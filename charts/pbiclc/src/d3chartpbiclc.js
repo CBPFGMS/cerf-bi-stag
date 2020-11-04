@@ -660,7 +660,7 @@
 			console.info("pbiclc: data from local storage");
 			csvCallback(rawData);
 		} else {
-			d3.csv("/data/CERF_ContributionTotal.csv").then(function(rawData) {
+			d3.csv("https://cbpfgms.github.io/cerf-bi-stag/data/CERF_ContributionTotal.csv").then(function(rawData) {
 				try {
 					localStorage.setItem("pbiclcpbiclipbifdcdata", JSON.stringify({
 						data: d3.csvFormat(rawData),

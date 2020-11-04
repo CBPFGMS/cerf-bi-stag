@@ -235,7 +235,7 @@
 			bookmarkSite = "https://pfbi.unocha.org/bookmark.html?",
 			helpPortalUrl = "https://gms.unocha.org/content/business-intelligence#allocation%20flow",
 			csvDateFormat = d3.utcFormat("_%Y%m%d_%H%M%S_UTC"),
-			dataUrl = "/data/cerf_subgrant.csv", //NOTE ON CERF: CERF ID MUST BE 999
+			dataUrl = "https://cbpfgms.github.io/cerf-bi-stag/data/cerf_subgrant.csv", //NOTE ON CERF: CERF ID MUST BE 999
 			cbpfsListUrl = "https://cbpfgms.github.io/pf-onebi-data/cerf_sample_data/MstPooledFund.csv",
 			//partnersListUrl = "https://cbpfgms.github.io/pf-onebi-data/cerf_sample_data/MstOrgType.csv",
 			//subPartnersListUrl = "https://cbpfgms.github.io/pf-onebi-data/cerf_sample_data/CERF_AllocationFlowbyOrgType.csv",

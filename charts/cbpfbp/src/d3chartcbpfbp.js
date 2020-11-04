@@ -234,7 +234,7 @@
 				return d.y;
 			});
 
-		d3.csv("/data/CERF_ContributionTotal.csv", filterYear).then(function(rawData) {
+		d3.csv("https://cbpfgms.github.io/cerf-bi-stag/data/CERF_ContributionTotal.csv", filterYear).then(function(rawData) {
 
 			removeProgressWheel();
 

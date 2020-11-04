@@ -216,7 +216,7 @@
 			chartTitleDefault = "Allocations",
 			vizNameQueryString = "allocationsmap",
 			bookmarkSite = "https://pfbi.unocha.org/bookmark.html?",
-			dataUrl = "oneampdata5combined.csv",
+			dataUrl = "https://cbpfgms.github.io/cerf-bi-stag/oneampdata5combined.csv",
 			mapUrl = "https://raw.githubusercontent.com/CBPFGMS/cbpfgms.github.io/master/img/assets/worldmaptopo110m.json",
 			csvDateFormat = d3.utcFormat("_%Y%m%d_%H%M%S_UTC"),
 			yearsArray = [],
