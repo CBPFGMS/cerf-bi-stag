@@ -1,0 +1,1000 @@
+FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidAmt,PledgeAmt,PledgeAmtLocalCurrency,PledgeAmtCurrencyExchangeRate,PaidAmtLocalCurrency,PaidAmtCurrencyExchangeRate,PledgeAmtLocal,PaidAmtLocal
+2006,Andorra,AD,Member State,Member State,25440,0,0,0,0,0,0,0
+2006,Antigua and Barbuda,AG,Member State,Member State,5000,0,0,0,0,0,0,0
+2006,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2006,Australia,AU,Member State,Member State,7600000,0,0,0,0,0,0,0
+2006,Azerbaijan,AZ,Member State,Member State,20000,0,0,0,0,0,0,0
+2006,Bangladesh,BD,Member State,Member State,5000,0,0,0,0,0,0,0
+2006,Belgium,BE,Member State,Member State,2666194.01,0,0,0,0,0,0,0
+2006,Canada,CA,Member State,Member State,21941309.26,0,0,0,0,0,0,0
+2006,Croatia,HR,Member State,Member State,5000,0,0,0,0,0,0,0
+2006,Czech Republic,CZ,Member State,Member State,113301.61,0,0,0,0,0,0,0
+2006,Denmark,DK,Member State,Member State,8401243.38,0,0,0,0,0,0,0
+2006,Djibouti,DJ,Member State,Member State,2000,0,0,0,0,0,0,0
+2006,Ecuador,EC,Member State,Member State,20000,0,0,0,0,0,0,0
+2006,Egypt,EG,Member State,Member State,15000,0,0,0,0,0,0,0
+2006,Estonia,EE,Member State,Member State,52102,0,0,0,0,0,0,0
+2006,Finland,FI,Member State,Member State,5154000,0,0,0,0,0,0,0
+2006,France,FR,Member State,Member State,1263800,0,0,0,0,0,0,0
+2006,Greece,GR,Member State,Member State,100000,0,0,0,0,0,0,0
+2006,Grenada,GD,Member State,Member State,10000,0,0,0,0,0,0,0
+2006,Iceland,IS,Member State,Member State,150000,0,0,0,0,0,0,0
+2006,India,IN,Member State,Member State,1000000,0,0,0,0,0,0,0
+2006,Indonesia,ID,Member State,Member State,50000,0,0,0,0,0,0,0
+2006,Ireland,IE,Member State,Member State,12601974,0,0,0,0,0,0,0
+2006,Japan,JP,Member State,Member State,7500000,0,0,0,0,0,0,0
+2006,Kazakhstan,KZ,Member State,Member State,25000,0,0,0,0,0,0,0
+2006,Korea,KR,Member State,Member State,5000000,0,0,0,0,0,0,0
+2006,Kuwait,KW,Member State,Member State,200000,0,0,0,0,0,0,0
+2006,Liechtenstein,LI,Member State,Member State,100000,0,0,0,0,0,0,0
+2006,Luxembourg,LU,Member State,Member State,4000000,0,0,0,0,0,0,0
+2006,Malaysia,MY,Member State,Member State,50000,0,0,0,0,0,0,0
+2006,Mexico,MX,Member State,Member State,50000,0,0,0,0,0,0,0
+2006,Monaco,MC,Member State,Member State,25000,0,0,0,0,0,0,0
+2006,Morocco,MA,Member State,Member State,5000,0,0,0,0,0,0,0
+2006,Netherlands,NL,Member State,Member State,51860000,0,0,0,0,0,0,0
+2006,Nigeria,NG,Member State,Member State,2452,0,0,0,0,0,0,0
+2006,Norway,NO,Member State,Member State,29993971.19,0,0,0,0,0,0,0
+2006,Pakistan,PK,Member State,Member State,20000,0,0,0,0,0,0,0
+2006,Poland,PL,Member State,Member State,250000,0,0,0,0,0,0,0
+2006,Portugal,PT,Member State,Member State,254220,0,0,0,0,0,0,0
+2006,Private Donors,ZPRV,Private Donors,Private Donors,10000,0,0,0,0,0,0,0
+2006,Qatar,QA,Member State,Member State,2000000,0,0,0,0,0,0,0
+2006,Regional Local Authority,ZRLA,RLA,RLA,424989.38,0,0,0,0,0,0,0
+2006,Saudi Arabia,SA,Member State,Member State,50000,0,0,0,0,0,0,0
+2006,Slovenia,SI,Member State,Member State,10000,0,0,0,0,0,0,0
+2006,South Africa,ZA,Member State,Member State,288577.15,0,0,0,0,0,0,0
+2006,Spain,ES,Member State,Member State,9999984,0,0,0,0,0,0,0
+2006,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
+2006,Sweden,SE,Member State,Member State,41093249.8,0,0,0,0,0,0,0
+2006,Switzerland,CH,Member State,Member State,3928097.01,0,0,0,0,0,0,0
+2006,Thailand,TH,Member State,Member State,10000,0,0,0,0,0,0,0
+2006,Trinidad and Tobago,TT,Member State,Member State,20000,0,0,0,0,0,0,0
+2006,Turkey,TR,Member State,Member State,300000,0,0,0,0,0,0,0
+2006,United Kingdom,GB,Member State,Member State,69928000,0,0,0,0,0,0,0
+2006,United States of America,US,Member State,Member State,10000000,0,0,0,0,0,0,0
+2007,Algeria,DZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2007,Andorra,AD,Member State,Member State,29735.2,0,0,0,0,0,0,0
+2007,Antigua and Barbuda,AG,Member State,Member State,5000,0,0,0,0,0,0,0
+2007,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2007,Australia,AU,Member State,Member State,8760000,0,0,0,0,0,0,0
+2007,Austria,AT,Member State,Member State,401430,0,0,0,0,0,0,0
+2007,Azerbaijan,AZ,Member State,Member State,20000,0,0,0,0,0,0,0
+2007,Bahamas,BS,Member State,Member State,50000,0,0,0,0,0,0,0
+2007,Belgium,BE,Member State,Member State,2988913.9,0,0,0,0,0,0,0
+2007,Brazil,BR,Member State,Member State,30000,0,0,0,0,0,0,0
+2007,Brunei Darussalam,BN,Member State,Member State,50000,0,0,0,0,0,0,0
+2007,Bulgaria,BG,Member State,Member State,10000,0,0,0,0,0,0,0
+2007,Canada,CA,Member State,Member State,35116374.03,0,0,0,0,0,0,0
+2007,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
+2007,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2007,Colombia,CO,Member State,Member State,20000,0,0,0,0,0,0,0
+2007,Croatia,HR,Member State,Member State,20000,0,0,0,0,0,0,0
+2007,Cyprus,CY,Member State,Member State,30000,0,0,0,0,0,0,0
+2007,Czech Republic,CZ,Member State,Member State,121353.33,0,0,0,0,0,0,0
+2007,Denmark,DK,Member State,Member State,8742383.64,0,0,0,0,0,0,0
+2007,Djibouti,DJ,Member State,Member State,2000,0,0,0,0,0,0,0
+2007,Ecuador,EC,Member State,Member State,20000,0,0,0,0,0,0,0
+2007,Egypt,EG,Member State,Member State,15000,0,0,0,0,0,0,0
+2007,El Salvador,SV,Member State,Member State,2000,0,0,0,0,0,0,0
+2007,Estonia,EE,Member State,Member State,39739,0,0,0,0,0,0,0
+2007,Finland,FI,Member State,Member State,6726000,0,0,0,0,0,0,0
+2007,France,FR,Member State,Member State,1312100,0,0,0,0,0,0,0
+2007,Germany,DE,Member State,Member State,6597500,0,0,0,0,0,0,0
+2007,Hungary,HU,Member State,Member State,10000,0,0,0,0,0,0,0
+2007,Iceland,IS,Member State,Member State,558618.16,0,0,0,0,0,0,0
+2007,India,IN,Member State,Member State,1000000,0,0,0,0,0,0,0
+2007,Indonesia,ID,Member State,Member State,100000,0,0,0,0,0,0,0
+2007,Ireland,IE,Member State,Member State,26273974,0,0,0,0,0,0,0
+2007,Israel,IL,Member State,Member State,30000,0,0,0,0,0,0,0
+2007,Italy,IT,Member State,Member State,2670400.23,0,0,0,0,0,0,0
+2007,Jamaica,JM,Member State,Member State,5000,0,0,0,0,0,0,0
+2007,Kazakhstan,KZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2007,Korea,KR,Member State,Member State,1500000,0,0,0,0,0,0,0
+2007,Lebanon,LB,Member State,Member State,3000,0,0,0,0,0,0,0
+2007,Liechtenstein,LI,Member State,Member State,123243.78,0,0,0,0,0,0,0
+2007,Luxembourg,LU,Member State,Member State,5610800,0,0,0,0,0,0,0
+2007,Malaysia,MY,Member State,Member State,100000,0,0,0,0,0,0,0
+2007,Maldives,MV,Member State,Member State,1000,0,0,0,0,0,0,0
+2007,Malta,MT,Member State,Member State,10000,0,0,0,0,0,0,0
+2007,Mexico,MX,Member State,Member State,50000,0,0,0,0,0,0,0
+2007,Monaco,MC,Member State,Member State,35000,0,0,0,0,0,0,0
+2007,Morocco,MA,Member State,Member State,5000,0,0,0,0,0,0,0
+2007,Netherlands,NL,Member State,Member State,53400000,0,0,0,0,0,0,0
+2007,New Zealand,NZ,Member State,Member State,762700,0,0,0,0,0,0,0
+2007,Norway,NO,Member State,Member State,55066049.29,0,0,0,0,0,0,0
+2007,Pakistan,PK,Member State,Member State,20000,0,0,0,0,0,0,0
+2007,Peru,PE,Member State,Member State,5000,0,0,0,0,0,0,0
+2007,Philippines,PH,Member State,Member State,5000,0,0,0,0,0,0,0
+2007,Poland,PL,Member State,Member State,510000,0,0,0,0,0,0,0
+2007,Portugal,PT,Member State,Member State,268540,0,0,0,0,0,0,0
+2007,Private Donors,ZPRV,Private Donors,Private Donors,163284.24,0,0,0,0,0,0,0
+2007,Regional Local Authority,ZRLA,RLA,RLA,435578.01,0,0,0,0,0,0,0
+2007,Romania,RO,Member State,Member State,359625,0,0,0,0,0,0,0
+2007,Saudi Arabia,SA,Member State,Member State,50000,0,0,0,0,0,0,0
+2007,Slovenia,SI,Member State,Member State,50000,0,0,0,0,0,0,0
+2007,South Africa,ZA,Member State,Member State,240000,0,0,0,0,0,0,0
+2007,Spain,ES,Member State,Member State,20692484,0,0,0,0,0,0,0
+2007,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
+2007,Sweden,SE,Member State,Member State,51045497.83,0,0,0,0,0,0,0
+2007,Switzerland,CH,Member State,Member State,8194982.25,0,0,0,0,0,0,0
+2007,Thailand,TH,Member State,Member State,10000,0,0,0,0,0,0,0
+2007,Trinidad and Tobago,TT,Member State,Member State,20000,0,0,0,0,0,0,0
+2007,Turkey,TR,Member State,Member State,300000,0,0,0,0,0,0,0
+2007,United Kingdom,GB,Member State,Member State,83726040,0,0,0,0,0,0,0
+2008,Albania,AL,Member State,Member State,3000,0,0,0,0,0,0,0
+2008,Algeria,DZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2008,Andorra,AD,Member State,Member State,33494.9,0,0,0,0,0,0,0
+2008,Antigua and Barbuda,AG,Member State,Member State,5000,0,0,0,0,0,0,0
+2008,Argentina,AR,Member State,Member State,30000,0,0,0,0,0,0,0
+2008,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2008,Australia,AU,Member State,Member State,9517000,0,0,0,0,0,0,0
+2008,Austria,AT,Member State,Member State,1030055,0,0,0,0,0,0,0
+2008,Bangladesh,BD,Member State,Member State,5000,0,0,0,0,0,0,0
+2008,Belgium,BE,Member State,Member State,2539594.3,0,0,0,0,0,0,0
+2008,Bhutan,BT,Member State,Member State,1480,0,0,0,0,0,0,0
+2008,Bosnia and Herzegovina,BA,Member State,Member State,5000,0,0,0,0,0,0,0
+2008,Botswana,BW,Member State,Member State,5000,0,0,0,0,0,0,0
+2008,Brazil,BR,Member State,Member State,50000,0,0,0,0,0,0,0
+2008,Bulgaria,BG,Member State,Member State,10000,0,0,0,0,0,0,0
+2008,Canada,CA,Member State,Member State,39037522.76,0,0,0,0,0,0,0
+2008,Chile,CL,Member State,Member State,100000,0,0,0,0,0,0,0
+2008,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2008,Croatia,HR,Member State,Member State,34000,0,0,0,0,0,0,0
+2008,Czech Republic,CZ,Member State,Member State,153874.56,0,0,0,0,0,0,0
+2008,Denmark,DK,Member State,Member State,9931472.84,0,0,0,0,0,0,0
+2008,Ecuador,EC,Member State,Member State,20000,0,0,0,0,0,0,0
+2008,Egypt,EG,Member State,Member State,15000,0,0,0,0,0,0,0
+2008,Estonia,EE,Member State,Member State,91200,0,0,0,0,0,0,0
+2008,Finland,FI,Member State,Member State,7791000,0,0,0,0,0,0,0
+2008,France,FR,Member State,Member State,2223046.38,0,0,0,0,0,0,0
+2008,Germany,DE,Member State,Member State,14790000,0,0,0,0,0,0,0
+2008,Ghana,GH,Member State,Member State,5000,0,0,0,0,0,0,0
+2008,Greece,GR,Member State,Member State,300000,0,0,0,0,0,0,0
+2008,Guatemala,GT,Member State,Member State,10000,0,0,0,0,0,0,0
+2008,Guyana,GY,Member State,Member State,4912.84,0,0,0,0,0,0,0
+2008,Hungary,HU,Member State,Member State,20000,0,0,0,0,0,0,0
+2008,Iceland,IS,Member State,Member State,611243.27,0,0,0,0,0,0,0
+2008,Indonesia,ID,Member State,Member State,100000,0,0,0,0,0,0,0
+2008,Ireland,IE,Member State,Member State,33301074,0,0,0,0,0,0,0
+2008,Israel,IL,Member State,Member State,15000,0,0,0,0,0,0,0
+2008,Italy,IT,Member State,Member State,2935400,0,0,0,0,0,0,0
+2008,Japan,JP,Member State,Member State,2169083.18,0,0,0,0,0,0,0
+2008,Kazakhstan,KZ,Member State,Member State,50000,0,0,0,0,0,0,0
+2008,Korea,KR,Member State,Member State,2000000,0,0,0,0,0,0,0
+2008,Kuwait,KW,Member State,Member State,50000,0,0,0,0,0,0,0
+2008,Latvia,LV,Member State,Member State,20000,0,0,0,0,0,0,0
+2008,Liechtenstein,LI,Member State,Member State,196136.12,0,0,0,0,0,0,0
+2008,Lithuania,LT,Member State,Member State,20844.62,0,0,0,0,0,0,0
+2008,Luxembourg,LU,Member State,Member State,6190400,0,0,0,0,0,0,0
+2008,Malaysia,MY,Member State,Member State,100000,0,0,0,0,0,0,0
+2008,Maldives,MV,Member State,Member State,1000,0,0,0,0,0,0,0
+2008,Mexico,MX,Member State,Member State,100000,0,0,0,0,0,0,0
+2008,Monaco,MC,Member State,Member State,139313.48,0,0,0,0,0,0,0
+2008,Mongolia,MN,Member State,Member State,10000,0,0,0,0,0,0,0
+2008,Montenegro,ME,Member State,Member State,2500,0,0,0,0,0,0,0
+2008,Morocco,MA,Member State,Member State,5000,0,0,0,0,0,0,0
+2008,Netherlands,NL,Member State,Member State,63900000,0,0,0,0,0,0,0
+2008,New Zealand,NZ,Member State,Member State,1000000,0,0,0,0,0,0,0
+2008,North Macedonia,MK,Member State,Member State,2000,0,0,0,0,0,0,0
+2008,Norway,NO,Member State,Member State,55258765.36,0,0,0,0,0,0,0
+2008,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
+2008,Pakistan,PK,Member State,Member State,20000,0,0,0,0,0,0,0
+2008,Peru,PE,Member State,Member State,10000,0,0,0,0,0,0,0
+2008,Philippines,PH,Member State,Member State,5000,0,0,0,0,0,0,0
+2008,Poland,PL,Member State,Member State,300000,0,0,0,0,0,0,0
+2008,Portugal,PT,Member State,Member State,312400,0,0,0,0,0,0,0
+2008,Private Donors,ZPRV,Private Donors,Private Donors,939215.92,0,0,0,0,0,0,0
+2008,Qatar,QA,Member State,Member State,100000,0,0,0,0,0,0,0
+2008,San Marino,SM,Member State,Member State,4412.74,0,0,0,0,0,0,0
+2008,Saudi Arabia,SA,Member State,Member State,100000,0,0,0,0,0,0,0
+2008,Slovenia,SI,Member State,Member State,50000,0,0,0,0,0,0,0
+2008,South Africa,ZA,Member State,Member State,221538.45,0,0,0,0,0,0,0
+2008,Spain,ES,Member State,Member State,45531968,0,0,0,0,0,0,0
+2008,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
+2008,Sweden,SE,Member State,Member State,56264400.17,0,0,0,0,0,0,0
+2008,Switzerland,CH,Member State,Member State,7241824.57,0,0,0,0,0,0,0
+2008,Syria,SY,Member State,Member State,5000,0,0,0,0,0,0,0
+2008,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
+2008,Trinidad and Tobago,TT,Member State,Member State,20000,0,0,0,0,0,0,0
+2008,Tunisia,TN,Member State,Member State,5000,0,0,0,0,0,0,0
+2008,Turkey,TR,Member State,Member State,300000,0,0,0,0,0,0,0
+2008,United Arab Emirates,AE,Member State,Member State,50000,0,0,0,0,0,0,0
+2008,United Kingdom,GB,Member State,Member State,80239000,0,0,0,0,0,0,0
+2008,United States of America,US,Member State,Member State,5000000,0,0,0,0,0,0,0
+2009,Afghanistan,AF,Member State,Member State,1500,0,0,0,0,0,0,0
+2009,Albania,AL,Member State,Member State,3500,0,0,0,0,0,0,0
+2009,Algeria,DZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2009,Andorra,AD,Member State,Member State,38985.8,0,0,0,0,0,0,0
+2009,Antigua and Barbuda,AG,Member State,Member State,5000,0,0,0,0,0,0,0
+2009,Argentina,AR,Member State,Member State,30000,0,0,0,0,0,0,0
+2009,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2009,Australia,AU,Member State,Member State,7821600,0,0,0,0,0,0,0
+2009,Austria,AT,Member State,Member State,424740,0,0,0,0,0,0,0
+2009,Azerbaijan,AZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2009,Belgium,BE,Member State,Member State,7272904.92,0,0,0,0,0,0,0
+2009,Benin,BJ,Member State,Member State,1500,0,0,0,0,0,0,0
+2009,Bhutan,BT,Member State,Member State,1480,0,0,0,0,0,0,0
+2009,Brazil,BR,Member State,Member State,149985,0,0,0,0,0,0,0
+2009,Bulgaria,BG,Member State,Member State,14966.2,0,0,0,0,0,0,0
+2009,Canada,CA,Member State,Member State,34566876.08,0,0,0,0,0,0,0
+2009,Chile,CL,Member State,Member State,20000,0,0,0,0,0,0,0
+2009,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2009,Colombia,CO,Member State,Member State,40000,0,0,0,0,0,0,0
+2009,Croatia,HR,Member State,Member State,24000,0,0,0,0,0,0,0
+2009,Czech Republic,CZ,Member State,Member State,143176.22,0,0,0,0,0,0,0
+2009,Denmark,DK,Member State,Member State,8544087.49,0,0,0,0,0,0,0
+2009,Egypt,EG,Member State,Member State,15000,0,0,0,0,0,0,0
+2009,Estonia,EE,Member State,Member State,80845,0,0,0,0,0,0,0
+2009,Finland,FI,Member State,Member State,8198400,0,0,0,0,0,0,0
+2009,Germany,DE,Member State,Member State,19522484.38,0,0,0,0,0,0,0
+2009,Ghana,GH,Member State,Member State,10000,0,0,0,0,0,0,0
+2009,Greece,GR,Member State,Member State,500000,0,0,0,0,0,0,0
+2009,Haiti,HT,Member State,Member State,1480,0,0,0,0,0,0,0
+2009,Hungary,HU,Member State,Member State,54088,0,0,0,0,0,0,0
+2009,Iceland,IS,Member State,Member State,200000,0,0,0,0,0,0,0
+2009,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
+2009,Indonesia,ID,Member State,Member State,125000,0,0,0,0,0,0,0
+2009,Ireland,IE,Member State,Member State,27179610,0,0,0,0,0,0,0
+2009,Israel,IL,Member State,Member State,15000,0,0,0,0,0,0,0
+2009,Italy,IT,Member State,Member State,1358868,0,0,0,0,0,0,0
+2009,Jamaica,JM,Member State,Member State,5000,0,0,0,0,0,0,0
+2009,Japan,JP,Member State,Member State,1000000,0,0,0,0,0,0,0
+2009,Kazakhstan,KZ,Member State,Member State,50000,0,0,0,0,0,0,0
+2009,Kenya,KE,Member State,Member State,9894.62,0,0,0,0,0,0,0
+2009,Korea,KR,Member State,Member State,3000000,0,0,0,0,0,0,0
+2009,Kuwait,KW,Member State,Member State,50000,0,0,0,0,0,0,0
+2009,Lao PDR,LA,Member State,Member State,3000,0,0,0,0,0,0,0
+2009,Liechtenstein,LI,Member State,Member State,230840.26,0,0,0,0,0,0,0
+2009,Luxembourg,LU,Member State,Member State,5696400,0,0,0,0,0,0,0
+2009,Malaysia,MY,Member State,Member State,100000,0,0,0,0,0,0,0
+2009,Mexico,MX,Member State,Member State,150000,0,0,0,0,0,0,0
+2009,Moldova,MD,Member State,Member State,10000,0,0,0,0,0,0,0
+2009,Monaco,MC,Member State,Member State,141692.25,0,0,0,0,0,0,0
+2009,Montenegro,ME,Member State,Member State,5000,0,0,0,0,0,0,0
+2009,Morocco,MA,Member State,Member State,5000,0,0,0,0,0,0,0
+2009,Mozambique,MZ,Member State,Member State,2000,0,0,0,0,0,0,0
+2009,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2009,Namibia,NA,Member State,Member State,1000,0,0,0,0,0,0,0
+2009,Netherlands,NL,Member State,Member State,55668000,0,0,0,0,0,0,0
+2009,New Zealand,NZ,Member State,Member State,1000000,0,0,0,0,0,0,0
+2009,Norway,NO,Member State,Member State,42734982.73,0,0,0,0,0,0,0
+2009,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
+2009,Oman,OM,Member State,Member State,30000,0,0,0,0,0,0,0
+2009,Pakistan,PK,Member State,Member State,15000,0,0,0,0,0,0,0
+2009,Peru,PE,Member State,Member State,10000,0,0,0,0,0,0,0
+2009,Philippines,PH,Member State,Member State,10000,0,0,0,0,0,0,0
+2009,Poland,PL,Member State,Member State,300000,0,0,0,0,0,0,0
+2009,Portugal,PT,Member State,Member State,263020,0,0,0,0,0,0,0
+2009,Private Donors,ZPRV,Private Donors,Private Donors,452819.55,0,0,0,0,0,0,0
+2009,Qatar,QA,Member State,Member State,50000,0,0,0,0,0,0,0
+2009,Republic of Congo,CG,Member State,Member State,2256.25,0,0,0,0,0,0,0
+2009,Samoa,WS,Member State,Member State,2000,0,0,0,0,0,0,0
+2009,San Marino,SM,Member State,Member State,30000,0,0,0,0,0,0,0
+2009,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
+2009,Slovakia,SK,Member State,Member State,10000,0,0,0,0,0,0,0
+2009,Slovenia,SI,Member State,Member State,66588,0,0,0,0,0,0,0
+2009,South Africa,ZA,Member State,Member State,180000,0,0,0,0,0,0,0
+2009,Spain,ES,Member State,Member State,44348982,0,0,0,0,0,0,0
+2009,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
+2009,Sweden,SE,Member State,Member State,49367572.36,0,0,0,0,0,0,0
+2009,Switzerland,CH,Member State,Member State,4657370.02,0,0,0,0,0,0,0
+2009,Syria,SY,Member State,Member State,5000,0,0,0,0,0,0,0
+2009,Timor-Leste,TL,Member State,Member State,1200,0,0,0,0,0,0,0
+2009,Trinidad and Tobago,TT,Member State,Member State,20000,0,0,0,0,0,0,0
+2009,Turkey,TR,Member State,Member State,200000,0,0,0,0,0,0,0
+2009,Tuvalu,TV,Member State,Member State,1000,0,0,0,0,0,0,0
+2009,United Kingdom,GB,Member State,Member State,64262000,0,0,0,0,0,0,0
+2009,Venezuela,VE,Member State,Member State,5000,0,0,0,0,0,0,0
+2009,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2010,Afghanistan,AF,Member State,Member State,1500,0,0,0,0,0,0,0
+2010,Algeria,DZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2010,Andorra,AD,Member State,Member State,46527,0,0,0,0,0,0,0
+2010,Antigua and Barbuda,AG,Member State,Member State,5000,0,0,0,0,0,0,0
+2010,Argentina,AR,Member State,Member State,50000,0,0,0,0,0,0,0
+2010,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2010,Australia,AU,Member State,Member State,10986000,0,0,0,0,0,0,0
+2010,Austria,AT,Member State,Member State,548400,0,0,0,0,0,0,0
+2010,Bangladesh,BD,Member State,Member State,5000,0,0,0,0,0,0,0
+2010,Belgium,BE,Member State,Member State,8387538.32,0,0,0,0,0,0,0
+2010,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
+2010,Brazil,BR,Member State,Member State,200000,0,0,0,0,0,0,0
+2010,Canada,CA,Member State,Member State,37328450.04,0,0,0,0,0,0,0
+2010,Central African Republic,CF,Member State,Member State,197238.66,0,0,0,0,0,0,0
+2010,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
+2010,China,CN,Member State,Member State,1500000,0,0,0,0,0,0,0
+2010,Colombia,CO,Member State,Member State,30000,0,0,0,0,0,0,0
+2010,Costa Rica,CR,Member State,Member State,9642.91,0,0,0,0,0,0,0
+2010,Croatia,HR,Member State,Member State,25000,0,0,0,0,0,0,0
+2010,Cyprus,CY,Member State,Member State,30000,0,0,0,0,0,0,0
+2010,Denmark,DK,Member State,Member State,11135477.69,0,0,0,0,0,0,0
+2010,Djibouti,DJ,Member State,Member State,4000,0,0,0,0,0,0,0
+2010,Egypt,EG,Member State,Member State,15000,0,0,0,0,0,0,0
+2010,Estonia,EE,Member State,Member State,74057,0,0,0,0,0,0,0
+2010,Finland,FI,Member State,Member State,8079000,0,0,0,0,0,0,0
+2010,France,FR,Member State,Member State,657250,0,0,0,0,0,0,0
+2010,Georgia,GE,Member State,Member State,2000,0,0,0,0,0,0,0
+2010,Germany,DE,Member State,Member State,21735000,0,0,0,0,0,0,0
+2010,Greece,GR,Member State,Member State,500000,0,0,0,0,0,0,0
+2010,Iceland,IS,Member State,Member State,100000,0,0,0,0,0,0,0
+2010,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
+2010,Indonesia,ID,Member State,Member State,150000,0,0,0,0,0,0,0
+2010,Ireland,IE,Member State,Member State,5099972,0,0,0,0,0,0,0
+2010,Israel,IL,Member State,Member State,20000,0,0,0,0,0,0,0
+2010,Italy,IT,Member State,Member State,1502270,0,0,0,0,0,0,0
+2010,Japan,JP,Member State,Member State,2000000,0,0,0,0,0,0,0
+2010,Kazakhstan,KZ,Member State,Member State,50000,0,0,0,0,0,0,0
+2010,Korea,KR,Member State,Member State,3000000,0,0,0,0,0,0,0
+2010,Kuwait,KW,Member State,Member State,34600,0,0,0,0,0,0,0
+2010,Latvia,LV,Member State,Member State,20672.55,0,0,0,0,0,0,0
+2010,Lebanon,LB,Member State,Member State,3000,0,0,0,0,0,0,0
+2010,Liechtenstein,LI,Member State,Member State,235072.87,0,0,0,0,0,0,0
+2010,Luxembourg,LU,Member State,Member State,5775000,0,0,0,0,0,0,0
+2010,Madagascar,MG,Member State,Member State,2000,0,0,0,0,0,0,0
+2010,Mexico,MX,Member State,Member State,150000,0,0,0,0,0,0,0
+2010,Moldova,MD,Member State,Member State,10000,0,0,0,0,0,0,0
+2010,Monaco,MC,Member State,Member State,134778.33,0,0,0,0,0,0,0
+2010,Montenegro,ME,Member State,Member State,5000,0,0,0,0,0,0,0
+2010,Morocco,MA,Member State,Member State,5000,0,0,0,0,0,0,0
+2010,Mozambique,MZ,Member State,Member State,4000,0,0,0,0,0,0,0
+2010,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2010,Namibia,NA,Member State,Member State,2000,0,0,0,0,0,0,0
+2010,Netherlands,NL,Member State,Member State,54984000,0,0,0,0,0,0,0
+2010,New Zealand,NZ,Member State,Member State,1000000,0,0,0,0,0,0,0
+2010,North Macedonia,MK,Member State,Member State,5000,0,0,0,0,0,0,0
+2010,Norway,NO,Member State,Member State,65483534.81,0,0,0,0,0,0,0
+2010,Observer,ZOB,Observer,Observer,10000,0,0,0,0,0,0,0
+2010,Pakistan,PK,Member State,Member State,19170.67,0,0,0,0,0,0,0
+2010,Panama,PA,Member State,Member State,5000,0,0,0,0,0,0,0
+2010,Philippines,PH,Member State,Member State,10000,0,0,0,0,0,0,0
+2010,Poland,PL,Member State,Member State,250000,0,0,0,0,0,0,0
+2010,Portugal,PT,Member State,Member State,286000,0,0,0,0,0,0,0
+2010,Private Donors,ZPRV,Private Donors,Private Donors,4362072.83,0,0,0,0,0,0,0
+2010,Romania,RO,Member State,Member State,136900,0,0,0,0,0,0,0
+2010,Russian Federation,RU,Member State,Member State,2000000,0,0,0,0,0,0,0
+2010,Saint Lucia,LC,Member State,Member State,1000,0,0,0,0,0,0,0
+2010,San Marino,SM,Member State,Member State,100000,0,0,0,0,0,0,0
+2010,Singapore,SG,Member State,Member State,30000,0,0,0,0,0,0,0
+2010,Slovenia,SI,Member State,Member State,13617,0,0,0,0,0,0,0
+2010,South Africa,ZA,Member State,Member State,263540,0,0,0,0,0,0,0
+2010,Spain,ES,Member State,Member State,39585000,0,0,0,0,0,0,0
+2010,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
+2010,Sweden,SE,Member State,Member State,64369547.93,0,0,0,0,0,0,0
+2010,Switzerland,CH,Member State,Member State,4568942.57,0,0,0,0,0,0,0
+2010,Syria,SY,Member State,Member State,5000,0,0,0,0,0,0,0
+2010,Tajikistan,TJ,Member State,Member State,2000,0,0,0,0,0,0,0
+2010,Trinidad and Tobago,TT,Member State,Member State,20000,0,0,0,0,0,0,0
+2010,Turkey,TR,Member State,Member State,200000,0,0,0,0,0,0,0
+2010,Ukraine,UA,Member State,Member State,503310.34,0,0,0,0,0,0,0
+2010,United Arab Emirates,AE,Member State,Member State,50000,0,0,0,0,0,0,0
+2010,United Kingdom,GB,Member State,Member State,60005700,0,0,0,0,0,0,0
+2010,United States of America,US,Member State,Member State,10000000,0,0,0,0,0,0,0
+2010,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2011,Afghanistan,AF,Member State,Member State,500,0,0,0,0,0,0,0
+2011,Albania,AL,Member State,Member State,4000,0,0,0,0,0,0,0
+2011,Algeria,DZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2011,Andorra,AD,Member State,Member State,28128,0,0,0,0,0,0,0
+2011,Argentina,AR,Member State,Member State,58394,0,0,0,0,0,0,0
+2011,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2011,Australia,AU,Member State,Member State,13906200,0,0,0,0,0,0,0
+2011,Austria,AT,Member State,Member State,289180,0,0,0,0,0,0,0
+2011,Azerbaijan,AZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2011,Bangladesh,BD,Member State,Member State,10000,0,0,0,0,0,0,0
+2011,Belgium,BE,Member State,Member State,17716150,0,0,0,0,0,0,0
+2011,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
+2011,Brazil,BR,Member State,Member State,500000,0,0,0,0,0,0,0
+2011,Brunei Darussalam,BN,Member State,Member State,50000,0,0,0,0,0,0,0
+2011,Canada,CA,Member State,Member State,41188191.22,0,0,0,0,0,0,0
+2011,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
+2011,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2011,Colombia,CO,Member State,Member State,10000,0,0,0,0,0,0,0
+2011,Cyprus,CY,Member State,Member State,27600,0,0,0,0,0,0,0
+2011,Czech Republic,CZ,Member State,Member State,434463.98,0,0,0,0,0,0,0
+2011,Denmark,DK,Member State,Member State,9182230.55,0,0,0,0,0,0,0
+2011,Ecuador,EC,Member State,Member State,5000,0,0,0,0,0,0,0
+2011,Estonia,EE,Member State,Member State,92302,0,0,0,0,0,0,0
+2011,Finland,FI,Member State,Member State,9411350,0,0,0,0,0,0,0
+2011,France,FR,Member State,Member State,720950,0,0,0,0,0,0,0
+2011,Germany,DE,Member State,Member State,16370000,0,0,0,0,0,0,0
+2011,Greece,GR,Member State,Member State,500000,0,0,0,0,0,0,0
+2011,Guyana,GY,Member State,Member State,2190.71,0,0,0,0,0,0,0
+2011,Hungary,HU,Member State,Member State,60000,0,0,0,0,0,0,0
+2011,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
+2011,Indonesia,ID,Member State,Member State,175000,0,0,0,0,0,0,0
+2011,Ireland,IE,Member State,Member State,5466772,0,0,0,0,0,0,0
+2011,Israel,IL,Member State,Member State,20000,0,0,0,0,0,0,0
+2011,Italy,IT,Member State,Member State,1308100,0,0,0,0,0,0,0
+2011,Japan,JP,Member State,Member State,3000000,0,0,0,0,0,0,0
+2011,Kazakhstan,KZ,Member State,Member State,49964,0,0,0,0,0,0,0
+2011,Korea,KR,Member State,Member State,3000000,0,0,0,0,0,0,0
+2011,Kuwait,KW,Member State,Member State,675000,0,0,0,0,0,0,0
+2011,Lao PDR,LA,Member State,Member State,3000,0,0,0,0,0,0,0
+2011,Liechtenstein,LI,Member State,Member State,281531.53,0,0,0,0,0,0,0
+2011,Luxembourg,LU,Member State,Member State,5982905.98,0,0,0,0,0,0,0
+2011,Malaysia,MY,Member State,Member State,100000,0,0,0,0,0,0,0
+2011,Maldives,MV,Member State,Member State,1000,0,0,0,0,0,0,0
+2011,Mexico,MX,Member State,Member State,300000,0,0,0,0,0,0,0
+2011,Moldova,MD,Member State,Member State,1000,0,0,0,0,0,0,0
+2011,Monaco,MC,Member State,Member State,140116.25,0,0,0,0,0,0,0
+2011,Montenegro,ME,Member State,Member State,5000,0,0,0,0,0,0,0
+2011,Morocco,MA,Member State,Member State,5000,0,0,0,0,0,0,0
+2011,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2011,Namibia,NA,Member State,Member State,2000,0,0,0,0,0,0,0
+2011,Netherlands,NL,Member State,Member State,54460000,0,0,0,0,0,0,0
+2011,New Zealand,NZ,Member State,Member State,1478974.5,0,0,0,0,0,0,0
+2011,Nigeria,NG,Member State,Member State,99851.64,0,0,0,0,0,0,0
+2011,Norway,NO,Member State,Member State,67966752.09,0,0,0,0,0,0,0
+2011,Observer,ZOB,Observer,Observer,10000,0,0,0,0,0,0,0
+2011,Philippines,PH,Member State,Member State,10000,0,0,0,0,0,0,0
+2011,Poland,PL,Member State,Member State,326051,0,0,0,0,0,0,0
+2011,Portugal,PT,Member State,Member State,267180,0,0,0,0,0,0,0
+2011,Private Donors,ZPRV,Private Donors,Private Donors,268780.48,0,0,0,0,0,0,0
+2011,Qatar,QA,Member State,Member State,4000000,0,0,0,0,0,0,0
+2011,Regional Local Authority,ZRLA,RLA,RLA,421080,0,0,0,0,0,0,0
+2011,Romania,RO,Member State,Member State,70900,0,0,0,0,0,0,0
+2011,Russian Federation,RU,Member State,Member State,2000000,0,0,0,0,0,0,0
+2011,Saint Lucia,LC,Member State,Member State,500,0,0,0,0,0,0,0
+2011,San Marino,SM,Member State,Member State,50000,0,0,0,0,0,0,0
+2011,Serbia,RS,Member State,Member State,2000,0,0,0,0,0,0,0
+2011,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
+2011,Slovenia,SI,Member State,Member State,70990,0,0,0,0,0,0,0
+2011,South Africa,ZA,Member State,Member State,272479.56,0,0,0,0,0,0,0
+2011,Spain,ES,Member State,Member State,20091000,0,0,0,0,0,0,0
+2011,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
+2011,Sweden,SE,Member State,Member State,74483670.84,0,0,0,0,0,0,0
+2011,Switzerland,CH,Member State,Member State,6071999.78,0,0,0,0,0,0,0
+2011,Turkey,TR,Member State,Member State,250000,0,0,0,0,0,0,0
+2011,United Arab Emirates,AE,Member State,Member State,50000,0,0,0,0,0,0,0
+2011,United Kingdom,GB,Member State,Member State,94280000,0,0,0,0,0,0,0
+2011,United States of America,US,Member State,Member State,6000000,0,0,0,0,0,0,0
+2011,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2012,Afghanistan,AF,Member State,Member State,1000,0,0,0,0,0,0,0
+2012,Albania,AL,Member State,Member State,50000,0,0,0,0,0,0,0
+2012,Andorra,AD,Member State,Member State,26316,0,0,0,0,0,0,0
+2012,Argentina,AR,Member State,Member State,68000,0,0,0,0,0,0,0
+2012,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2012,Australia,AU,Member State,Member State,16272000,0,0,0,0,0,0,0
+2012,Austria,AT,Member State,Member State,262080,0,0,0,0,0,0,0
+2012,Belgium,BE,Member State,Member State,19633125,0,0,0,0,0,0,0
+2012,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
+2012,Brazil,BR,Member State,Member State,750000,0,0,0,0,0,0,0
+2012,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
+2012,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2012,Colombia,CO,Member State,Member State,100000,0,0,0,0,0,0,0
+2012,Czech Republic,CZ,Member State,Member State,124371.92,0,0,0,0,0,0,0
+2012,Denmark,DK,Member State,Member State,23008540.85,0,0,0,0,0,0,0
+2012,Djibouti,DJ,Member State,Member State,0,0,0,0,0,0,0,0
+2012,Egypt,EG,Member State,Member State,15000,0,0,0,0,0,0,0
+2012,Estonia,EE,Member State,Member State,100185,0,0,0,0,0,0,0
+2012,Finland,FI,Member State,Member State,8517600,0,0,0,0,0,0,0
+2012,France,FR,Member State,Member State,392670,0,0,0,0,0,0,0
+2012,Germany,DE,Member State,Member State,19402500,0,0,0,0,0,0,0
+2012,Ghana,GH,Member State,Member State,15000,0,0,0,0,0,0,0
+2012,Guyana,GY,Member State,Member State,2196.08,0,0,0,0,0,0,0
+2012,Iceland,IS,Member State,Member State,50000,0,0,0,0,0,0,0
+2012,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
+2012,Indonesia,ID,Member State,Member State,200000,0,0,0,0,0,0,0
+2012,Ireland,IE,Member State,Member State,5160772,0,0,0,0,0,0,0
+2012,Israel,IL,Member State,Member State,20000,0,0,0,0,0,0,0
+2012,Italy,IT,Member State,Member State,645900,0,0,0,0,0,0,0
+2012,Japan,JP,Member State,Member State,2700000,0,0,0,0,0,0,0
+2012,Kazakhstan,KZ,Member State,Member State,99945,0,0,0,0,0,0,0
+2012,Korea,KR,Member State,Member State,4000000,0,0,0,0,0,0,0
+2012,Kuwait,KW,Member State,Member State,1000000,0,0,0,0,0,0,0
+2012,Liechtenstein,LI,Member State,Member State,272747.11,0,0,0,0,0,0,0
+2012,Lithuania,LT,Member State,Member State,10000,0,0,0,0,0,0,0
+2012,Luxembourg,LU,Member State,Member State,5577689.24,0,0,0,0,0,0,0
+2012,Malaysia,MY,Member State,Member State,50000,0,0,0,0,0,0,0
+2012,Mexico,MX,Member State,Member State,300000,0,0,0,0,0,0,0
+2012,Moldova,MD,Member State,Member State,2000,0,0,0,0,0,0,0
+2012,Monaco,MC,Member State,Member State,64714.5,0,0,0,0,0,0,0
+2012,Montenegro,ME,Member State,Member State,5000,0,0,0,0,0,0,0
+2012,Mozambique,MZ,Member State,Member State,2000,0,0,0,0,0,0,0
+2012,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2012,Netherlands,NL,Member State,Member State,52484000,0,0,0,0,0,0,0
+2012,New Zealand,NZ,Member State,Member State,1679374.5,0,0,0,0,0,0,0
+2012,Norway,NO,Member State,Member State,73945027.09,0,0,0,0,0,0,0
+2012,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
+2012,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
+2012,Peru,PE,Member State,Member State,5000,0,0,0,0,0,0,0
+2012,Poland,PL,Member State,Member State,264200,0,0,0,0,0,0,0
+2012,Portugal,PT,Member State,Member State,253520,0,0,0,0,0,0,0
+2012,Private Donors,ZPRV,Private Donors,Private Donors,211586.44,0,0,0,0,0,0,0
+2012,Qatar,QA,Member State,Member State,3000000,0,0,0,0,0,0,0
+2012,Regional Local Authority,ZRLA,RLA,RLA,380940,0,0,0,0,0,0,0
+2012,Romania,RO,Member State,Member State,92461.32,0,0,0,0,0,0,0
+2012,Russian Federation,RU,Member State,Member State,2000000,0,0,0,0,0,0,0
+2012,San Marino,SM,Member State,Member State,27291.42,0,0,0,0,0,0,0
+2012,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
+2012,South Africa,ZA,Member State,Member State,243457.09,0,0,0,0,0,0,0
+2012,Spain,ES,Member State,Member State,2608200,0,0,0,0,0,0,0
+2012,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
+2012,Sweden,SE,Member State,Member State,72132872.65,0,0,0,0,0,0,0
+2012,Switzerland,CH,Member State,Member State,5951684.41,0,0,0,0,0,0,0
+2012,Tajikistan,TJ,Member State,Member State,2000,0,0,0,0,0,0,0
+2012,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
+2012,Turkey,TR,Member State,Member State,200000,0,0,0,0,0,0,0
+2012,United Arab Emirates,AE,Member State,Member State,50000,0,0,0,0,0,0,0
+2012,United Kingdom,GB,Member State,Member State,95148000,0,0,0,0,0,0,0
+2012,United States of America,US,Member State,Member State,5000000,0,0,0,0,0,0,0
+2012,Uruguay,UY,Member State,Member State,5000,0,0,0,0,0,0,0
+2012,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2013,Afghanistan,AF,Member State,Member State,1000,0,0,0,0,0,0,0
+2013,Andorra,AD,Member State,Member State,19645.5,0,0,0,0,0,0,0
+2013,Argentina,AR,Member State,Member State,70000,0,0,0,0,0,0,0
+2013,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2013,Australia,AU,Member State,Member State,18566600,0,0,0,0,0,0,0
+2013,Austria,AT,Member State,Member State,271600,0,0,0,0,0,0,0
+2013,Azerbaijan,AZ,Member State,Member State,39820,0,0,0,0,0,0,0
+2013,Belgium,BE,Member State,Member State,19053650,0,0,0,0,0,0,0
+2013,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
+2013,Brazil,BR,Member State,Member State,1000000,0,0,0,0,0,0,0
+2013,Canada,CA,Member State,Member State,28809407.15,0,0,0,0,0,0,0
+2013,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
+2013,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2013,Colombia,CO,Member State,Member State,100000,0,0,0,0,0,0,0
+2013,Denmark,DK,Member State,Member State,24065367.72,0,0,0,0,0,0,0
+2013,Djibouti,DJ,Member State,Member State,0,0,0,0,0,0,0,0
+2013,Estonia,EE,Member State,Member State,102864,0,0,0,0,0,0,0
+2013,Finland,FI,Member State,Member State,9111900,0,0,0,0,0,0,0
+2013,France,FR,Member State,Member State,393300,0,0,0,0,0,0,0
+2013,Germany,DE,Member State,Member State,20313000,0,0,0,0,0,0,0
+2013,Greece,GR,Member State,Member State,50000,0,0,0,0,0,0,0
+2013,Guyana,GY,Member State,Member State,2184.47,0,0,0,0,0,0,0
+2013,Hungary,HU,Member State,Member State,20098,0,0,0,0,0,0,0
+2013,Iceland,IS,Member State,Member State,130000,0,0,0,0,0,0,0
+2013,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
+2013,Indonesia,ID,Member State,Member State,200000,0,0,0,0,0,0,0
+2013,Ireland,IE,Member State,Member State,13009444,0,0,0,0,0,0,0
+2013,Italy,IT,Member State,Member State,653350,0,0,0,0,0,0,0
+2013,Japan,JP,Member State,Member State,2987013,0,0,0,0,0,0,0
+2013,Korea,KR,Member State,Member State,4000000,0,0,0,0,0,0,0
+2013,Kuwait,KW,Member State,Member State,500000,0,0,0,0,0,0,0
+2013,Latvia,LV,Member State,Member State,41027.13,0,0,0,0,0,0,0
+2013,Liechtenstein,LI,Member State,Member State,272242.19,0,0,0,0,0,0,0
+2013,Luxembourg,LU,Member State,Member State,5747126.44,0,0,0,0,0,0,0
+2013,Mexico,MX,Member State,Member State,350000,0,0,0,0,0,0,0
+2013,Monaco,MC,Member State,Member State,64990,0,0,0,0,0,0,0
+2013,Mongolia,MN,Member State,Member State,10000,0,0,0,0,0,0,0
+2013,Montenegro,ME,Member State,Member State,3000,0,0,0,0,0,0,0
+2013,Morocco,MA,Member State,Member State,5000,0,0,0,0,0,0,0
+2013,Mozambique,MZ,Member State,Member State,2000,0,0,0,0,0,0,0
+2013,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2013,Netherlands,NL,Member State,Member State,52124000,0,0,0,0,0,0,0
+2013,New Zealand,NZ,Member State,Member State,1670425.12,0,0,0,0,0,0,0
+2013,Norway,NO,Member State,Member State,68265452.93,0,0,0,0,0,0,0
+2013,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
+2013,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
+2013,Peru,PE,Member State,Member State,25000,0,0,0,0,0,0,0
+2013,Poland,PL,Member State,Member State,248162,0,0,0,0,0,0,0
+2013,Portugal,PT,Member State,Member State,67655,0,0,0,0,0,0,0
+2013,Private Donors,ZPRV,Private Donors,Private Donors,76667.92,0,0,0,0,0,0,0
+2013,Qatar,QA,Member State,Member State,3000000,0,0,0,0,0,0,0
+2013,Regional Local Authority,ZRLA,RLA,RLA,401430,0,0,0,0,0,0,0
+2013,Romania,RO,Member State,Member State,34347.65,0,0,0,0,0,0,0
+2013,Russian Federation,RU,Member State,Member State,1000000,0,0,0,0,0,0,0
+2013,Saudi Arabia,SA,Member State,Member State,450000,0,0,0,0,0,0,0
+2013,Serbia,RS,Member State,Member State,7000,0,0,0,0,0,0,0
+2013,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
+2013,Slovenia,SI,Member State,Member State,68725.8,0,0,0,0,0,0,0
+2013,South Africa,ZA,Member State,Member State,274468.9,0,0,0,0,0,0,0
+2013,Spain,ES,Member State,Member State,6617500,0,0,0,0,0,0,0
+2013,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
+2013,Sweden,SE,Member State,Member State,71687729.13,0,0,0,0,0,0,0
+2013,Switzerland,CH,Member State,Member State,7549267.63,0,0,0,0,0,0,0
+2013,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
+2013,Turkey,TR,Member State,Member State,250000,0,0,0,0,0,0,0
+2013,United Arab Emirates,AE,Member State,Member State,70000,0,0,0,0,0,0,0
+2013,United Kingdom,GB,Member State,Member State,111230500,0,0,0,0,0,0,0
+2013,United States of America,US,Member State,Member State,4000000,0,0,0,0,0,0,0
+2013,Uruguay,UY,Member State,Member State,5000,0,0,0,0,0,0,0
+2013,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2014,Andorra,AD,Member State,Member State,20537.85,0,0,0,0,0,0,0
+2014,Argentina,AR,Member State,Member State,57683.8,0,0,0,0,0,0,0
+2014,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2014,Australia,AU,Member State,Member State,14580884,0,0,0,0,0,0,0
+2014,Belgium,BE,Member State,Member State,17588690,0,0,0,0,0,0,0
+2014,Brazil,BR,Member State,Member State,1200000,0,0,0,0,0,0,0
+2014,Canada,CA,Member State,Member State,26719985.46,0,0,0,0,0,0,0
+2014,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
+2014,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2014,Czech Republic,CZ,Member State,Member State,116212.91,0,0,0,0,0,0,0
+2014,Denmark,DK,Member State,Member State,25993457.95,0,0,0,0,0,0,0
+2014,Estonia,EE,Member State,Member State,135580,0,0,0,0,0,0,0
+2014,Finland,FI,Member State,Member State,9705500,0,0,0,0,0,0,0
+2014,Germany,DE,Member State,Member State,29819224,0,0,0,0,0,0,0
+2014,Guyana,GY,Member State,Member State,2179.18,0,0,0,0,0,0,0
+2014,Hungary,HU,Member State,Member State,48046.57,0,0,0,0,0,0,0
+2014,Iceland,IS,Member State,Member State,100000,0,0,0,0,0,0,0
+2014,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
+2014,Indonesia,ID,Member State,Member State,200000,0,0,0,0,0,0,0
+2014,Ireland,IE,Member State,Member State,12183300,0,0,0,0,0,0,0
+2014,Italy,IT,Member State,Member State,1161383.85,0,0,0,0,0,0,0
+2014,Japan,JP,Member State,Member State,1590814,0,0,0,0,0,0,0
+2014,Kazakhstan,KZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2014,Korea,KR,Member State,Member State,4000000,0,0,0,0,0,0,0
+2014,Kuwait,KW,Member State,Member State,500000,0,0,0,0,0,0,0
+2014,Liechtenstein,LI,Member State,Member State,278117.7,0,0,0,0,0,0,0
+2014,Luxembourg,LU,Member State,Member State,5082592.12,0,0,0,0,0,0,0
+2014,Mali,ML,Member State,Member State,100000,0,0,0,0,0,0,0
+2014,Mexico,MX,Member State,Member State,500000,0,0,0,0,0,0,0
+2014,Monaco,MC,Member State,Member State,67920.38,0,0,0,0,0,0,0
+2014,Mongolia,MN,Member State,Member State,10000,0,0,0,0,0,0,0
+2014,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2014,Netherlands,NL,Member State,Member State,54956000,0,0,0,0,0,0,0
+2014,New Zealand,NZ,Member State,Member State,2563200,0,0,0,0,0,0,0
+2014,Norway,NO,Member State,Member State,66113108.55,0,0,0,0,0,0,0
+2014,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
+2014,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
+2014,Peru,PE,Member State,Member State,4674.22,0,0,0,0,0,0,0
+2014,Poland,PL,Member State,Member State,212850,0,0,0,0,0,0,0
+2014,Portugal,PT,Member State,Member State,67655,0,0,0,0,0,0,0
+2014,Private Donors,ZPRV,Private Donors,Private Donors,214927.94,0,0,0,0,0,0,0
+2014,Regional Local Authority,ZRLA,RLA,RLA,718244.18,0,0,0,0,0,0,0
+2014,Romania,RO,Member State,Member State,53000,0,0,0,0,0,0,0
+2014,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
+2014,San Marino,SM,Member State,Member State,9969.6,0,0,0,0,0,0,0
+2014,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
+2014,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
+2014,South Africa,ZA,Member State,Member State,243641,0,0,0,0,0,0,0
+2014,Spain,ES,Member State,Member State,2490000,0,0,0,0,0,0,0
+2014,Sweden,SE,Member State,Member State,72656098.8,0,0,0,0,0,0,0
+2014,Switzerland,CH,Member State,Member State,7860763.15,0,0,0,0,0,0,0
+2014,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
+2014,Trinidad and Tobago,TT,Member State,Member State,20000,0,0,0,0,0,0,0
+2014,Turkey,TR,Member State,Member State,449630,0,0,0,0,0,0,0
+2014,United Arab Emirates,AE,Member State,Member State,100000,0,0,0,0,0,0,0
+2014,United Kingdom,GB,Member State,Member State,113185500,0,0,0,0,0,0,0
+2014,United States of America,US,Member State,Member State,4000000,0,0,0,0,0,0,0
+2014,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2015,Andorra,AD,Member State,Member State,44139.33,0,0,0,0,0,0,0
+2015,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2015,Australia,AU,Member State,Member State,9223031.43,0,0,0,0,0,0,0
+2015,Belgium,BE,Member State,Member State,10969000,0,0,0,0,0,0,0
+2015,Canada,CA,Member State,Member State,24418604.65,0,0,0,0,0,0,0
+2015,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
+2015,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2015,Colombia,CO,Member State,Member State,235000,0,0,0,0,0,0,0
+2015,Cyprus,CY,Member State,Member State,13780,0,0,0,0,0,0,0
+2015,Denmark,DK,Member State,Member State,14556040.76,0,0,0,0,0,0,0
+2015,Djibouti,DJ,Member State,Member State,0,0,0,0,0,0,0,0
+2015,Estonia,EE,Member State,Member State,125100,0,0,0,0,0,0,0
+2015,Finland,FI,Member State,Member State,7770000,0,0,0,0,0,0,0
+2015,Germany,DE,Member State,Member State,43255180.73,0,0,0,0,0,0,0
+2015,Guyana,GY,Member State,Member State,2179.18,0,0,0,0,0,0,0
+2015,Iceland,IS,Member State,Member State,100000,0,0,0,0,0,0,0
+2015,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
+2015,Indonesia,ID,Member State,Member State,200000,0,0,0,0,0,0,0
+2015,Ireland,IE,Member State,Member State,12212000,0,0,0,0,0,0,0
+2015,Italy,IT,Member State,Member State,1104500,0,0,0,0,0,0,0
+2015,Japan,JP,Member State,Member State,1402809,0,0,0,0,0,0,0
+2015,Korea,KR,Member State,Member State,4500000,0,0,0,0,0,0,0
+2015,Kuwait,KW,Member State,Member State,1000000,0,0,0,0,0,0,0
+2015,Liechtenstein,LI,Member State,Member State,271768.67,0,0,0,0,0,0,0
+2015,Lithuania,LT,Member State,Member State,21655.46,0,0,0,0,0,0,0
+2015,Luxembourg,LU,Member State,Member State,4277200,0,0,0,0,0,0,0
+2015,Malaysia,MY,Member State,Member State,50000,0,0,0,0,0,0,0
+2015,Mexico,MX,Member State,Member State,250000,0,0,0,0,0,0,0
+2015,Monaco,MC,Member State,Member State,52303.5,0,0,0,0,0,0,0
+2015,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2015,Netherlands,NL,Member State,Member State,59169000,0,0,0,0,0,0,0
+2015,New Zealand,NZ,Member State,Member State,2337600,0,0,0,0,0,0,0
+2015,Norway,NO,Member State,Member State,48983512.05,0,0,0,0,0,0,0
+2015,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
+2015,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
+2015,Peru,PE,Member State,Member State,4166.66,0,0,0,0,0,0,0
+2015,Philippines,PH,Member State,Member State,10000,0,0,0,0,0,0,0
+2015,Poland,PL,Member State,Member State,204823,0,0,0,0,0,0,0
+2015,Portugal,PT,Member State,Member State,59034.05,0,0,0,0,0,0,0
+2015,Private Donors,ZPRV,Private Donors,Private Donors,180241.15,0,0,0,0,0,0,0
+2015,Regional Local Authority,ZRLA,RLA,RLA,363382.49,0,0,0,0,0,0,0
+2015,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
+2015,San Marino,SM,Member State,Member State,2266,0,0,0,0,0,0,0
+2015,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
+2015,Serbia,RS,Member State,Member State,5000,0,0,0,0,0,0,0
+2015,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
+2015,South Africa,ZA,Member State,Member State,172562.55,0,0,0,0,0,0,0
+2015,Spain,ES,Member State,Member State,2185792.35,0,0,0,0,0,0,0
+2015,Sweden,SE,Member State,Member State,52331717.07,0,0,0,0,0,0,0
+2015,Switzerland,CH,Member State,Member State,10354726.73,0,0,0,0,0,0,0
+2015,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
+2015,Trinidad and Tobago,TT,Member State,Member State,20000,0,0,0,0,0,0,0
+2015,Turkey,TR,Member State,Member State,450000,0,0,0,0,0,0,0
+2015,United Arab Emirates,AE,Member State,Member State,1000000,0,0,0,0,0,0,0
+2015,United Kingdom,GB,Member State,Member State,83200500,0,0,0,0,0,0,0
+2015,United States of America,US,Member State,Member State,3000000,0,0,0,0,0,0,0
+2015,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2016,Albania,AL,Member State,Member State,0,0,0,0,0,0,0,0
+2016,Andorra,AD,Member State,Member State,16633.5,0,0,0,0,0,0,0
+2016,Argentina,AR,Member State,Member State,60000,0,0,0,0,0,0,0
+2016,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2016,Australia,AU,Member State,Member State,7575664.8,0,0,0,0,0,0,0
+2016,Bangladesh,BD,Member State,Member State,5000,0,0,0,0,0,0,0
+2016,Belgium,BE,Member State,Member State,11312000,0,0,0,0,0,0,0
+2016,Canada,CA,Member State,Member State,22624086.19,0,0,0,0,0,0,0
+2016,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
+2016,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2016,Cyprus,CY,Member State,Member State,13910,0,0,0,0,0,0,0
+2016,Denmark,DK,Member State,Member State,15328254.57,0,0,0,0,0,0,0
+2016,Djibouti,DJ,Member State,Member State,0,0,0,0,0,0,0,0
+2016,Estonia,EE,Member State,Member State,109780,0,0,0,0,0,0,0
+2016,Finland,FI,Member State,Member State,7716100,0,0,0,0,0,0,0
+2016,Germany,DE,Member State,Member State,55895000,0,0,0,0,0,0,0
+2016,Guyana,GY,Member State,Member State,2179.18,0,0,0,0,0,0,0
+2016,Iceland,IS,Member State,Member State,300000,0,0,0,0,0,0,0
+2016,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
+2016,Indonesia,ID,Member State,Member State,200000,0,0,0,0,0,0,0
+2016,Iraq,IQ,Member State,Member State,5000,0,0,0,0,0,0,0
+2016,Ireland,IE,Member State,Member State,13783925,0,0,0,0,0,0,0
+2016,Italy,IT,Member State,Member State,2239600,0,0,0,0,0,0,0
+2016,Japan,JP,Member State,Member State,1285908,0,0,0,0,0,0,0
+2016,Kazakhstan,KZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2016,Korea,KR,Member State,Member State,4000000,0,0,0,0,0,0,0
+2016,Kuwait,KW,Member State,Member State,1000000,0,0,0,0,0,0,0
+2016,Liechtenstein,LI,Member State,Member State,204729.25,0,0,0,0,0,0,0
+2016,Luxembourg,LU,Member State,Member State,4762350,0,0,0,0,0,0,0
+2016,Monaco,MC,Member State,Member State,57015.05,0,0,0,0,0,0,0
+2016,Mongolia,MN,Member State,Member State,10000,0,0,0,0,0,0,0
+2016,Montenegro,ME,Member State,Member State,2000,0,0,0,0,0,0,0
+2016,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2016,Netherlands,NL,Member State,Member State,60522000,0,0,0,0,0,0,0
+2016,New Zealand,NZ,Member State,Member State,2026200,0,0,0,0,0,0,0
+2016,Norway,NO,Member State,Member State,44493615.85,0,0,0,0,0,0,0
+2016,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
+2016,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
+2016,Peru,PE,Member State,Member State,3972.91,0,0,0,0,0,0,0
+2016,Philippines,PH,Member State,Member State,5000,0,0,0,0,0,0,0
+2016,Portugal,PT,Member State,Member State,54650,0,0,0,0,0,0,0
+2016,Private Donors,ZPRV,Private Donors,Private Donors,19631.9,0,0,0,0,0,0,0
+2016,Regional Local Authority,ZRLA,RLA,RLA,648960,0,0,0,0,0,0,0
+2016,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
+2016,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
+2016,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
+2016,South Africa,ZA,Member State,Member State,428878,0,0,0,0,0,0,0
+2016,Spain,ES,Member State,Member State,2245000,0,0,0,0,0,0,0
+2016,Sweden,SE,Member State,Member State,82078120.59,0,0,0,0,0,0,0
+2016,Switzerland,CH,Member State,Member State,8175020.71,0,0,0,0,0,0,0
+2016,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
+2016,Turkey,TR,Member State,Member State,450000,0,0,0,0,0,0,0
+2016,United Arab Emirates,AE,Member State,Member State,1000000,0,0,0,0,0,0,0
+2016,United Kingdom,GB,Member State,Member State,69901837.5,0,0,0,0,0,0,0
+2016,United States of America,US,Member State,Member State,3000000,0,0,0,0,0,0,0
+2016,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2017,Andorra,AD,Member State,Member State,23866.52,0,0,0,0,0,0,0
+2017,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2017,Australia,AU,Member State,Member State,8226873.82,0,0,0,0,0,0,0
+2017,Belgium,BE,Member State,Member State,13963750,0,0,0,0,0,0,0
+2017,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
+2017,Bulgaria,BG,Member State,Member State,20000,0,0,0,0,0,0,0
+2017,Canada,CA,Member State,Member State,21844119.18,0,0,0,0,0,0,0
+2017,Chile,CL,Member State,Member State,40000,0,0,0,0,0,0,0
+2017,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2017,Colombia,CO,Member State,Member State,112500,0,0,0,0,0,0,0
+2017,Cyprus,CY,Member State,Member State,11662,0,0,0,0,0,0,0
+2017,Czech Republic,CZ,Member State,Member State,38170.85,0,0,0,0,0,0,0
+2017,Denmark,DK,Member State,Member State,14233862.36,0,0,0,0,0,0,0
+2017,Estonia,EE,Member State,Member State,106220,0,0,0,0,0,0,0
+2017,Finland,FI,Member State,Member State,7511000,0,0,0,0,0,0,0
+2017,Germany,DE,Member State,Member State,82786000,0,0,0,0,0,0,0
+2017,Iceland,IS,Member State,Member State,765714.33,0,0,0,0,0,0,0
+2017,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
+2017,Indonesia,ID,Member State,Member State,220000,0,0,0,0,0,0,0
+2017,Ireland,IE,Member State,Member State,23900000,0,0,0,0,0,0,0
+2017,Italy,IT,Member State,Member State,2470400,0,0,0,0,0,0,0
+2017,Japan,JP,Member State,Member State,1402809,0,0,0,0,0,0,0
+2017,Kazakhstan,KZ,Member State,Member State,50000,0,0,0,0,0,0,0
+2017,Korea,KR,Member State,Member State,4000000,0,0,0,0,0,0,0
+2017,Kuwait,KW,Member State,Member State,1000000,0,0,0,0,0,0,0
+2017,Liechtenstein,LI,Member State,Member State,200541.46,0,0,0,0,0,0,0
+2017,Lithuania,LT,Member State,Member State,21734,0,0,0,0,0,0,0
+2017,Luxembourg,LU,Member State,Member State,4872780,0,0,0,0,0,0,0
+2017,Monaco,MC,Member State,Member State,52428.45,0,0,0,0,0,0,0
+2017,Mongolia,MN,Member State,Member State,0,0,0,0,0,0,0,0
+2017,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2017,Netherlands,NL,Member State,Member State,71266300,0,0,0,0,0,0,0
+2017,New Zealand,NZ,Member State,Member State,2176800,0,0,0,0,0,0,0
+2017,Norway,NO,Member State,Member State,53066570.04,0,0,0,0,0,0,0
+2017,Observer,ZOB,Observer,Observer,1000,0,0,0,0,0,0,0
+2017,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
+2017,Peru,PE,Member State,Member State,4006.07,0,0,0,0,0,0,0
+2017,Philippines,PH,Member State,Member State,50000,0,0,0,0,0,0,0
+2017,Portugal,PT,Member State,Member State,104110,0,0,0,0,0,0,0
+2017,Private Donors,ZPRV,Private Donors,Private Donors,331135.34,0,0,0,0,0,0,0
+2017,Qatar,QA,Member State,Member State,1000000,0,0,0,0,0,0,0
+2017,Regional Local Authority,ZRLA,RLA,RLA,625860,0,0,0,0,0,0,0
+2017,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
+2017,San Marino,SM,Member State,Member State,2487,0,0,0,0,0,0,0
+2017,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
+2017,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
+2017,Slovakia,SK,Member State,Member State,60155,0,0,0,0,0,0,0
+2017,South Africa,ZA,Member State,Member State,487257,0,0,0,0,0,0,0
+2017,Spain,ES,Member State,Member State,3475600,0,0,0,0,0,0,0
+2017,Sri Lanka,LK,Member State,Member State,5000,0,0,0,0,0,0,0
+2017,Sweden,SE,Member State,Member State,75978438.04,0,0,0,0,0,0,0
+2017,Switzerland,CH,Member State,Member State,6041234.58,0,0,0,0,0,0,0
+2017,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
+2017,Turkey,TR,Member State,Member State,450000,0,0,0,0,0,0,0
+2017,United Arab Emirates,AE,Member State,Member State,1250000,0,0,0,0,0,0,0
+2017,United Kingdom,GB,Member State,Member State,102619750,0,0,0,0,0,0,0
+2017,United States of America,US,Member State,Member State,5000000,0,0,0,0,0,0,0
+2017,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2018,Algeria,DZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2018,Andorra,AD,Member State,Member State,17735.1,0,0,0,0,0,0,0
+2018,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2018,Australia,AU,Member State,Member State,8643721.52,0,0,0,0,0,0,0
+2018,Azerbaijan,AZ,Member State,Member State,20000,0,0,0,0,0,0,0
+2018,Bangladesh,BD,Member State,Member State,10000,0,0,0,0,0,0,0
+2018,Belgium,BE,Member State,Member State,14717500,0,0,0,0,0,0,0
+2018,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
+2018,Bulgaria,BG,Member State,Member State,20000,0,0,0,0,0,0,0
+2018,Canada,CA,Member State,Member State,22762465.16,0,0,0,0,0,0,0
+2018,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
+2018,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2018,Czech Republic,CZ,Member State,Member State,175173.69,0,0,0,0,0,0,0
+2018,Denmark,DK,Member State,Member State,21452655.07,0,0,0,0,0,0,0
+2018,Estonia,EE,Member State,Member State,117840,0,0,0,0,0,0,0
+2018,Finland,FI,Member State,Member State,8626800,0,0,0,0,0,0,0
+2018,Germany,DE,Member State,Member State,109560500,0,0,0,0,0,0,0
+2018,Guyana,GY,Member State,Member State,2179.18,0,0,0,0,0,0,0
+2018,Iceland,IS,Member State,Member State,495785.82,0,0,0,0,0,0,0
+2018,Indonesia,ID,Member State,Member State,220000,0,0,0,0,0,0,0
+2018,Iraq,IQ,Member State,Member State,10000,0,0,0,0,0,0,0
+2018,Ireland,IE,Member State,Member State,14064800,0,0,0,0,0,0,0
+2018,Italy,IT,Member State,Member State,2949000,0,0,0,0,0,0,0
+2018,Japan,JP,Member State,Member State,1360714,0,0,0,0,0,0,0
+2018,Kazakhstan,KZ,Member State,Member State,50000,0,0,0,0,0,0,0
+2018,Korea,KR,Member State,Member State,4000000,0,0,0,0,0,0,0
+2018,Kuwait,KW,Member State,Member State,1000000,0,0,0,0,0,0,0
+2018,Liechtenstein,LI,Member State,Member State,213538.33,0,0,0,0,0,0,0
+2018,Lithuania,LT,Member State,Member State,22900,0,0,0,0,0,0,0
+2018,Luxembourg,LU,Member State,Member State,5874592.5,0,0,0,0,0,0,0
+2018,Monaco,MC,Member State,Member State,123080,0,0,0,0,0,0,0
+2018,Mongolia,MN,Member State,Member State,10000,0,0,0,0,0,0,0
+2018,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2018,Netherlands,NL,Member State,Member State,65472000,0,0,0,0,0,0,0
+2018,New Zealand,NZ,Member State,Member State,2194500,0,0,0,0,0,0,0
+2018,Norway,NO,Member State,Member State,55283544.3,0,0,0,0,0,0,0
+2018,Philippines,PH,Member State,Member State,50000,0,0,0,0,0,0,0
+2018,Portugal,PT,Member State,Member State,118250,0,0,0,0,0,0,0
+2018,Private Donors,ZPRV,Private Donors,Private Donors,401523.89,0,0,0,0,0,0,0
+2018,Qatar,QA,Member State,Member State,1000000,0,0,0,0,0,0,0
+2018,Regional Local Authority,ZRLA,RLA,RLA,989840,0,0,0,0,0,0,0
+2018,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
+2018,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
+2018,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
+2018,Slovakia,SK,Member State,Member State,34365,0,0,0,0,0,0,0
+2018,Spain,ES,Member State,Member State,3466100,0,0,0,0,0,0,0
+2018,Sri Lanka,LK,Member State,Member State,5000,0,0,0,0,0,0,0
+2018,Sweden,SE,Member State,Member State,85127752.87,0,0,0,0,0,0,0
+2018,Switzerland,CH,Member State,Member State,6164144.14,0,0,0,0,0,0,0
+2018,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
+2018,Turkey,TR,Member State,Member State,400000,0,0,0,0,0,0,0
+2018,United Arab Emirates,AE,Member State,Member State,1500000,0,0,0,0,0,0,0
+2018,United Kingdom,GB,Member State,Member State,114323552.5,0,0,0,0,0,0,0
+2018,United States of America,US,Member State,Member State,0,0,0,0,0,0,0,0
+2019,Andorra,AD,Member State,Member State,16942.95,0,0,0,0,0,0,0
+2019,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
+2019,Australia,AU,Member State,Member State,7841875.05,0,0,0,0,0,0,0
+2019,Azerbaijan,AZ,Member State,Member State,20000,0,0,0,0,0,0,0
+2019,Bangladesh,BD,Member State,Member State,20000,0,0,0,0,0,0,0
+2019,Belgium,BE,Member State,Member State,19259300,0,0,0,0,0,0,0
+2019,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
+2019,Canada,CA,Member State,Member State,21652466.13,0,0,0,0,0,0,0
+2019,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
+2019,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2019,Colombia,CO,Member State,Member State,90000,0,0,0,0,0,0,0
+2019,Czech Republic,CZ,Member State,Member State,221150.87,0,0,0,0,0,0,0
+2019,Denmark,DK,Member State,Member State,25432996.6,0,0,0,0,0,0,0
+2019,Estonia,EE,Member State,Member State,113380,0,0,0,0,0,0,0
+2019,Finland,FI,Member State,Member State,9038400,0,0,0,0,0,0,0
+2019,Germany,DE,Member State,Member State,105421500,0,0,0,0,0,0,0
+2019,Guyana,GY,Member State,Member State,2158.27,0,0,0,0,0,0,0
+2019,Iceland,IS,Member State,Member State,410576.45,0,0,0,0,0,0,0
+2019,Indonesia,ID,Member State,Member State,220000,0,0,0,0,0,0,0
+2019,Iran,IR,Member State,Member State,23873.19,0,0,0,0,0,0,0
+2019,Ireland,IE,Member State,Member State,11279200,0,0,0,0,0,0,0
+2019,Italy,IT,Member State,Member State,3962000,0,0,0,0,0,0,0
+2019,Japan,JP,Member State,Member State,680357,0,0,0,0,0,0,0
+2019,Kazakhstan,KZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2019,Korea,KR,Member State,Member State,5000000,0,0,0,0,0,0,0
+2019,Kuwait,KW,Member State,Member State,1000000,0,0,0,0,0,0,0
+2019,Liechtenstein,LI,Member State,Member State,198866.46,0,0,0,0,0,0,0
+2019,Luxembourg,LU,Member State,Member State,5561500,0,0,0,0,0,0,0
+2019,Mali,ML,Member State,Member State,0,0,0,0,0,0,0,0
+2019,Moldova,MD,Member State,Member State,3000,0,0,0,0,0,0,0
+2019,Monaco,MC,Member State,Member State,113390,0,0,0,0,0,0,0
+2019,Mongolia,MN,Member State,Member State,10000,0,0,0,0,0,0,0
+2019,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2019,Netherlands,NL,Member State,Member State,61055500,0,0,0,0,0,0,0
+2019,New Zealand,NZ,Member State,Member State,2014500,0,0,0,0,0,0,0
+2019,Norway,NO,Member State,Member State,53070237.37,0,0,0,0,0,0,0
+2019,Oman,OM,Member State,Member State,50000,0,0,0,0,0,0,0
+2019,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
+2019,Peru,PE,Member State,Member State,2942.62,0,0,0,0,0,0,0
+2019,Philippines,PH,Member State,Member State,2500,0,0,0,0,0,0,0
+2019,Portugal,PT,Member State,Member State,170220,0,0,0,0,0,0,0
+2019,Private Donors,ZPRV,Private Donors,Private Donors,456865.32,0,0,0,0,0,0,0
+2019,Qatar,QA,Member State,Member State,1000000,0,0,0,0,0,0,0
+2019,Regional Local Authority,ZRLA,RLA,RLA,1118041.11,0,0,0,0,0,0,0
+2019,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
+2019,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
+2019,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
+2019,Spain,ES,Member State,Member State,3318584.07,0,0,0,0,0,0,0
+2019,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
+2019,Sweden,SE,Member State,Member State,82302165.15,0,0,0,0,0,0,0
+2019,Switzerland,CH,Member State,Member State,6945243.76,0,0,0,0,0,0,0
+2019,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
+2019,Tunisia,TN,Member State,Member State,5000,0,0,0,0,0,0,0
+2019,Turkey,TR,Member State,Member State,400000,0,0,0,0,0,0,0
+2019,United Arab Emirates,AE,Member State,Member State,5000000,0,0,0,0,0,0,0
+2019,United Kingdom,GB,Member State,Member State,394568100,0,0,0,0,0,0,0
+2019,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2020,Andorra,AD,Member State,Member State,16806.72,0,0,0,0,0,0,0
+2020,Australia,AU,Member State,Member State,7518476.08,0,0,0,0,0,0,0
+2020,Bangladesh,BD,Member State,Member State,12000,8000,0,0,0,0,0,0
+2020,Belgium,BE,Member State,Member State,24980400,0,0,0,0,0,0,0
+2020,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
+2020,Cambodia,KH,Member State,Member State,20000,0,0,0,0,0,0,0
+2020,Canada,CA,Member State,Member State,21904336.16,0,0,0,0,0,0,0
+2020,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2020,Cyprus,CY,Member State,Member State,0,16501.65,0,0,0,0,0,0
+2020,Denmark,DK,Member State,Member State,25544319.39,0,0,0,0,0,0,0
+2020,Estonia,EE,Member State,Member State,110720,0,0,0,0,0,0,0
+2020,Finland,FI,Member State,Member State,8775200,0,0,0,0,0,0,0
+2020,France,FR,Member State,Member State,1137656.43,0,0,0,0,0,0,0
+2020,Germany,DE,Member State,Member State,113033000,0,0,0,0,0,0,0
+2020,Iceland,IS,Member State,Member State,409098.35,0,0,0,0,0,0,0
+2020,Indonesia,ID,Member State,Member State,0,220000,0,0,0,0,0,0
+2020,Iran,IR,Member State,Member State,10000,0,0,0,0,0,0,0
+2020,Ireland,IE,Member State,Member State,10680978,0,0,0,0,0,0,0
+2020,Italy,IT,Member State,Member State,0,5500550.06,0,0,0,0,0,0
+2020,Japan,JP,Member State,Member State,263636,0,0,0,0,0,0,0
+2020,Korea,KR,Member State,Member State,5823817.29,0,0,0,0,0,0,0
+2020,Kuwait,KW,Member State,Member State,1000000,0,0,0,0,0,0,0
+2020,Liechtenstein,LI,Member State,Member State,207792.21,0,0,0,0,0,0,0
+2020,Luxembourg,LU,Member State,Member State,5400000,0,0,0,0,0,0,0
+2020,Monaco,MC,Member State,Member State,111890,0,0,0,0,0,0,0
+2020,Mongolia,MN,Member State,Member State,0,0,0,0,0,0,0,0
+2020,Montenegro,ME,Member State,Member State,3324.9,0,0,0,0,0,0,0
+2020,Morocco,MA,Member State,Member State,0,50000,0,0,0,0,0,0
+2020,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
+2020,Netherlands,NL,Member State,Member State,85980013.75,0,0,0,0,0,0,0
+2020,New Zealand,NZ,Member State,Member State,6305750,0,0,0,0,0,0,0
+2020,Norway,NO,Member State,Member State,45835996.2,0,0,0,0,0,0,0
+2020,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
+2020,Peru,PE,Member State,Member State,2935.67,0,0,0,0,0,0,0
+2020,Philippines,PH,Member State,Member State,50000,0,0,0,0,0,0,0
+2020,Poland,PL,Member State,Member State,239693.19,0,0,0,0,0,0,0
+2020,Portugal,PT,Member State,Member State,193462.5,0,0,0,0,0,0,0
+2020,Private Donors,ZPRV,Private Donors,Private Donors,47259.07,49394.18,0,0,0,0,0,0
+2020,Qatar,QA,Member State,Member State,1000000,0,0,0,0,0,0,0
+2020,Regional Local Authority,ZRLA,RLA,RLA,1890074.98,0,0,0,0,0,0,0
+2020,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
+2020,Saudi Arabia,SA,Member State,Member State,0,0,0,0,0,0,0,0
+2020,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
+2020,South Africa,ZA,Member State,Member State,85304.82,0,0,0,0,0,0,0
+2020,Spain,ES,Member State,Member State,0,0,0,0,0,0,0,0
+2020,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
+2020,Sweden,SE,Member State,Member State,76301194.16,0,0,0,0,0,0,0
+2020,Switzerland,CH,Member State,Member State,24235703.94,0,0,0,0,0,0,0
+2020,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
+2020,Turkey,TR,Member State,Member State,0,0,0,0,0,0,0,0
+2020,Turkmenistan,TM,Member State,Member State,100000,0,0,0,0,0,0,0
+2020,United Arab Emirates,AE,Member State,Member State,5000000,0,0,0,0,0,0,0
+2020,United Kingdom,GB,Member State,Member State,12982000,0,0,0,0,0,0,0
+2021,Australia,AU,Member State,Member State,0,7304116.87,0,0,0,0,0,0
+2021,Denmark,DK,Member State,Member State,0,25170269.47,0,0,0,0,0,0
+2021,Iceland,IS,Member State,Member State,0,394913.51,0,0,0,0,0,0
+2021,Ireland,IE,Member State,Member State,0,11415525.11,0,0,0,0,0,0
+2021,Netherlands,NL,Member State,Member State,0,62500000,0,0,0,0,0,0
+2021,New Zealand,NZ,Member State,Member State,0,2039428.96,0,0,0,0,0,0
+2021,Norway,NO,Member State,Member State,0,50347638.46,0,0,0,0,0,0
+2021,Portugal,PT,Member State,Member State,148150,0,0,0,0,0,0,0
+2021,Qatar,QA,Member State,Member State,0,1000000,0,0,0,0,0,0
+2021,Sweden,SE,Member State,Member State,0,69061737.01,0,0,0,0,0,0
+2021,United Kingdom,GB,Member State,Member State,0,80075662.05,0,0,0,0,0,0
+2022,Denmark,DK,Member State,Member State,0,25170269.47,0,0,0,0,0,0
+2022,Iceland,IS,Member State,Member State,0,394913.51,0,0,0,0,0,0
+2022,United Kingdom,GB,Member State,Member State,0,113808322.8,0,0,0,0,0,0
+2023,Iceland,IS,Member State,Member State,0,394913.51,0,0,0,0,0,0
+2023,United Kingdom,GB,Member State,Member State,0,113808322.8,0,0,0,0,0,0
