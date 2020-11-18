@@ -5,12 +5,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 	<title>Home - CERF BI</title>
 	<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-	<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">	
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.css">
+	<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">	
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.css">	
+    <link rel="stylesheet" href="assets/css/smoothproducts.css">
     <link rel="stylesheet" href="assets/css/pf-one-bi.css">
     <link rel="stylesheet" href="assets/css/d3chartstyles.css">
     <link rel="stylesheet" href="assets/css/d3chartstylesoneamp.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <style>
     .center {
@@ -33,17 +34,17 @@
             </div>	
         </div>
 	</nav>
-	<header class="masthead text-center d-flex header-panel">		
+	<header class="masthead d-flex header-panel">		
 		<div class="container my-auto">
 			<div class="row">
-				<div class="col-lg-10 mx-auto">
-					<h1 class="text-uppercase font-weight-bold mb-2 mt-5">CERF BUSINESS INTELLIGENCE (BI) PORTAL</h1>
+				<div class="col-lg-12 mx-auto">
+					<h1 class="text-uppercase font-weight-bold mb-2 mt-5">CERF BUSINESS INTELLIGENCE (BI) <br>PORTAL</h1>				
+					<p class="title-desc">The CERF BI portal provides detailed contribution and allocation data in real-time</p>
 					<hr>
-					<p class="title-desc mb-5">The CERF BI portal provides detailed contribution and allocation data in real-time</p>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-lg-2 mx-auto mb-4 mt-4">
+				<div class="col-lg-2 mb-4 mt-4">
 					 <form>
 						<select id="lstYear" class="custom-select select-box" onchange="LoadData();">
 							<option selected>2020</option>
@@ -54,7 +55,7 @@
 					</form>
 				</div>
 			</div>
-			<div class="row justify-content-md-center no-gutters">				
+			<div class="row justify-content-md-start no-gutters">				
 					<div class="col-md-auto">
 						<div class="figure-box-panel tooltip-custom">							
 							<p><b><span id="spnDonor"></span></b> Donors</p>
@@ -87,14 +88,14 @@
 					</div>				
 			</div>
 			<div class="row">
-				<div class="col"><p class="text-center latest-date mt-3">Data updated on <span id="updatedOn"></span> EST</p></div>
+				<div class="col"><p class="latest-date mt-3 m-0">Data updated on <span id="updatedOn"></span> EST</p></div>
 			</div>
 		</div>		
 	</header>
 	<section>
 		<div class="container">
 			<div class="row">
-				<div class="col text-center intro-txt mt-3 mb-4">	
+				<div class="col intro-txt mt-3 mb-4">	
 					<p class="mt-3">As of today, CERF has allocated more than $<span id="spnAllocAmount"></span> to <span id="spnAllocPartner"></span> partners to support <span id="spnAllocProject"></span> critical humanitarian projects this year. These projects targeted millions of people with healthcare, food aid, clean water, shelter, and other life-saving assistances.</p>					
 				</div>
 			</div>
@@ -103,22 +104,19 @@
 	<section id="Allocations">
 		<div class="container">
 			<div class="row">
-				<div class="col text-center mb-4 pt-5 link-style">					
-					<a class="txt-header text-uppercase font-weight-bold js-scroll-trigger" href="#Allocations" role="button">Allocations <button class="video-btn" data-toggle="modal" data-src="https://ocha.fleeq.io/l/s7q22qmqus-53e65u965e" data-target="#myModal"><span class="video-info"><i class="fa fa-play-circle"></i></span></button></a>
+				<div class="col text-center mb-3 pt-5 link-style d-flex justify-content-left position-relative">					
+					<a class="txt-header text-uppercase js-scroll-trigger" href="#Allocations" role="button">Allocations</a><button class="video-btn" data-toggle="modal" data-src="https://ocha.fleeq.io/l/s7q22qmqus-53e65u965e" data-target="#myModal"><span class="video-info"><i class="fa fa-play-circle fa-2x"></i></span></button>
 				</div>
 			</div>
 			<div class="row mb-5">
 				<div class="col">
-					<ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
-  						<li class="nav-item waves-effect waves-light">
-    						<a class="nav-link" id="allocation-overview-tab" data-toggle="tab" href="#allocation-overview" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-map-o"></i> Allocations Overview</a>
+					<ul class="nav nav-tabs mb-4 pt-1 pb-1" id="myTab" role="tablist">
+  						<li class="nav-item waves-effect waves-light mr-4">
+    						<a class="nav-link" id="allocation-overview-tab" data-toggle="tab" href="#allocation-overview" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-map-o f-a"></i> Allocations Overview</a>
   						</li>
-  						<li class="nav-item waves-effect waves-light">
-    						<a class="nav-link active" id="allocation-chart-tab" data-toggle="tab" href="#allocation-chart" role="tab" aria-controls="profile" aria-selected="false"><i class="fa fa-bar-chart"></i> Allocations Chart</a>
-  						</li>
-  						<li class="nav-item waves-effect waves-light">
-    						<a class="nav-link" id="allocation-profile-tab" data-toggle="tab" href="#allocation-profile" role="tab" aria-controls="contact" aria-selected="false"><i class="fa fa-map-marker" style="font-size: 1rem;"></i> Allocations Profile (Q4)</a>
-  						</li>
+  						<li class="nav-item waves-effect waves-light mr-4">
+    						<a class="nav-link active" id="allocation-chart-tab" data-toggle="tab" href="#allocation-chart" role="tab" aria-controls="profile" aria-selected="false"><i class="fa fa-bar-chart f-a"></i> Allocations Chart</a>
+  						</li>  						
 					</ul>
 					<div class="tab-content" id="myTabContent">
 						<div class="tab-pane fade " id="allocation-overview" role="tabpanel" aria-labelledby="allocation-overview-tab">
@@ -139,18 +137,18 @@
 	<section id="Contributions">
 		<div class="container">
 			<div class="row">
-				<div class="col text-center mb-4 pt-5 link-style">					
-					<a class="txt-header text-uppercase font-weight-bold js-scroll-trigger" href="#Contributions" role="button">Contributions <button class="video-btn" data-toggle="modal" data-src="https://ocha.fleeq.io/l/s7q22qmqus-53e65u965e" data-target="#myModal"><span class="video-info"><i class="fa fa-play-circle"></i></span></button></a>
+				<div class="col text-center mb-3 pt-5 link-style d-flex justify-content-left position-relative">					
+					<a class="txt-header text-uppercase js-scroll-trigger" href="#Contributions" role="button">Contributions</a><button class="video-btn" data-toggle="modal" data-src="https://ocha.fleeq.io/l/s7q22qmqus-53e65u965e" data-target="#myModal"><span class="video-info"><i class="fa fa-play-circle fa-2x"></i></span></button>
 				</div>
 			</div>
 			<div class="row mb-5">
 				<div class="col">
-					<ul class="nav nav-tabs mb-4" id="myTab2" role="tablist">
-                        <li class="nav-item waves-effect waves-light">
+					<ul class="nav nav-tabs mb-4 pt-1 pb-1" id="myTab2" role="tablist">
+                        <li class="nav-item waves-effect waves-light mr-4">
     						<a class="nav-link" id="contributions-w-others-tab" data-toggle="tab" href="#contributions-w-others" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-handshake-o"></i> Contribution with others</a>
   						</li>
   						<li class="nav-item waves-effect waves-light">
-    						<a class="nav-link active" id="contributions-overview-tab" data-toggle="tab" href="#contributions-overview" role="tab" aria-controls="home" aria-selected="true"><i class='fa fa-money'></i> Contribution Overview</a>
+    						<a class="nav-link active" id="contributions-overview-tab" data-toggle="tab" href="#contributions-overview" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-money"></i> Contribution Overview</a>
   						</li>
 					</ul>
 					<div class="tab-content" id="myTabContent2">
@@ -169,7 +167,7 @@
 	<section>
 		<div class="container">
 			<div class="row">
-				<div class="col intro-txt text-center mb-5">
+				<div class="col intro-txt mb-5">
 					<p>CERF receives broad support from United Nations Member States, observers, regional governments and international organizations, the private sector and individuals.</p>
 					<a href="" class="btn btn-light btn-xl js-scroll-trigger text-uppercase font-weight-bold">Visit CERF Website for Updates</a>
 				</div>
@@ -229,6 +227,24 @@
             </div>
         </div>
     </footer>
+	<!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <!-- 16:9 aspect ratio -->
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <iframe class="embed-responsive-item" src="" id="video" allowscriptaccess="always" allow="autoplay"></iframe>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
 	 <div style="display:none;">
         <svg class="icons-sprite" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
             <symbol viewBox="0 0 48 48" id="add" xmlns="http://www.w3.org/2000/svg">
@@ -513,31 +529,27 @@
             <img src="assets/img/loading-img.gif" alt="Loading" class="img-fluid" />            
         </span>
     </div>
+	
+	<script src="assets/js/jquery.min.js"></script>	
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>   
+	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.js"></script>
+	
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
             //$('#lnkvideotutorial').tooltip();
         }); 
 		
-	</script>
-	<script>
-        $(document).ready(function() {
-            $(".cd-ocha-btn").click(function() {
-                $(".cd-dropdown").toggle();
-            });
-            $(window).on('click', function() {
-                $('#cd-ocha-dropdown').css('display', 'none'); //$( '#layers' ).hide();
-            });
-        });
-    </script>
-	<script src="assets/js/jquery.min.js"></script>	
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>    
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+	</script>	
 	<script src="assets/js/jquery.blockUI.js"></script>
+	<script src="assets/js/popup-video.js"></script>
+	<script type="text/javascript" id="cookieinfo" src="assets/js/cookieinfo.min.js" data-bg="#002856" data-fg="#FFF" data-link="#FFF" data-cookie="CookieInfoScript" data-text-align="left" data-close-text="OK">
+    </script>		
+	<script src="assets/js/respond.js"></script> 
 	<script src="assets/js/custom-one-bi.js"></script>	
 	<script src="assets/js/apiData.js"></script>
 </body>
