@@ -697,9 +697,9 @@
 
 			createTimeline(rawData);
 
-			setTimeout(function() {
-				selectDiv.style("display", "none")
-			}, duration / 4);
+			// setTimeout(function() {
+			// 	selectDiv.style("display", "none")
+			// }, duration / 4);
 
 		});
 
