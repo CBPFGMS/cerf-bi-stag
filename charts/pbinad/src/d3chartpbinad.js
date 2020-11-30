@@ -2060,7 +2060,7 @@
 
 		sankeyFundLabels.on("mouseover", function(d){
 			mouseoverFund(d, this);
-		});
+		}).on("mouseout", mouseOut);
 
 		sankeyNodes.on("mouseover", function(d) {
 			if (d.level === 1) mouseoverFund(d, this);
