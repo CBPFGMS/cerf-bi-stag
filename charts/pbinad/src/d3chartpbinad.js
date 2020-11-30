@@ -3,7 +3,7 @@
 	const isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches);
 
 
-	const width = 900,
+	const width = 1100,
 		padding = [4, 4, 4, 4],
 		panelHorizontalPadding = 4,
 		buttonsPanelHeight = 30,
@@ -161,10 +161,13 @@
 	const iconsDiv = topDiv.append("div")
 		.attr("class", "pbinadIconsDiv d3chartIconsDiv");
 
-	const selectTitleDiv = containerDiv.append("div")
+	const selectDivOuter = containerDiv.append("div")
+		.attr("class", "pbinadSelectDivOuter");
+
+	const selectTitleDiv = selectDivOuter.append("div")
 		.attr("class", "pbinadSelectTitleDiv");
 
-	const selectDiv = containerDiv.append("div")
+	const selectDiv = selectDivOuter.append("div")
 		.attr("class", "pbinadSelectDiv");
 
 	const svg = containerDiv.append("svg")
@@ -592,7 +595,10 @@
 
 	function createCheckboxes(rawData) {
 
-		selectTitleDiv.html("Select CERF:");
+		selectTitleDiv.html("Select CERF:")
+			.on("click", function() {
+				selectDiv.style("display", selectDiv.style("display") === "flex" ? null : "flex");
+			});
 
 		const checkboxData = d3.keys(cbpfsDataList).sort(function(a, b) {
 			return (cbpfsList[a]).localeCompare(cbpfsList[b]);
@@ -691,6 +697,8 @@
 			createSankey(data);
 
 			createTimeline(rawData);
+
+			selectDiv.style("display", "none");
 
 		});
 

@@ -1007,7 +1007,8 @@ p#pbinadd3chartTitle {
 	color: #418fde;
 }
 
-.pbinadSelectTitleDiv {
+.pbinadSelectDivOuter {
+	position: relative;
 	display: flex;
 	width: 100%;
 	margin-bottom: 8px;
@@ -1018,11 +1019,40 @@ p#pbinadd3chartTitle {
 	color: #666;
 }
 
+.pbinadSelectTitleDiv {
+	border-radius: 17.5px; 
+	background: #ffc417 url(../../assets/img/year-filter-arrow.png) no-repeat 88% 50%; 
+	border: none;
+	color: #333;
+	font-size: 1.2em;
+	font-weight: 700;
+	padding: 5px 40px;
+	width: 240px;
+	height: 35px;
+	vertical-align: middle;
+	box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12);
+	cursor: pointer;
+	line-height: normal;
+	-webkit-transition: all .3s ease;
+	-o-transition: all .3s ease;
+	transition: all .3s ease;
+}
+
+.pbinadSelectTitleDiv:hover {background: #2b6299 url(../../assets/img/year-filter-arrow-hover.png) no-repeat 88% 50%; color:#fff; text-shadow: none;}
+
 .pbinadSelectDiv {
-	display: flex;
-	margin-left: 8px;
-	margin-right: 4px;
-	flex-wrap: wrap;
+	display: none;
+  	position: absolute;
+	flex-direction: column;
+	padding-left: 8px;
+	padding-right: 4px;
+	margin-top: 38px;
+	max-height: 400px;
+	overflow-y: scroll;
+	z-index: 9000;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	background-color: rgb(255,255,255,1);
 }
 
 .pbinadCheckboxDiv {
@@ -1043,14 +1073,14 @@ p#pbinadd3chartTitle {
 	font-family: "Arial", sans-serif;
 	font-size: 14px;
 	color: #666;
-	margin-left: 2px;
+	margin-left: 8px;
 }
 
 .pbinadCheckboxTextAllCbpfs {
 	font-family: "Arial", sans-serif;
 	font-size: 14px;
 	font-weight: 700;
-	margin-left: 2px;
+	margin-left: 8px;
 	color: #f79a3b;
 }
 
