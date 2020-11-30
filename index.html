@@ -5,13 +5,17 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 	<title>Home - CERF BI</title>
 	<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-	<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">	
+	<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.css">	
     <link rel="stylesheet" href="assets/css/smoothproducts.css">
     <link rel="stylesheet" href="assets/css/pf-one-bi.css">
     <link rel="stylesheet" href="assets/css/d3chartstyles.css">
-    <link rel="stylesheet" href="assets/css/d3chartstylesoneamp.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js" integrity="sha512-FHsFVKQ/T1KWJDGSbrUhTJyS1ph3eRrxI228ND0EGaEp6v4a/vGwPWd3Dtd/+9cI7ccofZvl/wulICEurHN1pg==" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js" integrity="sha512-4UKI/XKm3xrvJ6pZS5oTRvIQGIzZFoXR71rRBb1y2N+PbwAsKa5tPl2J6WvbEvwN3TxQCm8hMzsl/pO+82iRlg==" crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/d3-sankey@0"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha512-cLuyDTDg9CSseBSFWNd4wkEaZ0TBEpclX0zD3D6HjI19pO39M58AgJ1SjHp6c7ZOp0/OCRcC2BCvvySU9KJaGw==" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="assets/js/html2canvas.min.js"></script>
 </head>
 <style>
     .center {
@@ -120,10 +124,10 @@
 					</ul>
 					<div class="tab-content" id="myTabContent">
 						<div class="tab-pane fade " id="allocation-overview" role="tabpanel" aria-labelledby="allocation-overview-tab">
-                            <div><div id="d3chartcontaineroneamp" data-title="Allocations" data-year="2019" data-cbpfallocation="total" data-cerfallocation="total" data-shownames="true" data-showhelp="false" data-showlink="true" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/oneamp/src/d3chartoneamp_b.js"></script></div>
+                            <div><div id="d3chartcontaineroneamp" data-title="Allocations" data-year="2019" data-cbpfallocation="total" data-cerfallocation="total" data-shownames="true" data-showhelp="false" data-showlink="false" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/oneamp/src/d3chartoneamp_b.js"></script></div>
                         </div>
 						<div class="tab-pane active show" id="allocation-chart" role="tabpanel" aria-labelledby="allocation-chart-tab">
-							<div><div id="d3chartcontainerpbinad" data-title="CERF Allocation flow (net funding)" data-year="2019" data-cbpf="all" data-aggregate="type" data-showhelp="false" data-showlink="true" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/pbinad/src/d3chartpbinad.js"></script></div>
+							<div><div id="d3chartcontainerpbinad" data-title="CERF Allocation flow (net funding)" data-year="2019" data-cbpf="all" data-aggregate="type" data-showhelp="false" data-showlink="false" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/pbinad/src/d3chartpbinad.js"></script></div>
 						</div>
 						<div class="tab-pane fade" id="allocation-profile" role="tabpanel" aria-labelledby="allocation-profile-tab">
 							<div><img src="assets/img/pf-one-bi-allocation-profile.png" alt="" class="img-fluid"></div>

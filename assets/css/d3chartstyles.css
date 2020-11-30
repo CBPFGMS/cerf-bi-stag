@@ -201,3 +201,1014 @@ These styles apply to all D3 charts*/
 	border: 7px solid transparent;
 	border-left-color: lightgray;
 }
+
+/*CBPF blog chart (code: cbpfbp)*/
+
+#cbpfbptooltipdiv{    
+	position: absolute;
+	text-align: left;
+	color: darkslategray;
+	font-family: "Arial";
+	white-space: normal;
+	padding: 8px;
+	line-height: 120%;
+	font-size: 14px;
+	background: #f1f1f1; 
+	border: 1px solid #999; 
+	border-radius: 4px;
+	pointer-events: none;
+	cursor: none;
+	max-width: 290px;
+}
+
+.cbpfbptopPanelTitle {
+	font-family: "Roboto", sans-serif;
+	font-size: 20px;
+	font-weight: 700;
+	fill: #545454;
+}
+
+.cbpfbptopValueMain {
+	font-family: "Arial", sans-serif;
+	font-size: 60px;
+}
+
+.cbpfbptopValueUnits {
+	font-family: "Arial", sans-serif;
+	font-size: 18px;
+	fill: #888;
+}
+
+.cbpfbpbarsPanelTitle {
+	font-family: "Roboto", sans-serif;
+	font-size: 18px;
+	fill: #545454;
+}
+
+.cbpfbpbarsLabels {
+	fill: darkslategray;
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+}
+
+.cbpfbpbarsContributionsOverText, .cbpfbpbarsAllocationsOverText {
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: white;
+}
+
+.cbpfbpbarsMiddleText {
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: #888;
+}
+
+.cbpfbpgBarsContributionsYAxis, .cbpfbpgBarsAllocationsYAxis, .cbpfbpgBarsContributionsXAxis, .cbpfbpgBarsAllocationsXAxis, .cbpfbpgBeeswarmXAxis, .cbpfbpgBeeswarmYAxis {
+	shape-rendering: crispEdges;
+}
+
+.cbpfbpgBarsContributionsYAxis path, .cbpfbpgBarsAllocationsYAxis path {
+	stroke: none;
+}
+
+.cbpfbpgBarsContributionsYAxis line, .cbpfbpgBarsAllocationsYAxis line {
+	stroke: #888;
+}
+
+.cbpfbpgBarsContributionsYAxis text, .cbpfbpgBarsAllocationsYAxis text {
+	font-family: "Roboto", sans-serif;
+	font-size: 14px;
+	fill: darkslategray;
+	pointer-events: none;
+}
+
+.cbpfbpgBarsContributionsXAxis path, .cbpfbpgBarsAllocationsXAxis path {
+	stroke: none;
+}
+
+.cbpfbpgBarsContributionsXAxis line, .cbpfbpgBarsAllocationsXAxis line {
+	stroke: #ddd;
+	stroke-dasharray: 2, 2;
+}
+
+.cbpfbpgBarsContributionsXAxis text, .cbpfbpgBarsAllocationsXAxis text {
+	fill: #888;
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+}
+
+.cbpfbpgBeeswarmXAxis path, .cbpfbpgBeeswarmYAxis path {
+	shape-rendering: crispEdges;
+	stroke: none;
+}
+
+.cbpfbpgBeeswarmYAxis line {
+	stroke: #eee;
+	stroke-dasharray: 2, 2;
+}
+
+.cbpfbpgBeeswarmXAxis line {
+	stroke: #ddd;
+}
+
+.cbpfbpgBeeswarmXAxis text {
+	fill: #888;
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+}
+
+.cbpfbpgBeeswarmYAxis text {
+	fill: #888;
+	font-family: "Roboto", sans-serif;
+	font-size: 14px;
+}
+
+.cbpfbpxAxisTooltip text, .cbpfbpyAxisTooltip text {
+	fill: #555;
+	font-family: "Arial";
+	font-size: 10px;
+}
+
+.cbpfbpxAxisTooltip, .cbpfbpyAxisTooltip {
+	shape-rendering: crispEdges;
+}
+
+.cbpfbpxAxisTooltip path {
+	stroke: none;
+}
+
+.cbpfbpyAxisTooltip path {
+	stroke: #ccc;
+}
+
+.cbpfbpxAxisTooltip line {
+	stroke: #ccc;
+}
+
+/*One BI, Allocations Map (code: oneamp)*/
+
+#d3chartcontaineroneamp {
+	position: relative;
+}
+
+#oneampDownloadingDiv {
+	position: absolute;
+	padding: 8px;
+	background: #fcfcfc; 
+	border: 1px solid #222; 
+	border-radius: 8px;
+	pointer-events: none;
+	cursor: none;
+	width: 200px;
+	height: 100px;
+	z-index: 1500;
+}
+
+#oneamptooltipdiv {    
+	position: absolute;
+	text-align: left;
+	color: darkslategray;
+	font-family: "Arial";
+	white-space: normal;
+	padding: 8px;
+	line-height: 120%;
+	font-size: 14px;
+	background: #f8f8f8; 
+	border: 1px solid #999; 
+	border-radius: 4px;
+	pointer-events: none;
+	cursor: none;
+	z-index: 1500;
+}
+
+.oneampTopDiv {
+	display: flex;
+	width: 100%;
+	margin-bottom: 4px;
+}
+
+.oneampTitleDiv {
+	display: flex;
+	flex:0 50%;
+	margin-left: 8px;
+}
+
+.oneampIconsDiv {
+	display: flex;
+	flex:0 50%;
+	flex-direction: row-reverse;
+	align-items: center;
+	margin-right: 16px;
+}
+
+.oneampFooterDiv {
+	width: 100%;
+	margin-top: 8px;
+}
+
+.oneampYearsDescriptionDiv {
+	margin-left: 22px;
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	color: #888;
+	width: 98%;
+}
+
+.oneampOverDivHelp {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(255,255,255,0.5);
+	top: 0;
+	left: 0;
+	z-index: 10;
+}
+
+p#oneampd3chartTitle {
+	font-size: 26px;
+	font-family: "Arial", sans-serif;
+	margin: 0px;
+	color: #418fde;
+}
+
+.oneampbuttonsText, .oneampbuttonsCbpfText, .oneampbuttonsCerfText {
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	pointer-events: none;
+}
+
+.oneampcbpfTitle, .oneampcerfTitle {
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	fill: #666;
+	pointer-events: none;
+}
+
+.oneampleftArrowText, .oneamprightArrowText {
+	font-family: "Arial", sans-serif;
+	font-size: 20px;
+	pointer-events: none;
+}
+
+.oneamplegendTitle {
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	font-weight: 700;
+}
+
+.oneamplegendCirclesText {
+	font-family: "Arial", sans-serif;
+	font-size: 9px;
+	fill: darkslategray;	
+}
+
+.oneamplegendColors text {
+	font-family: "Arial", sans-serif;
+	font-size: 10px;
+	fill: darkslategray;	
+}
+
+.oneampshowNamesText {
+	font-family: "Arial", sans-serif;
+	font-size: 10px;
+	fill: darkslategray;
+}
+
+.oneampgroupName {
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	pointer-events: none;
+	fill: darkslategray;
+	paint-order: stroke;
+    stroke: white;
+    stroke-width: 2px;
+}
+
+.oneampzoomPath {
+	fill: white;
+}
+
+.oneampzoomPath:hover {
+	fill: #f4f4f4;
+}
+
+.oneampzoomText {
+	font-family: "Arial", sans-serif;
+	font-size: 20px;
+	fill: #222;
+	pointer-events: none;	
+}
+
+.oneampTooltipSvgYAxisGroup path, .oneampTooltipSvgXAxisGroup path {
+	stroke: none;
+}
+
+.oneampTooltipSvgYAxisGroup text {
+	font-family: "Arial";
+	font-size: 11px;
+	fill: #444;
+}
+
+.oneampTooltipSvgXAxisGroup text {
+	font-family: "Roboto", sans-serif;
+	font-size: 9px;
+	fill: #aaa;
+	pointer-events: none;
+}
+
+.oneampTooltipSvgXAxisGroup line {
+	stroke: #ddd;
+	stroke-dasharray: 2, 2;
+}
+
+.oneampcbpfLabel {
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: #666;
+	pointer-events: none;
+}
+
+.oneampAnnotationMainText {
+	font-family: "Arial", sans-serif;
+	font-size: 26px;
+	font-weight: 700;
+	pointer-events: none;
+}
+
+.oneampAnnotationText {
+	font-family: "Arial", sans-serif;
+	font-size: 15px;
+	fill: #222;
+	pointer-events: none;
+}
+
+#oneampSnapshotTooltip {
+	z-index: 1600;
+}
+
+.oneampSnapshotContent {
+	position: absolute;
+	min-width: 100px;
+	display: none;
+	background-color: #f9f9f9;
+	box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.25);
+	cursor: pointer;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.oneampSnapshotContent #oneampSnapshotPdfText, .oneampSnapshotContent #oneampSnapshotPngText, .oneampSnapshotContent #oneampSnapshotTooltipPdfText, .oneampSnapshotContent #oneampSnapshotTooltipPngText {
+	font-size: 14px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+}
+
+.oneampSnapshotContent #oneampBestVisualizedText, .oneampSnapshotContent #oneampTooltipBestVisualizedText {
+	font-size: 11px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+	border-top: 1px solid lightgray;
+	width: 202px;
+}
+
+.oneampSnapshotContent #oneampSnapshotPdfText:hover, .oneampSnapshotContent #oneampSnapshotPngText:hover, .oneampSnapshotContent #oneampSnapshotTooltipPdfText:hover, .oneampSnapshotContent #oneampSnapshotTooltipPngText:hover {
+	background-color: #1F69B3;
+	color: white;
+}
+
+/*Public BI, Contributions tab, lollipop chart (code: pbiclc)*/
+
+#d3chartcontainerpbiclc {
+	position: relative;
+}
+
+#pbiclcDownloadingDiv {
+	position: absolute;
+	padding: 8px;
+	background: #fcfcfc; 
+	border: 1px solid #222; 
+	border-radius: 8px;
+	pointer-events: none;
+	cursor: none;
+	width: 200px;
+	height: 100px;
+	z-index: 1500;
+}
+
+#pbiclctooltipdiv {    
+	position: absolute;
+	text-align: left;
+	color: darkslategray;
+	font-family: "Arial";
+	white-space: normal;
+	padding: 8px;
+	line-height: 120%;
+	font-size: 14px;
+	background: #f1f1f1; 
+	border: 1px solid #999; 
+	border-radius: 4px;
+	pointer-events: none;
+	cursor: none;
+	max-width: 300px;
+	z-index: 1500;
+}
+
+.pbiclcTopDiv {
+	display: flex;
+	width: 100%;
+	margin-bottom: 4px;
+}
+
+.pbiclcTitleDiv {
+	display: flex;
+	flex:0 50%;
+	margin-left: 16px;
+}
+
+.pbiclcIconsDiv {
+	display: flex;
+	flex:0 50%;
+	flex-direction: row-reverse;
+	align-items: center;
+	margin-right: 16px;
+}
+
+.pbiclcFooterDiv {
+	width: 100%;
+	margin-top: 8px;
+}
+
+.pbiclcYearsDescriptionDiv {
+	margin-left: 12px;
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	color: #888;
+	width: 98%;
+}
+
+.pbiclcSelectionDescriptionDiv {
+	margin-left: 13px;
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	color: #888;
+	width: 98%;
+}
+
+.pbiclcOverDivHelp {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(255,255,255,0.5);
+	top: 0;
+	left: 0;
+	z-index: 10;
+}
+
+p#pbiclcd3chartTitle {
+	font-size: 26px;
+	font-family: "Arial", sans-serif;
+	margin: 0px;
+	color: #418fde;
+}
+
+.pbiclctopPanelMainValue, .pbiclctopPanelDonorsNumber, .pbiclctopPanelCbpfsNumber {
+	font-family: "Arial", sans-serif;
+	font-size: 48px;
+}
+
+.pbiclctopPanelMainText, .pbiclctopPanelSubText {
+	font-family: "Arial", sans-serif;
+	font-size: 18px;
+	fill: #888;
+}
+
+.pbiclctopPanelDonorsText, .pbiclctopPanelCbpfsText {
+	font-family: "Arial", sans-serif;
+	font-size: 22px;
+	fill: #888;
+}
+
+.pbiclctopPanelDonorsTextSubText, .pbiclctopPanelCbpfsTextSubText {
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	fill: #888;
+}
+
+.pbiclcbuttonsText, .pbiclcbuttonsContributionsText {
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	pointer-events: none;
+}
+
+.pbiclcleftArrowText, .pbiclcrightArrowText {
+	font-family: "Arial", sans-serif;
+	font-size: 20px;
+	pointer-events: none;
+}
+
+.pbiclcDonorsPanelTitle, .pbiclcCbpfsPanelTitle {
+	font-family: "Arial", sans-serif;
+	font-size: 16px;
+	fill: #666;
+}
+
+.pbiclcDonorsPanelTitleSpan, .pbiclcCbpfsPanelTitleSpan {
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	fill: #666;
+}
+
+.pbiclcDownloadText {
+	font-family: "Arial", sans-serif;
+	font-size: 10px;
+	fill: #666;
+}
+
+.pbiclcDonorLabel, .pbiclcCbpfLabel {
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: #666;
+	pointer-events: none;
+}
+
+.pbiclcDonorLabelPercentage {
+	font-family: "Roboto", sans-serif;
+	font-size: 9px;
+	fill: #aaa;
+	pointer-events: none;
+}
+
+.pbiclcgroupYAxisDonorsFake {
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	fill: darkslategray;
+	pointer-events: none;
+}
+
+.pbiclcgroupYAxisDonors text, .pbiclcgroupYAxisCbpfs text {
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	fill: darkslategray;
+	pointer-events: none;
+}
+
+.pbiclcgroupYAxisDonors path, .pbiclcgroupYAxisDonors line, .pbiclcgroupYAxisCbpfs path, .pbiclcgroupYAxisCbpfs line {
+	stroke: none;
+}
+
+.pbiclcgroupXAxisDonors text, .pbiclcgroupXAxisCbpfs text{
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: #aaa;
+	pointer-events: none;
+}
+
+.pbiclcgroupXAxisDonors path, .pbiclcgroupXAxisCbpfs path{
+	stroke: none;
+}
+
+.pbiclcgroupXAxisDonors line, .pbiclcgroupXAxisCbpfs line{
+	stroke: #ddd;
+	stroke-dasharray: 2, 2;
+}
+
+.pbiclcAnnotationMainText {
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	font-weight: 700;
+	pointer-events: none;
+	fill: white;
+}
+
+.pbiclcSvgLegend {
+	font-family: "Roboto", sans-serif;
+	font-size: 11px;
+	fill: #666;
+	pointer-events: none;	
+}
+
+#pbiclcSnapshotTooltip {
+	z-index: 1600;
+}
+
+.pbiclcSnapshotContent {
+	position: absolute;
+	min-width: 100px;
+	display: none;
+	background-color: #f9f9f9;
+	box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.25);
+	cursor: pointer;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.pbiclcSnapshotContent #pbiclcSnapshotPdfText, .pbiclcSnapshotContent #pbiclcSnapshotPngText, .pbiclcSnapshotContent #pbiclcSnapshotTooltipPdfText, .pbiclcSnapshotContent #pbiclcSnapshotTooltipPngText {
+	font-size: 14px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+}
+
+.pbiclcSnapshotContent #pbiclcBestVisualizedText, .pbiclcSnapshotContent #pbiclcTooltipBestVisualizedText {
+	font-size: 11px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+	border-top: 1px solid lightgray;
+	width: 202px;
+}
+
+.pbiclcSnapshotContent #pbiclcSnapshotPdfText:hover, .pbiclcSnapshotContent #pbiclcSnapshotPngText:hover, .pbiclcSnapshotContent #pbiclcSnapshotTooltipPdfText:hover, .pbiclcSnapshotContent #pbiclcSnapshotTooltipPngText:hover {
+	background-color: #1F69B3;
+	color: white;
+}
+
+/*PFBI, Net Funding Alluvial Diagram (code: pbinad)*/
+
+#d3chartcontainerpbinad {
+	position: relative;
+}
+
+#pbinadDownloadingDiv {
+	position: absolute;
+	padding: 8px;
+	background: #fcfcfc; 
+	border: 1px solid #222; 
+	border-radius: 8px;
+	pointer-events: none;
+	cursor: none;
+	width: 200px;
+	height: 100px;
+	z-index: 1500;
+}
+
+#pbinadtooltipdiv {    
+	position: absolute;
+	text-align: left;
+	color: darkslategray;
+	font-family: "Arial";
+	white-space: normal;
+	padding: 8px;
+	line-height: 120%;
+	font-size: 14px;
+	background: #f8f8f8; 
+	border: 1px solid #999; 
+	border-radius: 4px;
+	pointer-events: none;
+	cursor: none;
+	z-index: 1500;
+}
+
+.pbinadTopDiv {
+	display: flex;
+	width: 100%;
+	margin-bottom: 4px;
+}
+
+.pbinadTitleDiv {
+	display: flex;
+	flex:0 60%;
+	margin-left: 8px;
+}
+
+.pbinadIconsDiv {
+	display: flex;
+	flex:0 40%;
+	flex-direction: row-reverse;
+	align-items: center;
+	margin-right: 16px;
+	z-index: 1400;
+}
+
+.pbinadtimelineDiv {
+	width: 96%;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	margin-right: auto;
+	margin-left: auto;
+}
+
+.pbinadtimelineHeader {
+	font-family: "Arial";
+	font-size: 16px;
+	font-weight: 700;
+	color: #666;
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 2px;
+}
+
+.pbinadtimelineSubtitle {
+	font-family: "Montserrat";
+	font-size: 15px;
+	color: #444;
+	margin-top: 2px;
+	margin-bottom: 8px;
+}
+
+.pbinadtimelinesDisclaimer {
+	font-family: "Arial";
+	font-size: 11px;
+	margin-top: 4px;
+	margin-bottom: 4px;
+}
+
+.pbinadtimelineContainer {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+.pbinadtimelines {
+	display: flex;
+	margin-bottom: 4px;
+	border-radius: 4px;
+	background-color: #f4f4f4;
+}
+
+.pbinadtimelinesNameDiv {
+	display: flex;
+	flex:0 30%;
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	color: #444;
+	font-weight: 700;
+	justify-content: flex-end;
+	align-items: center;
+	padding-right: 8px;
+}
+
+.pbinadtimelineSvgInitialValue, .pbinadtimelineSvgFinalValue {
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: #666;
+}
+
+.pbinadtimelinesNameDiv p {
+	text-align: right;
+	margin: 0px;
+	line-height: 1;
+}
+
+.pbinadtimelinesChartDiv {
+	display: flex;
+	flex:0 70%;
+	flex-wrap: nowrap;
+}
+
+.pbinadtimelinesArrowDiv {
+	flex-grow: 1;
+	justify-content: center;
+	align-items: center;
+	font-family: "Arial", sans-serif;
+	flex-wrap: nowrap;
+	display: flex;
+}
+
+.pbinadtimelinePercentage {
+	padding-left: 2px;
+	font-size: 12px;
+	color: #444;
+}
+
+.pbinadFooterDiv {
+	width: 100%;
+	margin-top: 8px;
+}
+
+.pbinadYearsDescriptionDiv {
+	margin-left: 22px;
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	color: #888;
+	width: 98%;
+}
+
+.pbinadOverDivHelp {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(255,255,255,0.5);
+	top: 0;
+	left: 0;
+	z-index: 10;
+}
+
+p#pbinadd3chartTitle {
+	font-size: 26px;
+	font-family: "Arial", sans-serif;
+	margin: 0px;
+	color: #418fde;
+}
+
+.pbinadSelectTitleDiv {
+	display: flex;
+	width: 100%;
+	margin-bottom: 8px;
+	margin-top: 8px;
+	margin-left: 8px;
+	font-family: "Arial", sans-serif;
+	font-size: 16px;
+	color: #666;
+}
+
+.pbinadSelectDiv {
+	display: flex;
+	margin-left: 8px;
+	margin-right: 4px;
+	flex-wrap: wrap;
+}
+
+.pbinadCheckboxDiv {
+	display: flex;
+	margin-right: 12px;
+	align-items: center;
+}
+
+.pbinadCheckboxDiv label, .pbinadCheckboxDiv input {
+	cursor: pointer;
+}
+
+.pbinadCheckboxDiv label{
+	margin-bottom: 0px;
+}
+
+.pbinadCheckboxText {
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	color: #666;
+	margin-left: 2px;
+}
+
+.pbinadCheckboxTextAllCbpfs {
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	font-weight: 700;
+	margin-left: 2px;
+	color: #f79a3b;
+}
+
+.pbinadbuttonsText, .pbinadbuttonsAggregationText {
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	pointer-events: none;
+}
+
+.pbinadleftArrowText, .pbinadrightArrowText {
+	font-family: "Arial", sans-serif;
+	font-size: 20px;
+	pointer-events: none;
+}
+
+.pbinadtopPanelMainValue, .pbinadtopPanelPartnersValue, .pbinadtopPanelSubpartnersValue {
+	font-family: "Arial", sans-serif;
+	font-size: 48px;
+}
+
+.pbinadtopPanelMainText, .pbinadtopPanelSubText {
+	font-family: "Arial", sans-serif;
+	font-size: 18px;
+	fill: #888;
+}
+
+.pbinadtopPanelPartnersText, .pbinadtopPanelPartnersSubText, .pbinadtopPanelSubpartnersText, .pbinadtopPanelSubpartnersSubText {
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	fill: #888;
+}
+
+.pbinadsankeyLegendTitle {
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	fill: #888;
+}
+
+.pbinadlegendText, .pbinadcurlyText, .pbinadtypePercentageSubText, .pbinadtypeArrowSpan, .pbinadsankeyPartnerValuesLabelsSubText {
+	font-family: "Arial", sans-serif;
+	font-size: 10px;
+	fill: #666;
+}
+
+.pbinadtypePercentage, .pbinadcurlyTspan, .pbinadsankeyPartnerValuesLabels {
+	font-family: "Arial", sans-serif;
+	font-size: 10px;
+	fill: #444;
+	font-weight: 700;
+}
+
+.pbinadtypePercentageArrow {
+	font-size: 10px;
+	font-weight: 700;
+}
+
+.pbinadsankeyFundLabels, .pbinadsankeyPartnerLabels, .pbinadsankeySubpartnerLabels {
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: #222;
+	pointer-events: none;
+}
+
+.pbinadsankeyAnnotations {
+	font-family: "Arial", sans-serif;
+	font-size: 10px;
+	fill: #666;
+	pointer-events: none;
+}
+
+.pbinadsankeyNoData {
+	font-family: "Arial", sans-serif;
+	font-size: 18px;
+	fill: #666;
+	pointer-events: none;
+	text-anchor: middle;
+}
+
+.pbinadTooltipSvgYAxisGroup path, .pbinadTooltipSvgXAxisGroup path {
+	stroke: none;
+}
+
+.pbinadTooltipSvgYAxisGroup text {
+	font-family: "Arial";
+	font-size: 11px;
+	fill: #777;
+}
+
+.pbinadTooltipSvgXAxisGroup text {
+	font-family: "Roboto", sans-serif;
+	font-size: 9px;
+	fill: #aaa;
+	pointer-events: none;
+}
+
+.pbinadTooltipSvgXAxisGroup line {
+	stroke: #ddd;
+	stroke-dasharray: 2, 2;
+}
+
+.pbinadtooltipSvgLabel {
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: #666;
+	pointer-events: none;
+}
+
+.pbinadAnnotationMainText {
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	font-weight: 700;
+	pointer-events: none;
+	fill: white;
+}
+
+.pbinadAnnotationText {
+	font-family: "Arial", sans-serif;
+	font-size: 15px;
+	fill: #222;
+	pointer-events: none;
+}
+
+#pbinadSnapshotTooltip {
+	z-index: 1600;
+}
+
+.pbinadSnapshotContent {
+	position: absolute;
+	min-width: 100px;
+	display: none;
+	background-color: #f9f9f9;
+	box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.25);
+	cursor: pointer;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.pbinadSnapshotContent #pbinadSnapshotPdfText, .pbinadSnapshotContent #pbinadSnapshotPngText, .pbinadSnapshotContent #pbinadSnapshotTooltipPdfText, .pbinadSnapshotContent #pbinadSnapshotTooltipPngText {
+	font-size: 14px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+}
+
+.pbinadSnapshotContent #pbinadBestVisualizedText, .pbinadSnapshotContent #pbinadTooltipBestVisualizedText {
+	font-size: 11px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+	border-top: 1px solid lightgray;
+	width: 202px;
+}
+
+.pbinadSnapshotContent #pbinadSnapshotPdfText:hover, .pbinadSnapshotContent #pbinadSnapshotPngText:hover, .pbinadSnapshotContent #pbinadSnapshotTooltipPdfText:hover, .pbinadSnapshotContent #pbinadSnapshotTooltipPngText:hover {
+	background-color: #1F69B3;
+	color: white;
+}
+
