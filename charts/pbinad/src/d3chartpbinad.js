@@ -34,7 +34,6 @@
 		tooltipVerticalPadding = 4,
 		windowHeight = window.innerHeight,
 		unBlue = "#1F69B3",
-		cbpfColor = "#418FDE",
 		cerfColor = "#F9D25B",
 		partnerColor = "#BFBFBF",
 		subpartnerColor = "#E56A54",
@@ -67,7 +66,7 @@
 		formatPercent1dec = d3.format(".1%"),
 		formatPercent = d3.format(".0%"),
 		nationalPartnersName = "National Partners",
-		legendData = ["CBPF", "CERF", "Direct Partners", "Sub-implementing Partners"],
+		legendData = ["CERF", "Direct Partners", "Sub-implementing Partners"],
 		chartTitleDefault = "Allocation flow (net funding)",
 		vizNameQueryString = "netfunding",
 		bookmarkSite = "https://pfbi.unocha.org/bookmark.html?",
@@ -120,7 +119,6 @@
 		};
 
 	let isSnapshotTooltipVisible = false,
-		cerfInData = false,
 		currentHoveredElement;
 
 	const queryStringValues = new URLSearchParams(location.search);
@@ -1378,9 +1376,7 @@
 			.merge(sankeyLegendTitle)
 			.attr("y", sankeyPanel.height - sankeyPanel.padding[2] + sankeyLegendPadding);
 
-		const legendFilteredData = legendData.filter(function(d) {
-			return cerfInData || d !== "CERF";
-		});
+		const legendFilteredData = legendData;
 
 		let sankeyLegendGroups = sankeyPanel.main.selectAll(".pbinadsankeyLegendGroups")
 			.data(legendFilteredData);
@@ -1395,7 +1391,7 @@
 			.attr("width", sankeyLegendSquareSize)
 			.attr("height", sankeyLegendSquareSize)
 			.style("fill", function(d) {
-				return d === "CBPF" ? cbpfColor : d === "CERF" ? cerfColor : d === "Direct Partners" ? partnerColor : subpartnerColor;
+				return d === "CERF" ? cerfColor : d === "Direct Partners" ? partnerColor : subpartnerColor;
 			});
 
 		const legendText = sankeyLegendGroupsEnter.append("text")
@@ -1472,10 +1468,8 @@
 			.attr("class", "pbinadsankeyNodes")
 			.style("fill", function(d) {
 				const idSplit = d.id.split("#");
-				if (idSplit[0] === "fund" && idSplit[1] === "999") {
+				if (idSplit[0] === "fund") {
 					return cerfColor;
-				} else if (idSplit[0] === "fund" && idSplit[1] !== "999") {
-					return cbpfColor;
 				} else if (idSplit[0] === "partner") {
 					return partnerColor;
 				} else {
@@ -1534,9 +1528,9 @@
 			.style("fill", "none")
 			.style("stroke", function(d) {
 				if (d.sourceLevel === 1) {
-					return d.fund === "999" ? cerfColor : cbpfColor;
+					return cerfColor;
 				} else {
-					return d.target.id.split("#")[0] === "subpartner" ? subpartnerColor : (d.fund === "999" ? cerfColor : cbpfColor);
+					return d.target.id.split("#")[0] === "subpartner" ? subpartnerColor : cerfColor;
 				};
 			})
 			.style("stroke-opacity", 0)
@@ -4023,7 +4017,6 @@
 		rawData.forEach(function(row) {
 			if (yearsArray.indexOf(+row.year) === -1) yearsArray.push(+row.year);
 			if (!cbpfsDataList[row.fund]) cbpfsDataList[row.fund] = cbpfsList[row.fund];
-			if (row.fund === "999") cerfInData = true;
 		});
 
 		yearsArray.sort(function(a, b) {
