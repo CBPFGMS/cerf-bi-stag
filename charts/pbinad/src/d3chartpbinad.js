@@ -425,14 +425,14 @@
 
 		helpIcon.html("HELP  ")
 			.append("span")
-			.attr("class", "fas fa-info")
+			.attr("class", "fa fa-info")
 
 		const downloadIcon = iconsDiv.append("button")
 			.attr("id", "pbinadDownloadButton");
 
 		downloadIcon.html(".CSV  ")
 			.append("span")
-			.attr("class", "fas fa-download");
+			.attr("class", "fa fa-download");
 
 		const snapshotDiv = iconsDiv.append("div")
 			.attr("class", "pbinadSnapshotDiv");
@@ -442,7 +442,7 @@
 
 		snapshotIcon.html("IMAGE ")
 			.append("span")
-			.attr("class", "fas fa-camera");
+			.attr("class", "fa fa-camera");
 
 		const snapshotContent = snapshotDiv.append("div")
 			.attr("class", "pbinadSnapshotContent");
@@ -469,14 +469,14 @@
 
 		playIcon.html("PLAY  ")
 			.append("span")
-			.attr("class", "fas fa-play");
+			.attr("class", "fa fa-play");
 
 		playIcon.on("click", function(d) {
 			d.clicked = !d.clicked;
 
 			playIcon.html(d.clicked ? "PAUSE " : "PLAY  ")
 				.append("span")
-				.attr("class", d.clicked ? "fas fa-pause" : "fas fa-play");
+				.attr("class", d.clicked ? "fa fa-pause" : "fa fa-play");
 
 			if (d.clicked) {
 				chartState.selectedYear.length = 1;
