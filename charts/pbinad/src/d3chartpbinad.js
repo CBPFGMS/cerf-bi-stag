@@ -268,7 +268,7 @@
 			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + buttonsPanel.height + topPanel.height + 2 * panelHorizontalPadding) + ")"),
 		width: width - padding[1] - padding[3],
 		height: sankeyPanelHeight,
-		padding: [36, 80, 48, 106]
+		padding: [52, 80, 48, 106]
 	};
 
 	const invisibleLayer = svg.append("g")
@@ -2057,6 +2057,10 @@
 					node.textContent = "(" + formatPercent1dec(i(t)) + ")";
 				};
 			});
+
+		sankeyFundLabels.on("mouseover", function(d){
+			mouseoverFund(d, this);
+		});
 
 		sankeyNodes.on("mouseover", function(d) {
 			if (d.level === 1) mouseoverFund(d, this);

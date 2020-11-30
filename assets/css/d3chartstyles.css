@@ -1149,7 +1149,7 @@ p#pbinadd3chartTitle {
 	font-family: "Roboto", sans-serif;
 	font-size: 10px;
 	fill: #222;
-	pointer-events: none;
+	cursor: default;
 }
 
 .pbinadsankeyAnnotations {
