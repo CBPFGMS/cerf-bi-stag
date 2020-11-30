@@ -241,7 +241,7 @@
 		height: topPanelHeight,
 		padding: [0, 0, 0, 0],
 		moneyBagPadding: 4,
-		leftPadding: [180, 566, 900],
+		leftPadding: [180, 566, 952],
 		mainValueVerPadding: 12,
 		mainValueHorPadding: 2,
 		linePadding: 8
@@ -1027,11 +1027,7 @@
 				return "Aggregate by Partner " + capitalize(d);
 			});
 
-		const buttonsGroupSize = Math.max(buttonsPanel.padding[3] + buttonsPanel.arrowPadding + buttonsGroup.node().getBoundingClientRect().width,
-			buttonsPanel.padding[3] + buttonsNumber * buttonsPanel.buttonWidth + 2 * buttonsPanel.arrowPadding,
-			buttonsPanel.padding[3] + buttonsPanel.width / 2);
-
-		buttonsAggregationGroup.attr("transform", "translate(" + (buttonsGroupSize + buttonsPanel.aggregationPadding) + ",0)");
+		buttonsAggregationGroup.attr("transform", "translate(" + (buttonsPanel.width - buttonsAggregationGroup.node().getBoundingClientRect().width - 16) + ",0)");
 
 		const leftArrow = buttonsPanel.main.append("g")
 			.attr("class", "pbinadLeftArrowGroup")
