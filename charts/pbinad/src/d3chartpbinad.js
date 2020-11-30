@@ -8,11 +8,12 @@
 		panelHorizontalPadding = 4,
 		buttonsPanelHeight = 30,
 		topPanelHeight = 60,
-		sankeyPanelHeight = 480,
+		sankeyPanelHeight = 600,
+		minDataHeight = 275,
 		height = padding[0] + padding[2] + topPanelHeight + buttonsPanelHeight + sankeyPanelHeight + (2 * panelHorizontalPadding),
 		buttonsNumber = 8,
 		nodeWidth = 16,
-		nodeVerticalPadding = 1,
+		nodeVerticalPadding = 12,
 		sankeyAnnotationsPadding = 4,
 		sankeyAnnotationsSpace = 11,
 		sankeyLegendPadding = 18,
@@ -28,7 +29,7 @@
 		curlyGroupPadding = 4,
 		curlyTextPadding = 12,
 		typePercentagePadding = 3,
-		textCollisionHeight = 14,
+		textCollisionHeight = 12,
 		disabledOpacity = 0.6,
 		tooltipVerticalPadding = 4,
 		windowHeight = window.innerHeight,
@@ -242,7 +243,7 @@
 		height: topPanelHeight,
 		padding: [0, 0, 0, 0],
 		moneyBagPadding: 4,
-		leftPadding: [180, 496, 742],
+		leftPadding: [180, 566, 900],
 		mainValueVerPadding: 12,
 		mainValueHorPadding: 2,
 		linePadding: 8
@@ -269,7 +270,7 @@
 			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + buttonsPanel.height + topPanel.height + 2 * panelHorizontalPadding) + ")"),
 		width: width - padding[1] - padding[3],
 		height: sankeyPanelHeight,
-		padding: [36, 80, 38, 86]
+		padding: [36, 80, 38, 106]
 	};
 
 	const invisibleLayer = svg.append("g")
@@ -282,11 +283,7 @@
 		.nodePadding(nodeVerticalPadding)
 		.nodeId(function(d) {
 			return d.id;
-		})
-		.extent([
-			[sankeyPanel.padding[3], sankeyPanel.padding[0]],
-			[sankeyPanel.width - sankeyPanel.padding[1], sankeyPanel.height - sankeyPanel.padding[2]]
-		]);
+		});
 
 	const sankeyAnnotationsScale = d3.scalePoint()
 		.padding(0)
@@ -403,6 +400,8 @@
 		createTopPanel(data);
 
 		createButtonsPanel(rawData);
+
+		resizeSvg(data);
 
 		createSankey(data);
 
@@ -693,6 +692,8 @@
 			const data = processData(rawData);
 
 			createTopPanel(data);
+
+			resizeSvg(data);
 
 			createSankey(data);
 
@@ -1026,8 +1027,9 @@
 				return "Aggregate by Partner " + capitalize(d);
 			});
 
-		const buttonsGroupSize = Math.min(buttonsPanel.padding[3] + buttonsPanel.arrowPadding + buttonsGroup.node().getBoundingClientRect().width,
-			buttonsPanel.padding[3] + buttonsNumber * buttonsPanel.buttonWidth + 2 * buttonsPanel.arrowPadding);
+		const buttonsGroupSize = Math.max(buttonsPanel.padding[3] + buttonsPanel.arrowPadding + buttonsGroup.node().getBoundingClientRect().width,
+			buttonsPanel.padding[3] + buttonsNumber * buttonsPanel.buttonWidth + 2 * buttonsPanel.arrowPadding,
+			buttonsPanel.padding[3] + buttonsPanel.width / 2);
 
 		buttonsAggregationGroup.attr("transform", "translate(" + (buttonsGroupSize + buttonsPanel.aggregationPadding) + ",0)");
 
@@ -1294,6 +1296,8 @@
 
 			createTopPanel(data);
 
+			resizeSvg(data);
+
 			createSankey(data);
 
 			//end of clickButtonsRects
@@ -1363,33 +1367,38 @@
 				wrapText2(d3.select(this), d.size);
 			});
 
-		const sankeyLegendTitle = sankeyPanel.main.selectAll(".pbinadsankeyLegendTitle")
-			.data([true])
-			.enter()
+		let sankeyLegendTitle = sankeyPanel.main.selectAll(".pbinadsankeyLegendTitle")
+			.data([true]);
+
+		sankeyLegendTitle = sankeyLegendTitle.enter()
 			.append("text")
 			.attr("class", "pbinadsankeyLegendTitle")
 			.attr("x", sankeyPanel.padding[3])
-			.attr("y", sankeyPanel.height - sankeyPanel.padding[2] + sankeyLegendPadding)
-			.text("Legend:");
+			.text("Legend:")
+			.merge(sankeyLegendTitle)
+			.attr("y", sankeyPanel.height - sankeyPanel.padding[2] + sankeyLegendPadding);
 
 		const legendFilteredData = legendData.filter(function(d) {
 			return cerfInData || d !== "CERF";
 		});
 
-		const sankeyLegendGroups = sankeyPanel.main.selectAll(".pbinadsankeyLegendGroups")
-			.data(legendFilteredData)
-			.enter()
+		let sankeyLegendGroups = sankeyPanel.main.selectAll(".pbinadsankeyLegendGroups")
+			.data(legendFilteredData);
+
+		const sankeyLegendGroupsExit = sankeyLegendGroups.exit().remove();
+
+		const sankeyLegendGroupsEnter = sankeyLegendGroups.enter()
 			.append("g")
 			.attr("class", "pbinadsankeyLegendGroups");
 
-		const legendSquare = sankeyLegendGroups.append("rect")
+		const legendSquare = sankeyLegendGroupsEnter.append("rect")
 			.attr("width", sankeyLegendSquareSize)
 			.attr("height", sankeyLegendSquareSize)
 			.style("fill", function(d) {
 				return d === "CBPF" ? cbpfColor : d === "CERF" ? cerfColor : d === "Direct Partners" ? partnerColor : subpartnerColor;
 			});
 
-		const legendText = sankeyLegendGroups.append("text")
+		const legendText = sankeyLegendGroupsEnter.append("text")
 			.attr("class", "pbinadlegendText")
 			.attr("x", sankeyLegendSquareSize + sankeyLegendTextPadding)
 			.attr("y", sankeyLegendSquareSize - 2)
@@ -1397,16 +1406,21 @@
 				return d;
 			});
 
-		if (sankeyLegendGroups.size()) {
-			sankeyLegendGroups.each(function(_, i) {
-				d3.select(this).attr("transform", "translate(" + (i ? localVariable.get(this.previousSibling) : sankeyPanel.padding[3]) + "," + (sankeyPanel.height - sankeyPanel.padding[2] + sankeyLegendPadding + 4) + ")")
-				localVariable.set(this, this.getBBox().width + sankeyLegendGroupPadding + (i ? localVariable.get(this.previousSibling) : sankeyPanel.padding[3]));
-			});
-		};
+		sankeyLegendGroups = sankeyLegendGroupsEnter.merge(sankeyLegendGroups);
+
+		sankeyLegendGroups.each(function(_, i) {
+			d3.select(this).attr("transform", "translate(" + (i ? localVariable.get(this.previousSibling) : sankeyPanel.padding[3]) + "," + (sankeyPanel.height - sankeyPanel.padding[2] + sankeyLegendPadding + 4) + ")")
+			localVariable.set(this, this.getBBox().width + sankeyLegendGroupPadding + (i ? localVariable.get(this.previousSibling) : sankeyPanel.padding[3]));
+		});
 
 		const flatLevel3order = level3order.map(function(d) {
 			return d.partner;
 		});
+
+		sankeyGenerator.extent([
+			[sankeyPanel.padding[3], sankeyPanel.padding[0]],
+			[sankeyPanel.width - sankeyPanel.padding[1], sankeyPanel.height - sankeyPanel.padding[2]]
+		]);
 
 		sankeyGenerator.nodeSort(function(a, b) {
 			if (a.level === 1 && b.level === 1) {
@@ -1613,7 +1627,7 @@
 			})
 			.style("opacity", 0)
 			.text(function(d) {
-				return d.name;
+				return d.codeId === "17" ? "DRC" : d.codeId === "65" ? "Tanzania" : d.codeId === "68" ? "Venezuela Migration Crisis" : d.codeId === "35" ? "Laos" : d.name;
 			});
 
 		sankeyFundLabels = sankeyFundLabelsEnter.merge(sankeyFundLabels);
@@ -3785,6 +3799,8 @@
 						return e === chartState.selectedAggregation ? "white" : "#444";
 					});
 
+				resizeSvg(data);
+
 				createSankey(data);
 
 			});
@@ -4431,6 +4447,22 @@
 					if (d3.select(n[i + 1]).datum().y1 - d.y0 < collisionHeight) collision = true;
 				};
 			});
+	};
+
+	function resizeSvg(data) {
+
+		const dataLength = data.nodes.filter(function(d) {
+			return d.level === 1;
+		}).length;
+
+		const newsankeyPanelHeight = sankeyPanel.padding[0] + sankeyPanel.padding[2] + minDataHeight + ((dataLength - 1) * nodeVerticalPadding);
+
+		const newHeight = padding[0] + padding[2] + topPanelHeight + buttonsPanelHeight + newsankeyPanelHeight + (2 * panelHorizontalPadding);
+
+		sankeyPanel.height = newsankeyPanelHeight;
+
+		svg.attr("viewBox", "0 0 " + width + " " + newHeight);
+
 	};
 
 	function createAnnotationsDiv() {
