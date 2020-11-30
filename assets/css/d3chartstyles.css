@@ -1044,8 +1044,9 @@ p#pbinadd3chartTitle {
 	display: none;
   	position: absolute;
 	flex-direction: column;
-	padding-left: 8px;
-	padding-right: 4px;
+	padding-left: 6px;
+	padding-right: 6px;
+	padding-top: 4px;
 	margin-top: 38px;
 	max-height: 400px;
 	overflow-y: scroll;
@@ -1057,7 +1058,7 @@ p#pbinadd3chartTitle {
 
 .pbinadCheckboxDiv {
 	display: flex;
-	margin-right: 12px;
+	padding-left: 6px;
 	align-items: center;
 }
 
@@ -1065,8 +1066,14 @@ p#pbinadd3chartTitle {
 	cursor: pointer;
 }
 
+.pbinadCheckboxDiv:hover {
+	background-color: #e7e7e7;
+}
+
 .pbinadCheckboxDiv label{
 	margin-bottom: 0px;
+	width: 100%;
+	display: inline-block;
 }
 
 .pbinadCheckboxText {

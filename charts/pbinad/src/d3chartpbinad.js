@@ -16,7 +16,7 @@
 		nodeVerticalPadding = 12,
 		sankeyAnnotationsPadding = 4,
 		sankeyAnnotationsSpace = 11,
-		sankeyLegendPadding = 18,
+		sankeyLegendPadding = 28,
 		sankeyLegendSquareSize = 12,
 		sankeyLegendTextPadding = 2,
 		sankeyLegendGroupPadding = 10,
@@ -268,7 +268,7 @@
 			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + buttonsPanel.height + topPanel.height + 2 * panelHorizontalPadding) + ")"),
 		width: width - padding[1] - padding[3],
 		height: sankeyPanelHeight,
-		padding: [36, 80, 38, 106]
+		padding: [36, 80, 48, 106]
 	};
 
 	const invisibleLayer = svg.append("g")
@@ -697,7 +697,9 @@
 
 			createTimeline(rawData);
 
-			selectDiv.style("display", "none");
+			setTimeout(function() {
+				selectDiv.style("display", "none")
+			}, duration / 4);
 
 		});
 
@@ -1621,7 +1623,7 @@
 			})
 			.style("opacity", 0)
 			.text(function(d) {
-				return d.codeId === "17" ? "DRC" : d.codeId === "65" ? "Tanzania" : d.codeId === "68" ? "Venezuela Migration Crisis" : d.codeId === "35" ? "Laos" : d.name;
+				return d.codeId === "17" ? "DRC" : d.codeId === "65" ? "Tanzania" : d.codeId === "68" ? "Venezuela Migr. Crisis" : d.codeId === "35" ? "Laos" : d.name;
 			});
 
 		sankeyFundLabels = sankeyFundLabelsEnter.merge(sankeyFundLabels);
@@ -3811,203 +3813,203 @@
 			.enter()
 			.append("div")
 			.attr("class", "pbinadtimelineHeader")
-			.html("Allocation trends by Partners types");
+			.html("Allocations by Partners types");
 
-		const timelineSubtitle = timelineDiv.selectAll(".pbinadtimelineSubtitle")
-			.data([true])
-			.enter()
-			.append("div")
-			.attr("class", "pbinadtimelineSubtitle")
-			.html("Trends for the last three complete years (from " + (currentYear - 4) + " to " + (currentYear - 1) +
-				"). Green triangle (<span class='fa' style='color:" + greenArrowColor + ";'>\u25B2</span>) means increase, red triangle (<span class='fa' style='color:" + redArrowColor + ";'>\u25BC</span>) means decrease.");
+		// const timelineSubtitle = timelineDiv.selectAll(".pbinadtimelineSubtitle")
+		// 	.data([true])
+		// 	.enter()
+		// 	.append("div")
+		// 	.attr("class", "pbinadtimelineSubtitle")
+		// 	.html("Trends for the last three complete years (from " + (currentYear - 4) + " to " + (currentYear - 1) +
+		// 		"). Green triangle (<span class='fa' style='color:" + greenArrowColor + ";'>\u25B2</span>) means increase, red triangle (<span class='fa' style='color:" + redArrowColor + ";'>\u25BC</span>) means decrease.");
 
-		let timelineContainer = timelineDiv.selectAll(".pbinadtimelineContainer")
-			.data([true]);
+		// let timelineContainer = timelineDiv.selectAll(".pbinadtimelineContainer")
+		// 	.data([true]);
 
-		timelineContainer = timelineContainer.enter()
-			.append("div")
-			.attr("class", "pbinadtimelineContainer")
-			.merge(timelineContainer);
+		// timelineContainer = timelineContainer.enter()
+		// 	.append("div")
+		// 	.attr("class", "pbinadtimelineContainer")
+		// 	.merge(timelineContainer);
 
-		let timelines = timelineContainer.selectAll(".pbinadtimelines")
-			.data(timelineData, function(d) {
-				return d.partner;
-			});
+		// let timelines = timelineContainer.selectAll(".pbinadtimelines")
+		// 	.data(timelineData, function(d) {
+		// 		return d.partner;
+		// 	});
 
-		const timelinesExit = timelines.exit()
-			.transition()
-			.duration(duration)
-			.style("opacity", 0)
-			.remove();
+		// const timelinesExit = timelines.exit()
+		// 	.transition()
+		// 	.duration(duration)
+		// 	.style("opacity", 0)
+		// 	.remove();
 
-		const timelinesEnter = timelines.enter()
-			.append("div")
-			.attr("class", "pbinadtimelines")
-			.style("width", timelinesWidth + "px")
-			.style("height", timelinesHeight + "px");
+		// const timelinesEnter = timelines.enter()
+		// 	.append("div")
+		// 	.attr("class", "pbinadtimelines")
+		// 	.style("width", timelinesWidth + "px")
+		// 	.style("height", timelinesHeight + "px");
 
-		const timelinesNameDiv = timelinesEnter.append("div")
-			.attr("class", "pbinadtimelinesNameDiv")
-			.append("p")
-			.html(function(d) {
-				return d.partner === "NGO" ? nationalPartnersName + "<span style='color: " + subpartnerColor + ";'>*</span>" :
-					aggregationNameRule[d.partner];
-			});
+		// const timelinesNameDiv = timelinesEnter.append("div")
+		// 	.attr("class", "pbinadtimelinesNameDiv")
+		// 	.append("p")
+		// 	.html(function(d) {
+		// 		return d.partner === "NGO" ? nationalPartnersName + "<span style='color: " + subpartnerColor + ";'>*</span>" :
+		// 			aggregationNameRule[d.partner];
+		// 	});
 
-		const timelinesChartDiv = timelinesEnter.append("div")
-			.attr("class", "pbinadtimelinesChartDiv")
+		// const timelinesChartDiv = timelinesEnter.append("div")
+		// 	.attr("class", "pbinadtimelinesChartDiv")
 
-		const timelinesSvg = timelinesChartDiv.append("svg")
-			.attr("width", timelineSvgWidth)
-			.attr("height", timelineSvgHeight)
-			.each(function(d) {
-				const thisYScale = localTimelineScale.set(this, d3.scaleLinear()
-					.range([timelineSvgHeight - timelineSvgPadding[2], timelineSvgPadding[0]])
-					.domain(d3.extent(d.values)));
-				localTimelineGenerator.set(this, d3.line()
-					.x(function(_, i) {
-						return timelineXScale(i);
-					})
-					.y(function(e) {
-						return thisYScale(e);
-					}));
-			});
+		// const timelinesSvg = timelinesChartDiv.append("svg")
+		// 	.attr("width", timelineSvgWidth)
+		// 	.attr("height", timelineSvgHeight)
+		// 	.each(function(d) {
+		// 		const thisYScale = localTimelineScale.set(this, d3.scaleLinear()
+		// 			.range([timelineSvgHeight - timelineSvgPadding[2], timelineSvgPadding[0]])
+		// 			.domain(d3.extent(d.values)));
+		// 		localTimelineGenerator.set(this, d3.line()
+		// 			.x(function(_, i) {
+		// 				return timelineXScale(i);
+		// 			})
+		// 			.y(function(e) {
+		// 				return thisYScale(e);
+		// 			}));
+		// 	});
 
-		const timelineSvgInitialValue = timelinesSvg.append("text")
-			.attr("class", "pbinadtimelineSvgInitialValue")
-			.attr("text-anchor", "end")
-			.attr("x", timelineSvgPadding[3] - timelineSvgTextPadding)
-			.attr("y", function(d) {
-				return localTimelineScale.get(this)(d.values[0]) + timelineSvgVertTextPadding;
-			})
-			.text(function(d) {
-				return formatSIFloat(d.values[0]).replace("G", "B");
-			});
+		// const timelineSvgInitialValue = timelinesSvg.append("text")
+		// 	.attr("class", "pbinadtimelineSvgInitialValue")
+		// 	.attr("text-anchor", "end")
+		// 	.attr("x", timelineSvgPadding[3] - timelineSvgTextPadding)
+		// 	.attr("y", function(d) {
+		// 		return localTimelineScale.get(this)(d.values[0]) + timelineSvgVertTextPadding;
+		// 	})
+		// 	.text(function(d) {
+		// 		return formatSIFloat(d.values[0]).replace("G", "B");
+		// 	});
 
-		const timelineSvgFinalValue = timelinesSvg.append("text")
-			.attr("class", "pbinadtimelineSvgFinalValue")
-			.attr("x", timelineSvgWidth - timelineSvgPadding[1] + timelineSvgTextPadding)
-			.attr("y", function(d) {
-				return localTimelineScale.get(this)(d.values[3]) + timelineSvgVertTextPadding;
-			})
-			.text(function(d) {
-				return formatSIFloat(d.values[3]).replace("G", "B");
-			});
+		// const timelineSvgFinalValue = timelinesSvg.append("text")
+		// 	.attr("class", "pbinadtimelineSvgFinalValue")
+		// 	.attr("x", timelineSvgWidth - timelineSvgPadding[1] + timelineSvgTextPadding)
+		// 	.attr("y", function(d) {
+		// 		return localTimelineScale.get(this)(d.values[3]) + timelineSvgVertTextPadding;
+		// 	})
+		// 	.text(function(d) {
+		// 		return formatSIFloat(d.values[3]).replace("G", "B");
+		// 	});
 
-		const timelineSvgPath = timelinesSvg.append("path")
-			.attr("class", "pbinadtimelineSvgPath")
-			.style("fill", "none")
-			.style("stroke", "#bbb")
-			.style("stroke-width", "1px")
-			.attr("d", function(d) {
-				return localTimelineGenerator.get(this)(d.values);
-			});
+		// const timelineSvgPath = timelinesSvg.append("path")
+		// 	.attr("class", "pbinadtimelineSvgPath")
+		// 	.style("fill", "none")
+		// 	.style("stroke", "#bbb")
+		// 	.style("stroke-width", "1px")
+		// 	.attr("d", function(d) {
+		// 		return localTimelineGenerator.get(this)(d.values);
+		// 	});
 
-		const timelinesArrowDiv = timelinesChartDiv.append("div")
-			.attr("class", "pbinadtimelinesArrowDiv");
+		// const timelinesArrowDiv = timelinesChartDiv.append("div")
+		// 	.attr("class", "pbinadtimelinesArrowDiv");
 
-		const timelineArrowAndTextDiv = timelinesArrowDiv.append("div");
+		// const timelineArrowAndTextDiv = timelinesArrowDiv.append("div");
 
-		const timelineArrow = timelineArrowAndTextDiv.append("span")
-			.attr("class", "pbinadtimelineArrow")
-			.style("font-size", "16px")
-			.style("color", function(d) {
-				return d.values[3] >= d.values[0] ? greenArrowColor : redArrowColor;
-			})
-			.html(function(d) {
-				return d.values[3] >= d.values[0] ? "\u25B2" : "\u25BC";
-			});
+		// const timelineArrow = timelineArrowAndTextDiv.append("span")
+		// 	.attr("class", "pbinadtimelineArrow")
+		// 	.style("font-size", "16px")
+		// 	.style("color", function(d) {
+		// 		return d.values[3] >= d.values[0] ? greenArrowColor : redArrowColor;
+		// 	})
+		// 	.html(function(d) {
+		// 		return d.values[3] >= d.values[0] ? "\u25B2" : "\u25BC";
+		// 	});
 
-		const timelinePercentage = timelineArrowAndTextDiv.append("span")
-			.attr("class", "pbinadtimelinePercentage")
-			.html(function(d) {
-				return d.values[0] && d.values[3] ? formatPercent1dec(Math.abs(d.values[3] / d.values[0] - 1)) : "n/a";
-			});
+		// const timelinePercentage = timelineArrowAndTextDiv.append("span")
+		// 	.attr("class", "pbinadtimelinePercentage")
+		// 	.html(function(d) {
+		// 		return d.values[0] && d.values[3] ? formatPercent1dec(Math.abs(d.values[3] / d.values[0] - 1)) : "n/a";
+		// 	});
 
-		timelines = timelinesEnter.merge(timelines);
+		// timelines = timelinesEnter.merge(timelines);
 
-		timelines.sort(function(a, b) {
-			return b.values[3] - a.values[3];
-		});
+		// timelines.sort(function(a, b) {
+		// 	return b.values[3] - a.values[3];
+		// });
 
-		timelines.select("svg")
-			.each(function(d) {
-				const thisYScale = localTimelineScale.set(this, d3.scaleLinear()
-					.range([timelineSvgHeight - timelineSvgPadding[2], timelineSvgPadding[0]])
-					.domain(d3.extent(d.values)));
-				localTimelineGenerator.set(this, d3.line()
-					.x(function(_, i) {
-						return timelineXScale(i);
-					})
-					.y(function(e) {
-						return thisYScale(e);
-					}));
-			});
+		// timelines.select("svg")
+		// 	.each(function(d) {
+		// 		const thisYScale = localTimelineScale.set(this, d3.scaleLinear()
+		// 			.range([timelineSvgHeight - timelineSvgPadding[2], timelineSvgPadding[0]])
+		// 			.domain(d3.extent(d.values)));
+		// 		localTimelineGenerator.set(this, d3.line()
+		// 			.x(function(_, i) {
+		// 				return timelineXScale(i);
+		// 			})
+		// 			.y(function(e) {
+		// 				return thisYScale(e);
+		// 			}));
+		// 	});
 
-		timelines.select(".pbinadtimelineSvgInitialValue")
-			.transition()
-			.duration(duration)
-			.attr("y", function(d) {
-				return localTimelineScale.get(this)(d.values[0]) + timelineSvgVertTextPadding;
-			})
-			.tween("text", function(d) {
-				const node = this;
-				const i = d3.interpolate(reverseFormat(node.textContent) || 0, d.values[0])
-				return function(t) {
-					node.textContent = formatSIFloat(i(t)).replace("G", "B");
-				};
-			});
+		// timelines.select(".pbinadtimelineSvgInitialValue")
+		// 	.transition()
+		// 	.duration(duration)
+		// 	.attr("y", function(d) {
+		// 		return localTimelineScale.get(this)(d.values[0]) + timelineSvgVertTextPadding;
+		// 	})
+		// 	.tween("text", function(d) {
+		// 		const node = this;
+		// 		const i = d3.interpolate(reverseFormat(node.textContent) || 0, d.values[0])
+		// 		return function(t) {
+		// 			node.textContent = formatSIFloat(i(t)).replace("G", "B");
+		// 		};
+		// 	});
 
-		timelines.select(".pbinadtimelineSvgFinalValue")
-			.transition()
-			.duration(duration)
-			.attr("y", function(d) {
-				return localTimelineScale.get(this)(d.values[3]) + timelineSvgVertTextPadding;
-			})
-			.tween("text", function(d) {
-				const node = this;
-				const i = d3.interpolate(reverseFormat(node.textContent) || 0, d.values[3])
-				return function(t) {
-					node.textContent = formatSIFloat(i(t)).replace("G", "B");
-				};
-			});
+		// timelines.select(".pbinadtimelineSvgFinalValue")
+		// 	.transition()
+		// 	.duration(duration)
+		// 	.attr("y", function(d) {
+		// 		return localTimelineScale.get(this)(d.values[3]) + timelineSvgVertTextPadding;
+		// 	})
+		// 	.tween("text", function(d) {
+		// 		const node = this;
+		// 		const i = d3.interpolate(reverseFormat(node.textContent) || 0, d.values[3])
+		// 		return function(t) {
+		// 			node.textContent = formatSIFloat(i(t)).replace("G", "B");
+		// 		};
+		// 	});
 
-		timelines.select(".pbinadtimelineSvgPath")
-			.transition()
-			.duration(duration)
-			.attr("d", function(d) {
-				return localTimelineGenerator.get(this)(d.values);
-			});
+		// timelines.select(".pbinadtimelineSvgPath")
+		// 	.transition()
+		// 	.duration(duration)
+		// 	.attr("d", function(d) {
+		// 		return localTimelineGenerator.get(this)(d.values);
+		// 	});
 
-		timelines.select(".pbinadtimelineArrow")
-			.html(function(d) {
-				return d.values[3] >= d.values[0] ? "\u25B2" : "\u25BC";
-			})
-			.style("color", function(d) {
-				return d.values[3] >= d.values[0] ? greenArrowColor : redArrowColor;
-			});
+		// timelines.select(".pbinadtimelineArrow")
+		// 	.html(function(d) {
+		// 		return d.values[3] >= d.values[0] ? "\u25B2" : "\u25BC";
+		// 	})
+		// 	.style("color", function(d) {
+		// 		return d.values[3] >= d.values[0] ? greenArrowColor : redArrowColor;
+		// 	});
 
-		timelines.select(".pbinadtimelinePercentage")
-			.html(function(d) {
-				return d.values[0] && d.values[3] ? formatPercent1dec(Math.abs(d.values[3] / d.values[0] - 1)) : "n/a";
-			});
+		// timelines.select(".pbinadtimelinePercentage")
+		// 	.html(function(d) {
+		// 		return d.values[0] && d.values[3] ? formatPercent1dec(Math.abs(d.values[3] / d.values[0] - 1)) : "n/a";
+		// 	});
 
-		const timelinesDisclaimer = timelineDiv.selectAll(".pbinadtimelinesDisclaimer")
-			.data(timelineData.filter(function(d) {
-				return d.partner === "NGO";
-			}));
+		// const timelinesDisclaimer = timelineDiv.selectAll(".pbinadtimelinesDisclaimer")
+		// 	.data(timelineData.filter(function(d) {
+		// 		return d.partner === "NGO";
+		// 	}));
 
-		timelinesDisclaimer.exit().remove();
+		// timelinesDisclaimer.exit().remove();
 
-		timelinesDisclaimer.enter()
-			.append("div")
-			.attr("class", "pbinadtimelinesDisclaimer")
-			.append("span")
-			.style("color", subpartnerColor)
-			.html("*")
-			.append("span")
-			.style("color", "#666")
-			.html("National Partners includes funding to National NGOs, Government/Others and Private Contractors.");
+		// timelinesDisclaimer.enter()
+		// 	.append("div")
+		// 	.attr("class", "pbinadtimelinesDisclaimer")
+		// 	.append("span")
+		// 	.style("color", subpartnerColor)
+		// 	.html("*")
+		// 	.append("span")
+		// 	.style("color", "#666")
+		// 	.html("National Partners includes funding to National NGOs, Government/Others and Private Contractors.");
 
 		//end of createTimeline
 	};
@@ -4015,8 +4017,8 @@
 	function preProcessData(rawData) {
 
 		rawData.forEach(function(row) {
-			if(row.source === "NNGO") row.source = "NGO";
-			if(row.target === "NNGO") row.target = "NGO";
+			if (row.source === "NNGO") row.source = "NGO";
+			if (row.target === "NNGO") row.target = "NGO";
 			if (yearsArray.indexOf(+row.year) === -1) yearsArray.push(+row.year);
 			if (!cbpfsDataList[row.fund]) cbpfsDataList[row.fund] = cbpfsList[row.fund];
 		});
