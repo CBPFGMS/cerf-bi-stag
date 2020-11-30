@@ -36,7 +36,7 @@
 		unBlue = "#1F69B3",
 		cerfColor = "#F9D25B",
 		partnerColor = "#BFBFBF",
-		subpartnerColor = "#E56A54",
+		subpartnerColor = "#1F69B3",
 		greenArrowColor = "#7FB92F",
 		redArrowColor = "#CD3A1F",
 		highlightColor = "#F79A3B",
@@ -73,11 +73,11 @@
 		helpPortalUrl = "https://gms.unocha.org/content/business-intelligence#allocation%20flow",
 		csvDateFormat = d3.utcFormat("_%Y%m%d_%H%M%S_UTC"),
 		dataUrl = "https://cbpfgms.github.io/cerf-bi-stag/data/cerf_subgrant.csv", //NOTE ON CERF: CERF ID MUST BE 999
-		cbpfsListUrl = "https://cbpfgms.github.io/pf-onebi-data/cerf_sample_data/MstPooledFund.csv",
+		cerfListUrl = "https://cbpfgms.github.io/pf-onebi-data/cerf_sample_data/MstPooledFund.csv",
 		//partnersListUrl = "https://cbpfgms.github.io/pf-onebi-data/cerf_sample_data/MstOrgType.csv",
 		//subPartnersListUrl = "https://cbpfgms.github.io/pf-onebi-data/cerf_sample_data/CERF_AllocationFlowbyOrgType.csv",
 		//dataUrl = "https://cbpfapi.unocha.org/vo2/odata/AllocationFlowByOrgType?PoolfundCodeAbbrv=&$format=csv", //NOTE ON CERF: CERF ID MUST BE 999
-		//cbpfsListUrl = "https://cbpfapi.unocha.org/vo2/odata/MstPooledFund?$format=csv",
+		//cerfListUrl = "https://cbpfapi.unocha.org/vo2/odata/MstPooledFund?$format=csv",
 		partnersListUrl = "https://cbpfapi.unocha.org/vo2/odata/MstOrgType?$format=csv",
 		subPartnersListUrl = "https://cbpfapi.unocha.org/vo2/odata/SubIPType?$format=csv",
 		moneyBagdAttribute = ["M83.277,10.493l-13.132,12.22H22.821L9.689,10.493c0,0,6.54-9.154,17.311-10.352c10.547-1.172,14.206,5.293,19.493,5.56 c5.273-0.267,8.945-6.731,19.479-5.56C76.754,1.339,83.277,10.493,83.277,10.493z",
@@ -311,7 +311,7 @@
 
 	fetchFile("pbinad", dataUrl, [], "data")
 		.then(function(previousData) {
-			return fetchFile("pbinadcbpfList", cbpfsListUrl, previousData, "cbpfList")
+			return fetchFile("pbinadcbpfList", cerfListUrl, previousData, "cerfList")
 		})
 		.then(function(previousData) {
 			return fetchFile("pbinadpartnersList", partnersListUrl, previousData, "partnersList")
@@ -1807,7 +1807,7 @@
 				};
 			});
 
-		sankeySubpartnerLabels.call(hideLabels, textCollisionHeight * (chartState.selectedAggregation === "level" ? 1 : 3))
+		sankeySubpartnerLabels.call(hideLabels, textCollisionHeight * (chartState.selectedAggregation === "level" ? 1 : 2))
 			.transition()
 			.duration(duration)
 			.style("opacity", 1)
@@ -2180,7 +2180,7 @@
 					})
 				})
 				.style("display", null)
-				.call(hideLabels, textCollisionHeight * (chartState.selectedAggregation === "level" ? 1 : 3));
+				.call(hideLabels, textCollisionHeight * (chartState.selectedAggregation === "level" ? 1 : 2));
 			curlyPathsType.style("opacity", function(e) {
 				return e.targetLinks.find(function(f) {
 					return f.fund === d.codeId;
@@ -4015,6 +4015,8 @@
 	function preProcessData(rawData) {
 
 		rawData.forEach(function(row) {
+			if(row.source === "NNGO") row.source = "NGO";
+			if(row.target === "NNGO") row.target = "NGO";
 			if (yearsArray.indexOf(+row.year) === -1) yearsArray.push(+row.year);
 			if (!cbpfsDataList[row.fund]) cbpfsDataList[row.fund] = cbpfsList[row.fund];
 		});
