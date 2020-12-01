@@ -276,6 +276,8 @@
 		flagPadding = 28,
 		flagSize = 24,
 		paidSymbolSize = 16,
+		maxTextSize = 160,
+		maxTextLength = 26,
 		localVariable = d3.local(),
 		legendPadding = 6,
 		paidColor = "#9063CD",
@@ -463,7 +465,10 @@
 	const yAxisDonors = d3.axisLeft(yScaleDonors)
 		.tickSizeInner(2)
 		.tickSizeOuter(0)
-		.tickPadding(flagPadding);
+		.tickPadding(flagPadding)
+		.tickFormat(function(d) {
+			return d.length > maxTextLength ? d.substring(0, maxTextLength) + "..." : d;
+		});
 
 	const groupXAxisDonors = donorsPanel.main.append("g")
 		.attr("class", "pbiclcgroupXAxisDonors")
@@ -2041,7 +2046,7 @@
 
 		});
 
-		return d3.max(textSizeArray);
+		return Math.min(d3.max(textSizeArray), maxTextSize);
 
 		//end of calculateBiggestLabel
 	};
