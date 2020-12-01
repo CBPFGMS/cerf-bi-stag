@@ -1458,8 +1458,8 @@
 					return localStorage.getItem("storedFlag" + d.isoCode) ? localStorage.getItem("storedFlag" + d.isoCode) :
 						flagsDirectory + d.isoCode + ".png";
 				})
-				.on("error", function(d){
-					d3.select(this).remove();
+				.on("error", function(d) {
+					d3.select(this).attr("xlink:href", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAAAGklEQVR42mP8/5+BJMA4qmFUw6iGUQ201QAAYiIv6RZuPWMAAAAASUVORK5CYII=");
 				})
 
 			const donorPaidIndicatorEnter = donorGroupEnter.append("path")
