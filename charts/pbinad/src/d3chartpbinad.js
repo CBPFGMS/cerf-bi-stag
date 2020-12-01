@@ -401,7 +401,7 @@
 
 		setYearsDescriptionDiv();
 
-		createTimeline(rawData);
+		//createTimeline(rawData);
 
 		createFooterDiv();
 
@@ -691,7 +691,7 @@
 
 			createSankey(data);
 
-			createTimeline(rawData);
+			//createTimeline(rawData);
 
 			// setTimeout(function() {
 			// 	selectDiv.style("display", "none")
