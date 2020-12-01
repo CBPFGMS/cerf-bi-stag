@@ -56,8 +56,6 @@
 
 	var actualHeight = actualSvgSize.height;
 
-	createProgressWhell();
-
 	var tooltip = d3.select("body").append("div")
 		.attr("id", "cbpfbptooltipdiv")
 		.style("display", "none");
@@ -166,8 +164,6 @@
 		});
 
 	d3.csv("https://cbpfgms.github.io/cerf-bi-stag/data/CERF_ContributionTotal.csv", filterYear).then(function(rawData) {
-
-		removeProgressWheel();
 
 		var aggregatedDonors = [];
 
@@ -2125,72 +2121,6 @@
 
 	function formatSIInteger(value) {
 		return d3.formatPrefix(".0", value)(value);
-	};
-
-	function createProgressWhell() {
-		var wheelGroup = svg.append("g")
-			.attr("class", "d3chartwheelGroup")
-			.attr("transform", "translate(" + width / 2 + "," + height / 3 + ")");
-
-		var loadingText = wheelGroup.append("text")
-			.attr("text-anchor", "middle")
-			.style("font-family", "Roboto")
-			.style("font-weight", "bold")
-			.style("font-size", "11px")
-			.attr("y", 50)
-			.attr("class", "contributionColorFill")
-			.text("Loading visualisation...");
-
-		var arc = d3.arc()
-			.outerRadius(25)
-			.innerRadius(20);
-
-		var wheel = wheelGroup.append("path")
-			.datum({
-				startAngle: 0,
-				endAngle: 0
-			})
-			.classed("contributionColorFill", true)
-			.attr("d", arc);
-
-		transitionIn();
-
-		function transitionIn() {
-			wheel.transition()
-				.duration(1000)
-				.attrTween("d", function(d) {
-					var interpolate = d3.interpolate(0, Math.PI * 2);
-					return function(t) {
-						d.endAngle = interpolate(t);
-						return arc(d)
-					}
-				})
-				.on("end", transitionOut)
-		};
-
-		function transitionOut() {
-			wheel.transition()
-				.duration(1000)
-				.attrTween("d", function(d) {
-					var interpolate = d3.interpolate(0, Math.PI * 2);
-					return function(t) {
-						d.startAngle = interpolate(t);
-						return arc(d)
-					}
-				})
-				.on("end", function(d) {
-					d.startAngle = 0;
-					transitionIn()
-				})
-		};
-
-		//end of createProgressWheel
-	};
-
-	function removeProgressWheel() {
-		var wheelGroup = d3.select(".d3chartwheelGroup");
-		wheelGroup.select("path").interrupt();
-		wheelGroup.remove();
 	};
 
 	//Math.log10

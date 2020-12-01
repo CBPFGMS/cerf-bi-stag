@@ -166,8 +166,6 @@
 	const footerDiv = containerDiv.append("div")
 		.attr("class", "oneampFooterDiv");
 
-	createProgressWheel(svg, width, height, "Loading visualisation...");
-
 	const snapshotTooltip = containerDiv.append("div")
 		.attr("id", "oneampSnapshotTooltip")
 		.attr("class", "oneampSnapshotContent")
@@ -431,8 +429,6 @@
 		preProcessData(rawData);
 
 		validateYear(selectedYearString);
-
-		removeProgressWheel();
 
 		if (!lazyLoad) {
 			draw(rawData, mapData);
@@ -2019,8 +2015,6 @@
 
 		const downloadingDivText = "Downloading " + type.toUpperCase();
 
-		createProgressWheel(downloadingDivSvg, 200, 175, downloadingDivText);
-
 		const svgRealSize = svg.node().getBoundingClientRect();
 
 		svg.attr("width", svgRealSize.width)
@@ -2114,8 +2108,6 @@
 			};
 		});
 
-		removeProgressWheel();
-
 		d3.select("#oneampDownloadingDiv").remove();
 
 	};
@@ -2191,8 +2183,6 @@
 
 				pdf.save("oneamp_" + csvDateFormat(currentDate) + ".pdf");
 
-				removeProgressWheel();
-
 				d3.select("#oneampDownloadingDiv").remove();
 
 				function createLetterhead() {
@@ -2227,72 +2217,6 @@
 			});
 
 		//end of downloadSnapshotPdf
-	};
-
-	function createProgressWheel(thissvg, thiswidth, thisheight, thistext) {
-		const wheelGroup = thissvg.append("g")
-			.attr("class", "oneampd3chartwheelGroup")
-			.attr("transform", "translate(" + thiswidth / 2 + "," + thisheight / 4 + ")");
-
-		const loadingText = wheelGroup.append("text")
-			.attr("text-anchor", "middle")
-			.style("font-family", "Roboto")
-			.style("font-weight", "bold")
-			.style("font-size", "11px")
-			.attr("y", 50)
-			.attr("class", "contributionColorFill")
-			.text(thistext);
-
-		const arc = d3.arc()
-			.outerRadius(25)
-			.innerRadius(20);
-
-		const wheel = wheelGroup.append("path")
-			.datum({
-				startAngle: 0,
-				endAngle: 0
-			})
-			.classed("contributionColorFill", true)
-			.attr("d", arc);
-
-		transitionIn();
-
-		function transitionIn() {
-			wheel.transition()
-				.duration(1000)
-				.attrTween("d", function(d) {
-					const interpolate = d3.interpolate(0, Math.PI * 2);
-					return function(t) {
-						d.endAngle = interpolate(t);
-						return arc(d)
-					}
-				})
-				.on("end", transitionOut)
-		};
-
-		function transitionOut() {
-			wheel.transition()
-				.duration(1000)
-				.attrTween("d", function(d) {
-					const interpolate = d3.interpolate(0, Math.PI * 2);
-					return function(t) {
-						d.startAngle = interpolate(t);
-						return arc(d)
-					}
-				})
-				.on("end", function(d) {
-					d.startAngle = 0;
-					transitionIn()
-				})
-		};
-
-		//end of createProgressWheel
-	};
-
-	function removeProgressWheel() {
-		const wheelGroup = d3.select(".oneampd3chartwheelGroup");
-		wheelGroup.select("path").interrupt();
-		wheelGroup.remove();
 	};
 
 	//end of d3ChartIIFE
