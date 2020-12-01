@@ -10,6 +10,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2006,Croatia,HR,Member State,Member State,5000,0,0,0,0,0,0,0
 2006,Czech Republic,CZ,Member State,Member State,113301.61,0,0,0,0,0,0,0
 2006,Denmark,DK,Member State,Member State,8401243.38,0,0,0,0,0,0,0
+2006,Disaster Resource Network,ZPRV,Private Donors,Private Donors,10000,0,0,0,0,0,0,0
 2006,Djibouti,DJ,Member State,Member State,2000,0,0,0,0,0,0,0
 2006,Ecuador,EC,Member State,Member State,20000,0,0,0,0,0,0,0
 2006,Egypt,EG,Member State,Member State,15000,0,0,0,0,0,0,0
@@ -18,6 +19,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2006,France,FR,Member State,Member State,1263800,0,0,0,0,0,0,0
 2006,Greece,GR,Member State,Member State,100000,0,0,0,0,0,0,0
 2006,Grenada,GD,Member State,Member State,10000,0,0,0,0,0,0,0
+2006,Hyogo Prefecture (Japan),RLA,RLA,RLA,424989.38,0,0,0,0,0,0,0
 2006,Iceland,IS,Member State,Member State,150000,0,0,0,0,0,0,0
 2006,India,IN,Member State,Member State,1000000,0,0,0,0,0,0,0
 2006,Indonesia,ID,Member State,Member State,50000,0,0,0,0,0,0,0
@@ -38,9 +40,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2006,Pakistan,PK,Member State,Member State,20000,0,0,0,0,0,0,0
 2006,Poland,PL,Member State,Member State,250000,0,0,0,0,0,0,0
 2006,Portugal,PT,Member State,Member State,254220,0,0,0,0,0,0,0
-2006,Private Donors,ZPRV,Private Donors,Private Donors,10000,0,0,0,0,0,0,0
 2006,Qatar,QA,Member State,Member State,2000000,0,0,0,0,0,0,0
-2006,Regional Local Authority,ZRLA,RLA,RLA,424989.38,0,0,0,0,0,0,0
 2006,Saudi Arabia,SA,Member State,Member State,50000,0,0,0,0,0,0,0
 2006,Slovenia,SI,Member State,Member State,10000,0,0,0,0,0,0,0
 2006,South Africa,ZA,Member State,Member State,288577.15,0,0,0,0,0,0,0
@@ -73,6 +73,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2007,Cyprus,CY,Member State,Member State,30000,0,0,0,0,0,0,0
 2007,Czech Republic,CZ,Member State,Member State,121353.33,0,0,0,0,0,0,0
 2007,Denmark,DK,Member State,Member State,8742383.64,0,0,0,0,0,0,0
+2007,Disaster Resource Network,ZPRV,Private Donors,Private Donors,9978,0,0,0,0,0,0,0
 2007,Djibouti,DJ,Member State,Member State,2000,0,0,0,0,0,0,0
 2007,Ecuador,EC,Member State,Member State,20000,0,0,0,0,0,0,0
 2007,Egypt,EG,Member State,Member State,15000,0,0,0,0,0,0,0
@@ -81,7 +82,9 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2007,Finland,FI,Member State,Member State,6726000,0,0,0,0,0,0,0
 2007,France,FR,Member State,Member State,1312100,0,0,0,0,0,0,0
 2007,Germany,DE,Member State,Member State,6597500,0,0,0,0,0,0,0
+2007,Humanity First USA,ZPRV,Private Donors,Private Donors,10000,0,0,0,0,0,0,0
 2007,Hungary,HU,Member State,Member State,10000,0,0,0,0,0,0,0
+2007,Hyogo Prefecture (Japan),RLA,RLA,RLA,435578.01,0,0,0,0,0,0,0
 2007,Iceland,IS,Member State,Member State,558618.16,0,0,0,0,0,0,0
 2007,India,IN,Member State,Member State,1000000,0,0,0,0,0,0,0
 2007,Indonesia,ID,Member State,Member State,100000,0,0,0,0,0,0,0
@@ -89,6 +92,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2007,Israel,IL,Member State,Member State,30000,0,0,0,0,0,0,0
 2007,Italy,IT,Member State,Member State,2670400.23,0,0,0,0,0,0,0
 2007,Jamaica,JM,Member State,Member State,5000,0,0,0,0,0,0,0
+2007,Jan Egeland,ZPRV,Private Donors,Private Donors,17240.19,0,0,0,0,0,0,0
 2007,Kazakhstan,KZ,Member State,Member State,10000,0,0,0,0,0,0,0
 2007,Korea,KR,Member State,Member State,1500000,0,0,0,0,0,0,0
 2007,Lebanon,LB,Member State,Member State,3000,0,0,0,0,0,0,0
@@ -108,8 +112,8 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2007,Philippines,PH,Member State,Member State,5000,0,0,0,0,0,0,0
 2007,Poland,PL,Member State,Member State,510000,0,0,0,0,0,0,0
 2007,Portugal,PT,Member State,Member State,268540,0,0,0,0,0,0,0
-2007,Private Donors,ZPRV,Private Donors,Private Donors,163284.24,0,0,0,0,0,0,0
-2007,Regional Local Authority,ZRLA,RLA,RLA,435578.01,0,0,0,0,0,0,0
+2007,"Private donations outside UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,8107.05,0,0,0,0,0,0,0
+2007,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,117959,0,0,0,0,0,0,0
 2007,Romania,RO,Member State,Member State,359625,0,0,0,0,0,0,0
 2007,Saudi Arabia,SA,Member State,Member State,50000,0,0,0,0,0,0,0
 2007,Slovenia,SI,Member State,Member State,50000,0,0,0,0,0,0,0
@@ -123,6 +127,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2007,Turkey,TR,Member State,Member State,300000,0,0,0,0,0,0,0
 2007,United Kingdom,GB,Member State,Member State,83726040,0,0,0,0,0,0,0
 2008,Albania,AL,Member State,Member State,3000,0,0,0,0,0,0,0
+2008,Alexander Bodini Foundation,ZPRV,Private Donors,Private Donors,10000,0,0,0,0,0,0,0
 2008,Algeria,DZ,Member State,Member State,10000,0,0,0,0,0,0,0
 2008,Andorra,AD,Member State,Member State,33494.9,0,0,0,0,0,0,0
 2008,Antigua and Barbuda,AG,Member State,Member State,5000,0,0,0,0,0,0,0
@@ -143,6 +148,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2008,Croatia,HR,Member State,Member State,34000,0,0,0,0,0,0,0
 2008,Czech Republic,CZ,Member State,Member State,153874.56,0,0,0,0,0,0,0
 2008,Denmark,DK,Member State,Member State,9931472.84,0,0,0,0,0,0,0
+2008,Disaster Resource Network,ZPRV,Private Donors,Private Donors,5000,0,0,0,0,0,0,0
 2008,Ecuador,EC,Member State,Member State,20000,0,0,0,0,0,0,0
 2008,Egypt,EG,Member State,Member State,15000,0,0,0,0,0,0,0
 2008,Estonia,EE,Member State,Member State,91200,0,0,0,0,0,0,0
@@ -153,6 +159,8 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2008,Greece,GR,Member State,Member State,300000,0,0,0,0,0,0,0
 2008,Guatemala,GT,Member State,Member State,10000,0,0,0,0,0,0,0
 2008,Guyana,GY,Member State,Member State,4912.84,0,0,0,0,0,0,0
+2008,Holy See (Vatican City State),Observer,Observer,Observer,5000,0,0,0,0,0,0,0
+2008,Humanity First USA,ZPRV,Private Donors,Private Donors,2500,0,0,0,0,0,0,0
 2008,Hungary,HU,Member State,Member State,20000,0,0,0,0,0,0,0
 2008,Iceland,IS,Member State,Member State,611243.27,0,0,0,0,0,0,0
 2008,Indonesia,ID,Member State,Member State,100000,0,0,0,0,0,0,0
@@ -178,16 +186,18 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2008,New Zealand,NZ,Member State,Member State,1000000,0,0,0,0,0,0,0
 2008,North Macedonia,MK,Member State,Member State,2000,0,0,0,0,0,0,0
 2008,Norway,NO,Member State,Member State,55258765.36,0,0,0,0,0,0,0
-2008,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
 2008,Pakistan,PK,Member State,Member State,20000,0,0,0,0,0,0,0
 2008,Peru,PE,Member State,Member State,10000,0,0,0,0,0,0,0
 2008,Philippines,PH,Member State,Member State,5000,0,0,0,0,0,0,0
 2008,Poland,PL,Member State,Member State,300000,0,0,0,0,0,0,0
 2008,Portugal,PT,Member State,Member State,312400,0,0,0,0,0,0,0
-2008,Private Donors,ZPRV,Private Donors,Private Donors,939215.92,0,0,0,0,0,0,0
+2008,PriceWaterhouseCoopers,ZPRV,Private Donors,Private Donors,500000,0,0,0,0,0,0,0
+2008,"Private donations outside UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,3514.92,0,0,0,0,0,0,0
+2008,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,118201,0,0,0,0,0,0,0
 2008,Qatar,QA,Member State,Member State,100000,0,0,0,0,0,0,0
 2008,San Marino,SM,Member State,Member State,4412.74,0,0,0,0,0,0,0
 2008,Saudi Arabia,SA,Member State,Member State,100000,0,0,0,0,0,0,0
+2008,SCOR,ZPRV,Private Donors,Private Donors,200000,0,0,0,0,0,0,0
 2008,Slovenia,SI,Member State,Member State,50000,0,0,0,0,0,0,0
 2008,South Africa,ZA,Member State,Member State,221538.45,0,0,0,0,0,0,0
 2008,Spain,ES,Member State,Member State,45531968,0,0,0,0,0,0,0
@@ -202,8 +212,11 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2008,United Arab Emirates,AE,Member State,Member State,50000,0,0,0,0,0,0,0
 2008,United Kingdom,GB,Member State,Member State,80239000,0,0,0,0,0,0,0
 2008,United States of America,US,Member State,Member State,5000000,0,0,0,0,0,0,0
+2008,Western Union,ZPRV,Private Donors,Private Donors,100000,0,0,0,0,0,0,0
+2009,"Abu Dhabi National Energy Company ""TAQA""",ZPRV,Private Donors,Private Donors,150000,0,0,0,0,0,0,0
 2009,Afghanistan,AF,Member State,Member State,1500,0,0,0,0,0,0,0
 2009,Albania,AL,Member State,Member State,3500,0,0,0,0,0,0,0
+2009,Alexander Bodini Foundation,ZPRV,Private Donors,Private Donors,15000,0,0,0,0,0,0,0
 2009,Algeria,DZ,Member State,Member State,10000,0,0,0,0,0,0,0
 2009,Andorra,AD,Member State,Member State,38985.8,0,0,0,0,0,0,0
 2009,Antigua and Barbuda,AG,Member State,Member State,5000,0,0,0,0,0,0,0
@@ -212,6 +225,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2009,Australia,AU,Member State,Member State,7821600,0,0,0,0,0,0,0
 2009,Austria,AT,Member State,Member State,424740,0,0,0,0,0,0,0
 2009,Azerbaijan,AZ,Member State,Member State,10000,0,0,0,0,0,0,0
+2009,Baha'i International Community (National Spiritual Assembly),ZPRV,Private Donors,Private Donors,10000,0,0,0,0,0,0,0
 2009,Belgium,BE,Member State,Member State,7272904.92,0,0,0,0,0,0,0
 2009,Benin,BJ,Member State,Member State,1500,0,0,0,0,0,0,0
 2009,Bhutan,BT,Member State,Member State,1480,0,0,0,0,0,0,0
@@ -231,6 +245,8 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2009,Ghana,GH,Member State,Member State,10000,0,0,0,0,0,0,0
 2009,Greece,GR,Member State,Member State,500000,0,0,0,0,0,0,0
 2009,Haiti,HT,Member State,Member State,1480,0,0,0,0,0,0,0
+2009,Holy See (Vatican City State),Observer,Observer,Observer,5000,0,0,0,0,0,0,0
+2009,HSBC Bank Middle East Limited,ZPRV,Private Donors,Private Donors,100000,0,0,0,0,0,0,0
 2009,Hungary,HU,Member State,Member State,54088,0,0,0,0,0,0,0
 2009,Iceland,IS,Member State,Member State,200000,0,0,0,0,0,0,0
 2009,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
@@ -259,14 +275,14 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2009,Netherlands,NL,Member State,Member State,55668000,0,0,0,0,0,0,0
 2009,New Zealand,NZ,Member State,Member State,1000000,0,0,0,0,0,0,0
 2009,Norway,NO,Member State,Member State,42734982.73,0,0,0,0,0,0,0
-2009,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
 2009,Oman,OM,Member State,Member State,30000,0,0,0,0,0,0,0
 2009,Pakistan,PK,Member State,Member State,15000,0,0,0,0,0,0,0
 2009,Peru,PE,Member State,Member State,10000,0,0,0,0,0,0,0
 2009,Philippines,PH,Member State,Member State,10000,0,0,0,0,0,0,0
 2009,Poland,PL,Member State,Member State,300000,0,0,0,0,0,0,0
 2009,Portugal,PT,Member State,Member State,263020,0,0,0,0,0,0,0
-2009,Private Donors,ZPRV,Private Donors,Private Donors,452819.55,0,0,0,0,0,0,0
+2009,"Private donations outside UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,1400,0,0,0,0,0,0,0
+2009,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,56030,0,0,0,0,0,0,0
 2009,Qatar,QA,Member State,Member State,50000,0,0,0,0,0,0,0
 2009,Republic of Congo,CG,Member State,Member State,2256.25,0,0,0,0,0,0,0
 2009,Samoa,WS,Member State,Member State,2000,0,0,0,0,0,0,0
@@ -280,6 +296,8 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2009,Sweden,SE,Member State,Member State,49367572.36,0,0,0,0,0,0,0
 2009,Switzerland,CH,Member State,Member State,4657370.02,0,0,0,0,0,0,0
 2009,Syria,SY,Member State,Member State,5000,0,0,0,0,0,0,0
+2009,The Estate of George Gary,ZPRV,Private Donors,Private Donors,10408.05,0,0,0,0,0,0,0
+2009,The Red Crescent of the UAE,ZPRV,Private Donors,Private Donors,9981.5,0,0,0,0,0,0,0
 2009,Timor-Leste,TL,Member State,Member State,1200,0,0,0,0,0,0,0
 2009,Trinidad and Tobago,TT,Member State,Member State,20000,0,0,0,0,0,0,0
 2009,Turkey,TR,Member State,Member State,200000,0,0,0,0,0,0,0
@@ -287,7 +305,10 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2009,United Kingdom,GB,Member State,Member State,64262000,0,0,0,0,0,0,0
 2009,Venezuela,VE,Member State,Member State,5000,0,0,0,0,0,0,0
 2009,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2009,Western Union,ZPRV,Private Donors,Private Donors,100000,0,0,0,0,0,0,0
+2010,"Abu Dhabi National Energy Company ""TAQA""",ZPRV,Private Donors,Private Donors,272257.01,0,0,0,0,0,0,0
 2010,Afghanistan,AF,Member State,Member State,1500,0,0,0,0,0,0,0
+2010,Alexander Bodini Foundation,ZPRV,Private Donors,Private Donors,20000,0,0,0,0,0,0,0
 2010,Algeria,DZ,Member State,Member State,10000,0,0,0,0,0,0,0
 2010,Andorra,AD,Member State,Member State,46527,0,0,0,0,0,0,0
 2010,Antigua and Barbuda,AG,Member State,Member State,5000,0,0,0,0,0,0,0
@@ -295,27 +316,37 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2010,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
 2010,Australia,AU,Member State,Member State,10986000,0,0,0,0,0,0,0
 2010,Austria,AT,Member State,Member State,548400,0,0,0,0,0,0,0
+2010,Baha'i International Community (National Spiritual Assembly),ZPRV,Private Donors,Private Donors,20000,0,0,0,0,0,0,0
 2010,Bangladesh,BD,Member State,Member State,5000,0,0,0,0,0,0,0
+2010,BASF (Germany and South East Asia),ZPRV,Private Donors,Private Donors,761031.51,0,0,0,0,0,0,0
 2010,Belgium,BE,Member State,Member State,8387538.32,0,0,0,0,0,0,0
 2010,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
+2010,Bilkent Holding AS,ZPRV,Private Donors,Private Donors,10000,0,0,0,0,0,0,0
 2010,Brazil,BR,Member State,Member State,200000,0,0,0,0,0,0,0
 2010,Canada,CA,Member State,Member State,37328450.04,0,0,0,0,0,0,0
 2010,Central African Republic,CF,Member State,Member State,197238.66,0,0,0,0,0,0,0
 2010,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
 2010,China,CN,Member State,Member State,1500000,0,0,0,0,0,0,0
+2010,"Chung Te Buddhist Association of New York, Inc.",ZPRV,Private Donors,Private Donors,41771.22,0,0,0,0,0,0,0
 2010,Colombia,CO,Member State,Member State,30000,0,0,0,0,0,0,0
 2010,Costa Rica,CR,Member State,Member State,9642.91,0,0,0,0,0,0,0
 2010,Croatia,HR,Member State,Member State,25000,0,0,0,0,0,0,0
 2010,Cyprus,CY,Member State,Member State,30000,0,0,0,0,0,0,0
+2010,Daystar Christian Centre,ZPRV,Private Donors,Private Donors,20000,0,0,0,0,0,0,0
 2010,Denmark,DK,Member State,Member State,11135477.69,0,0,0,0,0,0,0
 2010,Djibouti,DJ,Member State,Member State,4000,0,0,0,0,0,0,0
 2010,Egypt,EG,Member State,Member State,15000,0,0,0,0,0,0,0
+2010,ENDESA Peru,ZPRV,Private Donors,Private Donors,12947.9,0,0,0,0,0,0,0
+2010,ENDESA Spain,ZPRV,Private Donors,Private Donors,55192.79,0,0,0,0,0,0,0
 2010,Estonia,EE,Member State,Member State,74057,0,0,0,0,0,0,0
 2010,Finland,FI,Member State,Member State,8079000,0,0,0,0,0,0,0
 2010,France,FR,Member State,Member State,657250,0,0,0,0,0,0,0
 2010,Georgia,GE,Member State,Member State,2000,0,0,0,0,0,0,0
 2010,Germany,DE,Member State,Member State,21735000,0,0,0,0,0,0,0
+2010,GMC Services,ZPRV,Private Donors,Private Donors,20000,0,0,0,0,0,0,0
 2010,Greece,GR,Member State,Member State,500000,0,0,0,0,0,0,0
+2010,Holy See (Vatican City State),Observer,Observer,Observer,5000,0,0,0,0,0,0,0
+2010,HSBC Bank Middle East Limited,ZPRV,Private Donors,Private Donors,16825.35,0,0,0,0,0,0,0
 2010,Iceland,IS,Member State,Member State,100000,0,0,0,0,0,0,0
 2010,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
 2010,Indonesia,ID,Member State,Member State,150000,0,0,0,0,0,0,0
@@ -323,9 +354,12 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2010,Israel,IL,Member State,Member State,20000,0,0,0,0,0,0,0
 2010,Italy,IT,Member State,Member State,1502270,0,0,0,0,0,0,0
 2010,Japan,JP,Member State,Member State,2000000,0,0,0,0,0,0,0
+2010,Jefferies and Company,ZPRV,Private Donors,Private Donors,1000000,0,0,0,0,0,0,0
 2010,Kazakhstan,KZ,Member State,Member State,50000,0,0,0,0,0,0,0
 2010,Korea,KR,Member State,Member State,3000000,0,0,0,0,0,0,0
+2010,Korean and Overseas Fans of Kim Hyun Joong,ZPRV,Private Donors,Private Donors,19293,0,0,0,0,0,0,0
 2010,Kuwait,KW,Member State,Member State,34600,0,0,0,0,0,0,0
+2010,Latin American Benevolent Foundation,ZPRV,Private Donors,Private Donors,25000,0,0,0,0,0,0,0
 2010,Latvia,LV,Member State,Member State,20672.55,0,0,0,0,0,0,0
 2010,Lebanon,LB,Member State,Member State,3000,0,0,0,0,0,0,0
 2010,Liechtenstein,LI,Member State,Member State,235072.87,0,0,0,0,0,0,0
@@ -343,20 +377,23 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2010,New Zealand,NZ,Member State,Member State,1000000,0,0,0,0,0,0,0
 2010,North Macedonia,MK,Member State,Member State,5000,0,0,0,0,0,0,0
 2010,Norway,NO,Member State,Member State,65483534.81,0,0,0,0,0,0,0
-2010,Observer,ZOB,Observer,Observer,10000,0,0,0,0,0,0,0
 2010,Pakistan,PK,Member State,Member State,19170.67,0,0,0,0,0,0,0
 2010,Panama,PA,Member State,Member State,5000,0,0,0,0,0,0,0
 2010,Philippines,PH,Member State,Member State,10000,0,0,0,0,0,0,0
 2010,Poland,PL,Member State,Member State,250000,0,0,0,0,0,0,0
 2010,Portugal,PT,Member State,Member State,286000,0,0,0,0,0,0,0
-2010,Private Donors,ZPRV,Private Donors,Private Donors,4362072.83,0,0,0,0,0,0,0
+2010,PriceWaterhouseCoopers,ZPRV,Private Donors,Private Donors,200000,0,0,0,0,0,0,0
+2010,"Private donations outside UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,89756.62,0,0,0,0,0,0,0
+2010,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,1172884,0,0,0,0,0,0,0
 2010,Romania,RO,Member State,Member State,136900,0,0,0,0,0,0,0
 2010,Russian Federation,RU,Member State,Member State,2000000,0,0,0,0,0,0,0
 2010,Saint Lucia,LC,Member State,Member State,1000,0,0,0,0,0,0,0
 2010,San Marino,SM,Member State,Member State,100000,0,0,0,0,0,0,0
 2010,Singapore,SG,Member State,Member State,30000,0,0,0,0,0,0,0
+2010,Skanska USA Building Inc.,ZPRV,Private Donors,Private Donors,50000,0,0,0,0,0,0,0
 2010,Slovenia,SI,Member State,Member State,13617,0,0,0,0,0,0,0
 2010,South Africa,ZA,Member State,Member State,263540,0,0,0,0,0,0,0
+2010,Sovereign Military Order of Malta,Observer,Observer,Observer,5000,0,0,0,0,0,0,0
 2010,Spain,ES,Member State,Member State,39585000,0,0,0,0,0,0,0
 2010,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
 2010,Sweden,SE,Member State,Member State,64369547.93,0,0,0,0,0,0,0
@@ -366,10 +403,15 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2010,Trinidad and Tobago,TT,Member State,Member State,20000,0,0,0,0,0,0,0
 2010,Turkey,TR,Member State,Member State,200000,0,0,0,0,0,0,0
 2010,Ukraine,UA,Member State,Member State,503310.34,0,0,0,0,0,0,0
+2010,UN Foundation core fund,ZPRV,Private Donors,Private Donors,250000,0,0,0,0,0,0,0
+2010,UN Spouses Bazaar,ZPRV,Private Donors,Private Donors,35113.43,0,0,0,0,0,0,0
 2010,United Arab Emirates,AE,Member State,Member State,50000,0,0,0,0,0,0,0
+2010,United Islamic Center,ZPRV,Private Donors,Private Donors,20000,0,0,0,0,0,0,0
 2010,United Kingdom,GB,Member State,Member State,60005700,0,0,0,0,0,0,0
 2010,United States of America,US,Member State,Member State,10000000,0,0,0,0,0,0,0
 2010,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2010,Western Union,ZPRV,Private Donors,Private Donors,150000,0,0,0,0,0,0,0
+2010,World Mission Society Church of God,ZPRV,Private Donors,Private Donors,100000,0,0,0,0,0,0,0
 2011,Afghanistan,AF,Member State,Member State,500,0,0,0,0,0,0,0
 2011,Albania,AL,Member State,Member State,4000,0,0,0,0,0,0,0
 2011,Algeria,DZ,Member State,Member State,10000,0,0,0,0,0,0,0
@@ -380,10 +422,12 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2011,Austria,AT,Member State,Member State,289180,0,0,0,0,0,0,0
 2011,Azerbaijan,AZ,Member State,Member State,10000,0,0,0,0,0,0,0
 2011,Bangladesh,BD,Member State,Member State,10000,0,0,0,0,0,0,0
+2011,Belgian Government of Flanders,RLA,RLA,RLA,421080,0,0,0,0,0,0,0
 2011,Belgium,BE,Member State,Member State,17716150,0,0,0,0,0,0,0
 2011,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
 2011,Brazil,BR,Member State,Member State,500000,0,0,0,0,0,0,0
 2011,Brunei Darussalam,BN,Member State,Member State,50000,0,0,0,0,0,0,0
+2011,Cote d'Ivoire,CI,Member State,Member State,5000,0,0,0,0,0,0,0
 2011,Canada,CA,Member State,Member State,41188191.22,0,0,0,0,0,0,0
 2011,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
 2011,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
@@ -398,6 +442,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2011,Germany,DE,Member State,Member State,16370000,0,0,0,0,0,0,0
 2011,Greece,GR,Member State,Member State,500000,0,0,0,0,0,0,0
 2011,Guyana,GY,Member State,Member State,2190.71,0,0,0,0,0,0,0
+2011,Holy See (Vatican City State),Observer,Observer,Observer,5000,0,0,0,0,0,0,0
 2011,Hungary,HU,Member State,Member State,60000,0,0,0,0,0,0,0
 2011,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
 2011,Indonesia,ID,Member State,Member State,175000,0,0,0,0,0,0,0
@@ -406,6 +451,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2011,Italy,IT,Member State,Member State,1308100,0,0,0,0,0,0,0
 2011,Japan,JP,Member State,Member State,3000000,0,0,0,0,0,0,0
 2011,Kazakhstan,KZ,Member State,Member State,49964,0,0,0,0,0,0,0
+2011,Kimse Yok Mu Association,ZPRV,Private Donors,Private Donors,10000,0,0,0,0,0,0,0
 2011,Korea,KR,Member State,Member State,3000000,0,0,0,0,0,0,0
 2011,Kuwait,KW,Member State,Member State,675000,0,0,0,0,0,0,0
 2011,Lao PDR,LA,Member State,Member State,3000,0,0,0,0,0,0,0
@@ -424,13 +470,12 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2011,New Zealand,NZ,Member State,Member State,1478974.5,0,0,0,0,0,0,0
 2011,Nigeria,NG,Member State,Member State,99851.64,0,0,0,0,0,0,0
 2011,Norway,NO,Member State,Member State,67966752.09,0,0,0,0,0,0,0
-2011,Observer,ZOB,Observer,Observer,10000,0,0,0,0,0,0,0
 2011,Philippines,PH,Member State,Member State,10000,0,0,0,0,0,0,0
 2011,Poland,PL,Member State,Member State,326051,0,0,0,0,0,0,0
 2011,Portugal,PT,Member State,Member State,267180,0,0,0,0,0,0,0
-2011,Private Donors,ZPRV,Private Donors,Private Donors,268780.48,0,0,0,0,0,0,0
+2011,"Private donations outside UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,7850.48,0,0,0,0,0,0,0
+2011,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,145930,0,0,0,0,0,0,0
 2011,Qatar,QA,Member State,Member State,4000000,0,0,0,0,0,0,0
-2011,Regional Local Authority,ZRLA,RLA,RLA,421080,0,0,0,0,0,0,0
 2011,Romania,RO,Member State,Member State,70900,0,0,0,0,0,0,0
 2011,Russian Federation,RU,Member State,Member State,2000000,0,0,0,0,0,0,0
 2011,Saint Lucia,LC,Member State,Member State,500,0,0,0,0,0,0,0
@@ -439,6 +484,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2011,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
 2011,Slovenia,SI,Member State,Member State,70990,0,0,0,0,0,0,0
 2011,South Africa,ZA,Member State,Member State,272479.56,0,0,0,0,0,0,0
+2011,Sovereign Military Order of Malta,Observer,Observer,Observer,5000,0,0,0,0,0,0,0
 2011,Spain,ES,Member State,Member State,20091000,0,0,0,0,0,0,0
 2011,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
 2011,Sweden,SE,Member State,Member State,74483670.84,0,0,0,0,0,0,0
@@ -448,6 +494,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2011,United Kingdom,GB,Member State,Member State,94280000,0,0,0,0,0,0,0
 2011,United States of America,US,Member State,Member State,6000000,0,0,0,0,0,0,0
 2011,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2011,Western Union,ZPRV,Private Donors,Private Donors,100000,0,0,0,0,0,0,0
 2012,Afghanistan,AF,Member State,Member State,1000,0,0,0,0,0,0,0
 2012,Albania,AL,Member State,Member State,50000,0,0,0,0,0,0,0
 2012,Andorra,AD,Member State,Member State,26316,0,0,0,0,0,0,0
@@ -455,6 +502,8 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2012,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
 2012,Australia,AU,Member State,Member State,16272000,0,0,0,0,0,0,0
 2012,Austria,AT,Member State,Member State,262080,0,0,0,0,0,0,0
+2012,Baha'i International Community (National Spiritual Assembly),ZPRV,Private Donors,Private Donors,20000,0,0,0,0,0,0,0
+2012,Belgian Government of Flanders,RLA,RLA,RLA,380940,0,0,0,0,0,0,0
 2012,Belgium,BE,Member State,Member State,19633125,0,0,0,0,0,0,0
 2012,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
 2012,Brazil,BR,Member State,Member State,750000,0,0,0,0,0,0,0
@@ -494,19 +543,19 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2012,Netherlands,NL,Member State,Member State,52484000,0,0,0,0,0,0,0
 2012,New Zealand,NZ,Member State,Member State,1679374.5,0,0,0,0,0,0,0
 2012,Norway,NO,Member State,Member State,73945027.09,0,0,0,0,0,0,0
-2012,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
 2012,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
 2012,Peru,PE,Member State,Member State,5000,0,0,0,0,0,0,0
 2012,Poland,PL,Member State,Member State,264200,0,0,0,0,0,0,0
 2012,Portugal,PT,Member State,Member State,253520,0,0,0,0,0,0,0
-2012,Private Donors,ZPRV,Private Donors,Private Donors,211586.44,0,0,0,0,0,0,0
+2012,"Private donations outside UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,5000,0,0,0,0,0,0,0
+2012,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,36586.44,0,0,0,0,0,0,0
 2012,Qatar,QA,Member State,Member State,3000000,0,0,0,0,0,0,0
-2012,Regional Local Authority,ZRLA,RLA,RLA,380940,0,0,0,0,0,0,0
 2012,Romania,RO,Member State,Member State,92461.32,0,0,0,0,0,0,0
 2012,Russian Federation,RU,Member State,Member State,2000000,0,0,0,0,0,0,0
 2012,San Marino,SM,Member State,Member State,27291.42,0,0,0,0,0,0,0
 2012,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
 2012,South Africa,ZA,Member State,Member State,243457.09,0,0,0,0,0,0,0
+2012,Sovereign Military Order of Malta,Observer,Observer,Observer,5000,0,0,0,0,0,0,0
 2012,Spain,ES,Member State,Member State,2608200,0,0,0,0,0,0,0
 2012,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
 2012,Sweden,SE,Member State,Member State,72132872.65,0,0,0,0,0,0,0
@@ -519,6 +568,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2012,United States of America,US,Member State,Member State,5000000,0,0,0,0,0,0,0
 2012,Uruguay,UY,Member State,Member State,5000,0,0,0,0,0,0,0
 2012,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2012,Western Union,ZPRV,Private Donors,Private Donors,150000,0,0,0,0,0,0,0
 2013,Afghanistan,AF,Member State,Member State,1000,0,0,0,0,0,0,0
 2013,Andorra,AD,Member State,Member State,19645.5,0,0,0,0,0,0,0
 2013,Argentina,AR,Member State,Member State,70000,0,0,0,0,0,0,0
@@ -526,6 +576,8 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2013,Australia,AU,Member State,Member State,18566600,0,0,0,0,0,0,0
 2013,Austria,AT,Member State,Member State,271600,0,0,0,0,0,0,0
 2013,Azerbaijan,AZ,Member State,Member State,39820,0,0,0,0,0,0,0
+2013,Baha'i International Community (National Spiritual Assembly),ZPRV,Private Donors,Private Donors,10000,0,0,0,0,0,0,0
+2013,Belgian Government of Flanders,RLA,RLA,RLA,401430,0,0,0,0,0,0,0
 2013,Belgium,BE,Member State,Member State,19053650,0,0,0,0,0,0,0
 2013,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
 2013,Brazil,BR,Member State,Member State,1000000,0,0,0,0,0,0,0
@@ -563,14 +615,13 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2013,Netherlands,NL,Member State,Member State,52124000,0,0,0,0,0,0,0
 2013,New Zealand,NZ,Member State,Member State,1670425.12,0,0,0,0,0,0,0
 2013,Norway,NO,Member State,Member State,68265452.93,0,0,0,0,0,0,0
-2013,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
 2013,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
 2013,Peru,PE,Member State,Member State,25000,0,0,0,0,0,0,0
 2013,Poland,PL,Member State,Member State,248162,0,0,0,0,0,0,0
 2013,Portugal,PT,Member State,Member State,67655,0,0,0,0,0,0,0
-2013,Private Donors,ZPRV,Private Donors,Private Donors,76667.92,0,0,0,0,0,0,0
+2013,"Private donations outside UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,881.25,0,0,0,0,0,0,0
+2013,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,15786.67,0,0,0,0,0,0,0
 2013,Qatar,QA,Member State,Member State,3000000,0,0,0,0,0,0,0
-2013,Regional Local Authority,ZRLA,RLA,RLA,401430,0,0,0,0,0,0,0
 2013,Romania,RO,Member State,Member State,34347.65,0,0,0,0,0,0,0
 2013,Russian Federation,RU,Member State,Member State,1000000,0,0,0,0,0,0,0
 2013,Saudi Arabia,SA,Member State,Member State,450000,0,0,0,0,0,0,0
@@ -578,6 +629,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2013,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
 2013,Slovenia,SI,Member State,Member State,68725.8,0,0,0,0,0,0,0
 2013,South Africa,ZA,Member State,Member State,274468.9,0,0,0,0,0,0,0
+2013,Sovereign Military Order of Malta,Observer,Observer,Observer,5000,0,0,0,0,0,0,0
 2013,Spain,ES,Member State,Member State,6617500,0,0,0,0,0,0,0
 2013,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
 2013,Sweden,SE,Member State,Member State,71687729.13,0,0,0,0,0,0,0
@@ -589,13 +641,16 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2013,United States of America,US,Member State,Member State,4000000,0,0,0,0,0,0,0
 2013,Uruguay,UY,Member State,Member State,5000,0,0,0,0,0,0,0
 2013,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2013,Western Union,ZPRV,Private Donors,Private Donors,50000,0,0,0,0,0,0,0
 2014,Andorra,AD,Member State,Member State,20537.85,0,0,0,0,0,0,0
 2014,Argentina,AR,Member State,Member State,57683.8,0,0,0,0,0,0,0
 2014,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
 2014,Australia,AU,Member State,Member State,14580884,0,0,0,0,0,0,0
+2014,Belgian Government of Flanders,RLA,RLA,RLA,410100,0,0,0,0,0,0,0
 2014,Belgium,BE,Member State,Member State,17588690,0,0,0,0,0,0,0
 2014,Brazil,BR,Member State,Member State,1200000,0,0,0,0,0,0,0
 2014,Canada,CA,Member State,Member State,26719985.46,0,0,0,0,0,0,0
+2014,Chih-Kun Chan,ZPRV,Private Donors,Private Donors,10000,0,0,0,0,0,0,0
 2014,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
 2014,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
 2014,Czech Republic,CZ,Member State,Member State,116212.91,0,0,0,0,0,0,0
@@ -614,6 +669,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2014,Kazakhstan,KZ,Member State,Member State,10000,0,0,0,0,0,0,0
 2014,Korea,KR,Member State,Member State,4000000,0,0,0,0,0,0,0
 2014,Kuwait,KW,Member State,Member State,500000,0,0,0,0,0,0,0
+2014,Lenovo Next Generation Hope Fund,ZPRV,Private Donors,Private Donors,25000,0,0,0,0,0,0,0
 2014,Liechtenstein,LI,Member State,Member State,278117.7,0,0,0,0,0,0,0
 2014,Luxembourg,LU,Member State,Member State,5082592.12,0,0,0,0,0,0,0
 2014,Mali,ML,Member State,Member State,100000,0,0,0,0,0,0,0
@@ -624,25 +680,27 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2014,Netherlands,NL,Member State,Member State,54956000,0,0,0,0,0,0,0
 2014,New Zealand,NZ,Member State,Member State,2563200,0,0,0,0,0,0,0
 2014,Norway,NO,Member State,Member State,66113108.55,0,0,0,0,0,0,0
-2014,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
 2014,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
 2014,Peru,PE,Member State,Member State,4674.22,0,0,0,0,0,0,0
 2014,Poland,PL,Member State,Member State,212850,0,0,0,0,0,0,0
 2014,Portugal,PT,Member State,Member State,67655,0,0,0,0,0,0,0
-2014,Private Donors,ZPRV,Private Donors,Private Donors,214927.94,0,0,0,0,0,0,0
-2014,Regional Local Authority,ZRLA,RLA,RLA,718244.18,0,0,0,0,0,0,0
+2014,"Private donations outside UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,300,0,0,0,0,0,0,0
+2014,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,119660.94,0,0,0,0,0,0,0
 2014,Romania,RO,Member State,Member State,53000,0,0,0,0,0,0,0
 2014,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
 2014,San Marino,SM,Member State,Member State,9969.6,0,0,0,0,0,0,0
 2014,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
 2014,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
 2014,South Africa,ZA,Member State,Member State,243641,0,0,0,0,0,0,0
+2014,Sovereign Military Order of Malta,Observer,Observer,Observer,5000,0,0,0,0,0,0,0
 2014,Spain,ES,Member State,Member State,2490000,0,0,0,0,0,0,0
+2014,State of South Australia,RLA,RLA,RLA,308144.18,0,0,0,0,0,0,0
 2014,Sweden,SE,Member State,Member State,72656098.8,0,0,0,0,0,0,0
 2014,Switzerland,CH,Member State,Member State,7860763.15,0,0,0,0,0,0,0
 2014,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
 2014,Trinidad and Tobago,TT,Member State,Member State,20000,0,0,0,0,0,0,0
 2014,Turkey,TR,Member State,Member State,449630,0,0,0,0,0,0,0
+2014,UN Spouses Bazaar,ZPRV,Private Donors,Private Donors,59967,0,0,0,0,0,0,0
 2014,United Arab Emirates,AE,Member State,Member State,100000,0,0,0,0,0,0,0
 2014,United Kingdom,GB,Member State,Member State,113185500,0,0,0,0,0,0,0
 2014,United States of America,US,Member State,Member State,4000000,0,0,0,0,0,0,0
@@ -650,11 +708,16 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2015,Andorra,AD,Member State,Member State,44139.33,0,0,0,0,0,0,0
 2015,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
 2015,Australia,AU,Member State,Member State,9223031.43,0,0,0,0,0,0,0
+2015,Belgian Government of Flanders,RLA,RLA,RLA,345690,0,0,0,0,0,0,0
 2015,Belgium,BE,Member State,Member State,10969000,0,0,0,0,0,0,0
+2015,Bonne L. Domroe,ZPRV,Private Donors,Private Donors,40,0,0,0,0,0,0,0
+2015,Cote d'Ivoire,CI,Member State,Member State,10000,0,0,0,0,0,0,0
 2015,Canada,CA,Member State,Member State,24418604.65,0,0,0,0,0,0,0
 2015,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
 2015,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2015,CIGNA,ZPRV,Private Donors,Private Donors,50000,0,0,0,0,0,0,0
 2015,Colombia,CO,Member State,Member State,235000,0,0,0,0,0,0,0
+2015,Coloplast,ZPRV,Private Donors,Private Donors,15000,0,0,0,0,0,0,0
 2015,Cyprus,CY,Member State,Member State,13780,0,0,0,0,0,0,0
 2015,Denmark,DK,Member State,Member State,14556040.76,0,0,0,0,0,0,0
 2015,Djibouti,DJ,Member State,Member State,0,0,0,0,0,0,0,0
@@ -665,9 +728,11 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2015,Iceland,IS,Member State,Member State,100000,0,0,0,0,0,0,0
 2015,India,IN,Member State,Member State,500000,0,0,0,0,0,0,0
 2015,Indonesia,ID,Member State,Member State,200000,0,0,0,0,0,0,0
+2015,International Maritime Orgnization (IMO),RLA,RLA,RLA,17692.49,0,0,0,0,0,0,0
 2015,Ireland,IE,Member State,Member State,12212000,0,0,0,0,0,0,0
 2015,Italy,IT,Member State,Member State,1104500,0,0,0,0,0,0,0
 2015,Japan,JP,Member State,Member State,1402809,0,0,0,0,0,0,0
+2015,KK Wind Solutions,ZPRV,Private Donors,Private Donors,1506.32,0,0,0,0,0,0,0
 2015,Korea,KR,Member State,Member State,4500000,0,0,0,0,0,0,0
 2015,Kuwait,KW,Member State,Member State,1000000,0,0,0,0,0,0,0
 2015,Liechtenstein,LI,Member State,Member State,271768.67,0,0,0,0,0,0,0
@@ -679,22 +744,23 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2015,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
 2015,Netherlands,NL,Member State,Member State,59169000,0,0,0,0,0,0,0
 2015,New Zealand,NZ,Member State,Member State,2337600,0,0,0,0,0,0,0
+2015,Nigerian Economic Summit Group LTD,ZPRV,Private Donors,Private Donors,1000,0,0,0,0,0,0,0
 2015,Norway,NO,Member State,Member State,48983512.05,0,0,0,0,0,0,0
-2015,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
 2015,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
 2015,Peru,PE,Member State,Member State,4166.66,0,0,0,0,0,0,0
 2015,Philippines,PH,Member State,Member State,10000,0,0,0,0,0,0,0
 2015,Poland,PL,Member State,Member State,204823,0,0,0,0,0,0,0
 2015,Portugal,PT,Member State,Member State,59034.05,0,0,0,0,0,0,0
-2015,Private Donors,ZPRV,Private Donors,Private Donors,180241.15,0,0,0,0,0,0,0
-2015,Regional Local Authority,ZRLA,RLA,RLA,363382.49,0,0,0,0,0,0,0
+2015,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,99755.58,0,0,0,0,0,0,0
 2015,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
 2015,San Marino,SM,Member State,Member State,2266,0,0,0,0,0,0,0
 2015,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
 2015,Serbia,RS,Member State,Member State,5000,0,0,0,0,0,0,0
 2015,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
 2015,South Africa,ZA,Member State,Member State,172562.55,0,0,0,0,0,0,0
+2015,Sovereign Military Order of Malta,Observer,Observer,Observer,5000,0,0,0,0,0,0,0
 2015,Spain,ES,Member State,Member State,2185792.35,0,0,0,0,0,0,0
+2015,Stephanie Loose,ZPRV,Private Donors,Private Donors,500.9,0,0,0,0,0,0,0
 2015,Sweden,SE,Member State,Member State,52331717.07,0,0,0,0,0,0,0
 2015,Switzerland,CH,Member State,Member State,10354726.73,0,0,0,0,0,0,0
 2015,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
@@ -704,12 +770,14 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2015,United Kingdom,GB,Member State,Member State,83200500,0,0,0,0,0,0,0
 2015,United States of America,US,Member State,Member State,3000000,0,0,0,0,0,0,0
 2015,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2015,"ZIV Aplicaciones y Tecnología, S.L. ",ZPRV,Private Donors,Private Donors,2438.35,0,0,0,0,0,0,0
 2016,Albania,AL,Member State,Member State,0,0,0,0,0,0,0,0
 2016,Andorra,AD,Member State,Member State,16633.5,0,0,0,0,0,0,0
 2016,Argentina,AR,Member State,Member State,60000,0,0,0,0,0,0,0
 2016,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
 2016,Australia,AU,Member State,Member State,7575664.8,0,0,0,0,0,0,0
 2016,Bangladesh,BD,Member State,Member State,5000,0,0,0,0,0,0,0
+2016,Belgian Government of Flanders,RLA,RLA,RLA,648960,0,0,0,0,0,0,0
 2016,Belgium,BE,Member State,Member State,11312000,0,0,0,0,0,0,0
 2016,Canada,CA,Member State,Member State,22624086.19,0,0,0,0,0,0,0
 2016,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
@@ -740,17 +808,16 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2016,Netherlands,NL,Member State,Member State,60522000,0,0,0,0,0,0,0
 2016,New Zealand,NZ,Member State,Member State,2026200,0,0,0,0,0,0,0
 2016,Norway,NO,Member State,Member State,44493615.85,0,0,0,0,0,0,0
-2016,Observer,ZOB,Observer,Observer,5000,0,0,0,0,0,0,0
 2016,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
 2016,Peru,PE,Member State,Member State,3972.91,0,0,0,0,0,0,0
 2016,Philippines,PH,Member State,Member State,5000,0,0,0,0,0,0,0
 2016,Portugal,PT,Member State,Member State,54650,0,0,0,0,0,0,0
-2016,Private Donors,ZPRV,Private Donors,Private Donors,19631.9,0,0,0,0,0,0,0
-2016,Regional Local Authority,ZRLA,RLA,RLA,648960,0,0,0,0,0,0,0
+2016,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,19631.9,0,0,0,0,0,0,0
 2016,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
 2016,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
 2016,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
 2016,South Africa,ZA,Member State,Member State,428878,0,0,0,0,0,0,0
+2016,Sovereign Military Order of Malta,Observer,Observer,Observer,5000,0,0,0,0,0,0,0
 2016,Spain,ES,Member State,Member State,2245000,0,0,0,0,0,0,0
 2016,Sweden,SE,Member State,Member State,82078120.59,0,0,0,0,0,0,0
 2016,Switzerland,CH,Member State,Member State,8175020.71,0,0,0,0,0,0,0
@@ -760,12 +827,15 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2016,United Kingdom,GB,Member State,Member State,69901837.5,0,0,0,0,0,0,0
 2016,United States of America,US,Member State,Member State,3000000,0,0,0,0,0,0,0
 2016,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2017,Al Jisr Foundation,ZPRV,Private Donors,Private Donors,250000,0,0,0,0,0,0,0
 2017,Andorra,AD,Member State,Member State,23866.52,0,0,0,0,0,0,0
 2017,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
 2017,Australia,AU,Member State,Member State,8226873.82,0,0,0,0,0,0,0
+2017,Belgian Government of Flanders,RLA,RLA,RLA,625860,0,0,0,0,0,0,0
 2017,Belgium,BE,Member State,Member State,13963750,0,0,0,0,0,0,0
 2017,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
 2017,Bulgaria,BG,Member State,Member State,20000,0,0,0,0,0,0,0
+2017,Cote d'Ivoire,CI,Member State,Member State,10000,0,0,0,0,0,0,0
 2017,Canada,CA,Member State,Member State,21844119.18,0,0,0,0,0,0,0
 2017,Chile,CL,Member State,Member State,40000,0,0,0,0,0,0,0
 2017,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
@@ -794,20 +864,20 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2017,Netherlands,NL,Member State,Member State,71266300,0,0,0,0,0,0,0
 2017,New Zealand,NZ,Member State,Member State,2176800,0,0,0,0,0,0,0
 2017,Norway,NO,Member State,Member State,53066570.04,0,0,0,0,0,0,0
-2017,Observer,ZOB,Observer,Observer,1000,0,0,0,0,0,0,0
 2017,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
 2017,Peru,PE,Member State,Member State,4006.07,0,0,0,0,0,0,0
 2017,Philippines,PH,Member State,Member State,50000,0,0,0,0,0,0,0
 2017,Portugal,PT,Member State,Member State,104110,0,0,0,0,0,0,0
-2017,Private Donors,ZPRV,Private Donors,Private Donors,331135.34,0,0,0,0,0,0,0
+2017,"Private donations outside UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,6854.53,0,0,0,0,0,0,0
+2017,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,51088.2,0,0,0,0,0,0,0
 2017,Qatar,QA,Member State,Member State,1000000,0,0,0,0,0,0,0
-2017,Regional Local Authority,ZRLA,RLA,RLA,625860,0,0,0,0,0,0,0
 2017,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
 2017,San Marino,SM,Member State,Member State,2487,0,0,0,0,0,0,0
 2017,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
 2017,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
 2017,Slovakia,SK,Member State,Member State,60155,0,0,0,0,0,0,0
 2017,South Africa,ZA,Member State,Member State,487257,0,0,0,0,0,0,0
+2017,Sovereign Military Order of Malta,Observer,Observer,Observer,1000,0,0,0,0,0,0,0
 2017,Spain,ES,Member State,Member State,3475600,0,0,0,0,0,0,0
 2017,Sri Lanka,LK,Member State,Member State,5000,0,0,0,0,0,0,0
 2017,Sweden,SE,Member State,Member State,75978438.04,0,0,0,0,0,0,0
@@ -818,16 +888,21 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2017,United Kingdom,GB,Member State,Member State,102619750,0,0,0,0,0,0,0
 2017,United States of America,US,Member State,Member State,5000000,0,0,0,0,0,0,0
 2017,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2017,Waterloo Foundation,ZPRV,Private Donors,Private Donors,13192.61,0,0,0,0,0,0,0
+2018,Al Jisr Foundation,ZPRV,Private Donors,Private Donors,250000,0,0,0,0,0,0,0
 2018,Algeria,DZ,Member State,Member State,10000,0,0,0,0,0,0,0
 2018,Andorra,AD,Member State,Member State,17735.1,0,0,0,0,0,0,0
 2018,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
 2018,Australia,AU,Member State,Member State,8643721.52,0,0,0,0,0,0,0
 2018,Azerbaijan,AZ,Member State,Member State,20000,0,0,0,0,0,0,0
 2018,Bangladesh,BD,Member State,Member State,10000,0,0,0,0,0,0,0
+2018,Belgian Government of Flanders,RLA,RLA,RLA,707040,0,0,0,0,0,0,0
 2018,Belgium,BE,Member State,Member State,14717500,0,0,0,0,0,0,0
 2018,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
 2018,Bulgaria,BG,Member State,Member State,20000,0,0,0,0,0,0,0
+2018,Cote d'Ivoire,CI,Member State,Member State,10000,0,0,0,0,0,0,0
 2018,Canada,CA,Member State,Member State,22762465.16,0,0,0,0,0,0,0
+2018,Catalan Agency for Development Cooperation,RLA,RLA,RLA,282800,0,0,0,0,0,0,0
 2018,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
 2018,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
 2018,Czech Republic,CZ,Member State,Member State,175173.69,0,0,0,0,0,0,0
@@ -856,9 +931,8 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2018,Norway,NO,Member State,Member State,55283544.3,0,0,0,0,0,0,0
 2018,Philippines,PH,Member State,Member State,50000,0,0,0,0,0,0,0
 2018,Portugal,PT,Member State,Member State,118250,0,0,0,0,0,0,0
-2018,Private Donors,ZPRV,Private Donors,Private Donors,401523.89,0,0,0,0,0,0,0
+2018,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,41523.89,0,0,0,0,0,0,0
 2018,Qatar,QA,Member State,Member State,1000000,0,0,0,0,0,0,0
-2018,Regional Local Authority,ZRLA,RLA,RLA,989840,0,0,0,0,0,0,0
 2018,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
 2018,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
 2018,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
@@ -872,16 +946,22 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2018,United Arab Emirates,AE,Member State,Member State,1500000,0,0,0,0,0,0,0
 2018,United Kingdom,GB,Member State,Member State,114323552.5,0,0,0,0,0,0,0
 2018,United States of America,US,Member State,Member State,0,0,0,0,0,0,0,0
+2018,World Mission Society Church of God,ZPRV,Private Donors,Private Donors,100000,0,0,0,0,0,0,0
+2019,Al Jisr Foundation,ZPRV,Private Donors,Private Donors,0,0,0,0,0,0,0,0
 2019,Andorra,AD,Member State,Member State,16942.95,0,0,0,0,0,0,0
 2019,Armenia,AM,Member State,Member State,5000,0,0,0,0,0,0,0
 2019,Australia,AU,Member State,Member State,7841875.05,0,0,0,0,0,0,0
 2019,Azerbaijan,AZ,Member State,Member State,20000,0,0,0,0,0,0,0
 2019,Bangladesh,BD,Member State,Member State,20000,0,0,0,0,0,0,0
+2019,Basque Agency for Development Cooperation,RLA,RLA,RLA,109554.11,0,0,0,0,0,0,0
+2019,Belgian Government of Flanders,RLA,RLA,RLA,684180,0,0,0,0,0,0,0
 2019,Belgium,BE,Member State,Member State,19259300,0,0,0,0,0,0,0
 2019,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
 2019,Canada,CA,Member State,Member State,21652466.13,0,0,0,0,0,0,0
+2019,Catalan Agency for Development Cooperation,RLA,RLA,RLA,324307,0,0,0,0,0,0,0
 2019,Chile,CL,Member State,Member State,30000,0,0,0,0,0,0,0
 2019,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
+2019,Cmax Foundation,ZPRV,Private Donors,Private Donors,0,0,0,0,0,0,0,0
 2019,Colombia,CO,Member State,Member State,90000,0,0,0,0,0,0,0
 2019,Czech Republic,CZ,Member State,Member State,221150.87,0,0,0,0,0,0,0
 2019,Denmark,DK,Member State,Member State,25432996.6,0,0,0,0,0,0,0
@@ -898,6 +978,7 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2019,Kazakhstan,KZ,Member State,Member State,10000,0,0,0,0,0,0,0
 2019,Korea,KR,Member State,Member State,5000000,0,0,0,0,0,0,0
 2019,Kuwait,KW,Member State,Member State,1000000,0,0,0,0,0,0,0
+2019,Late Barbara Cahill,ZPRV,Private Donors,Private Donors,118234.85,0,0,0,0,0,0,0
 2019,Liechtenstein,LI,Member State,Member State,198866.46,0,0,0,0,0,0,0
 2019,Luxembourg,LU,Member State,Member State,5561500,0,0,0,0,0,0,0
 2019,Mali,ML,Member State,Member State,0,0,0,0,0,0,0,0
@@ -913,9 +994,9 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2019,Peru,PE,Member State,Member State,2942.62,0,0,0,0,0,0,0
 2019,Philippines,PH,Member State,Member State,2500,0,0,0,0,0,0,0
 2019,Portugal,PT,Member State,Member State,170220,0,0,0,0,0,0,0
-2019,Private Donors,ZPRV,Private Donors,Private Donors,456865.32,0,0,0,0,0,0,0
+2019,"Private donations outside UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,237,0,0,0,0,0,0,0
+2019,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,338393.47,0,0,0,0,0,0,0
 2019,Qatar,QA,Member State,Member State,1000000,0,0,0,0,0,0,0
-2019,Regional Local Authority,ZRLA,RLA,RLA,1118041.11,0,0,0,0,0,0,0
 2019,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
 2019,Saudi Arabia,SA,Member State,Member State,150000,0,0,0,0,0,0,0
 2019,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
@@ -929,15 +1010,20 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2019,United Arab Emirates,AE,Member State,Member State,5000000,0,0,0,0,0,0,0
 2019,United Kingdom,GB,Member State,Member State,394568100,0,0,0,0,0,0,0
 2019,Vietnam,VN,Member State,Member State,10000,0,0,0,0,0,0,0
+2020,Al Jisr Foundation,ZPRV,Private Donors,Private Donors,0,0,0,0,0,0,0,0
 2020,Andorra,AD,Member State,Member State,16806.72,0,0,0,0,0,0,0
 2020,Australia,AU,Member State,Member State,7518476.08,0,0,0,0,0,0,0
-2020,Bangladesh,BD,Member State,Member State,12000,8000,0,0,0,0,0,0
+2020,Baha'i International Community (National Spiritual Assembly),ZPRV,Private Donors,Private Donors,10000,0,0,0,0,0,0,0
+2020,Bangladesh,BD,Member State,Member State,20000,0,0,0,0,0,0,0
+2020,Basque Agency for Development Cooperation,RLA,RLA,RLA,220735,0,0,0,0,0,0,0
+2020,Belgian Government of Flanders,RLA,RLA,RLA,1344480,0,0,0,0,0,0,0
 2020,Belgium,BE,Member State,Member State,24980400,0,0,0,0,0,0,0
 2020,Bhutan,BT,Member State,Member State,1500,0,0,0,0,0,0,0
 2020,Cambodia,KH,Member State,Member State,20000,0,0,0,0,0,0,0
 2020,Canada,CA,Member State,Member State,21904336.16,0,0,0,0,0,0,0
+2020,Catalan Agency for Development Cooperation,RLA,RLA,RLA,324859.98,0,0,0,0,0,0,0
 2020,China,CN,Member State,Member State,500000,0,0,0,0,0,0,0
-2020,Cyprus,CY,Member State,Member State,0,16501.65,0,0,0,0,0,0
+2020,Cyprus,CY,Member State,Member State,16650,0,0,0,0,0,0,0
 2020,Denmark,DK,Member State,Member State,25544319.39,0,0,0,0,0,0,0
 2020,Estonia,EE,Member State,Member State,110720,0,0,0,0,0,0,0
 2020,Finland,FI,Member State,Member State,8775200,0,0,0,0,0,0,0
@@ -947,18 +1033,18 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2020,Indonesia,ID,Member State,Member State,0,220000,0,0,0,0,0,0
 2020,Iran,IR,Member State,Member State,10000,0,0,0,0,0,0,0
 2020,Ireland,IE,Member State,Member State,10680978,0,0,0,0,0,0,0
-2020,Italy,IT,Member State,Member State,0,5500550.06,0,0,0,0,0,0
+2020,Italy,IT,Member State,Member State,5895000,0,0,0,0,0,0,0
 2020,Japan,JP,Member State,Member State,263636,0,0,0,0,0,0,0
 2020,Korea,KR,Member State,Member State,5823817.29,0,0,0,0,0,0,0
 2020,Kuwait,KW,Member State,Member State,1000000,0,0,0,0,0,0,0
 2020,Liechtenstein,LI,Member State,Member State,207792.21,0,0,0,0,0,0,0
 2020,Luxembourg,LU,Member State,Member State,5400000,0,0,0,0,0,0,0
 2020,Monaco,MC,Member State,Member State,111890,0,0,0,0,0,0,0
-2020,Mongolia,MN,Member State,Member State,0,0,0,0,0,0,0,0
+2020,Mongolia,MN,Member State,Member State,10000,0,0,0,0,0,0,0
 2020,Montenegro,ME,Member State,Member State,3324.9,0,0,0,0,0,0,0
 2020,Morocco,MA,Member State,Member State,0,50000,0,0,0,0,0,0
 2020,Myanmar,MM,Member State,Member State,10000,0,0,0,0,0,0,0
-2020,Netherlands,NL,Member State,Member State,85980013.75,0,0,0,0,0,0,0
+2020,Netherlands,NL,Member State,Member State,85980013.75,9400705.053,0,0,0,0,0,0
 2020,New Zealand,NZ,Member State,Member State,6305750,0,0,0,0,0,0,0
 2020,Norway,NO,Member State,Member State,45835996.2,0,0,0,0,0,0,0
 2020,Pakistan,PK,Member State,Member State,10000,0,0,0,0,0,0,0
@@ -966,25 +1052,25 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2020,Philippines,PH,Member State,Member State,50000,0,0,0,0,0,0,0
 2020,Poland,PL,Member State,Member State,239693.19,0,0,0,0,0,0,0
 2020,Portugal,PT,Member State,Member State,193462.5,0,0,0,0,0,0,0
-2020,Private Donors,ZPRV,Private Donors,Private Donors,47259.07,49394.18,0,0,0,0,0,0
+2020,"Private donations through UN Foundation (under $10,000)",ZPRV,Private Donors,Private Donors,86653.25,0,0,0,0,0,0,0
 2020,Qatar,QA,Member State,Member State,1000000,0,0,0,0,0,0,0
-2020,Regional Local Authority,ZRLA,RLA,RLA,1890074.98,0,0,0,0,0,0,0
 2020,Russian Federation,RU,Member State,Member State,1500000,0,0,0,0,0,0,0
 2020,Saudi Arabia,SA,Member State,Member State,0,0,0,0,0,0,0,0
 2020,Singapore,SG,Member State,Member State,50000,0,0,0,0,0,0,0
+2020,Slovenia,SI,Member State,Member State,0,35252.6439,0,0,0,0,0,0
 2020,South Africa,ZA,Member State,Member State,85304.82,0,0,0,0,0,0,0
-2020,Spain,ES,Member State,Member State,0,0,0,0,0,0,0,0
+2020,Spain,ES,Member State,Member State,0,3529411.765,0,0,0,0,0,0
 2020,Sri Lanka,LK,Member State,Member State,10000,0,0,0,0,0,0,0
 2020,Sweden,SE,Member State,Member State,76301194.16,0,0,0,0,0,0,0
 2020,Switzerland,CH,Member State,Member State,24235703.94,0,0,0,0,0,0,0
 2020,Thailand,TH,Member State,Member State,20000,0,0,0,0,0,0,0
-2020,Turkey,TR,Member State,Member State,0,0,0,0,0,0,0,0
+2020,Turkey,TR,Member State,Member State,250000,0,0,0,0,0,0,0
 2020,Turkmenistan,TM,Member State,Member State,100000,0,0,0,0,0,0,0
 2020,United Arab Emirates,AE,Member State,Member State,5000000,0,0,0,0,0,0,0
 2020,United Kingdom,GB,Member State,Member State,12982000,0,0,0,0,0,0,0
-2021,Australia,AU,Member State,Member State,0,7304116.87,0,0,0,0,0,0
+2021,Australia,AU,Member State,Member State,0,7304116.866,0,0,0,0,0,0
 2021,Denmark,DK,Member State,Member State,0,25170269.47,0,0,0,0,0,0
-2021,Iceland,IS,Member State,Member State,0,394913.51,0,0,0,0,0,0
+2021,Iceland,IS,Member State,Member State,0,394913.5139,0,0,0,0,0,0
 2021,Ireland,IE,Member State,Member State,0,11415525.11,0,0,0,0,0,0
 2021,Netherlands,NL,Member State,Member State,0,62500000,0,0,0,0,0,0
 2021,New Zealand,NZ,Member State,Member State,0,2039428.96,0,0,0,0,0,0
@@ -992,9 +1078,9 @@ FiscalYear,GMSDonorName,GMSDonorISO2Code,PooledFundName,PooledFundISO2Code,PaidA
 2021,Portugal,PT,Member State,Member State,148150,0,0,0,0,0,0,0
 2021,Qatar,QA,Member State,Member State,0,1000000,0,0,0,0,0,0
 2021,Sweden,SE,Member State,Member State,0,69061737.01,0,0,0,0,0,0
-2021,United Kingdom,GB,Member State,Member State,0,80075662.05,0,0,0,0,0,0
+2021,United Kingdom,GB,Member State,Member State,0,80075662.04,0,0,0,0,0,0
 2022,Denmark,DK,Member State,Member State,0,25170269.47,0,0,0,0,0,0
-2022,Iceland,IS,Member State,Member State,0,394913.51,0,0,0,0,0,0
+2022,Iceland,IS,Member State,Member State,0,394913.5139,0,0,0,0,0,0
 2022,United Kingdom,GB,Member State,Member State,0,113808322.8,0,0,0,0,0,0
-2023,Iceland,IS,Member State,Member State,0,394913.51,0,0,0,0,0,0
+2023,Iceland,IS,Member State,Member State,0,394913.5139,0,0,0,0,0,0
 2023,United Kingdom,GB,Member State,Member State,0,113808322.8,0,0,0,0,0,0
