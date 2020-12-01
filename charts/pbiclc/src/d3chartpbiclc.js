@@ -1457,7 +1457,10 @@
 				.attr("xlink:href", function(d) {
 					return localStorage.getItem("storedFlag" + d.isoCode) ? localStorage.getItem("storedFlag" + d.isoCode) :
 						flagsDirectory + d.isoCode + ".png";
-				});
+				})
+				.on("error", function(d){
+					d3.select(this).remove();
+				})
 
 			const donorPaidIndicatorEnter = donorGroupEnter.append("path")
 				.attr("class", "pbiclcDonorPaidIndicator")
@@ -1479,8 +1482,7 @@
 				.attr("height", lollipopGroupHeight)
 				.attr("width", donorsPanel.width)
 				.style("fill", "none")
-				.attr("pointer-events", "all")
-				.attr("cursor", "pointer");
+				.attr("pointer-events", "all");
 
 			donorGroup = donorGroupEnter.merge(donorGroup);
 
@@ -2128,15 +2130,11 @@
 
 	function saveFlags(donorsList) {
 
-		const unocha = donorsList.indexOf("");
-
-		if (unocha > -1) {
-			donorsList[unocha] = "un";
-		};
+		const blankFlag = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAAAGklEQVR42mP8/5+BJMA4qmFUw6iGUQ201QAAYiIv6RZuPWMAAAAASUVORK5CYII="
 
 		donorsList.forEach(function(d) {
 			if (!localStorage.getItem("storedFlag" + d)) {
-				getBase64FromImage("https://raw.githubusercontent.com/CBPFGMS/cbpfgms.github.io/master/img/flags16/" + d + ".png", setLocal, null, d);
+				getBase64FromImage("https://raw.githubusercontent.com/CBPFGMS/cbpfgms.github.io/master/img/flags/" + d + ".png", setLocal, null, d);
 			};
 		});
 
@@ -2147,7 +2145,7 @@
 			xhr.open("GET", url);
 
 			xhr.onload = function() {
-				let base64, binary, bytes, mediaType;
+				let base64, base64Blank, binary, bytes, mediaType;
 
 				bytes = new Uint8Array(xhr.response);
 
@@ -2163,7 +2161,19 @@
 					'base64,',
 					btoa(binary)
 				].join('');
-				onSuccess(isoCode, base64);
+
+				base64Blank = [
+					'data:',
+					mediaType ? mediaType + ';' : '',
+					'base64,',
+					blankFlag
+				].join('');
+
+				if (xhr.status === 200) {
+					onSuccess(isoCode, base64)
+				} else {
+					onSuccess(isoCode, base64Blank)
+				};
 			};
 
 			xhr.onerror = onError;

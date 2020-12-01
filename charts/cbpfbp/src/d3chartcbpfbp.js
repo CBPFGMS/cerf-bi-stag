@@ -2021,7 +2021,7 @@
 		});
 
 		donorsList.forEach(function(d) {
-			getBase64FromImage("https://raw.githubusercontent.com/CBPFGMS/cbpfgms.github.io/master/img/flags16/" + d + ".png", setLocal, null, d);
+			getBase64FromImage("https://raw.githubusercontent.com/CBPFGMS/cbpfgms.github.io/master/img/flags/" + d + ".png", setLocal, null, d);
 		});
 
 		function getBase64FromImage(url, onSuccess, onError, isoCode) {
@@ -2047,7 +2047,7 @@
 					'base64,',
 					btoa(binary)
 				].join('');
-				onSuccess(isoCode, base64);
+				if (xhr.status === 200) onSuccess(isoCode, base64);
 			};
 
 			xhr.onerror = onError;
