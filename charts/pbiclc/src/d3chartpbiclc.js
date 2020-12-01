@@ -253,7 +253,7 @@
 		XX: 'SCB'
 	};
 
-	const width = 900,
+	const width = 1100,
 		padding = [4, 10, 24, 10],
 		topPanelHeight = 60,
 		buttonPanelHeight = 30,
@@ -264,7 +264,7 @@
 		currentYear = currentDate.getFullYear(),
 		localStorageTime = 600000,
 		csvDateFormat = d3.utcFormat("_%Y%m%d_%H%M%S_UTC"),
-		lollipopGroupHeight = 18,
+		lollipopGroupHeight = 24,
 		stickHeight = 2,
 		lollipopRadius = 4,
 		fadeOpacity = 0.3,
@@ -273,8 +273,8 @@
 		formatMoney0Decimals = d3.format(",.0f"),
 		formatPercent = d3.format(".0%"),
 		formatNumberSI = d3.format(".3s"),
-		flagPadding = 22,
-		flagSize = 16,
+		flagPadding = 28,
+		flagSize = 24,
 		paidSymbolSize = 16,
 		localVariable = d3.local(),
 		legendPadding = 6,
@@ -282,15 +282,15 @@
 		pledgedColor = "#E56A54",
 		unBlue = "#1F69B3",
 		highlightColor = "#F79A3B",
-		buttonsNumber = 8,
-		verticalLabelPadding = 4,
+		buttonsNumber = 12,
+		verticalLabelPadding = 0,
 		chartTitleDefault = "CERF Contributions",
 		contributionsTotals = {},
 		countryNames = {},
 		vizNameQueryString = "contributions",
 		bookmarkSite = "https://bi-home.gitlab.io/CBPF-BI-Homepage/bookmark.html?",
 		helpPortalUrl = "https://gms.unocha.org/content/business-intelligence#CBPF_Contributions",
-		flagsDirectory = "https://github.com/CBPFGMS/cbpfgms.github.io/raw/master/img/flags16/",
+		flagsDirectory = "https://github.com/CBPFGMS/cbpfgms.github.io/raw/master/img/flags/",
 		moneyBagdAttribute = ["M83.277,10.493l-13.132,12.22H22.821L9.689,10.493c0,0,6.54-9.154,17.311-10.352c10.547-1.172,14.206,5.293,19.493,5.56 c5.273-0.267,8.945-6.731,19.479-5.56C76.754,1.339,83.277,10.493,83.277,10.493z",
 			"M48.297,69.165v9.226c1.399-0.228,2.545-0.768,3.418-1.646c0.885-0.879,1.321-1.908,1.321-3.08 c0-1.055-0.371-1.966-1.113-2.728C51.193,70.168,49.977,69.582,48.297,69.165z",
 			"M40.614,57.349c0,0.84,0.299,1.615,0.898,2.324c0.599,0.729,1.504,1.303,2.718,1.745v-8.177 c-1.104,0.306-1.979,0.846-2.633,1.602C40.939,55.61,40.614,56.431,40.614,57.349z",
@@ -418,8 +418,8 @@
 			.attr("transform", "translate(" + padding[3] + "," + padding[0] + ")"),
 		width: width - padding[1] - padding[3],
 		height: topPanelHeight,
-		moneyBagPadding: 94,
-		leftPadding: [176, 484, 632],
+		moneyBagPadding: 0,
+		leftPadding: [176, 64 + (width - padding[1] - padding[3]) / 2],
 		mainValueVerPadding: 12,
 		mainValueHorPadding: 4
 	};
@@ -430,13 +430,13 @@
 			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + topPanel.height + panelHorizontalPadding) + ")"),
 		width: width - padding[1] - padding[3],
 		height: buttonPanelHeight,
-		padding: [0, 0, 0, 90],
+		padding: [0, 0, 0, 0],
 		buttonWidth: 54,
 		buttonPadding: 4,
 		buttonVerticalPadding: 4,
 		arrowPadding: 18,
 		buttonContributionsWidth: 70,
-		buttonContributionsPadding: 590
+		buttonContributionsPadding: 860
 	};
 
 	const donorsPanel = {
@@ -444,21 +444,14 @@
 			.attr("class", "pbiclcDonorsPanel")
 			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + topPanel.height + buttonPanel.height + (2 * panelHorizontalPadding)) + ")"),
 		width: width - padding[1] - padding[3] - panelVerticalPadding,
-		padding: [44, 56, 4, 0],
-		labelPadding: 6
+		padding: [38, 6, 4, 0],
+		labelPadding: 8
 	};
-
-	const donorsPanelClip = donorsPanel.main.append("clipPath")
-		.attr("id", "pbiclcDonorsPanelClip")
-		.append("rect")
-		.attr("width", donorsPanel.width)
-		.attr("transform", "translate(0," + (-donorsPanel.padding[0]) + ")");
 
 	const xScaleDonors = d3.scaleLinear();
 
 	const yScaleDonors = d3.scalePoint()
-		.padding(0.5);
-
+		.padding(1);
 
 	const xAxisDonors = d3.axisTop(xScaleDonors)
 		.tickSizeOuter(0)
@@ -467,16 +460,13 @@
 			return "$" + formatSIaxes(d).replace("G", "B");
 		});
 
-
 	const yAxisDonors = d3.axisLeft(yScaleDonors)
 		.tickSizeInner(2)
 		.tickSizeOuter(0)
 		.tickPadding(flagPadding);
 
-
 	const groupXAxisDonors = donorsPanel.main.append("g")
 		.attr("class", "pbiclcgroupXAxisDonors")
-		.attr("clip-path", "url(#pbiclcDonorsPanelClip)")
 		.attr("transform", "translate(0," + donorsPanel.padding[0] + ")");
 
 	const groupYAxisDonors = donorsPanel.main.append("g")
@@ -569,22 +559,6 @@
 
 		validateCountries(selectedCountriesString, allDonors, allCbpfs);
 
-		if (chartState.selectedDonors.length) {
-			data.dataDonors.forEach(function(d) {
-				if (chartState.selectedDonors.indexOf(d.isoCode) > -1) {
-					d.clicked = true;
-				};
-			});
-		};
-
-		if (chartState.selectedCbpfs.length) {
-			data.dataCbpfs.forEach(function(d) {
-				if (chartState.selectedCbpfs.indexOf(d.isoCode) > -1) {
-					d.clicked = true;
-				};
-			});
-		};
-
 		createTitle();
 
 		createFooterDiv();
@@ -664,18 +638,6 @@
 
 			chartState.selectedCbpfs = chartState.selectedCbpfs.filter(function(d) {
 				return allCbpfs.indexOf(d) > -1;
-			});
-
-			data.dataDonors.forEach(function(d) {
-				if (chartState.selectedDonors.indexOf(d.isoCode) > -1) {
-					d.clicked = true;
-				};
-			});
-
-			data.dataCbpfs.forEach(function(d) {
-				if (chartState.selectedCbpfs.indexOf(d.isoCode) > -1) {
-					d.clicked = true;
-				};
 			});
 
 			recalculateAndResize();
@@ -858,11 +820,11 @@
 					yearButton.dispatch("click");
 					yearButton.dispatch("click");
 
-					const firstYearIndex = chartState.selectedYear[0] < yearsArray[5] ?
+					const firstYearIndex = chartState.selectedYear[0] < yearsArray[buttonsNumber / 2] ?
 						0 :
-						chartState.selectedYear[0] > yearsArray[yearsArray.length - 4] ?
-						yearsArray.length - 8 :
-						yearsArray.indexOf(chartState.selectedYear[0]) - 4;
+						chartState.selectedYear[0] > yearsArray[yearsArray.length - (buttonsNumber / 2)] ?
+						yearsArray.length - buttonsNumber :
+						yearsArray.indexOf(chartState.selectedYear[0]) - (buttonsNumber / 2);
 
 					const currentTranslate = -(buttonPanel.buttonWidth * firstYearIndex);
 
@@ -1151,51 +1113,6 @@
 				.merge(topPanelDonorsTextSubText)
 				.text(chartState.selectedDonors.length ? "(selected)" : "");
 
-			let topPanelCbpfsNumber = mainValueGroup.selectAll(".pbiclctopPanelCbpfsNumber")
-				.data([dataCbpfs.length]);
-
-			topPanelCbpfsNumber = topPanelCbpfsNumber.enter()
-				.append("text")
-				.attr("class", "pbiclctopPanelCbpfsNumber allocationColorFill")
-				.attr("text-anchor", "end")
-				.merge(topPanelCbpfsNumber)
-				.attr("y", topPanel.height - topPanel.mainValueVerPadding)
-				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] - topPanel.mainValueHorPadding);
-
-			topPanelCbpfsNumber.transition()
-				.duration(duration)
-				.tween("text", function(d) {
-					const node = this;
-					const i = d3.interpolate(previousCbpfs, d);
-					return function(t) {
-						node.textContent = ~~(i(t));
-					};
-				});
-
-			let topPanelCbpfsText = mainValueGroup.selectAll(".pbiclctopPanelCbpfsText")
-				.data([true]);
-
-			topPanelCbpfsText = topPanelCbpfsText.enter()
-				.append("text")
-				.attr("class", "pbiclctopPanelCbpfsText")
-				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] + topPanel.mainValueHorPadding)
-				.attr("text-anchor", "start")
-				.merge(topPanelCbpfsText)
-				.attr("y", topPanel.height - topPanel.mainValueVerPadding * (chartState.selectedCbpfs.length ? 2.5 : 1.9))
-				.text(dataCbpfs.length > 1 ? "CBPFs" : "CBPF");
-
-			let topPanelCbpfsTextSubText = mainValueGroup.selectAll(".pbiclctopPanelCbpfsTextSubText")
-				.data([true]);
-
-			topPanelCbpfsTextSubText = topPanelCbpfsTextSubText.enter()
-				.append("text")
-				.attr("class", "pbiclctopPanelCbpfsTextSubText")
-				.attr("y", topPanel.height - topPanel.mainValueVerPadding * 1.2)
-				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] + topPanel.mainValueHorPadding)
-				.attr("text-anchor", "start")
-				.merge(topPanelCbpfsTextSubText)
-				.text(chartState.selectedCbpfs.length ? "(selected)" : "");
-
 			const overRectangle = topPanel.main.selectAll(".pbiclctopPanelOverRectangle")
 				.data([true])
 				.enter()
@@ -1441,11 +1358,11 @@
 
 			function repositionButtonsGroup() {
 
-				const firstYearIndex = chartState.selectedYear[0] < yearsArray[5] ?
+				const firstYearIndex = chartState.selectedYear[0] < yearsArray[buttonsNumber / 2] ?
 					0 :
-					chartState.selectedYear[0] > yearsArray[yearsArray.length - 4] ?
-					yearsArray.length - 8 :
-					yearsArray.indexOf(chartState.selectedYear[0]) - 4;
+					chartState.selectedYear[0] > yearsArray[yearsArray.length - (buttonsNumber / 2)] ?
+					yearsArray.length - buttonsNumber :
+					yearsArray.indexOf(chartState.selectedYear[0]) - (buttonsNumber / 2);
 
 				buttonsGroup.attr("transform", "translate(" +
 					(-(buttonPanel.buttonWidth * firstYearIndex)) +
@@ -1484,29 +1401,7 @@
 						});
 						return acc;
 					});
-				mergedArray.forEach(function(d) {
-					d.clicked = data.dataDonors.find(function(e) {
-						return e.isoCode === d.isoCode;
-					}).clicked;
-				});
 				donorsArray = mergedArray;
-			};
-
-			let cbpfRecipient;
-
-			if (!chartState.selectedCbpfs.length) {
-				cbpfRecipient = null;
-			} else if (chartState.selectedCbpfs.length === 1) {
-				cbpfRecipient = countryNames[chartState.selectedCbpfs[0]]
-			} else if (chartState.selectedCbpfs.length < 4) {
-				cbpfRecipient = chartState.selectedCbpfs.sort(function(a, b) {
-					return a.toLowerCase() < b.toLowerCase() ? -1 :
-						a.toLowerCase() > b.toLowerCase() ? 1 : 0;
-				}).reduce(function(acc, curr, index) {
-					return acc + (index >= chartState.selectedCbpfs.length - 2 ? index > chartState.selectedCbpfs.length - 2 ? isoAlpha2to3[curr.toUpperCase()] : isoAlpha2to3[curr.toUpperCase()] + " and " : isoAlpha2to3[curr.toUpperCase()] + ", ");
-				}, "");
-			} else {
-				cbpfRecipient = "selected CBPFs\u207A";
 			};
 
 			donorsArray.sort(function(a, b) {
@@ -1522,31 +1417,6 @@
 			yScaleDonors.range([donorsPanel.padding[0],
 				(donorsArray.length * lollipopGroupHeight) + donorsPanel.padding[0]
 			]);
-
-			const cbpfName = cbpfRecipient ? " (donations to " + cbpfRecipient + ")" : "";
-
-			let donorsPanelTitle = donorsPanel.main.selectAll(".pbiclcDonorsPanelTitle")
-				.data([true]);
-
-			donorsPanelTitle = donorsPanelTitle.enter()
-				.append("text")
-				.attr("class", "pbiclcDonorsPanelTitle")
-				.attr("y", donorsPanel.padding[0] - titlePadding)
-				.merge(donorsPanelTitle)
-				.text("Donors");
-
-			donorsPanelTitle.transition()
-				.duration(duration)
-				.attr("x", donorsPanel.padding[3]);
-
-			let donorsPanelTitleSpan = donorsPanelTitle.selectAll(".pbiclcDonorsPanelTitleSpan")
-				.data([true]);
-
-			donorsPanelTitleSpan = donorsPanelTitleSpan.enter()
-				.append("tspan")
-				.attr("class", "pbiclcDonorsPanelTitleSpan")
-				.merge(donorsPanelTitleSpan)
-				.text(cbpfName);
 
 			let donorGroup = donorsPanel.main.selectAll(".pbiclcDonorGroup")
 				.data(donorsArray, function(d) {
@@ -1691,19 +1561,10 @@
 					};
 				});
 
-			donorGroup.selectAll("rect, circle")
-				.classed("contributionColorFill", function(d) {
-					return !d.clicked;
-				})
-				.classed("contributionColorDarkerFill", function(d) {
-					return d.clicked;
-				});
-
 			const donorTooltipRectangle = donorGroup.select(".pbiclcDonorTooltipRectangle");
 
 			donorTooltipRectangle.on("mouseover", mouseoverTooltipRectangle)
-				.on("mouseout", mouseoutTooltipRectangle)
-				.on("click", clickTooltipRectangle);
+				.on("mouseout", mouseoutTooltipRectangle);
 
 			xAxisDonors.tickSizeInner(-(lollipopGroupHeight * donorsArray.length));
 
@@ -1734,9 +1595,7 @@
 
 				currentHoveredRect = this;
 
-				if (!datum.clicked) {
-					chartState.selectedDonors.push(datum.isoCode);
-				};
+				chartState.selectedDonors.push(datum.isoCode);
 
 				donorGroup.style("opacity", function(d) {
 					return chartState.selectedDonors.indexOf(d.isoCode) > -1 ? 1 : fadeOpacity;
@@ -1778,61 +1637,14 @@
 
 				currentHoveredRect = null;
 
-				if (!datum.clicked) {
-					const index = chartState.selectedDonors.indexOf(datum.isoCode);
-					if (index > -1) {
-						chartState.selectedDonors.splice(index, 1);
-					};
+				const index = chartState.selectedDonors.indexOf(datum.isoCode);
+				if (index > -1) {
+					chartState.selectedDonors.splice(index, 1);
 				};
 
 				setGroupOpacity();
 
 				tooltip.style("display", "none");
-
-			};
-
-			function clickTooltipRectangle(datum) {
-
-				chartState.selectedCbpfs.length = 0;
-
-				data.dataCbpfs.forEach(function(d) {
-					d.clicked = false;
-				});
-
-				datum.clicked = !datum.clicked;
-
-				if (!datum.clicked) {
-					const index = chartState.selectedDonors.indexOf(datum.isoCode);
-					chartState.selectedDonors.splice(index, 1);
-				} else {
-					if (chartState.selectedDonors.indexOf(datum.isoCode) === -1) {
-						chartState.selectedDonors.push(datum.isoCode);
-					}
-				};
-
-				const allCountries = chartState.selectedDonors.map(function(d) {
-					return allCbpfs.indexOf(d) > -1 ? countryNames[d] + "@donor" : countryNames[d];
-				}).join("|");
-
-				if (queryStringValues.has("country")) {
-					queryStringValues.set("country", allCountries);
-				} else {
-					queryStringValues.append("country", allCountries);
-				};
-
-				const foundDatum = data.dataDonors.find(function(d) {
-					return d.isoCode === datum.isoCode;
-				});
-
-				foundDatum.clicked = datum.clicked;
-
-				tooltip.style("display", "none");
-
-				createTopPanel();
-
-				createDonorsPanel();
-
-				populateSelectedDescriptionDiv();
 
 			};
 
@@ -1906,6 +1718,22 @@
 		};
 
 		function mouseOverButtonsRects(d) {
+			tooltip.style("display", "block")
+				.style("width", "200px")
+				.html("Click for selecting a year. Double-click or ALT + click for selecting a single month.");
+
+			const containerSize = containerDiv.node().getBoundingClientRect();
+
+			const thisSize = this.getBoundingClientRect();
+
+			tooltipSize = tooltip.node().getBoundingClientRect();
+
+			tooltip.style("left", (thisSize.left + thisSize.width / 2 - containerSize.left) > containerSize.width - (tooltipSize.width / 2) - padding[1] ?
+					containerSize.width - tooltipSize.width - padding[1] + "px" : (thisSize.left + thisSize.width / 2 - containerSize.left) < tooltipSize.width / 2 + buttonPanel.padding[3] + padding[0] ?
+					buttonPanel.padding[3] + padding[0] + "px" : (thisSize.left + thisSize.width / 2 - containerSize.left) - (tooltipSize.width / 2) + "px")
+				.style("top", (thisSize.top + thisSize.height / 2 - containerSize.top) < tooltipSize.height ? thisSize.top - containerSize.top + thisSize.height + 2 + "px" :
+					thisSize.top - containerSize.top - tooltipSize.height - 4 + "px");
+
 			d3.select(this).style("fill", unBlue);
 			d3.select(this.parentNode).selectAll("text")
 				.filter(function(e) {
@@ -1915,6 +1743,8 @@
 		};
 
 		function mouseOutButtonsRects(d) {
+			tooltip.style("display", "none")
+				.style("width", null);
 			if (chartState.selectedYear.indexOf(d) > -1) return;
 			d3.select(this).style("fill", "#eaeaea");
 			d3.selectAll(".pbiclcbuttonsText")
@@ -2169,9 +1999,6 @@
 	function resizeSVGHeight(donorsLength, cbpfsLength) {
 
 		donorsPanel.height = (donorsLength * lollipopGroupHeight) + donorsPanel.padding[0] + donorsPanel.padding[2];
-
-		donorsPanelClip.attr("height", donorsPanel.height);
-
 
 		height = padding[0] + padding[2] + topPanel.height + buttonPanel.height +
 			donorsPanel.height + (2 * panelHorizontalPadding);
