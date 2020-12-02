@@ -1,10 +1,10 @@
 (function d3ChartIIFE() {
 
-	const width = 900,
+	const width = 1100,
 		padding = [4, 4, 4, 4],
 		panelHorizontalPadding = 4,
-		buttonsPanelHeight = 0,
-		mapPanelHeight = 430,
+		buttonsPanelHeight = 30,
+		mapPanelHeight = 510,
 		legendPanelHeight = 80,
 		legendPanelWidth = 86,
 		legendPanelHorPadding = 2,
@@ -14,13 +14,15 @@
 		mapZoomButtonSize = 26,
 		maxPieSize = 20,
 		minPieSize = 1,
-		buttonsNumber = 6,
+		buttonsNumber = 16,
 		groupNamePadding = 2,
+		topPanelHeight = 60,
+		cerfCircleRadius = 20,
 		unBlue = "#1F69B3",
 		cbpfColor = "#418FDE",
 		cerfColor = "#F9D25B",
-		choroplethColor = "#3289C9",
-		colorInterpolator = d3.interpolateRgb("#FFFFFF", choroplethColor),
+		choroplethColor = "#FBD45C",
+		colorInterpolator = d3.interpolateRgb("#FFFFFF", d3.color(choroplethColor).darker(0.1)),
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		fadeOpacity = 0.2,
 		tooltipMargin = 8,
@@ -28,7 +30,7 @@
 		tooltipSvgHeight = 80,
 		showNamesMargin = 12,
 		tooltipSvgPadding = [12, 36, 2, 96],
-		height = padding[0] + padding[2] + buttonsPanelHeight + mapPanelHeight + panelHorizontalPadding,
+		height = padding[0] + padding[2] + topPanelHeight + buttonsPanelHeight + mapPanelHeight + (2 * panelHorizontalPadding),
 		windowHeight = window.innerHeight,
 		currentDate = new Date(),
 		currentYear = currentDate.getFullYear(),
@@ -215,10 +217,23 @@
 			.style("left", thisMouse[0] - 4 + "px");
 	});
 
+	const topPanel = {
+		main: svg.append("g")
+			.attr("class", "covmaptopPanel")
+			.attr("transform", "translate(" + padding[3] + "," + padding[0] + ")"),
+		width: width - padding[1] - padding[3],
+		height: topPanelHeight,
+		padding: [0, 0, 0, 0],
+		leftPadding: [94, 280, 494, 890, 904, 970],
+		mainValueVerPadding: 12,
+		mainValueHorPadding: 2,
+		linePadding: 8
+	};
+
 	const buttonsPanel = {
 		main: svg.append("g")
 			.attr("class", "oneampbuttonsPanel")
-			.attr("transform", "translate(" + padding[3] + "," + padding[0] + ")"),
+			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + topPanel.height + panelHorizontalPadding) + ")"),
 		width: width - padding[1] - padding[3],
 		height: buttonsPanelHeight,
 		padding: [0, 0, 0, 0],
@@ -229,14 +244,14 @@
 		arrowPadding: 18,
 		cbpfMargin: 386,
 		cbpfButtonsMargin: 426,
-		cerfMargin: 606,
-		cerfButtonsMargin: 646,
+		cerfMargin: 806,
+		cerfButtonsMargin: 846,
 	};
 
 	const mapPanel = {
 		main: svg.append("g")
 			.attr("class", "oneampmapPanel")
-			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + buttonsPanel.height + panelHorizontalPadding) + ")"),
+			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + topPanel.height + buttonsPanel.height + (2 * panelHorizontalPadding)) + ")"),
 		width: width - padding[1] - padding[3],
 		height: mapPanelHeight,
 		padding: [0, 0, 0, 0],
@@ -245,7 +260,7 @@
 	const legendPanel = {
 		main: svg.append("g")
 			.attr("class", "oneamplegendPanel")
-			.attr("transform", "translate(" + (padding[3] + legendPanelHorPadding) + "," + (padding[0] + buttonsPanel.height + panelHorizontalPadding + mapPanel.height - legendPanelHeight - legendPanelVertPadding) + ")"),
+			.attr("transform", "translate(" + (padding[3] + legendPanelHorPadding) + "," + (padding[0] + topPanel.height + buttonsPanel.height + panelHorizontalPadding + mapPanel.height - legendPanelHeight - legendPanelVertPadding) + ")"),
 		width: legendPanelWidth,
 		height: legendPanelHeight,
 		padding: [20, 0, 12, 4],
@@ -254,7 +269,7 @@
 	const mapZoomButtonPanel = {
 		main: svg.append("g")
 			.attr("class", "oneampmapZoomButtonPanel")
-			.attr("transform", "translate(" + (padding[3] + mapZoomButtonHorPadding) + "," + (padding[0] + buttonsPanel.height + panelHorizontalPadding + mapZoomButtonVertPadding) + ")"),
+			.attr("transform", "translate(" + (padding[3] + mapZoomButtonHorPadding) + "," + (padding[0] + topPanel.height + buttonsPanel.height + panelHorizontalPadding + mapZoomButtonVertPadding) + ")"),
 		width: mapZoomButtonSize,
 		height: mapZoomButtonSize * 2,
 		padding: [4, 4, 4, 4],
@@ -267,12 +282,6 @@
 		padding: [0, 0, 0, 0],
 	};
 
-	const mapBackground = mapPanel.main.append("rect")
-		.attr("class", "oneampmapBackground")
-		.attr("width", mapPanel.width)
-		.attr("height", mapPanel.height)
-		.style("fill", mapBackgroundColor);
-
 	const mapPanelClip = mapPanel.main.append("clipPath")
 		.attr("id", "oneampmapPanelClip")
 		.append("rect")
@@ -281,23 +290,23 @@
 
 	mapPanel.main.attr("clip-path", "url(#oneampmapPanelClip)");
 
-	const mapContainer = mapPanel.main.append("g")
-		.attr("class", "oneampmapContainer");
-
 	const zoomLayer = mapPanel.main.append("g")
 		.attr("class", "oneampzoomLayer")
 		.style("opacity", 0)
 		.attr("cursor", "move")
 		.attr("pointer-events", "all");
 
-	// const zoomRectangle = zoomLayer.append("rect")
-	// 	.attr("width", mapPanel.width)
-	// 	.attr("height", mapPanel.height);
+	const zoomRectangle = zoomLayer.append("rect")
+		.attr("width", mapPanel.width)
+		.attr("height", mapPanel.height);
+
+	const mapContainer = mapPanel.main.append("g")
+		.attr("class", "oneampmapContainer");
 
 	const piesContainer = mapPanel.main.append("g")
 		.attr("class", "oneamppiesContainer");
 
-	const mapProjection = d3.geoEquirectangular();
+	const mapProjection = d3.geoEqualEarth();
 
 	const mapPath = d3.geoPath()
 		.projection(mapProjection);
@@ -433,16 +442,19 @@
 		if (!lazyLoad) {
 			draw(rawData, mapData);
 		} else {
-			d3.select(window).on("scroll.oneamp", checkPosition);
-			checkPosition();
-		};
-
-		function checkPosition() {
-			const containerPosition = containerDiv.node().getBoundingClientRect();
-			if (!(containerPosition.bottom < 0 || containerPosition.top - windowHeight > 0)) {
-				d3.select(window).on("scroll.oneamp", null);
-				draw(rawData, mapData);
-			};
+			const chartDiv = document.getElementById("allocation-overview");
+			let observer = new MutationObserver(function(mutations) {
+				const show = mutations.some(function(e) {
+					return e.target.classList.contains("show")
+				});
+				if (show) {
+					observer.disconnect();
+					draw(rawData, mapData)
+				};
+			});
+			observer.observe(chartDiv, {
+				attributes: true
+			});
 		};
 
 		//end of csvCallback
@@ -477,46 +489,21 @@
 
 		createTitle(rawData);
 
-		//createButtonsPanel(rawData);
+		createButtonsPanel(rawData);
 
-		createMap(mapData, data);
-
-		verifyCentroids(rawData);
+		createMap(mapData);
 
 		createZoomButtons();
 
 		//createCheckboxes();
 
-		//createPies(data);
+		createPies(data);
 
-		//createLegend(data);
+		createLegend(data);
 
 		createFooterDiv();
 
 		if (showHelp) createAnnotationsDiv();
-
-		zoom.on("zoom", zoomed);
-
-		function zoomed() {
-
-			mapContainer.attr("transform", d3.event.transform);
-
-			mapContainer.select(".mapborders")
-				.style("stroke-width", 1 / d3.event.transform.k + "px");
-
-			//end of zoomed
-		};
-
-		mapZoomButtonPanel.main.select(".oneampzoomInGroup")
-			.on("click", function() {
-				zoom.scaleBy(mapPanel.main.transition().duration(duration), 2);
-			});
-
-		mapZoomButtonPanel.main.select(".oneampzoomOutGroup")
-			.on("click", function() {
-				zoom.scaleBy(mapPanel.main.transition().duration(duration), 0.5);
-			});
-
 
 		//end of draw
 	};
@@ -694,145 +681,79 @@
 		//end of createTitle
 	};
 
-	function createMap(mapData, data) {
-
-		const allValues = data.map(function(d) {
-			return d.cerftotal + d.cbpftotal;
-		}).sort(function(a, b) {
-			return a - b
-		});
-
-		colorScale.domain(allValues);
+	function createMap(mapData) {
 
 		const features = topojson.feature(mapData, mapData.objects.countries).features;
 
 		const landObject = topojson.feature(mapData, mapData.objects.land);
 
+		const featuresWithoutAntarctica = topojson.feature(mapData, mapData.objects.countries);
+
+		featuresWithoutAntarctica.features = featuresWithoutAntarctica.features.filter(function(d) {
+			return d.properties.isoCode !== "AQ";
+		});
+
 		mapProjection.fitExtent([
 			[mapPanel.padding[3], mapPanel.padding[0]],
 			[(mapPanel.width - mapPanel.padding[1] - mapPanel.padding[3]), (mapPanel.height - mapPanel.padding[0] - mapPanel.padding[2])]
-		], landObject);
+		], featuresWithoutAntarctica);
 
-		// const land = mapContainer.append("path")
-		// 	.attr("d", mapPath(landObject))
-		// 	.style("fill", "#F9F9F7");
-
-		const fills = mapContainer.selectAll(null)
+		const paths = mapContainer.selectAll(null)
 			.data(features)
 			.enter()
 			.append("path")
 			.attr("d", mapPath)
-			.style("fill", function(d) {
-				const country = data.find(function(e) {
-					return e.isoCode === d.properties.isoCode;
-				});
-				return country ? colorScale(country.cerftotal + country.cbpftotal) : "#F1F1EE";
-			});
+			.attr("class", "oneampMapPath")
+			.style("fill", "#F1F1F1");
 
 		const borders = mapContainer.append("path")
-			.attr("class", "mapborders")
 			.attr("d", mapPath(topojson.mesh(mapData, mapData.objects.countries, function(a, b) {
-				return a !== b;
+				return a !== b && !(a.properties.name === "Somalia" && b.properties.name === "Somaliland");
 			})))
+			.attr("class", "oneampBorder")
 			.style("fill", "none")
-			.style("stroke", "#DEDEDD")
+			.style("stroke", "#C5C5C5")
 			.style("stroke-width", "1px");
 
-		features.forEach(function(d) {
-			centroids[d.properties.isoCode] = {
-				x: mapPath.centroid(d.geometry)[0],
-				y: mapPath.centroid(d.geometry)[1]
-			}
-		});
+		const cerfCircle = mapContainer.append("circle")
+			.datum({
+				properties: {
+					isoCode: "XG"
+				}
+			})
+			.attr("class", "oneampMapPath")
+			.attr("cx", function() {
+				const globalCerf = hardcodedAllocations.find(function(e) {
+					return e.isoCode === "XG"
+				});
+				return mapProjection([globalCerf.long, globalCerf.lat])[0]
+			})
+			.attr("cy", function() {
+				const globalCerf = hardcodedAllocations.find(function(e) {
+					return e.isoCode === "XG"
+				});
+				return mapProjection([globalCerf.long, globalCerf.lat])[1]
+			})
+			.attr("r", cerfCircleRadius)
+			.style("fill", "#F1F1F1")
+			.style("stroke", "#C5C5C5")
+			.style("stroke-width", "1px");
 
-		// centroids.XX = centroids.TR;
-
-		//Countries with problems:
-		//"KM","WS","AG","DM","MH","CV"
-		//Comoros, (west) Samoa, Antigua and Barbuda, Dominica, Marshall Islands, Cabo Verde
-		//And the fake codes: XV, XA and XG
-		hardcodedAllocations.forEach(function(d) {
-			const projected = mapProjection([d.long, d.lat]);
-			centroids[d.isoCode] = {
-				x: projected[0],
-				y: projected[1]
-			};
-		});
-
-		fills.on("mouseover", mouseover)
-			.on("mouseout", function() {
-				tooltip.html(null)
-					.style("display", "none");
-			});
-
-		function mouseover(d) {
-
-			const datum = data.find(function(e) {
-				return e.isoCode === d.properties.isoCode;
-			});
-
-			if (!datum) return;
-
-			tooltip.style("display", "block")
-				.html(null);
-
-			tooltip.append("div")
-				.style("margin-bottom", "10px")
-				.style("font-size", "16px")
-				.style("color", d3.color(cerfColor).darker(0.8))
-				.style("width", "260px")
-				.append("strong")
-				.html(datum.country);
-
-			const tooltipContainer = tooltip.append("div")
-				.style("margin", "0px")
-				.style("display", "flex")
-				.style("flex-wrap", "wrap")
-				.style("width", "260px");
-
-			const tooltipData = [{
-				title: "CERF (total)",
-				property: "cerftotal",
-				color: d3.color(cerfColor).darker(0.4)
-			}, {
-				title: "CERF (underfunded)",
-				property: "cerfunderfunded",
-				color: d3.color(cerfColor).darker(0.4)
-			}, {
-				title: "CERF (rapid response)",
-				property: "cerfrapidresponse",
-				color: d3.color(cerfColor).darker(0.4)
-			}];
-
-			tooltipData.forEach(function(e, i) {
-				tooltipContainer.append("div")
-					.style("display", "flex")
-					.style("flex", "0 56%")
-					.html(e.title);
-
-				tooltipContainer.append("div")
-					.style("display", "flex")
-					.style("flex", "0 44%")
-					.style("justify-content", "flex-end")
-					.style("color", e.color)
-					.html("$" + formatMoney0Decimals(datum[e.property]).replace("G", "B"));
-			});
-
-			const thisBox = this.getBoundingClientRect();
-
-			const containerBox = containerDiv.node().getBoundingClientRect();
-
-			const tooltipBox = tooltip.node().getBoundingClientRect();
-
-			const thisOffsetTop = (thisBox.bottom + thisBox.top) / 2 - containerBox.top - (tooltipBox.height / 2);
-
-			const thisOffsetLeft = containerBox.right - thisBox.right > tooltipBox.width + (2 * tooltipMargin) ?
-				thisBox.right - containerBox.left + tooltipMargin :
-				thisBox.left - containerBox.left - tooltipBox.width - tooltipMargin;
-
-			tooltip.style("top", thisOffsetTop + "px")
-				.style("left", thisOffsetLeft + "px");
-		};
+		const cerfText = mapContainer.append("text")
+			.attr("class", "oneampCerfText")
+			.attr("x", function() {
+				const globalCerf = hardcodedAllocations.find(function(e) {
+					return e.isoCode === "XG"
+				});
+				return mapProjection([globalCerf.long, globalCerf.lat])[0]
+			})
+			.attr("y", function() {
+				const globalCerf = hardcodedAllocations.find(function(e) {
+					return e.isoCode === "XG"
+				});
+				return mapProjection([globalCerf.long, globalCerf.lat])[1] + cerfCircleRadius + 8;
+			})
+			.text("CERF Global");
 
 		//end of createMap
 	};
@@ -956,7 +877,7 @@
 
 		const clipPathGroup = buttonsPanel.main.append("g")
 			.attr("class", "oneampClipPathGroup")
-			.attr("transform", "translate(" + (buttonsPanel.padding[3] + buttonsPanel.arrowPadding) + ",0)")
+			.attr("transform", "translate(" + (buttonsPanel.padding[3]) + ",0)")
 			.attr("clip-path", "url(#oneampclip)");
 
 		const buttonsGroup = clipPathGroup.append("g")
@@ -998,62 +919,6 @@
 				return d;
 			});
 
-		const cbpfTitle = buttonsPanel.main.append("text")
-			.attr("class", "oneampcbpfTitle")
-			.attr("y", buttonsPanel.height / 1.6)
-			.attr("x", buttonsPanel.cbpfMargin)
-			.text("CBPF:");
-
-		const buttonsCbpfGroup = buttonsPanel.main.selectAll(null)
-			.data(cbpfAllocationTypes)
-			.enter()
-			.append("g")
-			.attr("class", "oneampbuttonsCbpfGroup")
-			.attr("transform", "translate(" + (buttonsPanel.cbpfButtonsMargin) + ",0)")
-			.style("cursor", "pointer");
-
-		const buttonsCbpfRects = buttonsCbpfGroup.append("rect")
-			.attr("rx", "2px")
-			.attr("ry", "2px")
-			.attr("class", "oneampbuttonsCbpfRects")
-			.attr("height", buttonsPanel.height - buttonsPanel.buttonVerticalPadding * 2)
-			.attr("y", buttonsPanel.buttonVerticalPadding)
-			.style("fill", function(d) {
-				return d === chartState.selectedCbpfAllocation ? cbpfColor : "#eaeaea";
-			});
-
-		const buttonsCbpfText = buttonsCbpfGroup.append("text")
-			.attr("class", "oneampbuttonsCbpfText")
-			.attr("font-family", "Arial")
-			.attr("font-size", 12)
-			.attr("y", buttonsPanel.height / 1.6)
-			.attr("x", buttonsPanel.buttonsPadding)
-			.style("fill", function(d) {
-				return d === chartState.selectedCbpfAllocation ? "white" : "#444";
-			})
-			.text(function(d) {
-				return capitalize(d);
-			})
-			.each(function() {
-				localVariable.set(this.parentNode, this.getComputedTextLength())
-			});
-
-		buttonsCbpfRects.each(function() {
-			d3.select(this)
-				.attr("width", localVariable.get(this.parentNode) + 2 * buttonsPanel.buttonsPadding);
-		});
-
-		buttonsCbpfGroup.each(function(_, i) {
-			d3.select(this).attr("transform", "translate(" + (i ? localVariable.get(this.previousSibling) : buttonsPanel.cbpfButtonsMargin) + ",0)")
-			localVariable.set(this, this.getBBox().width + buttonsPanel.buttonsMargin + (i ? localVariable.get(this.previousSibling) : buttonsPanel.cbpfButtonsMargin));
-		});
-
-		const cerfTitle = buttonsPanel.main.append("text")
-			.attr("class", "oneampcerfTitle")
-			.attr("y", buttonsPanel.height / 1.6)
-			.attr("x", buttonsPanel.cerfMargin)
-			.text("CERF:");
-
 		const buttonsCerfGroup = buttonsPanel.main.selectAll(null)
 			.data(cerfAllocationTypes)
 			.enter()
@@ -1069,7 +934,7 @@
 			.attr("height", buttonsPanel.height - buttonsPanel.buttonVerticalPadding * 2)
 			.attr("y", buttonsPanel.buttonVerticalPadding)
 			.style("fill", function(d) {
-				return d === chartState.selectedCbpfAllocation ? d3.color(cerfColor).darker(0.4) : "#eaeaea";
+				return d === chartState.selectedCbpfAllocation ? d3.color(cerfColor).darker(0.2) : "#eaeaea";
 			});
 
 		const buttonsCerfText = buttonsCerfGroup.append("text")
@@ -1099,39 +964,86 @@
 		});
 
 		const leftArrow = buttonsPanel.main.append("g")
-			.attr("class", "oneampLeftArrowGroup")
+			.attr("class", "pbiobeLeftArrowGroup")
 			.style("cursor", "pointer")
+			.style("opacity", 0)
+			.attr("pointer-events", "none")
 			.attr("transform", "translate(" + buttonsPanel.padding[3] + ",0)");
 
 		const leftArrowRect = leftArrow.append("rect")
 			.style("fill", "white")
 			.attr("width", buttonsPanel.arrowPadding)
-			.attr("height", buttonsPanel.height);
+			.attr("height", buttonsPanel.height - buttonsPanel.padding[0] - buttonsPanel.buttonVerticalPadding * 2)
+			.attr("y", buttonsPanel.buttonVerticalPadding);
 
 		const leftArrowText = leftArrow.append("text")
-			.attr("class", "oneampleftArrowText")
+			.attr("class", "pbiobeleftArrowText")
 			.attr("x", 0)
 			.attr("y", buttonsPanel.height - buttonsPanel.buttonVerticalPadding * 2.1)
 			.style("fill", "#666")
 			.text("\u25c4");
 
 		const rightArrow = buttonsPanel.main.append("g")
-			.attr("class", "oneampRightArrowGroup")
+			.attr("class", "pbiobeRightArrowGroup")
 			.style("cursor", "pointer")
+			.style("opacity", 0)
+			.attr("pointer-events", "none")
 			.attr("transform", "translate(" + (buttonsPanel.padding[3] + buttonsPanel.arrowPadding +
 				(buttonsNumber * buttonsPanel.buttonWidth)) + ",0)");
 
 		const rightArrowRect = rightArrow.append("rect")
 			.style("fill", "white")
 			.attr("width", buttonsPanel.arrowPadding)
-			.attr("height", buttonsPanel.height);
+			.attr("height", buttonsPanel.height - buttonsPanel.padding[0] - buttonsPanel.buttonVerticalPadding * 2)
+			.attr("y", buttonsPanel.buttonVerticalPadding);
 
 		const rightArrowText = rightArrow.append("text")
-			.attr("class", "oneamprightArrowText")
+			.attr("class", "pbioberightArrowText")
 			.attr("x", -1)
 			.attr("y", buttonsPanel.height - buttonsPanel.buttonVerticalPadding * 2.1)
 			.style("fill", "#666")
 			.text("\u25ba");
+
+		if (yearsArray.length > buttonsNumber) {
+
+			clipPathGroup.attr("transform", "translate(" + (buttonsPanel.padding[3] + buttonsPanel.arrowPadding) + ",0)")
+
+			rightArrow.style("opacity", 1)
+				.attr("pointer-events", "all");
+
+			leftArrow.style("opacity", 1)
+				.attr("pointer-events", "all");
+
+			repositionButtonsGroup();
+
+			checkCurrentTranslate();
+
+			leftArrow.on("click", function() {
+				leftArrow.attr("pointer-events", "none");
+				const currentTranslate = parseTransform(buttonsGroup.attr("transform"))[0];
+				rightArrow.select("text").style("fill", "#666");
+				rightArrow.attr("pointer-events", "all");
+				buttonsGroup.transition()
+					.duration(duration)
+					.attr("transform", "translate(" +
+						Math.min(0, (currentTranslate + buttonsNumber * buttonsPanel.buttonWidth)) + ",0)")
+					.on("end", checkArrows);
+			});
+
+			rightArrow.on("click", function() {
+				rightArrow.attr("pointer-events", "none");
+				const currentTranslate = parseTransform(buttonsGroup.attr("transform"))[0];
+				leftArrow.select("text").style("fill", "#666");
+				leftArrow.attr("pointer-events", "all");
+				buttonsGroup.transition()
+					.duration(duration)
+					.attr("transform", "translate(" +
+						Math.max(-((yearsArray.length - buttonsNumber) * buttonsPanel.buttonWidth),
+							(-(Math.abs(currentTranslate) + buttonsNumber * buttonsPanel.buttonWidth))) +
+						",0)")
+					.on("end", checkArrows);
+			});
+		};
 
 		buttonsRects.on("mouseover", mouseOverButtonsRects)
 			.on("mouseout", mouseOutButtonsRects)
@@ -1151,42 +1063,6 @@
 					localVariable.set(this, null);
 				};
 			});
-
-		buttonsCbpfRects.on("mouseover", mouseOverButtonsCbpfRects)
-			.on("mouseout", mouseOutButtonsCbpfRects);
-
-		buttonsCerfRects.on("mouseover", mouseOverButtonsCerfRects)
-			.on("mouseout", mouseOutButtonsCerfRects);
-
-		repositionButtonsGroup();
-
-		checkCurrentTranslate();
-
-		leftArrow.on("click", function() {
-			leftArrow.attr("pointer-events", "none");
-			const currentTranslate = parseTransform(buttonsGroup.attr("transform"))[0];
-			rightArrow.select("text").style("fill", "#666");
-			rightArrow.attr("pointer-events", "all");
-			buttonsGroup.transition()
-				.duration(duration)
-				.attr("transform", "translate(" +
-					Math.min(0, (currentTranslate + buttonsNumber * buttonsPanel.buttonWidth)) + ",0)")
-				.on("end", checkArrows);
-		});
-
-		rightArrow.on("click", function() {
-			rightArrow.attr("pointer-events", "none");
-			const currentTranslate = parseTransform(buttonsGroup.attr("transform"))[0];
-			leftArrow.select("text").style("fill", "#666");
-			leftArrow.attr("pointer-events", "all");
-			buttonsGroup.transition()
-				.duration(duration)
-				.attr("transform", "translate(" +
-					Math.max(-((yearsArray.length - buttonsNumber) * buttonsPanel.buttonWidth),
-						(-(Math.abs(currentTranslate) + buttonsNumber * buttonsPanel.buttonWidth))) +
-					",0)")
-				.on("end", checkArrows);
-		});
 
 		function checkArrows() {
 
@@ -1241,6 +1117,27 @@
 		};
 
 		function mouseOverButtonsRects(d) {
+			tooltip.style("display", "block")
+				.html(null)
+
+			const innerTooltip = tooltip.append("div")
+				.style("max-width", "200px")
+				.attr("id", "pbinadInnerTooltipDiv");
+
+			innerTooltip.html("Click for selecting a year. Double-click or ALT + click for selecting a single month.");
+
+			const containerSize = containerDiv.node().getBoundingClientRect();
+
+			const thisSize = this.getBoundingClientRect();
+
+			tooltipSize = tooltip.node().getBoundingClientRect();
+
+			tooltip.style("left", (thisSize.left + thisSize.width / 2 - containerSize.left) > containerSize.width - (tooltipSize.width / 2) - padding[1] ?
+					containerSize.width - tooltipSize.width - padding[1] + "px" : (thisSize.left + thisSize.width / 2 - containerSize.left) < tooltipSize.width / 2 + buttonsPanel.padding[3] + padding[0] ?
+					buttonsPanel.padding[3] + padding[0] + "px" : (thisSize.left + thisSize.width / 2 - containerSize.left) - (tooltipSize.width / 2) + "px")
+				.style("top", (thisSize.top + thisSize.height / 2 - containerSize.top) < tooltipSize.height ? thisSize.top - containerSize.top + thisSize.height + 2 + "px" :
+					thisSize.top - containerSize.top - tooltipSize.height - 4 + "px");
+
 			d3.select(this).style("fill", unBlue);
 			buttonsText.filter(function(e) {
 					return e === d
@@ -1249,43 +1146,10 @@
 		};
 
 		function mouseOutButtonsRects(d) {
+			tooltip.style("display", "none");
 			if (chartState.selectedYear.indexOf(d) > -1) return;
 			d3.select(this).style("fill", "#eaeaea");
 			buttonsText.filter(function(e) {
-					return e === d
-				})
-				.style("fill", "#444");
-		};
-
-		function mouseOverButtonsCbpfRects(d) {
-			d3.select(this).style("fill", cbpfColor);
-			buttonsCbpfText.filter(function(e) {
-					return e === d
-				})
-				.style("fill", "white");
-		};
-
-		function mouseOutButtonsCbpfRects(d) {
-			if (d === chartState.selectedCbpfAllocation) return;
-			d3.select(this).style("fill", "#eaeaea");
-			buttonsCbpfText.filter(function(e) {
-					return e === d
-				})
-				.style("fill", "#444");
-		};
-
-		function mouseOverButtonsCerfRects(d) {
-			d3.select(this).style("fill", d3.color(cerfColor).darker(0.4));
-			buttonsCerfText.filter(function(e) {
-					return e === d
-				})
-				.style("fill", "white");
-		};
-
-		function mouseOutButtonsCerfRects(d) {
-			if (d === chartState.selectedCerfAllocation) return;
-			d3.select(this).style("fill", "#eaeaea");
-			buttonsCerfText.filter(function(e) {
 					return e === d
 				})
 				.style("fill", "#444");
@@ -1337,33 +1201,26 @@
 			//end of clickButtonsRects
 		};
 
-		buttonsCbpfRects.on("click", function(d) {
+		buttonsCerfRects.on("mouseover", mouseOverButtonsCerfRects)
+			.on("mouseout", mouseOutButtonsCerfRects);
 
-			chartState.selectedCbpfAllocation = d;
+		function mouseOverButtonsCerfRects(d) {
+			d3.select(this).style("fill", d3.color(cerfColor).darker(0.2));
+			buttonsCerfText.filter(function(e) {
+					return e === d
+				})
+				.style("fill", "white");
+		};
 
-			if (queryStringValues.has("cbpfallocation")) {
-				queryStringValues.set("cbpfallocation", d);
-			} else {
-				queryStringValues.append("cbpfallocation", d);
-			};
+		function mouseOutButtonsCerfRects(d) {
+			if (d === chartState.selectedCerfAllocation) return;
+			d3.select(this).style("fill", "#eaeaea");
+			buttonsCerfText.filter(function(e) {
+					return e === d
+				})
+				.style("fill", "#444");
+		};
 
-			buttonsPanel.main.selectAll(".oneampbuttonsCbpfRects")
-				.style("fill", function(e) {
-					return e === chartState.selectedCbpfAllocation ? cbpfColor : "#eaeaea";
-				});
-
-			buttonsPanel.main.selectAll(".oneampbuttonsCbpfText")
-				.style("fill", function(e) {
-					return e === chartState.selectedCbpfAllocation ? "white" : "#444";
-				});
-
-			const data = processData(rawData);
-
-			createPies(data);
-
-			createLegend(data);
-
-		});
 
 		buttonsCerfRects.on("click", function(d) {
 
@@ -1399,218 +1256,119 @@
 	function createPies(unfilteredData) {
 
 		const data = unfilteredData.filter(function(d) {
-			return d["cbpf" + chartState.selectedCbpfAllocation] + d["cerf" + chartState.selectedCerfAllocation];
+			return d["cerf" + chartState.selectedCerfAllocation];
 		});
 
 		zoom.on("zoom", zoomed);
 
-		const currentTransform = d3.zoomTransform(mapPanel.main.node());
-
-		data.sort(function(a, b) {
-			return (b["cbpf" + chartState.selectedCbpfAllocation] + b["cerf" + chartState.selectedCerfAllocation]) -
-				(a["cbpf" + chartState.selectedCbpfAllocation] + a["cerf" + chartState.selectedCerfAllocation]);
+		const allValues = data.map(function(d) {
+			return d["cerf" + chartState.selectedCerfAllocation];
+		}).sort(function(a, b) {
+			return a - b
 		});
 
-		const maxValue = d3.max(data, function(d) {
-			return d["cbpf" + chartState.selectedCbpfAllocation] + d["cerf" + chartState.selectedCerfAllocation];
-		});
+		colorScale.domain(allValues);
 
-		radiusScale.domain([0, maxValue || 0]);
-
-		let pieGroup = piesContainer.selectAll(".oneamppieGroup")
+		const countries = mapContainer.selectAll(".oneampMapPath")
 			.data(data, function(d) {
-				return d.isoCode;
+				return d.properties ? d.properties.isoCode : d.isoCode;
 			});
 
-		const pieGroupExit = pieGroup.exit();
-
-		pieGroupExit.selectAll("text, tspan")
-			.transition()
-			.duration(duration * 0.9)
-			.style("opacity", 0);
-
-		pieGroupExit.each(function(d) {
-			const thisGroup = d3.select(this);
-			thisGroup.selectAll(".oneampslice")
-				.transition()
-				.duration(duration)
-				.attrTween("d", function(d) {
-					const finalObject = d.data.type === "cerf" ? {
-						startAngle: 0,
-						endAngle: 0,
-						outerRadius: 0
-					} : {
-						startAngle: Math.PI * 2,
-						endAngle: Math.PI * 2,
-						outerRadius: 0
-					};
-					const i = d3.interpolateObject(localVariable.get(this), finalObject);
-					return function(t) {
-						return arcGenerator(i(t));
-					};
-				})
-				.on("end", function() {
-					thisGroup.remove();
-				})
-		});
-
-		const pieGroupEnter = pieGroup.enter()
-			.append("g")
-			.attr("class", "oneamppieGroup")
-			.style("opacity", 1)
-			.attr("transform", function(d) {
-				return "translate(" + (centroids[d.isoCode].x * currentTransform.k + currentTransform.x) +
-					"," + (centroids[d.isoCode].y * currentTransform.k + currentTransform.y) + ")";
-			});
-
-		const groupName = pieGroupEnter.append("text")
-			.attr("class", "oneampgroupName")
-			.attr("x", function(d) {
-				return radiusScale(d["cbpf" + chartState.selectedCbpfAllocation] + d["cerf" + chartState.selectedCerfAllocation]) + groupNamePadding;
-			})
-			.attr("y", function(d) {
-				return d.labelText.length > 1 ? groupNamePadding * 2 - 5 : groupNamePadding * 2;
-			})
-			.style("opacity", 0)
-			.text(function(d) {
-				return d.labelText.length > 2 ? d.labelText[0] + " " + d.labelText[1] :
-					d.labelText[0];
-			})
-			.each(function(d) {
-				if (d.labelText.length > 1) {
-					d3.select(this).append("tspan")
-						.attr("x", radiusScale(d["cbpf" + chartState.selectedCbpfAllocation] + d["cerf" + chartState.selectedCerfAllocation]) + groupNamePadding)
-						.attr("dy", 12)
-						.text(d.labelText.length > 2 ? d.labelText.filter(function(_, i) {
-								return i > 1;
-							}).join(" ") :
-							d.labelText[1]);
-				};
-			});
-
-		pieGroup = pieGroupEnter.merge(pieGroup);
-
-		pieGroup.order();
-
-		pieGroup.select("text")
+		const countriesExit = countries.exit()
 			.transition()
 			.duration(duration)
-			.style("opacity", chartState.showNames ? 1 : 0)
-			.attr("x", function(d) {
-				return radiusScale(d["cbpf" + chartState.selectedCbpfAllocation] + d["cerf" + chartState.selectedCerfAllocation]) + groupNamePadding;
-			});
+			.style("fill", "#F1F1F1");
 
-		pieGroup.select("tspan")
-			.transition()
+		countries.transition()
 			.duration(duration)
-			.style("opacity", chartState.showNames ? 1 : 0)
-			.attr("x", function(d) {
-				return radiusScale(d["cbpf" + chartState.selectedCbpfAllocation] + d["cerf" + chartState.selectedCerfAllocation]) + groupNamePadding;
-			});
-
-		let slices = pieGroup.selectAll(".oneampslice")
-			.data(function(d) {
-				return pieGenerator([{
-					value: d["cerf" + chartState.selectedCerfAllocation],
-					total: d["cbpf" + chartState.selectedCbpfAllocation] + d["cerf" + chartState.selectedCerfAllocation],
-					type: "cerf"
-				}, {
-					value: d["cbpf" + chartState.selectedCbpfAllocation],
-					total: d["cbpf" + chartState.selectedCbpfAllocation] + d["cerf" + chartState.selectedCerfAllocation],
-					type: "cbpf"
-				}].filter(function(e) {
-					return e.value !== 0;
-				}))
-			}, function(d) {
-				return d.data.type;
-			});
-
-		const slicesRemove = slices.exit()
-			.transition()
-			.duration(duration)
-			.attrTween("d", function(d) {
-				const parentDatum = d3.select(this.parentNode).datum();
-				const thisTotal = radiusScale(parentDatum["cbpf" + chartState.selectedCbpfAllocation] + parentDatum["cerf" + chartState.selectedCerfAllocation]);
-				const finalObject = d.data.type === "cerf" ? {
-					startAngle: 0,
-					endAngle: 0,
-					outerRadius: thisTotal
-				} : {
-					startAngle: Math.PI * 2,
-					endAngle: Math.PI * 2,
-					outerRadius: thisTotal
-				};
-				const i = d3.interpolateObject(localVariable.get(this), finalObject);
-				return function(t) {
-					return arcGenerator(i(t));
-				};
-			})
-			.on("end", function() {
-				d3.select(this).remove();
-			})
-
-		const slicesEnter = slices.enter()
-			.append("path")
-			.attr("class", "oneampslice")
 			.style("fill", function(d) {
-				return d.data.type === "cbpf" ? cbpfColor : cerfColor;
-			})
-			.style("stroke", "#666")
-			.style("stroke-width", "0.5px")
-			.each(function(d) {
-				let siblingRadius = 0
-				const siblings = d3.select(this.parentNode).selectAll("path")
-					.each(function() {
-						const thisLocal = localVariable.get(this)
-						if (thisLocal) siblingRadius = thisLocal.outerRadius;
-					});
-				if (d.data.type === "cerf") {
-					localVariable.set(this, {
-						startAngle: 0,
-						endAngle: 0,
-						outerRadius: siblingRadius
-					});
-				} else {
-					localVariable.set(this, {
-						startAngle: Math.PI * 2,
-						endAngle: Math.PI * 2,
-						outerRadius: siblingRadius
-					});
-				};
-			})
-
-		slices = slicesEnter.merge(slices);
-
-		slices.transition()
-			.duration(duration)
-			.attrTween("d", pieTween);
-
-		function pieTween(d) {
-			const i = d3.interpolateObject(localVariable.get(this), {
-				startAngle: d.startAngle,
-				endAngle: d.endAngle,
-				outerRadius: radiusScale(d.data.total)
+				return colorScale(d["cerf" + chartState.selectedCerfAllocation]);
 			});
-			localVariable.set(this, i(1));
-			return function(t) {
-				return arcGenerator(i(t));
-			};
-		};
 
-		pieGroup.on("mouseover", pieGroupMouseover)
-			.on("mouseout", pieGroupMouseout);
+		countries.on("mouseover", mouseover)
+			.on("mouseout", function() {
+				tooltip.html(null)
+					.style("display", "none");
+			});
+
+		function mouseover(d) {
+
+			tooltip.style("display", "block")
+				.html(null);
+
+			tooltip.append("div")
+				.style("margin-bottom", "10px")
+				.style("font-size", "16px")
+				.style("color", d3.color(cerfColor).darker(0.8))
+				.style("width", "260px")
+				.append("strong")
+				.html(d.country);
+
+			const tooltipContainer = tooltip.append("div")
+				.style("margin", "0px")
+				.style("display", "flex")
+				.style("flex-wrap", "wrap")
+				.style("width", "260px");
+
+			const tooltipData = [{
+				title: "Total:",
+				property: "cerftotal",
+				color: d3.color(cerfColor).darker(0.4)
+			}, {
+				title: "Underfunded:",
+				property: "cerfunderfunded",
+				color: d3.color(cerfColor).darker(0.4)
+			}, {
+				title: "Rapid Response:",
+				property: "cerfrapidresponse",
+				color: d3.color(cerfColor).darker(0.4)
+			}];
+
+			tooltipData.forEach(function(e, i) {
+				tooltipContainer.append("div")
+					.style("display", "flex")
+					.style("flex", "0 56%")
+					.html(e.title);
+
+				tooltipContainer.append("div")
+					.style("display", "flex")
+					.style("flex", "0 44%")
+					.style("justify-content", "flex-end")
+					.style("color", e.color)
+					.html("$" + formatMoney0Decimals(d[e.property]).replace("G", "B"));
+			});
+
+			const thisBox = this.getBoundingClientRect();
+
+			const containerBox = containerDiv.node().getBoundingClientRect();
+
+			const tooltipBox = tooltip.node().getBoundingClientRect();
+
+			const thisOffsetTop = (thisBox.bottom + thisBox.top) / 2 - containerBox.top - (tooltipBox.height / 2);
+
+			const thisOffsetLeft = containerBox.right - thisBox.right > tooltipBox.width + (2 * tooltipMargin) ?
+				thisBox.right - containerBox.left + tooltipMargin :
+				thisBox.left - containerBox.left - tooltipBox.width - tooltipMargin;
+
+			tooltip.style("top", thisOffsetTop + "px")
+				.style("left", thisOffsetLeft + "px");
+		};
 
 		function zoomed() {
 
 			mapContainer.attr("transform", d3.event.transform);
 
-			mapContainer.select("path:nth-child(2)")
+			mapContainer.selectAll("circle.oneampMapPath, .oneampBorder")
 				.style("stroke-width", 1 / d3.event.transform.k + "px");
 
-			pieGroup.attr("transform", function(d) {
-				return "translate(" + (centroids[d.isoCode].x * d3.event.transform.k + d3.event.transform.x) +
-					"," + (centroids[d.isoCode].y * d3.event.transform.k + d3.event.transform.y) + ")";
-			});
+			mapContainer.select(".oneampCerfText")
+				.style("font-size", 10 / d3.event.transform.k + "px")
+				.attr("y", function() {
+					const globalCerf = hardcodedAllocations.find(function(e) {
+						return e.isoCode === "XG"
+					});
+					return mapProjection([globalCerf.long, globalCerf.lat])[1] + cerfCircleRadius + 8 / d3.event.transform.k;
+				});
 
 			//end of zoomed
 		};
@@ -1625,38 +1383,10 @@
 				zoom.scaleBy(mapPanel.main.transition().duration(duration), 0.5);
 			});
 
-		function pieGroupMouseover(datum) {
-
-			currentHoveredElem = this;
-
-			pieGroup.style("opacity", function() {
-				return this === currentHoveredElem ? 1 : fadeOpacity;
-			});
-
-
-		};
-
-		function pieGroupMouseout() {
-
-			if (isSnapshotTooltipVisible) return;
-
-			currentHoveredElem = null;
-
-			pieGroup.style("opacity", 1);
-
-			tooltip.html(null)
-				.style("display", "none");
-
-		};
-
 		//end of createPies
 	};
 
 	function createLegend(data) {
-
-		const maxDataValue = radiusScale.domain()[1];
-
-		const sizeCirclesData = [0, maxDataValue / 4, maxDataValue / 2, maxDataValue];
 
 		const legendTitle = legendPanel.main.selectAll(".oneamplegendTitle")
 			.data([true])
@@ -1667,96 +1397,63 @@
 			.attr("y", legendPanel.padding[0] - 10)
 			.text("Legend");
 
-		let legendSizeGroups = legendPanel.main.selectAll(".oneamplegendSizeGroups")
-			.data([true]);
+		let legendRects = legendPanel.main.selectAll(".oneampLegendRects")
+			.data([colorScale.domain()[0]].concat(colorScale.quantiles()));
 
-		legendSizeGroups = legendSizeGroups.enter()
-			.append("g")
-			.attr("class", "oneamplegendSizeGroups")
-			.merge(legendSizeGroups);
-
-		let legendSizeGroup = legendSizeGroups.selectAll(".oneamplegendSizeGroup")
-			.data(sizeCirclesData);
-
-		const legendSizeGroupEnter = legendSizeGroup.enter()
-			.append("g")
-			.attr("class", "oneamplegendSizeGroup");
-
-		const legendSizeLines = legendSizeGroupEnter.append("line")
-			.attr("x1", legendPanel.padding[3] + radiusScale.range()[1])
-			.attr("x2", legendPanel.padding[3] + radiusScale.range()[1] + 30)
-			.attr("y1", function(d) {
-				return d ? legendPanel.padding[0] + (radiusScale.range()[1] * 2) - radiusScale(d) * 2 :
-					legendPanel.padding[0] + (radiusScale.range()[1] * 2);
+		legendRects = legendRects.enter()
+			.append("rect")
+			.attr("class", "oneampLegendRects")
+			.attr("y", legendPanel.padding[0])
+			.attr("x", function(_, i) {
+				return legendPanel.padding[3] + i * 9
 			})
-			.attr("y2", function(d) {
-				return d ? legendPanel.padding[0] + (radiusScale.range()[1] * 2) - radiusScale(d) * 2 :
-					legendPanel.padding[0] + (radiusScale.range()[1] * 2);
-			})
-			.style("stroke", "#666")
-			.style("stroke-dasharray", "2,2")
-			.style("stroke-width", "1px");
-
-		const legendSizeCircles = legendSizeGroupEnter.append("circle")
-			.attr("cx", legendPanel.padding[3] + radiusScale.range()[1])
-			.attr("cy", function(d) {
-				return legendPanel.padding[0] + (radiusScale.range()[1] * 2) - radiusScale(d);
-			})
-			.attr("r", function(d) {
-				return !d ? 0 : radiusScale(d);
-			})
-			.style("fill", "none")
-			.style("stroke", "darkslategray");
-
-		const legendSizeCirclesText = legendSizeGroupEnter.append("text")
-			.attr("class", "oneamplegendCirclesText")
-			.attr("x", legendPanel.padding[3] + radiusScale.range()[1] + 34)
-			.attr("y", function(d, i) {
-				return i === 1 ? legendPanel.padding[0] + 5 + (radiusScale.range()[1] * 2) - radiusScale(d) * 2 :
-					i ? legendPanel.padding[0] + 3 + (radiusScale.range()[1] * 2) - radiusScale(d) * 2 :
-					legendPanel.padding[0] + 3 + (radiusScale.range()[1] * 2) - 2;
-			})
-			.text(function(d) {
-				return d ? d3.formatPrefix(".0", d)(d) : "0";
+			.style("stroke", "#444")
+			.attr("width", 7)
+			.attr("height", 9)
+			.merge(legendRects)
+			.style("fill", function(d) {
+				return colorScale(d);
 			});
 
-		legendSizeGroup = legendSizeGroup.merge(legendSizeGroupEnter);
+		const legendColorLines = legendPanel.main.selectAll(".oneampLegendColorLines")
+			.data(d3.range(2))
+			.enter()
+			.append("line")
+			.attr("class", "oneampLegendColorLines")
+			.attr("y1", legendPanel.padding[0] + 10)
+			.attr("y2", legendPanel.padding[0] + 20)
+			.attr("x1", function(d) {
+				return d ? legendPanel.padding[3] + 88 : legendPanel.padding[3];
+			})
+			.attr("x2", function(d) {
+				return d ? legendPanel.padding[3] + 88 : legendPanel.padding[3];
+			})
+			.style("stroke-width", "1px")
+			.style("shape-rendering", "crispEdges")
+			.style("stroke", "#444");
 
-		legendSizeGroup.select(".oneamplegendCirclesText")
-			.transition()
+		let legendColorTexts = legendPanel.main.selectAll(".oneampLegendColorTexts")
+			.data(d3.extent(colorScale.domain()));
+
+		legendColorTexts = legendColorTexts.enter()
+			.append("text")
+			.attr("class", "oneampLegendColorTexts")
+			.attr("y", 42)
+			.attr("x", function(_, i) {
+				return i ? legendPanel.padding[3] + 88 : legendPanel.padding[3];
+			})
+			.attr("text-anchor", function(_, i) {
+				return i ? "end" : "start";
+			})
+			.merge(legendColorTexts);
+
+		legendColorTexts.transition()
 			.duration(duration)
 			.textTween(function(d) {
 				const i = d3.interpolate(reverseFormat(this.textContent) || 0, d);
 				return function(t) {
 					return d3.formatPrefix(".0", i(t))(i(t)).replace("G", "B");
 				};
-			});
-
-		const legendColors = legendPanel.main.selectAll(".oneamplegendColors")
-			.data(["cbpf", "cerf"])
-			.enter()
-			.append("g")
-			.attr("class", "oneamplegendColors")
-			.attr("transform", function(_, i) {
-				return "translate(" + (legendPanel.padding[3] + i * 44) + "," + (legendPanel.height - legendPanel.padding[2]) + ")";
-			});
-
-		legendColors.append("rect")
-			.attr("width", 8)
-			.attr("height", 8)
-			.attr("rx", 1)
-			.attr("ry", 1)
-			.style("stroke-width", "0.5px")
-			.style("stroke", "#666")
-			.style("fill", function(_, i) {
-				return i ? cerfColor : cbpfColor;
-			});
-
-		legendColors.append("text")
-			.attr("x", 10)
-			.attr("y", 8)
-			.text(function(d) {
-				return d.toUpperCase();
 			});
 
 		//end of createLegend
@@ -1782,7 +1479,7 @@
 		const data = [];
 
 		rawData.forEach(function(row) {
-			if (row.PooledFundIso) {
+			if (chartState.selectedYear.indexOf(+row.AllocationYear) > -1 && row.PooledFundIso) {
 				if (chartState.countriesInData.indexOf(row.PooledFundIso) === -1) chartState.countriesInData.push(row.PooledFundIso);
 
 				const foundCountry = data.find(function(d) {
@@ -1875,18 +1572,6 @@
 			if (d && yearsArray.indexOf(d) > -1) chartState.selectedYear.push(d);
 		});
 		if (!chartState.selectedYear.length) chartState.selectedYear.push(new Date().getFullYear());
-	};
-
-	function verifyCentroids(rawData) {
-		rawData.forEach(function(row) {
-			if (!centroids[row.PooledFundIso]) {
-				centroids[row.PooledFundIso] = {
-					x: mapProjection([0, 0])[0],
-					y: mapProjection([0, 0])[1]
-				};
-				console.warn("Attention: " + row.PooledFundIso + "(" + row.PooledFundName + ") has no centroid");
-			};
-		});
 	};
 
 	function capitalize(str) {

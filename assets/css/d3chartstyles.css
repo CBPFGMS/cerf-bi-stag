@@ -467,8 +467,8 @@ p#oneampd3chartTitle {
 
 .oneamplegendTitle {
 	font-family: "Roboto", sans-serif;
-	font-size: 10px;
-	font-weight: 700;
+	font-size: 12px;
+	font-weight: 500;
 }
 
 .oneamplegendCirclesText {
@@ -477,7 +477,16 @@ p#oneampd3chartTitle {
 	fill: darkslategray;	
 }
 
-.oneamplegendColors text {
+.oneampLegendColorTexts {
+	font-family: "Arial", sans-serif;
+	font-size: 10px;
+	fill: darkslategray;	
+	dominant-baseline: hanging;
+}
+
+.oneampCerfText {
+	text-anchor: middle;
+	dominant-baseline: central;
 	font-family: "Arial", sans-serif;
 	font-size: 10px;
 	fill: darkslategray;	
