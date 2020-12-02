@@ -284,7 +284,7 @@
 	const checkboxesPanel = {
 		main: svg.append("g")
 			.attr("class", "oneampcheckboxesPanel")
-			.attr("transform", "translate(" + (padding[3] + mapZoomButtonHorPadding + 1) + "," + (padding[0] + buttonsPanel.height + panelHorizontalPadding + mapZoomButtonVertPadding + mapZoomButtonPanel.height + showNamesMargin) + ")"),
+			.attr("transform", "translate(" + (padding[3] + mapZoomButtonHorPadding + 1) + "," + (padding[0] + topPanel.height + buttonsPanel.height + (2 * panelHorizontalPadding) + mapZoomButtonVertPadding + mapZoomButtonPanel.height + showNamesMargin) + ")"),
 		padding: [0, 0, 0, 0],
 	};
 
@@ -501,7 +501,7 @@
 
 		createZoomButtons();
 
-		//createCheckboxes();
+		createCheckboxes();
 
 		createTopPanel(data);
 
@@ -763,6 +763,27 @@
 			})
 			.text("CERF Global");
 
+		features.forEach(function(d) {
+			centroids[d.properties.isoCode] = {
+				x: mapPath.centroid(d.geometry)[0],
+				y: mapPath.centroid(d.geometry)[1]
+			}
+		});
+
+		// centroids.XX = centroids.TR;
+
+		//Countries with problems:
+		//"KM","WS","AG","DM","MH","CV"
+		//Comoros, (west) Samoa, Antigua and Barbuda, Dominica, Marshall Islands, Cabo Verde
+		//And the fake codes: XV, XA and XG
+		hardcodedAllocations.forEach(function(d) {
+			const projected = mapProjection([d.long, d.lat]);
+			centroids[d.isoCode] = {
+				x: projected[0],
+				y: projected[1]
+			};
+		});
+
 		//end of createMap
 	};
 
@@ -867,7 +888,7 @@
 
 			innerCheck.style("stroke", chartState.showNames ? "darkslategray" : "white");
 
-			piesContainer.selectAll("text, tspan")
+			mapContainer.selectAll(".oneampcountryNames")
 				.style("opacity", chartState.showNames ? 1 : 0);
 
 		});
@@ -1438,6 +1459,32 @@
 				return colorScale(d["cerf" + chartState.selectedCerfAllocation]);
 			});
 
+		let countryNames = mapContainer.selectAll(".oneampcountryNames")
+			.data(data, function(d) {
+				return d.isoCode
+			});
+
+		const countryNamesExit = countryNames.exit().remove();
+
+		const countryNamesEnter = countryNames.enter()
+			.append("text")
+			.attr("class", "oneampcountryNames")
+			.style("opacity", chartState.showNames ? 1 : 0)
+			.attr("x", function(d) {
+				return centroids[d.isoCode].x;
+			})
+			.attr("y", function(d) {
+				return centroids[d.isoCode].y;
+			})
+			.text(function(d) {
+				return d.country
+			})
+			.call(wrapText2, 100);
+
+		countryNames = countryNamesEnter.merge(countryNames);
+
+		countryNames.style("opacity", chartState.showNames ? 1 : 0);
+
 		countries.on("mouseover", mouseover)
 			.on("mouseout", function() {
 				tooltip.html(null)
@@ -1522,6 +1569,9 @@
 					});
 					return mapProjection([globalCerf.long, globalCerf.lat])[1] + cerfCircleRadius + 8 / d3.event.transform.k;
 				});
+
+			mapContainer.selectAll(".oneampcountryNames")
+				.style("font-size", 10 / d3.event.transform.k + "px")
 
 			//end of zoomed
 		};
@@ -1773,6 +1823,40 @@
 		return returnValue;
 	};
 
+	function wrapText2(text, width) {
+		text.each(function() {
+			let text = d3.select(this),
+				words = text.text().split(/\s+/).reverse(),
+				word,
+				line = [],
+				lineNumber = 0,
+				lineHeight = 1.1,
+				y = text.attr("y"),
+				x = text.attr("x"),
+				dy = 0,
+				tspan = text.text(null)
+				.append("tspan")
+				.attr("x", x)
+				.attr("y", y)
+				.attr("dy", dy + "em");
+			while (word = words.pop()) {
+				line.push(word);
+				tspan.text(line.join(" "));
+				if (tspan.node()
+					.getComputedTextLength() > width) {
+					line.pop();
+					tspan.text(line.join(" "));
+					line = [word];
+					tspan = text.append("tspan")
+						.attr("x", x)
+						.attr("y", y)
+						.attr("dy", ++lineNumber * lineHeight + dy + "em")
+						.text(word);
+				}
+			}
+		});
+	};
+
 	function createAnnotationsDiv() {
 
 		const padding = 6;
@@ -1813,8 +1897,6 @@
 			.attr("x", width / 2)
 			.attr("y", 320)
 			.text("CLICK ANYWHERE TO START");
-
-
 
 		helpSVG.on("click", function() {
 			overDiv.remove();

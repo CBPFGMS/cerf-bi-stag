@@ -495,7 +495,7 @@ p#oneampd3chartTitle {
 	dominant-baseline: hanging;
 }
 
-.oneampCerfText {
+.oneampCerfText, .oneampcountryNames {
 	text-anchor: middle;
 	dominant-baseline: central;
 	font-family: "Arial", sans-serif;
