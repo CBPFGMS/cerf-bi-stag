@@ -1,10 +1,10 @@
 (function d3ChartIIFE() {
 
-	var width = 743,
-		height = 600,
+	var width = 1100,
+		height = 620,
 		padding = [4, 4, 4, 4],
-		topPanelHeightFactor = 0.17,
-		barsPanelHeightFactor = 0.63,
+		topPanelHeightFactor = 0.15,
+		barsPanelHeightFactor = 0.62,
 		beeswarmPanelHeightFactor = 0.2,
 		panelHorizontalPadding = 6,
 		duration = 1500,
@@ -19,6 +19,7 @@
 		circleRadius = 4,
 		beeswarmTransitionEnded = false,
 		flagPadding = 30,
+		verticalTopPadding = 64,
 		yearsArray,
 		barsHeightUnit = ((height - padding[0] - padding[2] - (2 * panelHorizontalPadding)) * barsPanelHeightFactor) / 11,
 		flagsDirectory = "https://github.com/CBPFGMS/cbpfgms.github.io/raw/master/img/flags/";
@@ -31,6 +32,16 @@
 	var windowHeight = window.innerHeight;
 
 	var containerDiv = d3.select("#d3chartcontainercbpfbp");
+
+	const topDiv = containerDiv.append("div")
+		.attr("class", "cbpfbpTopDiv");
+
+	const titleDiv = topDiv.append("div")
+		.attr("class", "cbpfbpTitleDiv");
+
+	titleDiv.append("p")
+		.attr("id", "cbpfbpd3chartTitle")
+		.html("CERF Contributions, 2020");
 
 	var selectedResponsiveness = containerDiv.node().getAttribute("data-responsive");
 
@@ -66,7 +77,7 @@
 			.attr("transform", "translate(" + padding[3] + "," + padding[0] + ")"),
 		width: width - padding[1] - padding[3],
 		height: (height - padding[0] - padding[2] - (2 * panelHorizontalPadding)) * topPanelHeightFactor,
-		moneyBagPadding: 70,
+		moneyBagPadding: 216,
 		paidValuePadding: 330
 	};
 
@@ -78,15 +89,18 @@
 		height: (height - padding[0] - padding[2] - (2 * panelHorizontalPadding)) * barsPanelHeightFactor,
 		padding: [22, 32, 20, 32],
 		centralSpace: 220 + flagPadding,
-		get barsSpace() {
-			return (this.width - this.centralSpace) / 2;
+		get barsSpaceDonor() {
+			return (this.width - this.centralSpace) * 0.3;
+		},
+		get barsSpaceCbpfs() {
+			return (this.width - this.centralSpace) * 0.7;
 		}
 	};
 
 	var beeswarmPanel = {
 		main: svg.append("g")
 			.attr("class", "cbpfbpbeeswarmPanel")
-			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + topPanel.height + barsPanel.height + (2 * panelHorizontalPadding)) + ")"),
+			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + topPanel.height + barsPanel.height + (4 * panelHorizontalPadding)) + ")"),
 		width: width - padding[1] - padding[3],
 		height: (height - padding[0] - padding[2] - (2 * panelHorizontalPadding)) * beeswarmPanelHeightFactor,
 		padding: [18, 10, 20, 124],
@@ -104,10 +118,10 @@
 		.paddingInner(0.4);
 
 	var barsDonorsXScale = d3.scaleLinear()
-		.range([barsPanel.barsSpace, barsPanel.padding[3]]);
+		.range([barsPanel.barsSpaceDonor, barsPanel.padding[3]]);
 
 	var barsCbpfsXScale = d3.scaleLinear()
-		.range([0, barsPanel.barsSpace - barsPanel.padding[1]]);
+		.range([0, barsPanel.barsSpaceCbpfs - barsPanel.padding[1]]);
 
 	var linksWidthScale = d3.scaleLinear();
 
@@ -318,8 +332,8 @@
 				(dataDonors.length * barsHeightUnit) - barsPanel.padding[2] :
 				barsPanel.height - barsPanel.padding[2]
 			]);
-			barsCbpfsYScale.range([barsPanel.padding[0], dataCbpfs.length < 11 ?
-				(dataCbpfs.length * barsHeightUnit) - barsPanel.padding[2] :
+			barsCbpfsYScale.range([barsPanel.padding[0] + 112, dataCbpfs.length < 11 ?
+				barsPanel.padding[0] + 112 + (dataCbpfs.length * barsHeightUnit) :
 				barsPanel.height - barsPanel.padding[2]
 			]);
 		};
@@ -442,44 +456,21 @@
 			return d.totalPaidPlusPledge
 		})]);
 
-		barsDonorsXScale.domain([0, ~~(maxXValue * 1.05)]);
+		barsDonorsXScale.domain([0, ~~(maxXValue * 1.05) * 0.3]);
 
-		barsCbpfsXScale.domain([0, ~~(maxXValue * 1.05)]);
+		barsCbpfsXScale.domain([0, ~~(maxXValue * 1.05) * 0.7]);
 
 		beeswarmXScale.domain([0, ~~(maxXValue * 0.25)]);
 
 
 		//TOP PANEL
 
-		var topPanelTitle = topPanel.main.append("text")
-			.attr("class", "cbpfbptopPanelTitle")
-			.attr("text-anchor", "middle")
-			.attr("y", 16)
-			.attr("x", topPanel.width / 2)
-			.text(yearsArray.length === 1 ? yearsArray[0] + " Contributions" :
-				yearsArray[0] + " to " + yearsArray[1] + " Contributions");
-
-		var placeholderText1 = svg.append("text")
-			.style("opacity", "0")
-			.attr("class", "cbpfbptopValueMain")
-			.text(formatSIFloat(totalAmountAllCountries));
-
-		var placeholderText2 = svg.append("text")
-			.style("opacity", "0")
-			.attr("class", "cbpfbptopValueUnits")
-			.text("Donated");
-
-		var placeholderWidths = placeholderText1.node().getBBox().width + placeholderText2.node().getBBox().width;
-
-		placeholderText1.remove();
-		placeholderText2.remove();
-
 		var topPanelGroup = topPanel.main.append("g")
-			.attr("transform", "translate(" + (width / 2 - (topPanel.moneyBagPadding + placeholderWidths) / 2) + ",0)")
+			.attr("transform", "translate(" + padding[3] + ",0)")
 
 		var topPanelMoneyBag = topPanelGroup.append("g")
 			.attr("class", "contributionColorFill")
-			.attr("transform", "translate(0,26) scale(0.6)");
+			.attr("transform", "translate(0,12) scale(0.6)");
 
 		topPanelMoneyBag.append("path")
 			.attr("d", moneyBagd1);
@@ -495,8 +486,9 @@
 
 		var topValueMain = topPanelGroup.append("text")
 			.attr("class", "cbpfbptopValueMain contributionColorFill")
-			.attr("y", 78)
-			.attr("x", topPanel.moneyBagPadding);
+			.attr("y", verticalTopPadding)
+			.attr("text-anchor", "end")
+			.attr("x", topPanel.moneyBagPadding - 4);
 
 		topValueMain.transition()
 			.duration(duration)
@@ -507,37 +499,29 @@
 					var siString = formatSIFloat(i(t))
 					node.textContent = "$" + siString.substring(0, siString.length - 1);
 				};
-			})
-			.on("end", function(d, i) {
-
-				var finalValue = formatSIFloat(totalAmountAllCountries);
-				var unit = finalValue[finalValue.length - 1]
-				var thisBox = this.getBBox();
-
-				var topValueUnits = d3.select(this.parentNode).append("text")
-					.style("opacity", 0)
-					.attr("pointer-events", "none")
-					.attr("class", "cbpfbptopValueUnits")
-					.attr("y", 54)
-					.attr("x", thisBox.x + thisBox.width + 10);
-
-				topValueUnits.append("tspan")
-					.text(unit === "k" ? "Thousand" : unit === "M" ? "Million" : unit === "G" ? "Billion" : "")
-					.append("tspan")
-					.attr("dy", "1.1em")
-					.attr("x", thisBox.x + thisBox.width + 10)
-					.text("Donated");
-
-				topValueUnits.transition()
-					.duration(duration / 2)
-					.style("opacity", 1);
-
 			});
 
+		var topValueUnits = topPanelGroup.append("text")
+			.attr("pointer-events", "none")
+			.attr("class", "cbpfbptopValueUnits")
+			.attr("y", verticalTopPadding - 24)
+			.attr("x", topPanel.moneyBagPadding + 4);
+
+		topValueUnits.append("tspan")
+			.text(function() {
+				var finalValue = formatSIFloat(totalAmountAllCountries);
+				var unit = finalValue[finalValue.length - 1]
+				return unit === "k" ? "Thousand" : unit === "M" ? "Million" : unit === "G" ? "Billion" : ""
+			})
+			.append("tspan")
+			.attr("dy", "1.1em")
+			.attr("x", topPanel.moneyBagPadding + 4)
+			.text("Donated");
+
 		var topPanelRect = topPanel.main.append("rect")
-			.attr("x", width / 2 - (topPanel.moneyBagPadding + placeholderWidths) / 2)
-			.attr("y", 26)
-			.attr("width", (topPanel.moneyBagPadding + placeholderWidths))
+			.attr("x", 0)
+			.attr("y", 6)
+			.attr("width", width - padding[3] - padding[1])
 			.attr("height", topPanel.height - 26)
 			.style("opacity", 0)
 			.on("mousemove", function() {
@@ -562,14 +546,14 @@
 		var barsDonorsTitle = barsPanel.main.append("text")
 			.attr("text-anchor", "end")
 			.attr("class", "cbpfbpbarsPanelTitle")
-			.attr("y", barsPanel.padding[0] - 7)
-			.attr("x", barsPanel.barsSpace)
+			.attr("y", barsPanel.padding[0] - 16)
+			.attr("x", barsPanel.barsSpaceDonor)
 			.text(dataDonors.length > 10 ? "Top 10 Donors" : "Donors");
 
 		var barsCbpfsTitle = barsPanel.main.append("text")
 			.attr("class", "cbpfbpbarsPanelTitle")
-			.attr("y", barsPanel.padding[0] - 7)
-			.attr("x", barsPanel.barsSpace + barsPanel.centralSpace)
+			.attr("y", barsPanel.padding[0] - 16)
+			.attr("x", barsPanel.barsSpaceDonor + barsPanel.centralSpace)
 			.text(dataCbpfs.length > 10 ? "Top 10 CERFs" : "CERFs");
 
 		var barsTransition = d3.transition()
@@ -577,7 +561,7 @@
 
 		var gBarsDonorsYAxis = barsPanel.main.append("g")
 			.attr("class", "cbpfbpgBarsContributionsYAxis")
-			.attr("transform", "translate(" + barsPanel.barsSpace + ",0)")
+			.attr("transform", "translate(" + barsPanel.barsSpaceDonor + ",0)")
 			.style("opacity", 0)
 			.call(barsDonorsYAxis);
 
@@ -586,7 +570,7 @@
 
 		var gBarsCbpfsYAxis = barsPanel.main.append("g")
 			.attr("class", "cbpfbpgBarsAllocationsYAxis")
-			.attr("transform", "translate(" + (barsPanel.barsSpace + barsPanel.centralSpace) + ",0)")
+			.attr("transform", "translate(" + (barsPanel.barsSpaceDonor + barsPanel.centralSpace) + ",0)")
 			.style("opacity", 0)
 			.call(barsCbpfsYAxis);
 
@@ -612,7 +596,7 @@
 
 		var gBarsCbpfsXAxis = barsPanel.main.append("g")
 			.attr("class", "cbpfbpgBarsAllocationsXAxis")
-			.attr("transform", "translate(" + (barsPanel.barsSpace + barsPanel.centralSpace) + ", " + (barsPanel.height - barsPanel.padding[2]) + ")")
+			.attr("transform", "translate(" + (barsPanel.barsSpaceDonor + barsPanel.centralSpace) + ", " + (barsPanel.height - barsPanel.padding[2]) + ")")
 			.style("opacity", 0)
 			.call(barsCbpfsXAxis);
 
@@ -636,7 +620,7 @@
 
 		var barsDonorsRects = barsDonors.append("rect")
 			.attr("class", "cbpfbpbarsContributionsRects")
-			.attr("x", barsPanel.barsSpace)
+			.attr("x", barsPanel.barsSpaceDonor)
 			.attr("y", 0)
 			.attr("width", 0)
 			.attr("height", barsDonorsYScale.bandwidth())
@@ -647,7 +631,7 @@
 				return barsDonorsXScale(d.totalPaidPlusPledge)
 			})
 			.attr("width", function(d) {
-				return barsPanel.barsSpace - barsDonorsXScale(d.totalPaidPlusPledge)
+				return barsPanel.barsSpaceDonor - barsDonorsXScale(d.totalPaidPlusPledge)
 			});
 
 		var barsCbpfs = barsPanel.main.selectAll(null)
@@ -655,7 +639,7 @@
 			.enter()
 			.append("g")
 			.attr("transform", function(d) {
-				return "translate(" + (barsPanel.barsSpace + barsPanel.centralSpace) + "," + barsCbpfsYScale(d.cbpf) + ")"
+				return "translate(" + (barsPanel.barsSpaceDonor + barsPanel.centralSpace) + "," + barsCbpfsYScale(d.cbpf) + ")"
 			});
 
 		var barsCbpfsRects = barsCbpfs.append("rect")
@@ -674,7 +658,7 @@
 		var barsDonorsLabels = barsDonors.append("text")
 			.attr("class", "cbpfbpbarsLabels")
 			.attr("text-anchor", "end")
-			.attr("x", barsPanel.barsSpace - barsDonorsLabelsPadding)
+			.attr("x", barsPanel.barsSpaceDonor - barsDonorsLabelsPadding)
 			.attr("y", 4 + barsDonorsYScale.bandwidth() / 2);
 
 		barsDonorsLabels.transition(barsTransition)
@@ -709,7 +693,7 @@
 		var barsDonorsOverRect = barsDonors.append("rect")
 			.attr("class", "cbpfbpbarsContributionsOverRect")
 			.style("opacity", 0)
-			.attr("x", barsPanel.barsSpace)
+			.attr("x", barsPanel.barsSpaceDonor)
 			.attr("y", 0)
 			.attr("width", 0)
 			.attr("height", barsDonorsYScale.bandwidth())
@@ -729,8 +713,8 @@
 			.style("opacity", 0)
 			.style("stroke", "white")
 			.style("stroke-width", "1px")
-			.attr("x1", barsPanel.barsSpace)
-			.attr("x2", barsPanel.barsSpace)
+			.attr("x1", barsPanel.barsSpaceDonor)
+			.attr("x2", barsPanel.barsSpaceDonor)
 			.attr("y1", 0)
 			.attr("y2", barsDonorsYScale.bandwidth());
 
@@ -747,7 +731,7 @@
 		var barsMiddleText = barsPanel.main.append("text")
 			.attr("class", "cbpfbpbarsMiddleText")
 			.attr("pointer-events", "none")
-			.attr("x", barsPanel.width / 2 + flagPadding / 2)
+			.attr("x", barsPanel.barsSpaceDonor + barsPanel.centralSpace / 2)
 			.attr("y", barsPanel.padding[0] - 26)
 			.attr("text-anchor", "middle");
 
@@ -755,7 +739,7 @@
 			.attr("width", 24)
 			.attr("height", 24)
 			.attr("y", -3)
-			.attr("x", barsPanel.barsSpace + 8)
+			.attr("x", barsPanel.barsSpaceDonor + 8)
 			.attr("xlink:href", function(d) {
 				return d.donor === "Other Donors" ?
 					null :
@@ -795,7 +779,7 @@
 							valuePledge: e.amountPledge,
 							donor: d.donor,
 							donorNames: donorsNames,
-							x: barsPanel.barsSpace + thisBoxDonors.width + barsDonorsYAxis.tickPadding() +
+							x: barsPanel.barsSpaceDonor + thisBoxDonors.width + barsDonorsYAxis.tickPadding() +
 								barsDonorsYAxis.tickSizeInner() + 4,
 							y: barsDonorsYScale(d.donor) + barsDonorsYScale.bandwidth() / 2 - linksYPosScale(counter)
 						},
@@ -804,7 +788,7 @@
 							valuePledge: e.amountPledge,
 							cbpf: cbpfName,
 							cbpfNameInOthers: e.cbpf,
-							x: barsPanel.barsSpace + barsPanel.centralSpace - thisBoxCbpfs.width - barsCbpfsYAxis.tickPadding() -
+							x: barsPanel.barsSpaceDonor + barsPanel.centralSpace - thisBoxCbpfs.width - barsCbpfsYAxis.tickPadding() -
 								barsCbpfsYAxis.tickSizeInner() - 4,
 							y: barsCbpfsYScale(cbpfName) + barsCbpfsYScale.bandwidth() / 2
 						},
@@ -839,7 +823,7 @@
 					.filter(function(e) {
 						return e === d.donor
 					}).node().getBBox().width;
-				return barsPanel.barsSpace + thisTick + barsDonorsYAxis.tickPadding() +
+				return barsPanel.barsSpaceDonor + thisTick + barsDonorsYAxis.tickPadding() +
 					barsDonorsYAxis.tickSizeInner();
 			})
 			.style("opacity", 0)
@@ -854,7 +838,7 @@
 						return e === d.cbpf
 					}).node().getBBox().width;
 				localVariable.set(this, thisTick)
-				return barsPanel.barsSpace + thisTick + barsCbpfsYAxis.tickPadding() +
+				return barsPanel.barsSpaceCbpfs + thisTick + barsCbpfsYAxis.tickPadding() +
 					barsCbpfsYAxis.tickSizeInner();
 			})
 			.attr("x", function() {
@@ -897,7 +881,7 @@
 			.attr("class", "cbpfbpbarsPanelTitle")
 			.attr("y", beeswarmPanel.padding[0] - 2)
 			.attr("x", beeswarmPanel.titlePadding)
-			.text("All Donors and CERFs");
+			.text("All Donors:");
 
 		var gBeeswarmXAxis = beeswarmPanel.main.append("g")
 			.attr("class", "cbpfbpgBeeswarmXAxis")
@@ -1157,11 +1141,11 @@
 
 			barsMiddleText.text("Donated to... (darker color indicates")
 				.append("tspan")
-				.attr("x", barsPanel.width / 2 + flagPadding / 2)
+				.attr("x", barsPanel.barsSpaceDonor + barsPanel.centralSpace / 2)
 				.attr("dy", "1em")
 				.text("paid amount, lighter color")
 				.append("tspan")
-				.attr("x", barsPanel.width / 2 + flagPadding / 2)
+				.attr("x", barsPanel.barsSpaceDonor + barsPanel.centralSpace / 2)
 				.attr("dy", "1em")
 				.text("indicates pledged amount)");
 
@@ -1229,7 +1213,7 @@
 						.duration(shortDuration * 2)
 						.style("opacity", 1)
 						.attr("x", barsDonorsXScale(cbpfFound.amountPaid))
-						.attr("width", barsPanel.barsSpace - barsDonorsXScale(cbpfFound.amountPaid));
+						.attr("width", barsPanel.barsSpaceDonor - barsDonorsXScale(cbpfFound.amountPaid));
 
 					thisGroup.select(".cbpfbpbarsContributionsOverLine")
 						.transition()
@@ -1242,7 +1226,7 @@
 						.transition()
 						.duration(shortDuration * 2)
 						.attr("x", barsDonorsXScale(cbpfFound.amountPaidPlusPledge))
-						.attr("width", barsPanel.barsSpace - barsDonorsXScale(cbpfFound.amountPaidPlusPledge));
+						.attr("width", barsPanel.barsSpaceDonor - barsDonorsXScale(cbpfFound.amountPaidPlusPledge));
 
 					thisGroup.select(".cbpfbpbarsLabels")
 						.transition()
@@ -1324,11 +1308,11 @@
 
 			barsMiddleText.text("Received from... (darker color indicates")
 				.append("tspan")
-				.attr("x", barsPanel.width / 2 + flagPadding / 2)
+				.attr("x", barsPanel.barsSpaceDonor + barsPanel.centralSpace / 2)
 				.attr("dy", "1em")
 				.text("paid amount, lighter color")
 				.append("tspan")
-				.attr("x", barsPanel.width / 2 + flagPadding / 2)
+				.attr("x", barsPanel.barsSpaceDonor + barsPanel.centralSpace / 2)
 				.attr("dy", "1em")
 				.text("indicates pledged amount)");
 
@@ -1433,7 +1417,7 @@
 				.duration(shortDuration * 2)
 				.style("opacity", 1)
 				.attr("x", barsDonorsXScale(d.target.valuePaid))
-				.attr("width", barsPanel.barsSpace - barsDonorsXScale(d.target.valuePaid));
+				.attr("width", barsPanel.barsSpaceDonor - barsDonorsXScale(d.target.valuePaid));
 
 			thisBarsDonorsGroup.select(".cbpfbpbarsContributionsOverLine")
 				.transition()
@@ -1446,7 +1430,7 @@
 				.transition()
 				.duration(shortDuration * 2)
 				.attr("x", barsDonorsXScale((d.target.valuePaid + d.target.valuePledge)))
-				.attr("width", barsPanel.barsSpace - barsDonorsXScale((d.target.valuePaid + d.target.valuePledge)));
+				.attr("width", barsPanel.barsSpaceDonor - barsDonorsXScale((d.target.valuePaid + d.target.valuePledge)));
 
 			thisBarsDonorsGroup.select(".cbpfbpbarsLabels")
 				.transition()
@@ -1506,7 +1490,7 @@
 			var tooltipSize = localVariable.get(tooltip.node());
 			var mouse = d3.mouse(this)[0];
 			tooltip.style("top", barNumber > 7 ? d3.event.pageY - tooltipSize.height - 6 + "px" : d3.event.pageY + 20 + "px")
-				.style("left", mouse > barsPanel.barsSpace - (tooltipSize.width / 2) ? d3.event.pageX - (mouse - (barsPanel.barsSpace - (tooltipSize.width))) + "px" : d3.event.pageX - tooltipSize.width / 2 + "px");
+				.style("left", mouse > barsPanel.barsSpaceCbpfs - (tooltipSize.width / 2) ? d3.event.pageX - (mouse - (barsPanel.barsSpaceCbpfs - (tooltipSize.width))) + "px" : d3.event.pageX - tooltipSize.width / 2 + "px");
 		};
 
 		function mousemoveLinks(d) {
@@ -1688,12 +1672,12 @@
 				.style("opacity", 1);
 			barsDonors.selectAll(".cbpfbpbarsContributionsOverRect")
 				.style("opacity", 0)
-				.attr("x", barsPanel.barsSpace)
+				.attr("x", barsPanel.barsSpaceDonor)
 				.attr("width", 0);
 			barsDonors.selectAll(".cbpfbpbarsContributionsOverLine")
 				.style("opacity", 0)
-				.attr("x1", barsPanel.barsSpace)
-				.attr("x2", barsPanel.barsSpace);
+				.attr("x1", barsPanel.barsSpaceDonor)
+				.attr("x2", barsPanel.barsSpaceDonor);
 
 			barsDonors.selectAll(".cbpfbpbarsContributionsRects")
 				.transition()
@@ -1702,7 +1686,7 @@
 					return barsDonorsXScale(d.totalPaidPlusPledge)
 				})
 				.attr("width", function(d) {
-					return barsPanel.barsSpace - barsDonorsXScale(d.totalPaidPlusPledge)
+					return barsPanel.barsSpaceDonor - barsDonorsXScale(d.totalPaidPlusPledge)
 				})
 				.on("end", function() {
 					barsDonorsTooltipRect.attr("pointer-events", "all");

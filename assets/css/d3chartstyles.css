@@ -204,6 +204,17 @@ These styles apply to all D3 charts*/
 
 /*CBPF blog chart (code: cbpfbp)*/
 
+p#cbpfbpd3chartTitle {
+	font-size: 26px;
+	font-family: "Arial", sans-serif;
+	margin: 0px;
+	color: #418fde;
+}
+
+.cbpfbpTitleDiv {
+	margin-left: 16px;
+}
+
 #cbpfbptooltipdiv{    
 	position: absolute;
 	text-align: left;
@@ -219,6 +230,9 @@ These styles apply to all D3 charts*/
 	pointer-events: none;
 	cursor: none;
 	max-width: 290px;
+	z-index: 9000;
+	max-height: 500px;
+	overflow: hidden;
 }
 
 .cbpfbptopPanelTitle {
