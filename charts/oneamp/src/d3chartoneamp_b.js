@@ -601,35 +601,38 @@
 				yearButton.dispatch("click");
 				yearButton.dispatch("click");
 
-				const firstYearIndex = chartState.selectedYear[0] < yearsArray[buttonsNumber / 2] ?
-					0 :
-					chartState.selectedYear[0] > yearsArray[yearsArray.length - (buttonsNumber / 2)] ?
-					yearsArray.length - buttonsNumber :
-					yearsArray.indexOf(chartState.selectedYear[0]) - (buttonsNumber / 2);
+				if (yearsArray.length > buttonsNumber) {
 
-				const currentTranslate = -(buttonsPanel.buttonWidth * firstYearIndex);
+					const firstYearIndex = chartState.selectedYear[0] < yearsArray[buttonsNumber / 2] ?
+						0 :
+						chartState.selectedYear[0] > yearsArray[yearsArray.length - (buttonsNumber / 2)] ?
+						yearsArray.length - buttonsNumber :
+						yearsArray.indexOf(chartState.selectedYear[0]) - (buttonsNumber / 2);
 
-				if (currentTranslate === 0) {
-					svg.select(".oneampLeftArrowGroup").select("text").style("fill", "#ccc")
-					svg.select(".oneampLeftArrowGroup").attr("pointer-events", "none");
-				} else {
-					svg.select(".oneampLeftArrowGroup").select("text").style("fill", "#666")
-					svg.select(".oneampLeftArrowGroup").attr("pointer-events", "all");
+					const currentTranslate = -(buttonsPanel.buttonWidth * firstYearIndex);
+
+					if (currentTranslate === 0) {
+						svg.select(".oneampLeftArrowGroup").select("text").style("fill", "#ccc")
+						svg.select(".oneampLeftArrowGroup").attr("pointer-events", "none");
+					} else {
+						svg.select(".oneampLeftArrowGroup").select("text").style("fill", "#666")
+						svg.select(".oneampLeftArrowGroup").attr("pointer-events", "all");
+					};
+
+					if (Math.abs(currentTranslate) >= ((yearsArray.length - buttonsNumber) * buttonsPanel.buttonWidth)) {
+						svg.select(".oneampRightArrowGroup").select("text").style("fill", "#ccc")
+						svg.select(".oneampRightArrowGroup").attr("pointer-events", "none");
+					} else {
+						svg.select(".oneampRightArrowGroup").select("text").style("fill", "#666")
+						svg.select(".oneampRightArrowGroup").attr("pointer-events", "all");
+					};
+
+					svg.select(".oneampbuttonsGroup").transition()
+						.duration(duration)
+						.attrTween("transform", function() {
+							return d3.interpolateString(this.getAttribute("transform"), "translate(" + currentTranslate + ",0)");
+						});
 				};
-
-				if (Math.abs(currentTranslate) >= ((yearsArray.length - buttonsNumber) * buttonsPanel.buttonWidth)) {
-					svg.select(".oneampRightArrowGroup").select("text").style("fill", "#ccc")
-					svg.select(".oneampRightArrowGroup").attr("pointer-events", "none");
-				} else {
-					svg.select(".oneampRightArrowGroup").select("text").style("fill", "#666")
-					svg.select(".oneampRightArrowGroup").attr("pointer-events", "all");
-				};
-
-				svg.select(".oneampbuttonsGroup").transition()
-					.duration(duration)
-					.attrTween("transform", function() {
-						return d3.interpolateString(this.getAttribute("transform"), "translate(" + currentTranslate + ",0)");
-					});
 			};
 		});
 
@@ -1449,18 +1452,22 @@
 			});
 
 		const countriesExit = countries.exit()
+			.attr("pointer-events", "none")
 			.transition()
 			.duration(duration)
 			.style("fill", "#F1F1F1");
 
-		countries.transition()
+		countries.attr("pointer-events", "all")
+			.transition()
 			.duration(duration)
 			.style("fill", function(d) {
 				return colorScale(d["cerf" + chartState.selectedCerfAllocation]);
 			});
 
 		let countryNames = mapContainer.selectAll(".oneampcountryNames")
-			.data(data, function(d) {
+			.data(data.filter(function(e) {
+				return centroids[e.isoCode];
+			}), function(d) {
 				return d.isoCode
 			});
 

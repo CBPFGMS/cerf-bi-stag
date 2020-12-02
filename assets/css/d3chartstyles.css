@@ -500,7 +500,8 @@ p#oneampd3chartTitle {
 	dominant-baseline: central;
 	font-family: "Arial", sans-serif;
 	font-size: 10px;
-	fill: darkslategray;	
+	fill: darkslategray;
+	pointer-events: none;	
 }
 
 .oneampshowNamesText {
