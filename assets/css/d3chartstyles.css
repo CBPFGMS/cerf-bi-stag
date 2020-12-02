@@ -471,6 +471,17 @@ p#oneampd3chartTitle {
 	font-weight: 500;
 }
 
+.oneamptopPanelMainValue, .oneamptopPanelProjectsNumber, .oneamptopPanelCbpfsNumber {
+	font-family: "Arial", sans-serif;
+	font-size: 48px;
+}
+
+.oneamptopPanelMainText, .oneamptopPanelSubText, .oneamptopPanelProjectsText, .oneamptopPanelCbpfsText, .oneamptopPanelProjectsTextSubText {
+	font-family: "Arial", sans-serif;
+	font-size: 18px;
+	fill: #888;
+}
+
 .oneamplegendCirclesText {
 	font-family: "Arial", sans-serif;
 	font-size: 9px;

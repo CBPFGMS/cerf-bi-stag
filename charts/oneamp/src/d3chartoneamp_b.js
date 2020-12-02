@@ -51,6 +51,11 @@
 		dataUrl = "https://cbpfgms.github.io/cerf-bi-stag/oneampdata5combined.csv",
 		mapUrl = "https://raw.githubusercontent.com/CBPFGMS/cbpfgms.github.io/master/img/assets/worldmaptopo110m.json",
 		csvDateFormat = d3.utcFormat("_%Y%m%d_%H%M%S_UTC"),
+		moneyBagdAttribute = ["M83.277,10.493l-13.132,12.22H22.821L9.689,10.493c0,0,6.54-9.154,17.311-10.352c10.547-1.172,14.206,5.293,19.493,5.56 c5.273-0.267,8.945-6.731,19.479-5.56C76.754,1.339,83.277,10.493,83.277,10.493z",
+			"M48.297,69.165v9.226c1.399-0.228,2.545-0.768,3.418-1.646c0.885-0.879,1.321-1.908,1.321-3.08 c0-1.055-0.371-1.966-1.113-2.728C51.193,70.168,49.977,69.582,48.297,69.165z",
+			"M40.614,57.349c0,0.84,0.299,1.615,0.898,2.324c0.599,0.729,1.504,1.303,2.718,1.745v-8.177 c-1.104,0.306-1.979,0.846-2.633,1.602C40.939,55.61,40.614,56.431,40.614,57.349z",
+			"M73.693,30.584H19.276c0,0-26.133,20.567-17.542,58.477c0,0,2.855,10.938,15.996,10.938h57.54 c13.125,0,15.97-10.938,15.97-10.938C99.827,51.151,73.693,30.584,73.693,30.584z M56.832,80.019 c-2.045,1.953-4.89,3.151-8.535,3.594v4.421H44.23v-4.311c-3.232-0.318-5.853-1.334-7.875-3.047 c-2.018-1.699-3.307-4.102-3.864-7.207l7.314-0.651c0.3,1.25,0.856,2.338,1.677,3.256c0.823,0.911,1.741,1.575,2.747,1.979v-9.903 c-3.659-0.879-6.348-2.22-8.053-3.997c-1.716-1.804-2.565-3.958-2.565-6.523c0-2.578,0.96-4.753,2.897-6.511 c1.937-1.751,4.508-2.767,7.721-3.034v-2.344h4.066v2.344c2.969,0.306,5.338,1.159,7.09,2.565c1.758,1.406,2.877,3.3,3.372,5.658 l-7.097,0.774c-0.43-1.849-1.549-3.118-3.365-3.776v9.238c4.485,1.035,7.539,2.357,9.16,3.984c1.634,1.635,2.441,3.725,2.441,6.289 C59.898,75.656,58.876,78.072,56.832,80.019z"
+		],
 		yearsArray = [],
 		countryNames = {},
 		centroids = {},
@@ -224,7 +229,8 @@
 		width: width - padding[1] - padding[3],
 		height: topPanelHeight,
 		padding: [0, 0, 0, 0],
-		leftPadding: [94, 280, 494, 890, 904, 970],
+		moneyBagPadding: 4,
+		leftPadding: [180, 720],
 		mainValueVerPadding: 12,
 		mainValueHorPadding: 2,
 		linePadding: 8
@@ -496,6 +502,8 @@
 		createZoomButtons();
 
 		//createCheckboxes();
+
+		createTopPanel(data);
 
 		createPies(data);
 
@@ -867,6 +875,147 @@
 		//end of createCheckboxes
 	};
 
+	function createTopPanel(data) {
+
+		const mainValue = d3.sum(data, function(d) {
+			return d["cerf" + chartState.selectedCerfAllocation];
+		});
+
+		const cbpfsValue = data.map(function(d) {
+			return d.country;
+		}).filter(function(elem, index, arr) {
+			return arr.indexOf(elem) === index;
+		}).length;
+
+		const topPanelMoneyBag = topPanel.main.selectAll(".oneamptopPanelMoneyBag")
+			.data([true])
+			.enter()
+			.append("g")
+			.attr("class", "oneamptopPanelMoneyBag contributionColorFill")
+			.attr("transform", "translate(" + topPanel.moneyBagPadding + ",6) scale(0.5)")
+			.each(function(_, i, n) {
+				moneyBagdAttribute.forEach(function(d) {
+					d3.select(n[i]).append("path")
+						.attr("d", d);
+				});
+			});
+
+		const previousValue = d3.select(".oneamptopPanelMainValue").size() !== 0 ? d3.select(".oneamptopPanelMainValue").datum() : 0;
+
+		const previousProjects = d3.select(".oneamptopPanelProjectsNumber").size() !== 0 ? d3.select(".oneamptopPanelProjectsNumber").datum() : 0;
+
+		const previousCbpfs = d3.select(".oneamptopPanelCbpfsNumber").size() !== 0 ? d3.select(".oneamptopPanelCbpfsNumber").datum() : 0;
+
+		let mainValueGroup = topPanel.main.selectAll(".oneampmainValueGroup")
+			.data([true]);
+
+		mainValueGroup = mainValueGroup.enter()
+			.append("g")
+			.attr("class", "oneampmainValueGroup")
+			.merge(mainValueGroup);
+
+		let topPanelMainValue = mainValueGroup.selectAll(".oneamptopPanelMainValue")
+			.data([mainValue]);
+
+		topPanelMainValue = topPanelMainValue.enter()
+			.append("text")
+			.attr("class", "oneamptopPanelMainValue contributionColorFill")
+			.attr("text-anchor", "end")
+			.merge(topPanelMainValue)
+			.attr("y", topPanel.height - topPanel.mainValueVerPadding)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[0] - topPanel.mainValueHorPadding);
+
+		topPanelMainValue.transition()
+			.duration(duration)
+			.tween("text", function(d) {
+				const node = this;
+				const i = d3.interpolate(previousValue, d);
+				return function(t) {
+					const siString = formatSIFloat(i(t))
+					node.textContent = "$" + (+siString === +siString ? siString : siString.substring(0, siString.length - 1));
+				};
+			});
+
+		let topPanelMainText = mainValueGroup.selectAll(".oneamptopPanelMainText")
+			.data([mainValue]);
+
+		topPanelMainText = topPanelMainText.enter()
+			.append("text")
+			.attr("class", "oneamptopPanelMainText")
+			.style("opacity", 0)
+			.attr("text-anchor", "start")
+			.merge(topPanelMainText)
+			.attr("y", topPanel.height - topPanel.mainValueVerPadding * 2.7)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[0] + topPanel.mainValueHorPadding);
+
+		topPanelMainText.transition()
+			.duration(duration)
+			.style("opacity", 1)
+			.text(function(d) {
+				const valueSI = formatSIFloat(d);
+				const unit = valueSI[valueSI.length - 1];
+				return (unit === "k" ? "Thousand" : unit === "M" ? "Million" : unit === "B" ? "Billion" : "") +
+					" allocated";
+			});
+
+		let topPanelSubText = mainValueGroup.selectAll(".oneamptopPanelSubText")
+			.data([true]);
+
+		topPanelSubText = topPanelSubText.enter()
+			.append("text")
+			.attr("class", "oneamptopPanelSubText")
+			.style("opacity", 0)
+			.attr("text-anchor", "start")
+			.merge(topPanelSubText)
+			.attr("y", topPanel.height - topPanel.mainValueVerPadding * 1.2)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[0] + topPanel.mainValueHorPadding);
+
+		topPanelSubText.transition()
+			.duration(duration)
+			.style("opacity", 1)
+			.text(function(d) {
+				const yearsText = chartState.selectedYear.length === 1 ? chartState.selectedYear[0] : "years\u002A";
+				return "in " + yearsText + " (" + (chartState.selectedCerfAllocation === "rapidresponse" ? "Rapid Response" : capitalize(chartState.selectedCerfAllocation)) + ")";
+			});
+
+		let topPanelCbpfsNumber = mainValueGroup.selectAll(".oneamptopPanelCbpfsNumber")
+			.data([cbpfsValue]);
+
+		topPanelCbpfsNumber = topPanelCbpfsNumber.enter()
+			.append("text")
+			.attr("class", "oneamptopPanelCbpfsNumber contributionColorFill")
+			.attr("text-anchor", "end")
+			.merge(topPanelCbpfsNumber)
+			.attr("y", topPanel.height - topPanel.mainValueVerPadding)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[1] - topPanel.mainValueHorPadding);
+
+		topPanelCbpfsNumber.transition()
+			.duration(duration)
+			.tween("text", function(d) {
+				const node = this;
+				const i = d3.interpolate(previousCbpfs, d);
+				return function(t) {
+					node.textContent = ~~(i(t));
+				};
+			});
+
+		let topPanelCbpfsText = mainValueGroup.selectAll(".oneamptopPanelCbpfsText")
+			.data([cbpfsValue]);
+
+		topPanelCbpfsText = topPanelCbpfsText.enter()
+			.append("text")
+			.attr("class", "oneamptopPanelCbpfsText")
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[1] + topPanel.mainValueHorPadding)
+			.attr("text-anchor", "start")
+			.merge(topPanelCbpfsText)
+			.attr("y", topPanel.height - topPanel.mainValueVerPadding * 2)
+			.text(function(d) {
+				return d > 1 ? "Countries" : "Country"
+			});
+
+		//end of createTopPanel
+	};
+
 	function createButtonsPanel(rawData) {
 
 		const clipPath = buttonsPanel.main.append("clipPath")
@@ -1192,6 +1341,8 @@
 
 			const data = processData(rawData);
 
+			createTopPanel(data);
+
 			createPies(data);
 
 			createLegend(data);
@@ -1243,6 +1394,8 @@
 				});
 
 			const data = processData(rawData);
+
+			createTopPanel(data);
 
 			createPies(data);
 
@@ -1902,6 +2055,16 @@
 			});
 
 		//end of downloadSnapshotPdf
+	};
+
+	function formatSIFloat(value) {
+		const length = (~~Math.log10(value) + 1) % 3;
+		const digits = length === 1 ? 2 : length === 2 ? 1 : 0;
+		let siString = d3.formatPrefix("." + digits, value)(value);
+		if (siString[siString.length - 1] === "G") {
+			siString = siString.slice(0, -1) + "B";
+		};
+		return siString;
 	};
 
 	//end of d3ChartIIFE
