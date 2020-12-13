@@ -126,6 +126,10 @@ These styles apply to all D3 charts*/
 
 /*styles for the chart title, footer and help/csv/image/share buttons*/
 
+.d3chartIconsDiv {
+	line-height: normal !important;
+}
+
 .d3chartIconsDiv button {
 	white-space: pre;
 	font-size: 12px;
@@ -359,13 +363,13 @@ p#cbpfbpd3chartTitle {
 	stroke: #ccc;
 }
 
-/*One BI, Allocations Map (code: oneamp)*/
+/*Allocations Overview (code: allocover)*/
 
-#d3chartcontaineroneamp {
+#d3chartcontainerallocover {
 	position: relative;
 }
 
-#oneampDownloadingDiv {
+#allocoverDownloadingDiv {
 	position: absolute;
 	padding: 8px;
 	background: #fcfcfc; 
@@ -378,7 +382,7 @@ p#cbpfbpd3chartTitle {
 	z-index: 1500;
 }
 
-#oneamptooltipdiv {    
+#allocovertooltipdiv {    
 	position: absolute;
 	text-align: left;
 	color: darkslategray;
@@ -395,19 +399,19 @@ p#cbpfbpd3chartTitle {
 	z-index: 1500;
 }
 
-.oneampTopDiv {
+.allocoverTopDiv {
 	display: flex;
 	width: 100%;
 	margin-bottom: 4px;
 }
 
-.oneampTitleDiv {
+.allocoverTitleDiv {
 	display: flex;
 	flex:0 50%;
 	margin-left: 8px;
 }
 
-.oneampIconsDiv {
+.allocoverIconsDiv {
 	display: flex;
 	flex:0 50%;
 	flex-direction: row-reverse;
@@ -415,12 +419,12 @@ p#cbpfbpd3chartTitle {
 	margin-right: 16px;
 }
 
-.oneampFooterDiv {
+.allocoverFooterDiv {
 	width: 100%;
 	margin-top: 8px;
 }
 
-.oneampYearsDescriptionDiv {
+.allocoverYearsDescriptionDiv {
 	margin-left: 22px;
 	font-family: "Arial", sans-serif;
 	font-size: 12px;
@@ -428,7 +432,7 @@ p#cbpfbpd3chartTitle {
 	width: 98%;
 }
 
-.oneampOverDivHelp {
+.allocoverOverDivHelp {
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -438,20 +442,20 @@ p#cbpfbpd3chartTitle {
 	z-index: 10;
 }
 
-p#oneampd3chartTitle {
+p#allocoverd3chartTitle {
 	font-size: 26px;
 	font-family: "Arial", sans-serif;
 	margin: 0px;
 	color: #418fde;
 }
 
-.oneampbuttonsText, .oneampbuttonsCbpfText, .oneampbuttonsCerfText {
+.allocoverbuttonsText, .allocoverbuttonsCbpfText, .allocoverbuttonsCerfText {
 	font-family: "Arial", sans-serif;
 	font-size: 12px;
 	pointer-events: none;
 }
 
-.oneampcbpfTitle, .oneampcerfTitle {
+.allocovercbpfTitle, .allocovercerfTitle {
 	font-family: "Arial", sans-serif;
 	font-size: 12px;
 	font-weight: 700;
@@ -459,43 +463,43 @@ p#oneampd3chartTitle {
 	pointer-events: none;
 }
 
-.oneampleftArrowText, .oneamprightArrowText {
+.allocoverleftArrowText, .allocoverrightArrowText {
 	font-family: "Arial", sans-serif;
 	font-size: 20px;
 	pointer-events: none;
 }
 
-.oneamplegendTitle {
+.allocoverlegendTitle {
 	font-family: "Roboto", sans-serif;
 	font-size: 12px;
 	font-weight: 500;
 }
 
-.oneamptopPanelMainValue, .oneamptopPanelProjectsNumber, .oneamptopPanelCbpfsNumber {
+.allocovertopPanelMainValue, .allocovertopPanelProjectsNumber, .allocovertopPanelCbpfsNumber {
 	font-family: "Arial", sans-serif;
 	font-size: 48px;
 }
 
-.oneamptopPanelMainText, .oneamptopPanelSubText, .oneamptopPanelProjectsText, .oneamptopPanelCbpfsText, .oneamptopPanelProjectsTextSubText {
+.allocovertopPanelMainText, .allocovertopPanelSubText, .allocovertopPanelProjectsText, .allocovertopPanelCbpfsText, .allocovertopPanelProjectsTextSubText {
 	font-family: "Arial", sans-serif;
 	font-size: 18px;
 	fill: #888;
 }
 
-.oneamplegendCirclesText {
+.allocoverlegendCirclesText {
 	font-family: "Arial", sans-serif;
 	font-size: 9px;
 	fill: darkslategray;	
 }
 
-.oneampLegendColorTexts {
+.allocoverLegendColorTexts {
 	font-family: "Arial", sans-serif;
 	font-size: 10px;
 	fill: darkslategray;	
 	dominant-baseline: hanging;
 }
 
-.oneampCerfText, .oneampcountryNames {
+.allocoverCerfText, .allocovercountryNames {
 	text-anchor: middle;
 	dominant-baseline: central;
 	font-family: "Arial", sans-serif;
@@ -504,13 +508,13 @@ p#oneampd3chartTitle {
 	pointer-events: none;	
 }
 
-.oneampshowNamesText {
+.allocovershowNamesText {
 	font-family: "Arial", sans-serif;
 	font-size: 10px;
 	fill: darkslategray;
 }
 
-.oneampgroupName {
+.allocovergroupName {
 	font-family: "Arial", sans-serif;
 	font-size: 12px;
 	pointer-events: none;
@@ -520,69 +524,69 @@ p#oneampd3chartTitle {
     stroke-width: 2px;
 }
 
-.oneampzoomPath {
+.allocoverzoomPath {
 	fill: white;
 }
 
-.oneampzoomPath:hover {
+.allocoverzoomPath:hover {
 	fill: #f4f4f4;
 }
 
-.oneampzoomText {
+.allocoverzoomText {
 	font-family: "Arial", sans-serif;
 	font-size: 20px;
 	fill: #222;
 	pointer-events: none;	
 }
 
-.oneampTooltipSvgYAxisGroup path, .oneampTooltipSvgXAxisGroup path {
+.allocoverTooltipSvgYAxisGroup path, .allocoverTooltipSvgXAxisGroup path {
 	stroke: none;
 }
 
-.oneampTooltipSvgYAxisGroup text {
+.allocoverTooltipSvgYAxisGroup text {
 	font-family: "Arial";
 	font-size: 11px;
 	fill: #444;
 }
 
-.oneampTooltipSvgXAxisGroup text {
+.allocoverTooltipSvgXAxisGroup text {
 	font-family: "Roboto", sans-serif;
 	font-size: 9px;
 	fill: #aaa;
 	pointer-events: none;
 }
 
-.oneampTooltipSvgXAxisGroup line {
+.allocoverTooltipSvgXAxisGroup line {
 	stroke: #ddd;
 	stroke-dasharray: 2, 2;
 }
 
-.oneampcbpfLabel {
+.allocovercbpfLabel {
 	font-family: "Roboto", sans-serif;
 	font-size: 10px;
 	fill: #666;
 	pointer-events: none;
 }
 
-.oneampAnnotationMainText {
+.allocoverAnnotationMainText {
 	font-family: "Arial", sans-serif;
 	font-size: 26px;
 	font-weight: 700;
 	pointer-events: none;
 }
 
-.oneampAnnotationText {
+.allocoverAnnotationText {
 	font-family: "Arial", sans-serif;
 	font-size: 15px;
 	fill: #222;
 	pointer-events: none;
 }
 
-#oneampSnapshotTooltip {
+#allocoverSnapshotTooltip {
 	z-index: 1600;
 }
 
-.oneampSnapshotContent {
+.allocoverSnapshotContent {
 	position: absolute;
 	min-width: 100px;
 	display: none;
@@ -593,7 +597,7 @@ p#oneampd3chartTitle {
 	overflow: hidden;
 }
 
-.oneampSnapshotContent #oneampSnapshotPdfText, .oneampSnapshotContent #oneampSnapshotPngText, .oneampSnapshotContent #oneampSnapshotTooltipPdfText, .oneampSnapshotContent #oneampSnapshotTooltipPngText {
+.allocoverSnapshotContent #allocoverSnapshotPdfText, .allocoverSnapshotContent #allocoverSnapshotPngText, .allocoverSnapshotContent #allocoverSnapshotTooltipPdfText, .allocoverSnapshotContent #allocoverSnapshotTooltipPngText {
 	font-size: 14px;
 	padding: 10px;
 	margin: 0px;
@@ -601,7 +605,7 @@ p#oneampd3chartTitle {
 	font-family: "Arial", sans-serif;
 }
 
-.oneampSnapshotContent #oneampBestVisualizedText, .oneampSnapshotContent #oneampTooltipBestVisualizedText {
+.allocoverSnapshotContent #allocoverBestVisualizedText, .allocoverSnapshotContent #allocoverTooltipBestVisualizedText {
 	font-size: 11px;
 	padding: 10px;
 	margin: 0px;
@@ -611,7 +615,7 @@ p#oneampd3chartTitle {
 	width: 202px;
 }
 
-.oneampSnapshotContent #oneampSnapshotPdfText:hover, .oneampSnapshotContent #oneampSnapshotPngText:hover, .oneampSnapshotContent #oneampSnapshotTooltipPdfText:hover, .oneampSnapshotContent #oneampSnapshotTooltipPngText:hover {
+.allocoverSnapshotContent #allocoverSnapshotPdfText:hover, .allocoverSnapshotContent #allocoverSnapshotPngText:hover, .allocoverSnapshotContent #allocoverSnapshotTooltipPdfText:hover, .allocoverSnapshotContent #allocoverSnapshotTooltipPngText:hover {
 	background-color: #1F69B3;
 	color: white;
 }

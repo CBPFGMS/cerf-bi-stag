@@ -14,15 +14,23 @@
 		mapZoomButtonSize = 26,
 		maxPieSize = 20,
 		minPieSize = 1,
-		buttonsNumber = 16,
+		buttonsNumber = 8,
 		groupNamePadding = 2,
 		topPanelHeight = 60,
 		cerfCircleRadius = 20,
+		zoomBoundingMarginHor = 26,
+		zoomBoundingMarginVert = 6,
 		unBlue = "#1F69B3",
-		cbpfColor = "#418FDE",
 		cerfColor = "#F9D25B",
-		choroplethColor = "#FBD45C",
-		colorInterpolator = d3.interpolateRgb("#FFFFFF", d3.color(choroplethColor).darker(0.1)),
+		choroplethColorTotal = "#F9D25B",
+		choroplethColorRR = "#F0DA8A",
+		choroplethColorUnderfunded = "#B8C9E6",
+		countriesBackground = "#F4F4F4",
+		classPrefix = "allocover",
+		globalIsoCode = "0G",
+		colorInterpolatorTotal = d3.interpolateRgb("#FFFFFF", d3.color(choroplethColorTotal).darker(0.1)),
+		colorInterpolatorRR = d3.interpolateRgb("#FFFFFF", d3.color(choroplethColorRR).darker(0.1)),
+		colorInterpolatorUnderfunded = d3.interpolateRgb("#FFFFFF", d3.color(choroplethColorUnderfunded).darker(0.1)),
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		fadeOpacity = 0.2,
 		tooltipMargin = 8,
@@ -44,12 +52,16 @@
 		formatMoney0Decimals = d3.format(",.0f"),
 		formatSIaxes = d3.format("~s"),
 		formatNumberSI = d3.format(".3s"),
-		mapBackgroundColor = "#9BDAE9",
 		chartTitleDefault = "Allocations",
 		vizNameQueryString = "allocationsmap",
 		bookmarkSite = "https://pfbi.unocha.org/bookmark.html?",
-		dataUrl = "https://cbpfgms.github.io/cerf-bi-stag/oneampdata5combined.csv",
-		mapUrl = "https://raw.githubusercontent.com/CBPFGMS/cbpfgms.github.io/master/img/assets/worldmaptopo110m.json",
+		dataUrl = "http://cbpfgms.github.io/pf-onebi-data/cerf/cerf_allocationSummary_byorg.csv",
+		mapUrl = "https://cbpfgms.github.io/pf-onebi-data/map/unworldmap.json",
+		masterFundsUrl = "https://cbpfgms.github.io/pf-onebi-data/mst/MstCountry.json",
+		masterAllocationTypesUrl = "https://cbpfgms.github.io/pf-onebi-data/mst/MstAllocation.json",
+		masterUnAgenciesUrl = "https://cerfgms-webapi.unocha.org/v1/agency/All.json",
+		masterPartnerTypesUrl = "https://cbpfgms.github.io/pf-onebi-data/mst/MstOrganization.json",
+		masterClusterTypesUrl = "https://cbpfgms.github.io/pf-onebi-data/mst/MstCluster.json",
 		csvDateFormat = d3.utcFormat("_%Y%m%d_%H%M%S_UTC"),
 		moneyBagdAttribute = ["M83.277,10.493l-13.132,12.22H22.821L9.689,10.493c0,0,6.54-9.154,17.311-10.352c10.547-1.172,14.206,5.293,19.493,5.56 c5.273-0.267,8.945-6.731,19.479-5.56C76.754,1.339,83.277,10.493,83.277,10.493z",
 			"M48.297,69.165v9.226c1.399-0.228,2.545-0.768,3.418-1.646c0.885-0.879,1.321-1.908,1.321-3.08 c0-1.055-0.371-1.966-1.113-2.728C51.193,70.168,49.977,69.582,48.297,69.165z",
@@ -60,12 +72,23 @@
 		countryNames = {},
 		centroids = {},
 		partnerTypes = [],
-		cbpfAllocationTypes = ["standard", "reserve", "total"],
-		cerfAllocationTypes = ["rapidresponse", "underfunded", "total"],
+		cerfAllocationTypes = {},
+		cerfTypeKeys = ["3", "4"],
+		fundNamesList = {},
+		fundAbbreviatedNamesList = {},
+		fundIsoCodesList = {},
+		fundIsoCodes3List = {},
+		fundLatLongList = {},
+		partnersList = {},
+		clustersList = {},
+		allocationTypesList = {},
+		uNAgenciesNamesList = {},
+		uNAgenciesShortNamesList = {},
+		fundNamesListKeys = [],
+		separator = "##",
 		chartState = {
 			selectedYear: [],
-			countriesInData: [],
-			selectedCbpfAllocation: null,
+			selectedCluster: [],
 			selectedCerfAllocation: null,
 			showNames: null
 		};
@@ -98,7 +121,7 @@
 		long: -61.37,
 		lat: 15.41
 	}, {
-		isoCode: "XV",
+		isoCode: "0V",
 		long: -66.85,
 		lat: 1.23
 	}, {
@@ -110,7 +133,7 @@
 		long: 41.9,
 		lat: 3.86
 	}, {
-		isoCode: "XG",
+		isoCode: globalIsoCode,
 		long: -74,
 		lat: 40.73
 	}];
@@ -119,7 +142,7 @@
 
 	if (!queryStringValues.has("viz")) queryStringValues.append("viz", vizNameQueryString);
 
-	const containerDiv = d3.select("#d3chartcontaineroneamp");
+	const containerDiv = d3.select("#d3chartcontainer" + classPrefix);
 
 	const showHelp = containerDiv.node().getAttribute("data-showhelp") === "true";
 
@@ -135,17 +158,12 @@
 
 	const selectedYearString = queryStringValues.has("year") ? queryStringValues.get("year").replace(/\|/g, ",") : containerDiv.node().getAttribute("data-year");
 
-	const selectedCbpfAllocation = queryStringValues.has("cbpfallocation") && cbpfAllocationTypes.indexOf(queryStringValues.get("cbpfallocation")) > -1 ? queryStringValues.get("cbpfallocation") :
-		cbpfAllocationTypes.indexOf(containerDiv.node().getAttribute("data-cbpfallocation")) > -1 ?
-		containerDiv.node().getAttribute("data-cbpfallocation") : "total";
+	//improve this:
+	// const selectedCerfAllocation = queryStringValues.has("cerfallocation") && cerfAllocationTypes.indexOf(queryStringValues.get("cerfallocation")) > -1 ? queryStringValues.get("cerfallocation") :
+	// 	cerfAllocationTypes.indexOf(containerDiv.node().getAttribute("data-cerfallocation")) > -1 ?
+	// 	containerDiv.node().getAttribute("data-cerfallocation") : "total";
 
-	const selectedCerfAllocation = queryStringValues.has("cerfallocation") && cerfAllocationTypes.indexOf(queryStringValues.get("cerfallocation")) > -1 ? queryStringValues.get("cerfallocation") :
-		cerfAllocationTypes.indexOf(containerDiv.node().getAttribute("data-cerfallocation")) > -1 ?
-		containerDiv.node().getAttribute("data-cerfallocation") : "total";
-
-	chartState.selectedCbpfAllocation = selectedCbpfAllocation;
-
-	chartState.selectedCerfAllocation = selectedCerfAllocation;
+	chartState.selectedCerfAllocation = "0";
 
 	chartState.showNames = showNamesOption;
 
@@ -155,27 +173,27 @@
 	};
 
 	const topDiv = containerDiv.append("div")
-		.attr("class", "oneampTopDiv");
+		.attr("class", classPrefix + "TopDiv");
 
 	const titleDiv = topDiv.append("div")
-		.attr("class", "oneampTitleDiv");
+		.attr("class", classPrefix + "TitleDiv");
 
 	const iconsDiv = topDiv.append("div")
-		.attr("class", "oneampIconsDiv d3chartIconsDiv");
+		.attr("class", classPrefix + "IconsDiv d3chartIconsDiv");
 
 	const svg = containerDiv.append("svg")
 		.attr("viewBox", "0 0 " + width + " " + height)
 		.style("background-color", "white");
 
 	const yearsDescriptionDiv = containerDiv.append("div")
-		.attr("class", "oneampYearsDescriptionDiv");
+		.attr("class", classPrefix + "YearsDescriptionDiv");
 
 	const footerDiv = containerDiv.append("div")
-		.attr("class", "oneampFooterDiv");
+		.attr("class", classPrefix + "FooterDiv");
 
 	const snapshotTooltip = containerDiv.append("div")
-		.attr("id", "oneampSnapshotTooltip")
-		.attr("class", "oneampSnapshotContent")
+		.attr("id", classPrefix + "SnapshotTooltip")
+		.attr("class", classPrefix + "SnapshotContent")
 		.style("display", "none")
 		.on("mouseleave", function() {
 			isSnapshotTooltipVisible = false;
@@ -184,7 +202,7 @@
 		});
 
 	snapshotTooltip.append("p")
-		.attr("id", "oneampSnapshotTooltipPdfText")
+		.attr("id", classPrefix + "SnapshotTooltipPdfText")
 		.html("Download PDF")
 		.on("click", function() {
 			isSnapshotTooltipVisible = false;
@@ -192,7 +210,7 @@
 		});
 
 	snapshotTooltip.append("p")
-		.attr("id", "oneampSnapshotTooltipPngText")
+		.attr("id", classPrefix + "SnapshotTooltipPngText")
 		.html("Download Image (PNG)")
 		.on("click", function() {
 			isSnapshotTooltipVisible = false;
@@ -203,14 +221,14 @@
 
 	if (browserHasSnapshotIssues) {
 		snapshotTooltip.append("p")
-			.attr("id", "oneampTooltipBestVisualizedText")
+			.attr("id", classPrefix + "TooltipBestVisualizedText")
 			.html("For best results use Chrome, Firefox, Opera or Chromium-based Edge.")
 			.attr("pointer-events", "none")
 			.style("cursor", "default");
 	};
 
 	const tooltip = containerDiv.append("div")
-		.attr("id", "oneamptooltipdiv")
+		.attr("id", classPrefix + "tooltipdiv")
 		.style("display", "none");
 
 	containerDiv.on("contextmenu", function() {
@@ -238,7 +256,7 @@
 
 	const buttonsPanel = {
 		main: svg.append("g")
-			.attr("class", "oneampbuttonsPanel")
+			.attr("class", classPrefix + "buttonsPanel")
 			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + topPanel.height + panelHorizontalPadding) + ")"),
 		width: width - padding[1] - padding[3],
 		height: buttonsPanelHeight,
@@ -248,15 +266,12 @@
 		buttonsPadding: 6,
 		buttonVerticalPadding: 4,
 		arrowPadding: 18,
-		cbpfMargin: 386,
-		cbpfButtonsMargin: 426,
-		cerfMargin: 806,
-		cerfButtonsMargin: 846,
+		cerfButtonsMargin: 546,
 	};
 
 	const mapPanel = {
 		main: svg.append("g")
-			.attr("class", "oneampmapPanel")
+			.attr("class", classPrefix + "mapPanel")
 			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + topPanel.height + buttonsPanel.height + (2 * panelHorizontalPadding)) + ")"),
 		width: width - padding[1] - padding[3],
 		height: mapPanelHeight,
@@ -265,7 +280,7 @@
 
 	const legendPanel = {
 		main: svg.append("g")
-			.attr("class", "oneamplegendPanel")
+			.attr("class", classPrefix + "legendPanel")
 			.attr("transform", "translate(" + (padding[3] + legendPanelHorPadding) + "," + (padding[0] + topPanel.height + buttonsPanel.height + panelHorizontalPadding + mapPanel.height - legendPanelHeight - legendPanelVertPadding) + ")"),
 		width: legendPanelWidth,
 		height: legendPanelHeight,
@@ -274,7 +289,7 @@
 
 	const mapZoomButtonPanel = {
 		main: svg.append("g")
-			.attr("class", "oneampmapZoomButtonPanel")
+			.attr("class", classPrefix + "mapZoomButtonPanel")
 			.attr("transform", "translate(" + (padding[3] + mapZoomButtonHorPadding) + "," + (padding[0] + topPanel.height + buttonsPanel.height + panelHorizontalPadding + mapZoomButtonVertPadding) + ")"),
 		width: mapZoomButtonSize,
 		height: mapZoomButtonSize * 2,
@@ -283,21 +298,21 @@
 
 	const checkboxesPanel = {
 		main: svg.append("g")
-			.attr("class", "oneampcheckboxesPanel")
+			.attr("class", classPrefix + "checkboxesPanel")
 			.attr("transform", "translate(" + (padding[3] + mapZoomButtonHorPadding + 1) + "," + (padding[0] + topPanel.height + buttonsPanel.height + (2 * panelHorizontalPadding) + mapZoomButtonVertPadding + mapZoomButtonPanel.height + showNamesMargin) + ")"),
 		padding: [0, 0, 0, 0],
 	};
 
 	const mapPanelClip = mapPanel.main.append("clipPath")
-		.attr("id", "oneampmapPanelClip")
+		.attr("id", classPrefix + "mapPanelClip")
 		.append("rect")
 		.attr("width", mapPanel.width)
 		.attr("height", mapPanel.height);
 
-	mapPanel.main.attr("clip-path", "url(#oneampmapPanelClip)");
+	mapPanel.main.attr("clip-path", "url(#" + classPrefix + "mapPanelClip)");
 
 	const zoomLayer = mapPanel.main.append("g")
-		.attr("class", "oneampzoomLayer")
+		.attr("class", classPrefix + "zoomLayer")
 		.style("opacity", 0)
 		.attr("cursor", "move")
 		.attr("pointer-events", "all");
@@ -307,10 +322,10 @@
 		.attr("height", mapPanel.height);
 
 	const mapContainer = mapPanel.main.append("g")
-		.attr("class", "oneampmapContainer");
+		.attr("class", classPrefix + "mapContainer");
 
 	const piesContainer = mapPanel.main.append("g")
-		.attr("class", "oneamppiesContainer");
+		.attr("class", classPrefix + "piesContainer");
 
 	const mapProjection = d3.geoEqualEarth();
 
@@ -321,7 +336,7 @@
 		.range([minPieSize, maxPieSize]);
 
 	const colors = d3.range(0.1, 1.1, 0.1).map(function(d) {
-		return colorInterpolator(d);
+		return colorInterpolatorTotal(d);
 	});
 
 	const colorScale = d3.scaleQuantile()
@@ -356,7 +371,7 @@
 	const defs = svg.append("defs");
 
 	const filter = defs.append("filter")
-		.attr("id", "oneampdropshadow")
+		.attr("id", classPrefix + "dropshadow")
 		.attr('filterUnits', 'userSpaceOnUse');
 
 	filter.append("feGaussianBlur")
@@ -379,7 +394,7 @@
 	feMerge.append("feMergeNode")
 		.attr("in", "SourceGraphic");
 
-	mapZoomButtonPanel.main.style("filter", "url(#oneampdropshadow)");
+	mapZoomButtonPanel.main.style("filter", "url(#" + classPrefix + "dropshadow)");
 
 	const tooltipSvgYScale = d3.scalePoint()
 		.range([tooltipSvgPadding[0], tooltipSvgHeight - tooltipSvgPadding[2]])
@@ -401,49 +416,59 @@
 			return "$" + formatSIaxes(d).replace("G", "B");
 		});
 
-	if (localStorage.getItem("oneampmap")) {
-		const mapData = JSON.parse(localStorage.getItem("oneampmap"));
-		console.info("oneamp: map from local storage");
-		getData(mapData);
-	} else {
-		d3.json(mapUrl).then(function(mapData) {
-			try {
-				localStorage.setItem("oneampmap", JSON.stringify(mapData));
-			} catch (error) {
-				console.info("D3 chart oneamp map, " + error);
-			};
-			console.info("oneamp: map from API");
-			getData(mapData);
-		});
-	};
+	Promise.all([fetchFile("unworldmap", mapUrl, "world map", "json"),
+			fetchFile("masterFunds", masterFundsUrl, "master table for funds", "json"),
+			fetchFile("masterAllocationTypes", masterAllocationTypesUrl, "master table for allocation types", "json"),
+			fetchFile("masterUnAgenciesTypes", masterUnAgenciesUrl, "master table for un agencies", "json"),
+			fetchFile("masterPartnerTypes", masterPartnerTypesUrl, "master table for partner types", "json"),
+			fetchFile("masterClusterTypes", masterClusterTypesUrl, "master table for cluster types", "json"),
+			fetchFile("allocationsData", dataUrl, "allocations data", "csv")
+		])
+		.then(rawData => csvCallback(rawData));
 
-	function getData(mapData) {
-		if (localStorage.getItem("oneampdata") &&
-			JSON.parse(localStorage.getItem("oneampdata")).timestamp > (currentDate.getTime() - localStorageTime)) {
-			const rawData = d3.csvParse(JSON.parse(localStorage.getItem("oneampdata")).data);
-			console.info("oneamp: data from local storage");
-			csvCallback(rawData, mapData);
+	function fetchFile(fileName, url, warningString, method) {
+		if (localStorage.getItem(fileName) &&
+			JSON.parse(localStorage.getItem(fileName)).timestamp > (currentDate.getTime() - localStorageTime)) {
+			const fetchedData = method === "csv" ? d3.csvParse(JSON.parse(localStorage.getItem(fileName)).data, d3.autoType) :
+				JSON.parse(localStorage.getItem(fileName)).data;
+			console.info("CERF chart info: " + warningString + " from local storage");
+			return Promise.resolve(fetchedData);
 		} else {
-			d3.csv(dataUrl).then(function(rawData) {
+			const fetchMethod = method === "csv" ? d3.csv : d3.json;
+			const rowFunction = method === "csv" ? d3.autoType : null;
+			return fetchMethod(url, rowFunction).then(fetchedData => {
 				try {
-					localStorage.setItem("oneampdata", JSON.stringify({
-						data: d3.csvFormat(rawData),
+					localStorage.setItem(fileName, JSON.stringify({
+						data: method === "csv" ? d3.csvFormat(fetchedData) : fetchedData,
 						timestamp: currentDate.getTime()
 					}));
 				} catch (error) {
-					console.info("D3 chart oneamp data, " + error);
+					console.info("CERF chart, " + error);
 				};
-				console.info("oneamp: data from API");
-				csvCallback(rawData, mapData);
+				console.info("CERF chart info: " + warningString + " from API");
+				return fetchedData;
 			});
 		};
 	};
 
-	function csvCallback(rawData, mapData) {
+	function csvCallback([mapData,
+		masterFunds,
+		masterAllocationTypes,
+		masterUnAgenciesTypes,
+		masterPartnerTypes,
+		masterClusterTypes,
+		rawData
+	]) {
 
 		preProcessData(rawData);
-
 		validateYear(selectedYearString);
+		createFundNamesList(masterFunds);
+		createUnAgenciesNamesList(masterUnAgenciesTypes);
+		createPartnersList(masterPartnerTypes);
+		createClustersList(masterClusterTypes);
+		createAllocationTypesList(masterAllocationTypes);
+
+		cerfAllocationTypes["0"] = "Total";
 
 		if (!lazyLoad) {
 			draw(rawData, mapData);
@@ -491,7 +516,7 @@
 
 		const data = processData(rawData);
 
-		//console.log(data.sort((a, b) => a.country < b.country ? -1 : a.country > b.country ? 1 : 0));
+		verifyCentroids(data.map);
 
 		createTitle(rawData);
 
@@ -503,9 +528,9 @@
 
 		createCheckboxes();
 
-		createTopPanel(data);
+		// createTopPanel(data);
 
-		createPies(data);
+		createChoropleth(data);
 
 		createLegend(data);
 
@@ -519,45 +544,45 @@
 	function createTitle(rawData) {
 
 		const title = titleDiv.append("p")
-			.attr("id", "oneampd3chartTitle")
+			.attr("id", classPrefix + "d3chartTitle")
 			.html(chartTitle);
 
 		const helpIcon = iconsDiv.append("button")
-			.attr("id", "oneampHelpButton");
+			.attr("id", classPrefix + "HelpButton");
 
 		helpIcon.html("HELP  ")
 			.append("span")
 			.attr("class", "fa fa-info")
 
 		const downloadIcon = iconsDiv.append("button")
-			.attr("id", "oneampDownloadButton");
+			.attr("id", classPrefix + "DownloadButton");
 
 		downloadIcon.html(".CSV  ")
 			.append("span")
 			.attr("class", "fa fa-download");
 
 		const snapshotDiv = iconsDiv.append("div")
-			.attr("class", "oneampSnapshotDiv");
+			.attr("class", classPrefix + "SnapshotDiv");
 
 		const snapshotIcon = snapshotDiv.append("button")
-			.attr("id", "oneampSnapshotButton");
+			.attr("id", classPrefix + "SnapshotButton");
 
 		snapshotIcon.html("IMAGE ")
 			.append("span")
 			.attr("class", "fa fa-camera");
 
 		const snapshotContent = snapshotDiv.append("div")
-			.attr("class", "oneampSnapshotContent");
+			.attr("class", classPrefix + "SnapshotContent");
 
 		const pdfSpan = snapshotContent.append("p")
-			.attr("id", "oneampSnapshotPdfText")
+			.attr("id", classPrefix + "SnapshotPdfText")
 			.html("Download PDF")
 			.on("click", function() {
 				createSnapshot("pdf", false);
 			});
 
 		const pngSpan = snapshotContent.append("p")
-			.attr("id", "oneampSnapshotPngText")
+			.attr("id", classPrefix + "SnapshotPngText")
 			.html("Download Image (PNG)")
 			.on("click", function() {
 				createSnapshot("png", false);
@@ -567,7 +592,7 @@
 			.datum({
 				clicked: false
 			})
-			.attr("id", "oneampPlayButton");
+			.attr("id", classPrefix + "PlayButton");
 
 		playIcon.html("PLAY  ")
 			.append("span")
@@ -593,7 +618,7 @@
 
 				chartState.selectedYear[0] = yearsArray[(index + 1) % yearsArray.length];
 
-				const yearButton = d3.selectAll(".oneampbuttonsRects")
+				const yearButton = d3.selectAll("." + classPrefix + "buttonsRects")
 					.filter(function(d) {
 						return d === chartState.selectedYear[0]
 					});
@@ -612,22 +637,22 @@
 					const currentTranslate = -(buttonsPanel.buttonWidth * firstYearIndex);
 
 					if (currentTranslate === 0) {
-						svg.select(".oneampLeftArrowGroup").select("text").style("fill", "#ccc")
-						svg.select(".oneampLeftArrowGroup").attr("pointer-events", "none");
+						svg.select("." + classPrefix + "LeftArrowGroup").select("text").style("fill", "#ccc")
+						svg.select("." + classPrefix + "LeftArrowGroup").attr("pointer-events", "none");
 					} else {
-						svg.select(".oneampLeftArrowGroup").select("text").style("fill", "#666")
-						svg.select(".oneampLeftArrowGroup").attr("pointer-events", "all");
+						svg.select("." + classPrefix + "LeftArrowGroup").select("text").style("fill", "#666")
+						svg.select("." + classPrefix + "LeftArrowGroup").attr("pointer-events", "all");
 					};
 
 					if (Math.abs(currentTranslate) >= ((yearsArray.length - buttonsNumber) * buttonsPanel.buttonWidth)) {
-						svg.select(".oneampRightArrowGroup").select("text").style("fill", "#ccc")
-						svg.select(".oneampRightArrowGroup").attr("pointer-events", "none");
+						svg.select("." + classPrefix + "RightArrowGroup").select("text").style("fill", "#ccc")
+						svg.select("." + classPrefix + "RightArrowGroup").attr("pointer-events", "none");
 					} else {
-						svg.select(".oneampRightArrowGroup").select("text").style("fill", "#666")
-						svg.select(".oneampRightArrowGroup").attr("pointer-events", "all");
+						svg.select("." + classPrefix + "RightArrowGroup").select("text").style("fill", "#666")
+						svg.select("." + classPrefix + "RightArrowGroup").attr("pointer-events", "all");
 					};
 
-					svg.select(".oneampbuttonsGroup").transition()
+					svg.select("." + classPrefix + "buttonsGroup").transition()
 						.duration(duration)
 						.attrTween("transform", function() {
 							return d3.interpolateString(this.getAttribute("transform"), "translate(" + currentTranslate + ",0)");
@@ -638,7 +663,7 @@
 
 		if (browserHasSnapshotIssues) {
 			const bestVisualizedSpan = snapshotContent.append("p")
-				.attr("id", "oneampBestVisualizedText")
+				.attr("id", classPrefix + "BestVisualizedText")
 				.html("For best results use Chrome, Firefox, Opera or Chromium-based Edge.")
 				.attr("pointer-events", "none")
 				.style("cursor", "default");
@@ -658,7 +683,7 @@
 
 			const currentDate = new Date();
 
-			const fileName = "oneamp_" + csvDateFormat(currentDate) + ".csv";
+			const fileName = classPrefix + "_" + csvDateFormat(currentDate) + ".csv";
 
 			const blob = new Blob([csv], {
 				type: 'text/csv;charset=utf-8;'
@@ -694,34 +719,26 @@
 
 	function createMap(mapData) {
 
-		const features = topojson.feature(mapData, mapData.objects.countries).features;
+		const countryFeatures = topojson.feature(mapData, mapData.objects.wrl_polbnda_int_simple_uncs);
 
-		const landObject = topojson.feature(mapData, mapData.objects.land);
-
-		const featuresWithoutAntarctica = topojson.feature(mapData, mapData.objects.countries);
-
-		featuresWithoutAntarctica.features = featuresWithoutAntarctica.features.filter(function(d) {
-			return d.properties.isoCode !== "AQ";
-		});
+		countryFeatures.features = countryFeatures.features.filter(d => d.properties.ISO_2 !== "AQ");
 
 		mapProjection.fitExtent([
 			[mapPanel.padding[3], mapPanel.padding[0]],
 			[(mapPanel.width - mapPanel.padding[1] - mapPanel.padding[3]), (mapPanel.height - mapPanel.padding[0] - mapPanel.padding[2])]
-		], featuresWithoutAntarctica);
+		], countryFeatures);
 
 		const paths = mapContainer.selectAll(null)
-			.data(features)
+			.data(countryFeatures.features)
 			.enter()
 			.append("path")
 			.attr("d", mapPath)
-			.attr("class", "oneampMapPath")
-			.style("fill", "#F1F1F1");
+			.attr("class", classPrefix + "MapPath")
+			.style("fill", countriesBackground);
 
 		const borders = mapContainer.append("path")
-			.attr("d", mapPath(topojson.mesh(mapData, mapData.objects.countries, function(a, b) {
-				return a !== b && !(a.properties.name === "Somalia" && b.properties.name === "Somaliland");
-			})))
-			.attr("class", "oneampBorder")
+			.attr("d", mapPath(topojson.mesh(mapData, mapData.objects.wrl_polbnda_int_simple_uncs, (a, b) => a !== b)))
+			.attr("class", classPrefix + "Border")
 			.style("fill", "none")
 			.style("stroke", "#C5C5C5")
 			.style("stroke-width", "1px");
@@ -729,45 +746,45 @@
 		const cerfCircle = mapContainer.append("circle")
 			.datum({
 				properties: {
-					isoCode: "XG"
+					ISO_2: globalIsoCode
 				}
 			})
-			.attr("class", "oneampMapPath")
+			.attr("class", classPrefix + "MapPath")
 			.attr("cx", function() {
 				const globalCerf = hardcodedAllocations.find(function(e) {
-					return e.isoCode === "XG"
+					return e.isoCode === globalIsoCode
 				});
 				return mapProjection([globalCerf.long, globalCerf.lat])[0]
 			})
 			.attr("cy", function() {
 				const globalCerf = hardcodedAllocations.find(function(e) {
-					return e.isoCode === "XG"
+					return e.isoCode === globalIsoCode
 				});
 				return mapProjection([globalCerf.long, globalCerf.lat])[1]
 			})
 			.attr("r", cerfCircleRadius)
-			.style("fill", "#F1F1F1")
+			.style("fill", countriesBackground)
 			.style("stroke", "#C5C5C5")
 			.style("stroke-width", "1px");
 
 		const cerfText = mapContainer.append("text")
-			.attr("class", "oneampCerfText")
+			.attr("class", classPrefix + "CerfText")
 			.attr("x", function() {
 				const globalCerf = hardcodedAllocations.find(function(e) {
-					return e.isoCode === "XG"
+					return e.isoCode === globalIsoCode;
 				});
 				return mapProjection([globalCerf.long, globalCerf.lat])[0]
 			})
 			.attr("y", function() {
 				const globalCerf = hardcodedAllocations.find(function(e) {
-					return e.isoCode === "XG"
+					return e.isoCode === globalIsoCode;
 				});
 				return mapProjection([globalCerf.long, globalCerf.lat])[1] + cerfCircleRadius + 8;
 			})
 			.text("CERF Global");
 
-		features.forEach(function(d) {
-			centroids[d.properties.isoCode] = {
+		countryFeatures.features.forEach(function(d) {
+			centroids[d.properties.ISO_2] = {
 				x: mapPath.centroid(d.geometry)[0],
 				y: mapPath.centroid(d.geometry)[1]
 			}
@@ -793,11 +810,11 @@
 	function createZoomButtons() {
 
 		const zoomInGroup = mapZoomButtonPanel.main.append("g")
-			.attr("class", "oneampzoomInGroup")
+			.attr("class", classPrefix + "zoomInGroup")
 			.attr("cursor", "pointer");
 
 		const zoomInPath = zoomInGroup.append("path")
-			.attr("class", "oneampzoomPath")
+			.attr("class", classPrefix + "zoomPath")
 			.attr("d", function() {
 				const drawPath = d3.path();
 				drawPath.moveTo(0, mapZoomButtonPanel.height / 2);
@@ -811,18 +828,18 @@
 			});
 
 		const zoomInText = zoomInGroup.append("text")
-			.attr("class", "oneampzoomText")
+			.attr("class", classPrefix + "zoomText")
 			.attr("text-anchor", "middle")
 			.attr("x", mapZoomButtonPanel.width / 2)
 			.attr("y", (mapZoomButtonPanel.height / 4) + 7)
 			.text("+");
 
 		const zoomOutGroup = mapZoomButtonPanel.main.append("g")
-			.attr("class", "oneampzoomOutGroup")
+			.attr("class", classPrefix + "zoomOutGroup")
 			.attr("cursor", "pointer");
 
 		const zoomOutPath = zoomOutGroup.append("path")
-			.attr("class", "oneampzoomPath")
+			.attr("class", classPrefix + "zoomPath")
 			.attr("d", function() {
 				const drawPath = d3.path();
 				drawPath.moveTo(0, mapZoomButtonPanel.height / 2);
@@ -836,7 +853,7 @@
 			});
 
 		const zoomOutText = zoomOutGroup.append("text")
-			.attr("class", "oneampzoomText")
+			.attr("class", classPrefix + "zoomText")
 			.attr("text-anchor", "middle")
 			.attr("x", mapZoomButtonPanel.width / 2)
 			.attr("y", (3 * mapZoomButtonPanel.height / 4) + 7)
@@ -856,7 +873,7 @@
 	function createCheckboxes() {
 
 		const showNamesGroup = checkboxesPanel.main.append("g")
-			.attr("class", "oneampshowNamesGroup")
+			.attr("class", classPrefix + "showNamesGroup")
 			.attr("cursor", "pointer");
 
 		const outerRectangle = showNamesGroup.append("rect")
@@ -874,7 +891,7 @@
 			.style("stroke", chartState.showNames ? "darkslategray" : "white");
 
 		const showNamesText = showNamesGroup.append("text")
-			.attr("class", "oneampshowNamesText")
+			.attr("class", classPrefix + "showNamesText")
 			.attr("x", 16)
 			.attr("y", 11)
 			.text("Show names");
@@ -891,7 +908,7 @@
 
 			innerCheck.style("stroke", chartState.showNames ? "darkslategray" : "white");
 
-			mapContainer.selectAll(".oneampcountryNames")
+			mapContainer.selectAll("." + classPrefix + "countryNames")
 				.style("opacity", chartState.showNames ? 1 : 0);
 
 		});
@@ -900,6 +917,8 @@
 	};
 
 	function createTopPanel(data) {
+
+		return;
 
 		const mainValue = d3.sum(data, function(d) {
 			return d["cerf" + chartState.selectedCerfAllocation];
@@ -911,11 +930,11 @@
 			return arr.indexOf(elem) === index;
 		}).length;
 
-		const topPanelMoneyBag = topPanel.main.selectAll(".oneamptopPanelMoneyBag")
+		const topPanelMoneyBag = topPanel.main.selectAll("." + classPrefix + "topPanelMoneyBag")
 			.data([true])
 			.enter()
 			.append("g")
-			.attr("class", "oneamptopPanelMoneyBag contributionColorFill")
+			.attr("class", classPrefix + "topPanelMoneyBag contributionColorFill")
 			.attr("transform", "translate(" + topPanel.moneyBagPadding + ",6) scale(0.5)")
 			.each(function(_, i, n) {
 				moneyBagdAttribute.forEach(function(d) {
@@ -924,26 +943,26 @@
 				});
 			});
 
-		const previousValue = d3.select(".oneamptopPanelMainValue").size() !== 0 ? d3.select(".oneamptopPanelMainValue").datum() : 0;
+		const previousValue = d3.select("." + classPrefix + "topPanelMainValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelMainValue").datum() : 0;
 
-		const previousProjects = d3.select(".oneamptopPanelProjectsNumber").size() !== 0 ? d3.select(".oneamptopPanelProjectsNumber").datum() : 0;
+		const previousProjects = d3.select("." + classPrefix + "topPanelProjectsNumber").size() !== 0 ? d3.select("." + classPrefix + "topPanelProjectsNumber").datum() : 0;
 
-		const previousCbpfs = d3.select(".oneamptopPanelCbpfsNumber").size() !== 0 ? d3.select(".oneamptopPanelCbpfsNumber").datum() : 0;
+		const previousCbpfs = d3.select("." + classPrefix + "topPanelCbpfsNumber").size() !== 0 ? d3.select("." + classPrefix + "topPanelCbpfsNumber").datum() : 0;
 
-		let mainValueGroup = topPanel.main.selectAll(".oneampmainValueGroup")
+		let mainValueGroup = topPanel.main.selectAll("." + classPrefix + "mainValueGroup")
 			.data([true]);
 
 		mainValueGroup = mainValueGroup.enter()
 			.append("g")
-			.attr("class", "oneampmainValueGroup")
+			.attr("class", classPrefix + "mainValueGroup")
 			.merge(mainValueGroup);
 
-		let topPanelMainValue = mainValueGroup.selectAll(".oneamptopPanelMainValue")
+		let topPanelMainValue = mainValueGroup.selectAll("." + classPrefix + "topPanelMainValue")
 			.data([mainValue]);
 
 		topPanelMainValue = topPanelMainValue.enter()
 			.append("text")
-			.attr("class", "oneamptopPanelMainValue contributionColorFill")
+			.attr("class", classPrefix + "topPanelMainValue contributionColorFill")
 			.attr("text-anchor", "end")
 			.merge(topPanelMainValue)
 			.attr("y", topPanel.height - topPanel.mainValueVerPadding)
@@ -960,12 +979,12 @@
 				};
 			});
 
-		let topPanelMainText = mainValueGroup.selectAll(".oneamptopPanelMainText")
+		let topPanelMainText = mainValueGroup.selectAll("." + classPrefix + "topPanelMainText")
 			.data([mainValue]);
 
 		topPanelMainText = topPanelMainText.enter()
 			.append("text")
-			.attr("class", "oneamptopPanelMainText")
+			.attr("class", classPrefix + "topPanelMainText")
 			.style("opacity", 0)
 			.attr("text-anchor", "start")
 			.merge(topPanelMainText)
@@ -982,12 +1001,12 @@
 					" allocated";
 			});
 
-		let topPanelSubText = mainValueGroup.selectAll(".oneamptopPanelSubText")
+		let topPanelSubText = mainValueGroup.selectAll("." + classPrefix + "topPanelSubText")
 			.data([true]);
 
 		topPanelSubText = topPanelSubText.enter()
 			.append("text")
-			.attr("class", "oneamptopPanelSubText")
+			.attr("class", classPrefix + "topPanelSubText")
 			.style("opacity", 0)
 			.attr("text-anchor", "start")
 			.merge(topPanelSubText)
@@ -1002,12 +1021,12 @@
 				return "in " + yearsText + " (" + (chartState.selectedCerfAllocation === "rapidresponse" ? "Rapid Response" : capitalize(chartState.selectedCerfAllocation)) + ")";
 			});
 
-		let topPanelCbpfsNumber = mainValueGroup.selectAll(".oneamptopPanelCbpfsNumber")
+		let topPanelCbpfsNumber = mainValueGroup.selectAll("." + classPrefix + "topPanelCbpfsNumber")
 			.data([cbpfsValue]);
 
 		topPanelCbpfsNumber = topPanelCbpfsNumber.enter()
 			.append("text")
-			.attr("class", "oneamptopPanelCbpfsNumber contributionColorFill")
+			.attr("class", classPrefix + "topPanelCbpfsNumber contributionColorFill")
 			.attr("text-anchor", "end")
 			.merge(topPanelCbpfsNumber)
 			.attr("y", topPanel.height - topPanel.mainValueVerPadding)
@@ -1023,12 +1042,12 @@
 				};
 			});
 
-		let topPanelCbpfsText = mainValueGroup.selectAll(".oneamptopPanelCbpfsText")
+		let topPanelCbpfsText = mainValueGroup.selectAll("." + classPrefix + "topPanelCbpfsText")
 			.data([cbpfsValue]);
 
 		topPanelCbpfsText = topPanelCbpfsText.enter()
 			.append("text")
-			.attr("class", "oneamptopPanelCbpfsText")
+			.attr("class", classPrefix + "topPanelCbpfsText")
 			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[1] + topPanel.mainValueHorPadding)
 			.attr("text-anchor", "start")
 			.merge(topPanelCbpfsText)
@@ -1043,18 +1062,18 @@
 	function createButtonsPanel(rawData) {
 
 		const clipPath = buttonsPanel.main.append("clipPath")
-			.attr("id", "oneampclip")
+			.attr("id", classPrefix + "clip")
 			.append("rect")
 			.attr("width", buttonsNumber * buttonsPanel.buttonWidth)
 			.attr("height", buttonsPanel.height);
 
 		const clipPathGroup = buttonsPanel.main.append("g")
-			.attr("class", "oneampClipPathGroup")
+			.attr("class", classPrefix + "ClipPathGroup")
 			.attr("transform", "translate(" + (buttonsPanel.padding[3]) + ",0)")
-			.attr("clip-path", "url(#oneampclip)");
+			.attr("clip-path", "url(#" + classPrefix + "clip)");
 
 		const buttonsGroup = clipPathGroup.append("g")
-			.attr("class", "oneampbuttonsGroup")
+			.attr("class", classPrefix + "buttonsGroup")
 			.attr("transform", "translate(0,0)")
 			.style("cursor", "pointer");
 
@@ -1064,7 +1083,7 @@
 			.append("rect")
 			.attr("rx", "2px")
 			.attr("ry", "2px")
-			.attr("class", "oneampbuttonsRects")
+			.attr("class", classPrefix + "buttonsRects")
 			.attr("width", buttonsPanel.buttonWidth - buttonsPanel.buttonsMargin)
 			.attr("height", buttonsPanel.height - buttonsPanel.buttonVerticalPadding * 2)
 			.attr("y", buttonsPanel.buttonVerticalPadding)
@@ -1080,7 +1099,7 @@
 			.enter()
 			.append("text")
 			.attr("text-anchor", "middle")
-			.attr("class", "oneampbuttonsText")
+			.attr("class", classPrefix + "buttonsText")
 			.attr("y", buttonsPanel.height / 1.6)
 			.attr("x", function(_, i) {
 				return i * buttonsPanel.buttonWidth + buttonsPanel.buttonWidth / 2;
@@ -1093,34 +1112,37 @@
 			});
 
 		const buttonsCerfGroup = buttonsPanel.main.selectAll(null)
-			.data(cerfAllocationTypes)
+			.data(Object.entries(cerfAllocationTypes).map(e => ({
+				value: e[0],
+				name: e[1]
+			})))
 			.enter()
 			.append("g")
-			.attr("class", "oneampbuttonsCerfGroup")
+			.attr("class", classPrefix + "buttonsCerfGroup")
 			.attr("transform", "translate(" + (buttonsPanel.cerfButtonsMargin) + ",0)")
 			.style("cursor", "pointer");
 
 		const buttonsCerfRects = buttonsCerfGroup.append("rect")
 			.attr("rx", "2px")
 			.attr("ry", "2px")
-			.attr("class", "oneampbuttonsCerfRects")
+			.attr("class", classPrefix + "buttonsCerfRects")
 			.attr("height", buttonsPanel.height - buttonsPanel.buttonVerticalPadding * 2)
 			.attr("y", buttonsPanel.buttonVerticalPadding)
 			.style("fill", function(d) {
-				return d === chartState.selectedCbpfAllocation ? d3.color(cerfColor).darker(0.2) : "#eaeaea";
+				return d.value === chartState.selectedCerfAllocation ? unBlue : "#eaeaea";
 			});
 
 		const buttonsCerfText = buttonsCerfGroup.append("text")
-			.attr("class", "oneampbuttonsCerfText")
+			.attr("class", classPrefix + "buttonsCerfText")
 			.attr("font-family", "Arial")
 			.attr("font-size", 12)
 			.attr("y", buttonsPanel.height / 1.6)
 			.attr("x", buttonsPanel.buttonsPadding)
 			.style("fill", function(d) {
-				return d === chartState.selectedCbpfAllocation ? "white" : "#444";
+				return d.value === chartState.selectedCerfAllocation ? "white" : "#444";
 			})
 			.text(function(d) {
-				return d === "rapidresponse" ? "Rapid Response" : capitalize(d);
+				return d.name;
 			})
 			.each(function() {
 				localVariable.set(this.parentNode, this.getComputedTextLength())
@@ -1137,7 +1159,7 @@
 		});
 
 		const leftArrow = buttonsPanel.main.append("g")
-			.attr("class", "pbiobeLeftArrowGroup")
+			.attr("class", classPrefix + "LeftArrowGroup")
 			.style("cursor", "pointer")
 			.style("opacity", 0)
 			.attr("pointer-events", "none")
@@ -1150,14 +1172,14 @@
 			.attr("y", buttonsPanel.buttonVerticalPadding);
 
 		const leftArrowText = leftArrow.append("text")
-			.attr("class", "pbiobeleftArrowText")
+			.attr("class", classPrefix + "leftArrowText")
 			.attr("x", 0)
 			.attr("y", buttonsPanel.height - buttonsPanel.buttonVerticalPadding * 2.1)
 			.style("fill", "#666")
 			.text("\u25c4");
 
 		const rightArrow = buttonsPanel.main.append("g")
-			.attr("class", "pbiobeRightArrowGroup")
+			.attr("class", classPrefix + "RightArrowGroup")
 			.style("cursor", "pointer")
 			.style("opacity", 0)
 			.attr("pointer-events", "none")
@@ -1171,7 +1193,7 @@
 			.attr("y", buttonsPanel.buttonVerticalPadding);
 
 		const rightArrowText = rightArrow.append("text")
-			.attr("class", "pbioberightArrowText")
+			.attr("class", classPrefix + "rightArrowText")
 			.attr("x", -1)
 			.attr("y", buttonsPanel.height - buttonsPanel.buttonVerticalPadding * 2.1)
 			.style("fill", "#666")
@@ -1365,9 +1387,11 @@
 
 			const data = processData(rawData);
 
+			verifyCentroids(data.map);
+
 			createTopPanel(data);
 
-			createPies(data);
+			createChoropleth(data);
 
 			createLegend(data);
 
@@ -1380,18 +1404,18 @@
 			.on("mouseout", mouseOutButtonsCerfRects);
 
 		function mouseOverButtonsCerfRects(d) {
-			d3.select(this).style("fill", d3.color(cerfColor).darker(0.2));
+			d3.select(this).style("fill", unBlue);
 			buttonsCerfText.filter(function(e) {
-					return e === d
+					return e.value === d.value
 				})
 				.style("fill", "white");
 		};
 
 		function mouseOutButtonsCerfRects(d) {
-			if (d === chartState.selectedCerfAllocation) return;
+			if (d.value === chartState.selectedCerfAllocation) return;
 			d3.select(this).style("fill", "#eaeaea");
 			buttonsCerfText.filter(function(e) {
-					return e === d
+					return e.value === d.value
 				})
 				.style("fill", "#444");
 		};
@@ -1399,7 +1423,7 @@
 
 		buttonsCerfRects.on("click", function(d) {
 
-			chartState.selectedCerfAllocation = d;
+			chartState.selectedCerfAllocation = d.value;
 
 			if (queryStringValues.has("cerfallocation")) {
 				queryStringValues.set("cerfallocation", d);
@@ -1407,21 +1431,21 @@
 				queryStringValues.append("cerfallocation", d);
 			};
 
-			buttonsPanel.main.selectAll(".oneampbuttonsCerfRects")
+			buttonsPanel.main.selectAll("." + classPrefix + "buttonsCerfRects")
 				.style("fill", function(e) {
-					return e === chartState.selectedCerfAllocation ? d3.color(cerfColor).darker(0.4) : "#eaeaea";
+					return e.value === chartState.selectedCerfAllocation ? unBlue : "#eaeaea";
 				});
 
-			buttonsPanel.main.selectAll(".oneampbuttonsCerfText")
+			buttonsPanel.main.selectAll("." + classPrefix + "buttonsCerfText")
 				.style("fill", function(e) {
-					return e === chartState.selectedCerfAllocation ? "white" : "#444";
+					return e.value === chartState.selectedCerfAllocation ? "white" : "#444";
 				});
 
 			const data = processData(rawData);
 
 			createTopPanel(data);
 
-			createPies(data);
+			createChoropleth(data);
 
 			createLegend(data);
 
@@ -1430,41 +1454,55 @@
 		//end of createButtonsPanel
 	};
 
-	function createPies(unfilteredData) {
+	function createChoropleth(unfilteredData) {
 
-		const data = unfilteredData.filter(function(d) {
-			return d["cerf" + chartState.selectedCerfAllocation];
+		const data = unfilteredData.map.filter(function(d) {
+			return d[`cerf${separator}${chartState.selectedCerfAllocation}${separator}0`];
 		});
 
 		zoom.on("zoom", zoomed);
 
+		if (data.length) {
+			zoomToBoundingBox(data);
+		} else {
+			zoom.transform(mapPanel.main.transition().duration(duration), d3.zoomIdentity)
+		};
+
 		const allValues = data.map(function(d) {
-			return d["cerf" + chartState.selectedCerfAllocation];
+			return d[`cerf${separator}${chartState.selectedCerfAllocation}${separator}0`];
 		}).sort(function(a, b) {
 			return a - b
 		});
 
-		colorScale.domain(allValues);
+		const thisInterpolator = chartState.selectedCerfAllocation === "0" ? colorInterpolatorTotal :
+			chartState.selectedCerfAllocation === "3" ? colorInterpolatorRR : colorInterpolatorUnderfunded;
 
-		const countries = mapContainer.selectAll(".oneampMapPath")
+		const newColors = d3.range(0.1, 1.1, 0.1).map(function(d) {
+			return thisInterpolator(d);
+		});
+
+		colorScale.domain(allValues)
+			.range(newColors);
+
+		const countries = mapContainer.selectAll("." + classPrefix + "MapPath")
 			.data(data, function(d) {
-				return d.properties ? d.properties.isoCode : d.isoCode;
+				return d.properties ? d.properties.ISO_2 : d.isoCode;
 			});
 
 		const countriesExit = countries.exit()
 			.attr("pointer-events", "none")
 			.transition()
 			.duration(duration)
-			.style("fill", "#F1F1F1");
+			.style("fill", countriesBackground);
 
 		countries.attr("pointer-events", "all")
 			.transition()
 			.duration(duration)
 			.style("fill", function(d) {
-				return colorScale(d["cerf" + chartState.selectedCerfAllocation]);
+				return colorScale(d[`cerf${separator}${chartState.selectedCerfAllocation}${separator}0`]);
 			});
 
-		let countryNames = mapContainer.selectAll(".oneampcountryNames")
+		let countryNames = mapContainer.selectAll("." + classPrefix + "countryNames")
 			.data(data.filter(function(e) {
 				return centroids[e.isoCode];
 			}), function(d) {
@@ -1475,7 +1513,7 @@
 
 		const countryNamesEnter = countryNames.enter()
 			.append("text")
-			.attr("class", "oneampcountryNames")
+			.attr("class", classPrefix + "countryNames")
 			.style("opacity", chartState.showNames ? 1 : 0)
 			.attr("x", function(d) {
 				return centroids[d.isoCode].x;
@@ -1491,6 +1529,19 @@
 		countryNames = countryNamesEnter.merge(countryNames);
 
 		countryNames.style("opacity", chartState.showNames ? 1 : 0);
+
+		const globalCountry = mapContainer.selectAll("." + classPrefix + "MapPath")
+			.filter(d => d.properties ? d.properties.ISO_2 === globalIsoCode : d.isoCode === globalIsoCode);
+
+		const globalDatum = data.find(e => e.isoCode === globalIsoCode);
+
+		if (globalDatum && globalDatum[`cerf${separator}${chartState.selectedCerfAllocation}${separator}0`]) {
+			globalCountry.style("opacity", 1);
+			mapContainer.select("." + classPrefix + "CerfText").style("opacity", 1);
+		} else {
+			globalCountry.style("opacity", 0);
+			mapContainer.select("." + classPrefix + "CerfText").style("opacity", 0);
+		};
 
 		countries.on("mouseover", mouseover)
 			.on("mouseout", function() {
@@ -1565,54 +1616,83 @@
 
 			mapContainer.attr("transform", d3.event.transform);
 
-			mapContainer.selectAll("circle.oneampMapPath, .oneampBorder")
+			mapContainer.selectAll("circle." + classPrefix + "MapPath, ." + classPrefix + "Border")
 				.style("stroke-width", 1 / d3.event.transform.k + "px");
 
-			mapContainer.select(".oneampCerfText")
+			mapContainer.select("." + classPrefix + "CerfText")
 				.style("font-size", 10 / d3.event.transform.k + "px")
 				.attr("y", function() {
 					const globalCerf = hardcodedAllocations.find(function(e) {
-						return e.isoCode === "XG"
+						return e.isoCode === globalIsoCode;
 					});
 					return mapProjection([globalCerf.long, globalCerf.lat])[1] + cerfCircleRadius + 8 / d3.event.transform.k;
 				});
 
-			mapContainer.selectAll(".oneampcountryNames")
+			mapContainer.selectAll("." + classPrefix + "countryNames")
 				.style("font-size", 10 / d3.event.transform.k + "px")
 
 			//end of zoomed
 		};
 
-		mapZoomButtonPanel.main.select(".oneampzoomInGroup")
+		mapZoomButtonPanel.main.select("." + classPrefix + "zoomInGroup")
 			.on("click", function() {
 				zoom.scaleBy(mapPanel.main.transition().duration(duration), 2);
 			});
 
-		mapZoomButtonPanel.main.select(".oneampzoomOutGroup")
+		mapZoomButtonPanel.main.select("." + classPrefix + "zoomOutGroup")
 			.on("click", function() {
 				zoom.scaleBy(mapPanel.main.transition().duration(duration), 0.5);
 			});
 
-		//end of createPies
+		function zoomToBoundingBox(data) {
+
+			//Change this: use the bounding box of the geometry instead of a centroid
+
+			const boundingBox = data.reduce((acc, curr) => {
+				if (centroids[curr.isoCode]) {
+					acc.n = Math.min(acc.n, centroids[curr.isoCode].y - zoomBoundingMarginHor);
+					acc.s = Math.max(acc.s, centroids[curr.isoCode].y + zoomBoundingMarginHor);
+					acc.e = Math.max(acc.e, centroids[curr.isoCode].x + zoomBoundingMarginVert);
+					acc.w = Math.min(acc.w, centroids[curr.isoCode].x - zoomBoundingMarginVert);
+				};
+				return acc;
+			}, {
+				n: Infinity,
+				s: -Infinity,
+				e: -Infinity,
+				w: Infinity
+			});
+
+			const midPointX = (boundingBox.w + boundingBox.e) / 2;
+			const midPointY = (boundingBox.n + boundingBox.s) / 2;
+			const scale = Math.min(mapPanel.width / (boundingBox.e - boundingBox.w), mapPanel.height / (boundingBox.s - boundingBox.n));
+			const translate = [mapPanel.width / 2 - scale * midPointX, mapPanel.height / 2 - scale * midPointY];
+
+			zoom.transform(mapPanel.main.transition().duration(duration),
+				d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale));
+
+		};
+
+		//end of createChoropleth
 	};
 
 	function createLegend(data) {
 
-		const legendTitle = legendPanel.main.selectAll(".oneamplegendTitle")
+		const legendTitle = legendPanel.main.selectAll("." + classPrefix + "legendTitle")
 			.data([true])
 			.enter()
 			.append("text")
-			.attr("class", "oneamplegendTitle")
+			.attr("class", classPrefix + "legendTitle")
 			.attr("x", legendPanel.padding[3])
 			.attr("y", legendPanel.padding[0] - 10)
 			.text("Legend");
 
-		let legendRects = legendPanel.main.selectAll(".oneampLegendRects")
+		let legendRects = legendPanel.main.selectAll("." + classPrefix + "LegendRects")
 			.data([colorScale.domain()[0]].concat(colorScale.quantiles()));
 
 		legendRects = legendRects.enter()
 			.append("rect")
-			.attr("class", "oneampLegendRects")
+			.attr("class", classPrefix + "LegendRects")
 			.attr("y", legendPanel.padding[0])
 			.attr("x", function(_, i) {
 				return legendPanel.padding[3] + i * 9
@@ -1625,11 +1705,11 @@
 				return colorScale(d);
 			});
 
-		const legendColorLines = legendPanel.main.selectAll(".oneampLegendColorLines")
+		const legendColorLines = legendPanel.main.selectAll("." + classPrefix + "LegendColorLines")
 			.data(d3.range(2))
 			.enter()
 			.append("line")
-			.attr("class", "oneampLegendColorLines")
+			.attr("class", classPrefix + "LegendColorLines")
 			.attr("y1", legendPanel.padding[0] + 10)
 			.attr("y2", legendPanel.padding[0] + 20)
 			.attr("x1", function(d) {
@@ -1642,12 +1722,12 @@
 			.style("shape-rendering", "crispEdges")
 			.style("stroke", "#444");
 
-		let legendColorTexts = legendPanel.main.selectAll(".oneampLegendColorTexts")
+		let legendColorTexts = legendPanel.main.selectAll("." + classPrefix + "LegendColorTexts")
 			.data(d3.extent(colorScale.domain()));
 
 		legendColorTexts = legendColorTexts.enter()
 			.append("text")
-			.attr("class", "oneampLegendColorTexts")
+			.attr("class", classPrefix + "LegendColorTexts")
 			.attr("y", 42)
 			.attr("x", function(_, i) {
 				return i ? legendPanel.padding[3] + 88 : legendPanel.padding[3];
@@ -1673,8 +1753,6 @@
 
 		rawData.forEach(function(row) {
 			if (yearsArray.indexOf(+row.AllocationYear) === -1) yearsArray.push(+row.AllocationYear);
-			if (!countryNames[row.PooledFundIso] && row.PooledFundIso) countryNames[row.PooledFundIso] = row.PooledFundName;
-			if (row.FundType.toLowerCase() === "cbpf" && partnerTypes.indexOf(row.OrganizationType) === -1) partnerTypes.push(row.OrganizationType);
 		});
 
 		yearsArray.sort(function(a, b) {
@@ -1684,70 +1762,108 @@
 		//end of preProcessData
 	};
 
+	function createFundNamesList(fundsData) {
+		fundsData.forEach(row => {
+			fundNamesList[row.id + ""] = row.PooledFundName;
+			fundAbbreviatedNamesList[row.id + ""] = row.PooledFundNameAbbrv;
+			fundNamesListKeys.push(row.id + "");
+			fundIsoCodesList[row.id + ""] = row.ISO2Code;
+			fundIsoCodes3List[row.id + ""] = row.CountryCode;
+			fundLatLongList[row.ISO2Code] = [row.latitude, row.longitude];
+		});
+	};
+
+	function createUnAgenciesNamesList(unAgenciesTypesData) {
+		unAgenciesTypesData.forEach(row => {
+			uNAgenciesNamesList[row.agencyID + ""] = row.agencyName.toLowerCase();
+			uNAgenciesShortNamesList[row.agencyID + ""] = row.agencyShortName.toLowerCase();
+		});
+	};
+
+	function createPartnersList(partnersData) {
+		partnersData.forEach(row => {
+			partnersList[row.id + ""] = row.OrganizationTypeName;
+		});
+	};
+
+	function createClustersList(clustersData) {
+		clustersData.forEach(row => {
+			clustersList[row.id + ""] = row.ClustNm;
+		});
+	};
+
+	function createAllocationTypesList(allocationTypesData) {
+		allocationTypesData.forEach(row => {
+			allocationTypesList[row.id + ""] = row.AllocationName;
+			if (cerfTypeKeys.includes(row.id + "")) cerfAllocationTypes[row.id + ""] = row.AllocationName;
+		});
+	};
+
+	function verifyCentroids(data) {
+		data.forEach(row => {
+			if (!centroids[row.isoCode] || isNaN(centroids[row.isoCode].x) || isNaN(centroids[row.isoCode].y)) {
+				if (!isNaN(fundLatLongList[row.isoCode][0]) || !isNaN(fundLatLongList[row.isoCode][1])) {
+					centroids[row.isoCode] = {
+						x: mapProjection([fundLatLongList[row.isoCode][1], fundLatLongList[row.isoCode][0]])[0],
+						y: mapProjection([fundLatLongList[row.isoCode][1], fundLatLongList[row.isoCode][0]])[1]
+					};
+				} else {
+					centroids[row.isoCode] = {
+						x: mapProjection([0, 0])[0],
+						y: mapProjection([0, 0])[1]
+					};
+					console.warn("Attention: " + row.isoCode + "(" + row.countryName + ") has no centroid");
+				};
+			};
+		});
+	};
+
 	function processData(rawData) {
 
-		const data = [];
+		const data = {
+			map: [],
+			bar: [],
+			projects: new Set()
+		};
 
 		rawData.forEach(function(row) {
-			if (chartState.selectedYear.indexOf(+row.AllocationYear) > -1 && row.PooledFundIso) {
-				if (chartState.countriesInData.indexOf(row.PooledFundIso) === -1) chartState.countriesInData.push(row.PooledFundIso);
+			if (chartState.selectedYear.indexOf(+row.AllocationYear) > -1) {
 
-				const foundCountry = data.find(function(d) {
-					return d.isoCode === row.PooledFundIso;
+				row.ProjList.toString().split("##").forEach(e => data.projects.add(e));
+
+				const foundCountry = data.map.find(function(d) {
+					return d.id === row.PooledFundId;
 				});
 
 				if (foundCountry) {
-					pushCbpfOrCerf(foundCountry, row);
+					populateCountryObject(foundCountry, row);
 				} else {
 					const countryObject = {
-						country: row.PooledFundName,
-						labelText: row.PooledFundName.split(" "),
-						isoCode: row.PooledFundIso,
-						cbpfstandard: 0,
-						cbpfreserve: 0,
-						cbpftotal: 0,
-						cbpfstandardunderapproval: 0,
-						cbpfreserveunderapproval: 0,
-						cbpftotalunderapproval: 0,
-						cerfrapidresponse: 0,
-						cerfunderfunded: 0,
-						cerftotal: 0,
-						cerfrapidresponseunderapproval: 0,
-						cerfunderfundedunderapproval: 0,
-						cerftotalunderapproval: 0,
+						id: row.PooledFundId,
+						country: fundNamesList[row.PooledFundId],
+						countryAbbreviation: fundAbbreviatedNamesList[row.PooledFundId],
+						isoCode: fundIsoCodesList[row.PooledFundId],
+						allocations: []
 					};
-					partnerTypes.forEach(function(partner) {
-						countryObject["cbpfstandard" + partner] = 0;
-						countryObject["cbpfreserve" + partner] = 0;
-						countryObject["cbpftotal" + partner] = 0;
+					Object.keys(cerfAllocationTypes).forEach(outerRow => {
+						Object.keys(clustersList).forEach(innerRow => {
+							countryObject[`cerf${separator}${outerRow}${separator}${innerRow}`] = 0;
+						});
+						countryObject[`cerf${separator}${outerRow}${separator}0`] = 0;
 					});
-					pushCbpfOrCerf(countryObject, row);
-					data.push(countryObject);
+					populateCountryObject(countryObject, row);
+					data.map.push(countryObject);
 				};
 			};
 		});
 
 		return data;
 
-		function pushCbpfOrCerf(obj, row) {
-			if (row.FundType.toLowerCase() === "cbpf") {
-				obj.cbpfstandard += +row.ApprovedStandardBudget;
-				obj.cbpfreserve += +row.ApprovedReserveBudget;
-				obj.cbpftotal += (+row.ApprovedStandardBudget) + (+row.ApprovedReserveBudget);
-				obj.cbpfstandardunderapproval += +row.PipelineStandardBudget;
-				obj.cbpfreserveunderapproval += +row.PipelineReserveBudget;
-				obj.cbpftotalunderapproval += (+row.PipelineStandardBudget) + (+row.PipelineReserveBudget);
-				obj["cbpfstandard" + row.OrganizationType] += +row.ApprovedStandardBudget;
-				obj["cbpfreserve" + row.OrganizationType] += +row.ApprovedReserveBudget;
-				obj["cbpftotal" + row.OrganizationType] += (+row.ApprovedStandardBudget) + (+row.ApprovedReserveBudget);
-			} else if (row.FundType.toLowerCase() === "cerf") {
-				obj.cerfrapidresponse += +row.ApprovedRrBudget;
-				obj.cerfunderfunded += +row.ApprovedUnderfundedBudget;
-				obj.cerftotal += (+row.ApprovedRrBudget) + (+row.ApprovedUnderfundedBudget);
-				obj.cerfrapidresponseunderapproval += +row.PipelineRrBudget;
-				obj.cerfunderfundedunderapproval += +row.PipelineUnderfundedBudget;
-				obj.cerftotalunderapproval += (+row.PipelineRrBudget) + (+row.PipelineUnderfundedBudget);
-			};
+		function populateCountryObject(obj, row) {
+			obj[`cerf${separator}0${separator}0`] += row.Budget;
+			obj[`cerf${separator}${row.AllocationSurceId}${separator}0`] += row.Budget;
+			obj[`cerf${separator}${row.AllocationSurceId}${separator}${row.ClusterId}`] += row.Budget;
+			obj.allocations.push(row);
 		};
 
 		//end of processData
@@ -1869,14 +1985,14 @@
 		const padding = 6;
 
 		const overDiv = containerDiv.append("div")
-			.attr("class", "oneampOverDivHelp");
+			.attr("class", classPrefix + "OverDivHelp");
 
 		const helpSVG = overDiv.append("svg")
 			.attr("viewBox", "0 0 " + width + " " + height);
 
 		const arrowMarker = helpSVG.append("defs")
 			.append("marker")
-			.attr("id", "oneampArrowMarker")
+			.attr("id", classPrefix + "ArrowMarker")
 			.attr("viewBox", "0 -5 10 10")
 			.attr("refX", 0)
 			.attr("refY", 0)
@@ -1899,7 +2015,7 @@
 			.text("CLICK ANYWHERE TO START");
 
 		const mainText = helpSVG.append("text")
-			.attr("class", "oneampAnnotationMainText contributionColorFill")
+			.attr("class", classPrefix + "AnnotationMainText contributionColorFill")
 			.attr("text-anchor", "middle")
 			.attr("x", width / 2)
 			.attr("y", 320)
@@ -1931,12 +2047,12 @@
 
 		const downloadingDiv = d3.select("body").append("div")
 			.style("position", "fixed")
-			.attr("id", "oneampDownloadingDiv")
+			.attr("id", classPrefix + "DownloadingDiv")
 			.style("left", window.innerWidth / 2 - 100 + "px")
 			.style("top", window.innerHeight / 2 - 100 + "px");
 
 		const downloadingDivSvg = downloadingDiv.append("svg")
-			.attr("class", "oneampDownloadingDivSvg")
+			.attr("class", classPrefix + "DownloadingDivSvg")
 			.attr("width", 200)
 			.attr("height", 100);
 
@@ -2018,7 +2134,7 @@
 
 		const currentDate = new Date();
 
-		const fileName = "oneamp_" + csvDateFormat(currentDate) + ".png";
+		const fileName = classPrefix + "_" + csvDateFormat(currentDate) + ".png";
 
 		source.toBlob(function(blob) {
 			const url = URL.createObjectURL(blob);
@@ -2035,7 +2151,7 @@
 			};
 		});
 
-		d3.select("#oneampDownloadingDiv").remove();
+		d3.select("#" + classPrefix + "DownloadingDiv").remove();
 
 	};
 
@@ -2108,9 +2224,9 @@
 
 				const currentDate = new Date();
 
-				pdf.save("oneamp_" + csvDateFormat(currentDate) + ".pdf");
+				pdf.save(classPrefix + "_" + csvDateFormat(currentDate) + ".pdf");
 
-				d3.select("#oneampDownloadingDiv").remove();
+				d3.select("#" + classPrefix + "DownloadingDiv").remove();
 
 				function createLetterhead() {
 
