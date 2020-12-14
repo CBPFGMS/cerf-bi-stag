@@ -109,17 +109,17 @@
 				<div class="col">
 					<ul class="nav nav-tabs mb-4 pt-1 pb-1" id="myTab" role="tablist">
   						<li class="nav-item waves-effect waves-light mr-4">
-    						<a class="nav-link" id="allocation-overview-tab" data-toggle="tab" href="#allocation-overview" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-map-o f-a mr-1"></i> Allocations Overview</a>
+    						<a class="nav-link active" id="allocation-overview-tab" data-toggle="tab" href="#allocation-overview" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-map-o f-a mr-1"></i> Allocations Overview</a>
   						</li>
   						<li class="nav-item waves-effect waves-light mr-4">
-    						<a class="nav-link active" id="allocation-chart-tab" data-toggle="tab" href="#allocation-chart" role="tab" aria-controls="profile" aria-selected="false"><i class="fa fa-bar-chart f-a mr-1"></i> Allocations Chart</a>
+    						<a class="nav-link" id="allocation-chart-tab" data-toggle="tab" href="#allocation-chart" role="tab" aria-controls="profile" aria-selected="false"><i class="fa fa-bar-chart f-a mr-1"></i> Allocations Chart</a>
   						</li>  						
 					</ul>
 					<div class="tab-content" id="myTabContent">
-						<div class="tab-pane fade" id="allocation-overview" role="tabpanel" aria-labelledby="allocation-overview-tab">
-                            <div><div id="d3chartcontainerallocover" data-title=" " data-year="2019" data-cerfallocation="total" data-shownames="false" data-showhelp="false" data-showlink="false" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/allocationsoverview.js"></script></div>
+						<div class="tab-pane active show" id="allocation-overview" role="tabpanel" aria-labelledby="allocation-overview-tab">
+                            <div><div id="d3chartcontainerallocover" data-title=" " data-year="2019" data-cerfallocation="total" data-shownames="false" data-showhelp="false" data-showlink="false" data-responsive="true" data-lazyload="false"></div><script type="text/javascript" src="charts/allocationsoverview.js"></script></div>
                         </div>
-						<div class="tab-pane active show" id="allocation-chart" role="tabpanel" aria-labelledby="allocation-chart-tab">
+						<div class="tab-pane fade" id="allocation-chart" role="tabpanel" aria-labelledby="allocation-chart-tab">
 							<div><div id="d3chartcontainerpbinad" data-title="CERF Allocation flow (net funding)" data-year="2019" data-cbpf="all" data-aggregate="type" data-showhelp="false" data-showlink="false" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/pbinad/src/d3chartpbinad.js"></script></div>
 						</div>
 						<div class="tab-pane fade" id="allocation-profile" role="tabpanel" aria-labelledby="allocation-profile-tab">
