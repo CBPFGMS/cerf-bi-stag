@@ -28,6 +28,7 @@
 		countriesBackground = "#F4F4F4",
 		classPrefix = "allocover",
 		globalIsoCode = "0G",
+		countryNameMaxLength = 60,
 		colorInterpolatorTotal = d3.interpolateRgb("#FFFFFF", d3.color(choroplethColorTotal).darker(0.1)),
 		colorInterpolatorRR = d3.interpolateRgb("#FFFFFF", d3.color(choroplethColorRR).darker(0.1)),
 		colorInterpolatorUnderfunded = d3.interpolateRgb("#FFFFFF", d3.color(choroplethColorUnderfunded).darker(0.1)),
@@ -137,6 +138,8 @@
 		long: -74,
 		lat: 40.73
 	}];
+
+	const hardcodedRegionals = [41, 31, 110, 103];
 
 	const queryStringValues = new URLSearchParams(location.search);
 
@@ -248,9 +251,9 @@
 		height: topPanelHeight,
 		padding: [0, 0, 0, 0],
 		moneyBagPadding: 4,
-		leftPadding: [180, 720],
+		leftPadding: [180, 380, 710, 926, 1010],
 		mainValueVerPadding: 12,
-		mainValueHorPadding: 2,
+		mainValueHorPadding: 1,
 		linePadding: 8
 	};
 
@@ -494,9 +497,9 @@
 	function draw(rawData, mapData) {
 
 		//TEST
-		// buttonsPanel.main.append("rect")
-		// 	.attr("width", buttonsPanel.width)
-		// 	.attr("height", buttonsPanel.height)
+		// topPanel.main.append("rect")
+		// 	.attr("width", topPanel.width)
+		// 	.attr("height", topPanel.height)
 		// 	.style("opacity", 0.15);
 		// mapLayer.append("rect")
 		// 	.attr("width", mapPanel.width)
@@ -528,7 +531,7 @@
 
 		createCheckboxes();
 
-		// createTopPanel(data);
+		createTopPanel(data);
 
 		createChoropleth(data);
 
@@ -894,7 +897,7 @@
 			.attr("class", classPrefix + "showNamesText")
 			.attr("x", 16)
 			.attr("y", 11)
-			.text("Show names");
+			.text("Show All");
 
 		showNamesGroup.on("click", function() {
 
@@ -908,8 +911,11 @@
 
 			innerCheck.style("stroke", chartState.showNames ? "darkslategray" : "white");
 
-			mapContainer.selectAll("." + classPrefix + "countryNames")
-				.style("opacity", chartState.showNames ? 1 : 0);
+			const allLabels = mapContainer.selectAll("." + classPrefix + "countryNames");
+
+			allLabels.style("display", null);
+
+			if (!chartState.showNames) displayLabels(allLabels);
 
 		});
 
@@ -918,17 +924,26 @@
 
 	function createTopPanel(data) {
 
-		return;
+		let mainValue = 0,
+			rapidResponseValue = 0,
+			underfundedValue = 0,
+			projectsValue = data.projects.size,
+			numberofCountries = 0,
+			numberofRegionals = 0,
+			thisOffset;
 
-		const mainValue = d3.sum(data, function(d) {
-			return d["cerf" + chartState.selectedCerfAllocation];
-		});
+		const numberofFunds = data.map.length;
 
-		const cbpfsValue = data.map(function(d) {
-			return d.country;
-		}).filter(function(elem, index, arr) {
-			return arr.indexOf(elem) === index;
-		}).length;
+		for (row of data.map) {
+			mainValue += row[`cerf${separator}0${separator}0`];
+			rapidResponseValue += row[`cerf${separator}3${separator}0`];
+			underfundedValue += row[`cerf${separator}4${separator}0`];
+			if (hardcodedRegionals.includes(row.id)) {
+				++numberofRegionals;
+			} else {
+				++numberofCountries;
+			};
+		};
 
 		const topPanelMoneyBag = topPanel.main.selectAll("." + classPrefix + "topPanelMoneyBag")
 			.data([true])
@@ -943,11 +958,13 @@
 				});
 			});
 
-		const previousValue = d3.select("." + classPrefix + "topPanelMainValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelMainValue").datum() : 0;
-
-		const previousProjects = d3.select("." + classPrefix + "topPanelProjectsNumber").size() !== 0 ? d3.select("." + classPrefix + "topPanelProjectsNumber").datum() : 0;
-
-		const previousCbpfs = d3.select("." + classPrefix + "topPanelCbpfsNumber").size() !== 0 ? d3.select("." + classPrefix + "topPanelCbpfsNumber").datum() : 0;
+		const previousMainValue = d3.select("." + classPrefix + "topPanelMainValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelMainValue").datum() : 0;
+		const previousRapidResponseValue = d3.select("." + classPrefix + "topPanelRapidResponseValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelRapidResponseValue").datum() : 0;
+		const previousUnderfundedValue = d3.select("." + classPrefix + "topPanelUnderfundedValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelUnderfundedValue").datum() : 0;
+		const previousProjectsValue = d3.select("." + classPrefix + "topPanelProjectsValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelProjectsValue").datum() : 0;
+		const previousFundsValue = d3.select("." + classPrefix + "topPanelFundsValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelFundsValue").datum() : 0;
+		const previousCountriesValue = d3.select("." + classPrefix + "topPanelCountriesValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelCountriesValue").datum() : 0;
+		const previousRegionalsValue = d3.select("." + classPrefix + "topPanelRegionalsValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelRegionalsValue").datum() : 0;
 
 		let mainValueGroup = topPanel.main.selectAll("." + classPrefix + "mainValueGroup")
 			.data([true]);
@@ -965,14 +982,14 @@
 			.attr("class", classPrefix + "topPanelMainValue contributionColorFill")
 			.attr("text-anchor", "end")
 			.merge(topPanelMainValue)
-			.attr("y", topPanel.height - topPanel.mainValueVerPadding)
+			.attr("y", topPanel.height / 2)
 			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[0] - topPanel.mainValueHorPadding);
 
 		topPanelMainValue.transition()
 			.duration(duration)
 			.tween("text", function(d) {
 				const node = this;
-				const i = d3.interpolate(previousValue, d);
+				const i = d3.interpolate(previousMainValue, d);
 				return function(t) {
 					const siString = formatSIFloat(i(t))
 					node.textContent = "$" + (+siString === +siString ? siString : siString.substring(0, siString.length - 1));
@@ -1018,42 +1035,273 @@
 			.style("opacity", 1)
 			.text(function(d) {
 				const yearsText = chartState.selectedYear.length === 1 ? chartState.selectedYear[0] : "years\u002A";
-				return "in " + yearsText + " (" + (chartState.selectedCerfAllocation === "rapidresponse" ? "Rapid Response" : capitalize(chartState.selectedCerfAllocation)) + ")";
+				return "in " + yearsText;
 			});
 
-		let topPanelCbpfsNumber = mainValueGroup.selectAll("." + classPrefix + "topPanelCbpfsNumber")
-			.data([cbpfsValue]);
+		let topPanelRapidResponseValue = mainValueGroup.selectAll("." + classPrefix + "topPanelRapidResponseValue")
+			.data([rapidResponseValue]);
 
-		topPanelCbpfsNumber = topPanelCbpfsNumber.enter()
+		topPanelRapidResponseValue = topPanelRapidResponseValue.enter()
 			.append("text")
-			.attr("class", classPrefix + "topPanelCbpfsNumber contributionColorFill")
+			.attr("class", classPrefix + "topPanelRapidResponseValue contributionColorFill")
 			.attr("text-anchor", "end")
-			.merge(topPanelCbpfsNumber)
-			.attr("y", topPanel.height - topPanel.mainValueVerPadding)
+			.merge(topPanelRapidResponseValue)
+			.attr("y", topPanel.height * 0.3)
 			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[1] - topPanel.mainValueHorPadding);
 
-		topPanelCbpfsNumber.transition()
+		topPanelRapidResponseValue.transition()
 			.duration(duration)
 			.tween("text", function(d) {
 				const node = this;
-				const i = d3.interpolate(previousCbpfs, d);
+				const i = d3.interpolate(previousRapidResponseValue, d);
 				return function(t) {
-					node.textContent = ~~(i(t));
+					node.textContent = "$" + formatSIFloat(i(t));
 				};
 			});
 
-		let topPanelCbpfsText = mainValueGroup.selectAll("." + classPrefix + "topPanelCbpfsText")
-			.data([cbpfsValue]);
-
-		topPanelCbpfsText = topPanelCbpfsText.enter()
+		const topPanelRapidResponseText = mainValueGroup.selectAll("." + classPrefix + "topPanelRapidResponseText")
+			.data([true])
+			.enter()
 			.append("text")
-			.attr("class", classPrefix + "topPanelCbpfsText")
-			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[1] + topPanel.mainValueHorPadding)
+			.attr("class", classPrefix + "topPanelRapidResponseText")
 			.attr("text-anchor", "start")
-			.merge(topPanelCbpfsText)
-			.attr("y", topPanel.height - topPanel.mainValueVerPadding * 2)
-			.text(function(d) {
-				return d > 1 ? "Countries" : "Country"
+			.attr("y", topPanel.height * 0.3)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[1] + topPanel.mainValueHorPadding)
+			.text("Rapid Response");
+
+		let topPanelUnderfundedValue = mainValueGroup.selectAll("." + classPrefix + "topPanelUnderfundedValue")
+			.data([underfundedValue]);
+
+		topPanelUnderfundedValue = topPanelUnderfundedValue.enter()
+			.append("text")
+			.attr("class", classPrefix + "topPanelUnderfundedValue contributionColorFill")
+			.attr("text-anchor", "end")
+			.merge(topPanelUnderfundedValue)
+			.attr("y", topPanel.height * 0.7)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[1] - topPanel.mainValueHorPadding);
+
+		topPanelUnderfundedValue.transition()
+			.duration(duration)
+			.tween("text", function(d) {
+				const node = this;
+				const i = d3.interpolate(previousUnderfundedValue, d);
+				return function(t) {
+					node.textContent = "$" + formatSIFloat(i(t));
+				};
+			});
+
+		const topPanelUnderfundedText = mainValueGroup.selectAll("." + classPrefix + "topPanelUnderfundedText")
+			.data([true])
+			.enter()
+			.append("text")
+			.attr("class", classPrefix + "topPanelUnderfundedText")
+			.attr("text-anchor", "start")
+			.attr("y", topPanel.height * 0.7)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[1] + topPanel.mainValueHorPadding)
+			.text("Underfunded");
+
+		let topPanelProjectsValue = mainValueGroup.selectAll("." + classPrefix + "topPanelProjectsValue")
+			.data([projectsValue]);
+
+		topPanelProjectsValue = topPanelProjectsValue.enter()
+			.append("text")
+			.attr("class", classPrefix + "topPanelProjectsValue contributionColorFill")
+			.attr("text-anchor", "end")
+			.merge(topPanelProjectsValue)
+			.attr("y", topPanel.height / 2)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] - topPanel.mainValueHorPadding);
+
+		topPanelProjectsValue.transition()
+			.duration(duration)
+			.tween("text", function(d) {
+				const node = this;
+				const i = d3.interpolateRound(previousProjectsValue, d);
+				return function(t) {
+					node.textContent = i(t);
+				};
+			});
+
+		let topPanelProjectsText = mainValueGroup.selectAll("." + classPrefix + "topPanelProjectsText")
+			.data([projectsValue])
+			.enter()
+			.append("text")
+			.attr("class", classPrefix + "topPanelProjectsText")
+			.attr("text-anchor", "start")
+			.attr("y", topPanel.height / 2)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] + topPanel.mainValueHorPadding)
+			.text(d => d > 1 ? "Projects" : "Project");
+
+		let topPanelFundsValue = mainValueGroup.selectAll("." + classPrefix + "topPanelFundsValue")
+			.data([numberofFunds]);
+
+		topPanelFundsValue = topPanelFundsValue.enter()
+			.append("text")
+			.attr("class", classPrefix + "topPanelFundsValue contributionColorFill")
+			.attr("text-anchor", "end")
+			.merge(topPanelFundsValue)
+			.attr("y", topPanel.height / 2)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[3] - topPanel.mainValueHorPadding);
+
+		topPanelFundsValue.transition()
+			.duration(duration)
+			.tween("text", function(d) {
+				const node = this;
+				const i = d3.interpolateRound(previousFundsValue, d);
+				return function(t) {
+					node.textContent = i(t);
+				};
+			});
+
+		let topPanelFundsText = mainValueGroup.selectAll("." + classPrefix + "topPanelFundsText")
+			.data([numberofFunds])
+			.enter()
+			.append("text")
+			.attr("class", classPrefix + "topPanelFundsText")
+			.attr("text-anchor", "start")
+			.attr("y", topPanel.height / 2)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[3] + topPanel.mainValueHorPadding)
+			.text(d => d > 1 ? "Funds" : "Fund");
+
+		let topPanelCountriesValue = mainValueGroup.selectAll("." + classPrefix + "topPanelCountriesValue")
+			.data([numberofCountries]);
+
+		topPanelCountriesValue = topPanelCountriesValue.enter()
+			.append("text")
+			.attr("class", classPrefix + "topPanelCountriesValue contributionColorFill")
+			.attr("text-anchor", "end")
+			.merge(topPanelCountriesValue)
+			.attr("y", topPanel.height * 0.3)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[4] - topPanel.mainValueHorPadding);
+
+		topPanelCountriesValue.transition()
+			.duration(duration)
+			.tween("text", function(d) {
+				const node = this;
+				const i = d3.interpolateRound(previousCountriesValue, d);
+				return function(t) {
+					node.textContent = i(t);
+				};
+			});
+
+		const topPanelCountriesText = mainValueGroup.selectAll("." + classPrefix + "topPanelCountriesText")
+			.data([numberofCountries])
+			.enter()
+			.append("text")
+			.attr("class", classPrefix + "topPanelCountriesText")
+			.attr("text-anchor", "start")
+			.attr("y", topPanel.height * 0.3)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[4] + topPanel.mainValueHorPadding)
+			.text(d => d > 1 ? "Countries" : "Country");
+
+		let topPanelRegionalsValue = mainValueGroup.selectAll("." + classPrefix + "topPanelRegionalsValue")
+			.data([numberofRegionals]);
+
+		topPanelRegionalsValue = topPanelRegionalsValue.enter()
+			.append("text")
+			.attr("class", classPrefix + "topPanelRegionalsValue contributionColorFill")
+			.attr("text-anchor", "end")
+			.merge(topPanelRegionalsValue)
+			.attr("y", topPanel.height * 0.7)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[4] - topPanel.mainValueHorPadding);
+
+		topPanelRegionalsValue.transition()
+			.duration(duration)
+			.tween("text", function(d) {
+				const node = this;
+				const i = d3.interpolateRound(previousRegionalsValue, d);
+				return function(t) {
+					node.textContent = i(t);
+				};
+			});
+
+		const topPanelRegionalsText = mainValueGroup.selectAll("." + classPrefix + "topPanelRegionalsText")
+			.data([numberofRegionals])
+			.enter()
+			.append("text")
+			.attr("class", classPrefix + "topPanelRegionalsText")
+			.attr("text-anchor", "start")
+			.attr("y", topPanel.height * 0.7)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[4] + topPanel.mainValueHorPadding)
+			.text(d => d > 1 ? "Regionals" : "Regional");
+
+		let overRectangle = topPanel.main.selectAll("." + classPrefix + "topPanelOverRectangle")
+			.data([true]);
+
+		overRectangle = overRectangle.enter()
+			.append("rect")
+			.attr("class", classPrefix + "topPanelOverRectangle")
+			.attr("width", topPanel.width)
+			.attr("height", topPanel.height)
+			.style("pointer-events", "all")
+			.style("opacity", 0)
+			.merge(overRectangle);
+
+		overRectangle.on("mouseover", function() {
+
+				const mouseContainer = d3.mouse(containerDiv.node());
+
+				const mouse = d3.mouse(this);
+
+				tooltip.style("display", "block")
+					.html(null);
+
+				const tooltipContainer = tooltip.append("div")
+					.style("margin", "0px")
+					.style("display", "flex")
+					.style("flex-wrap", "wrap")
+					.style("width", "280px");
+
+				const tooltipData = [{
+					title: "Total:",
+					property: mainValue
+				}, {
+					title: "Rapid Response:",
+					property: rapidResponseValue
+				}, {
+					title: "Underfunded:",
+					property: underfundedValue
+				}];
+
+				tooltipData.forEach(function(e, i) {
+					tooltipContainer.append("div")
+						.style("display", "flex")
+						.style("flex", "0 56%")
+						.html(e.title);
+
+					tooltipContainer.append("div")
+						.style("display", "flex")
+						.style("flex", "0 44%")
+						.style("justify-content", "flex-end")
+						.html("$" + formatMoney0Decimals(e.property).replace("G", "B"));
+				});
+
+				const tooltipSize = tooltip.node().getBoundingClientRect();
+
+				localVariable.set(this, tooltipSize);
+
+				thisOffset = this.getBoundingClientRect().top - containerDiv.node().getBoundingClientRect().top - (tooltipSize.height - this.getBoundingClientRect().height) / 2;
+
+				tooltip.style("top", thisOffset + "px")
+					.style("left", mouse[0] < topPanel.width - 14 - tooltipSize.width ?
+						mouseContainer[0] + 14 + "px" :
+						mouseContainer[0] - (mouse[0] - (topPanel.width - tooltipSize.width)) + "px");
+			})
+			.on("mousemove", function() {
+
+				const mouseContainer = d3.mouse(containerDiv.node());
+
+				const mouse = d3.mouse(this);
+
+				const tooltipSize = localVariable.get(this);
+
+				tooltip.style("top", thisOffset + "px")
+					.style("left", mouse[0] < topPanel.width - 14 - tooltipSize.width ?
+						mouseContainer[0] + 14 + "px" :
+						mouseContainer[0] - (mouse[0] - (topPanel.width - tooltipSize.width)) + "px");
+			})
+			.on("mouseout", function() {
+				if (isSnapshotTooltipVisible) return;
+				tooltip.style("display", "none");
 			});
 
 		//end of createTopPanel
@@ -1504,7 +1752,7 @@
 
 		let countryNames = mapContainer.selectAll("." + classPrefix + "countryNames")
 			.data(data.filter(function(e) {
-				return centroids[e.isoCode];
+				return centroids[e.isoCode] && !hardcodedRegionals.includes(e.id);
 			}), function(d) {
 				return d.isoCode
 			});
@@ -1514,7 +1762,6 @@
 		const countryNamesEnter = countryNames.enter()
 			.append("text")
 			.attr("class", classPrefix + "countryNames")
-			.style("opacity", chartState.showNames ? 1 : 0)
 			.attr("x", function(d) {
 				return centroids[d.isoCode].x;
 			})
@@ -1522,13 +1769,15 @@
 				return centroids[d.isoCode].y;
 			})
 			.text(function(d) {
-				return d.country
+				return d.countryAbbreviation;
 			})
-			.call(wrapText2, 100);
+			.call(wrapText2, countryNameMaxLength);
 
 		countryNames = countryNamesEnter.merge(countryNames);
 
-		countryNames.style("opacity", chartState.showNames ? 1 : 0);
+		if (!chartState.showNames) {
+			countryNames.each((_, i, n) => d3.select(n[i]).style("display", null)).call(displayLabels);
+		};
 
 		const globalCountry = mapContainer.selectAll("." + classPrefix + "MapPath")
 			.filter(d => d.properties ? d.properties.ISO_2 === globalIsoCode : d.isoCode === globalIsoCode);
@@ -1628,8 +1877,13 @@
 					return mapProjection([globalCerf.long, globalCerf.lat])[1] + cerfCircleRadius + 8 / d3.event.transform.k;
 				});
 
-			mapContainer.selectAll("." + classPrefix + "countryNames")
-				.style("font-size", 10 / d3.event.transform.k + "px")
+			const allLabels = mapContainer.selectAll("." + classPrefix + "countryNames");
+
+			allLabels.style("font-size", 10 / d3.event.transform.k + "px")
+
+			if (!chartState.showNames) {
+				allLabels.each((_, i, n) => d3.select(n[i]).style("display", null)).call(displayLabels);
+			};
 
 			//end of zoomed
 		};
@@ -1650,10 +1904,10 @@
 
 			const boundingBox = data.reduce((acc, curr) => {
 				if (centroids[curr.isoCode]) {
-					acc.n = Math.min(acc.n, centroids[curr.isoCode].y - zoomBoundingMarginHor);
-					acc.s = Math.max(acc.s, centroids[curr.isoCode].y + zoomBoundingMarginHor);
-					acc.e = Math.max(acc.e, centroids[curr.isoCode].x + zoomBoundingMarginVert);
-					acc.w = Math.min(acc.w, centroids[curr.isoCode].x - zoomBoundingMarginVert);
+					acc.n = Math.min(acc.n, centroids[curr.isoCode].y - zoomBoundingMarginVert);
+					acc.s = Math.max(acc.s, centroids[curr.isoCode].y + zoomBoundingMarginVert);
+					acc.e = Math.max(acc.e, centroids[curr.isoCode].x + zoomBoundingMarginHor);
+					acc.w = Math.min(acc.w, centroids[curr.isoCode].x - zoomBoundingMarginHor);
 				};
 				return acc;
 			}, {
@@ -1695,11 +1949,11 @@
 			.attr("class", classPrefix + "LegendRects")
 			.attr("y", legendPanel.padding[0])
 			.attr("x", function(_, i) {
-				return legendPanel.padding[3] + i * 9
+				return legendPanel.padding[3] + i * 11
 			})
 			.style("stroke", "#444")
-			.attr("width", 7)
-			.attr("height", 9)
+			.attr("width", 9)
+			.attr("height", 11)
 			.merge(legendRects)
 			.style("fill", function(d) {
 				return colorScale(d);
@@ -1713,10 +1967,10 @@
 			.attr("y1", legendPanel.padding[0] + 10)
 			.attr("y2", legendPanel.padding[0] + 20)
 			.attr("x1", function(d) {
-				return d ? legendPanel.padding[3] + 88 : legendPanel.padding[3];
+				return d ? legendPanel.padding[3] + 108 : legendPanel.padding[3];
 			})
 			.attr("x2", function(d) {
-				return d ? legendPanel.padding[3] + 88 : legendPanel.padding[3];
+				return d ? legendPanel.padding[3] + 108 : legendPanel.padding[3];
 			})
 			.style("stroke-width", "1px")
 			.style("shape-rendering", "crispEdges")
@@ -1730,7 +1984,7 @@
 			.attr("class", classPrefix + "LegendColorTexts")
 			.attr("y", 42)
 			.attr("x", function(_, i) {
-				return i ? legendPanel.padding[3] + 88 : legendPanel.padding[3];
+				return i ? legendPanel.padding[3] + 108 : legendPanel.padding[3];
 			})
 			.attr("text-anchor", function(_, i) {
 				return i ? "end" : "start";
@@ -2260,6 +2514,29 @@
 			});
 
 		//end of downloadSnapshotPdf
+	};
+
+	function displayLabels(labelSelection) {
+		labelSelection.each(function(d) {
+			const outerElement = this;
+			const outerBox = this.getBoundingClientRect();
+			labelSelection.each(function(e) {
+				if (outerElement !== this) {
+					const innerBox = this.getBoundingClientRect();
+					if (!(outerBox.right < innerBox.left ||
+							outerBox.left > innerBox.right ||
+							outerBox.bottom < innerBox.top ||
+							outerBox.top > innerBox.bottom)) {
+						console.log(this)
+						if (e[`cerf${separator}${chartState.selectedCerfAllocation}${separator}0`] < d[`cerf${separator}${chartState.selectedCerfAllocation}${separator}0`]) {
+							d3.select(this).style("display", "none");
+						} else {
+							d3.select(outerElement).style("display", "none");
+						};
+					};
+				};
+			});
+		});
 	};
 
 	function formatSIFloat(value) {

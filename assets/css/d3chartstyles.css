@@ -471,19 +471,38 @@ p#allocoverd3chartTitle {
 
 .allocoverlegendTitle {
 	font-family: "Roboto", sans-serif;
-	font-size: 12px;
+	font-size: 14px;
 	font-weight: 500;
+	fill: #888;
 }
 
-.allocovertopPanelMainValue, .allocovertopPanelProjectsNumber, .allocovertopPanelCbpfsNumber {
+.allocovertopPanelMainValue, .allocovertopPanelProjectsValue, .allocovertopPanelFundsValue {
 	font-family: "Arial", sans-serif;
 	font-size: 48px;
+	dominant-baseline: central;
 }
 
-.allocovertopPanelMainText, .allocovertopPanelSubText, .allocovertopPanelProjectsText, .allocovertopPanelCbpfsText, .allocovertopPanelProjectsTextSubText {
+.allocovertopPanelRapidResponseValue, .allocovertopPanelUnderfundedValue, .allocovertopPanelCountriesValue, .allocovertopPanelRegionalsValue {
+	font-family: "Arial", sans-serif;
+	font-size: 18px;
+	dominant-baseline: central;
+}
+
+.allocovertopPanelRapidResponseText, .allocovertopPanelUnderfundedText, .allocovertopPanelCountriesText, .allocovertopPanelRegionalsText {
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	dominant-baseline: central;
+	fill: #888;
+}
+
+.allocovertopPanelMainText, .allocovertopPanelSubText, .allocovertopPanelProjectsText, .allocovertopPanelFundsText {
 	font-family: "Arial", sans-serif;
 	font-size: 18px;
 	fill: #888;
+}
+
+.allocovertopPanelProjectsText, .allocovertopPanelFundsText {
+	dominant-baseline: central;
 }
 
 .allocoverlegendCirclesText {
