@@ -61,7 +61,7 @@
 		chartTitleDefault = "Allocations",
 		vizNameQueryString = "allocationsmap",
 		bookmarkSite = "https://pfbi.unocha.org/bookmark.html?",
-		dataUrl = "http://cbpfgms.github.io/pf-onebi-data/cerf/cerf_allocationSummary_byorg.csv",
+		dataUrl = "https://cbpfgms.github.io/pf-onebi-data/cerf/cerf_allocationSummary_byorg.csv",
 		mapUrl = "https://cbpfgms.github.io/pf-onebi-data/map/unworldmap.json",
 		masterFundsUrl = "https://cbpfgms.github.io/pf-onebi-data/mst/MstCountry.json",
 		masterAllocationTypesUrl = "https://cbpfgms.github.io/pf-onebi-data/mst/MstAllocation.json",
