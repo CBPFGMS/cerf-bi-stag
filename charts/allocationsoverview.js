@@ -1873,11 +1873,27 @@
 				.style("font-size", "16px")
 				.html(d.country);
 
+			const tooltipContainer = innerTooltipDiv.append("div")
+				.style("display", "flex")
+				.style("margin-bottom", "8px")
+				.style("width", "100%");
+
+			tooltipContainer.append("div")
+				.style("display", "flex")
+				.style("flex", "0 60%")
+				.html(cerfAllocationTypes[chartState.selectedCerfAllocation]);
+
+			tooltipContainer.append("div")
+				.style("display", "flex")
+				.style("flex", "0 40%")
+				.style("justify-content", "flex-end")
+				.html("$" + formatMoney0Decimals(d[`cerf${separator}${chartState.selectedCerfAllocation}${separator}0`]).replace("G", "B"));
+
 			innerTooltipDiv.append("div")
 				.style("margin-bottom", "2px")
 				.style("font-size", "12px")
 				.style("color", "#444")
-				.html("Allocations by sector:");
+				.html("Allocations by sector");
 
 			const svgData = Object.keys(clustersList).map(e => ({
 					cluster: clustersList[e],
