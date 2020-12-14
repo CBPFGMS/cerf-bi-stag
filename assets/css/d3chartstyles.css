@@ -505,6 +505,43 @@ p#allocoverd3chartTitle {
 	dominant-baseline: central;
 }
 
+.allocoverxAxisGroupColumnBySector path, .allocoveryAxisGroupColumnBySector path {
+	stroke: none;
+}
+
+.allocoverxAxisGroupColumnBySector text {
+  font-family: "Roboto", sans-serif;
+  font-size: 10px;
+  fill: #888;
+  pointer-events: none;
+}
+
+.allocoveryAxisGroupColumnBySector text {
+  font-family: "Roboto", sans-serif;
+  font-size: 10px;
+  fill: #888;
+  pointer-events: none;
+  letter-spacing: -0.25px;
+}
+
+.allocoverlabelsColumnBySector {
+  font-family: "Roboto", sans-serif;
+  font-size: 9px;
+  fill: #333;
+  letter-spacing: -0.25px;
+  pointer-events: none;
+  dominant-baseline: central;
+}
+
+.allocoveryAxisGroupColumnBySector line {
+stroke: darkslategray;
+}
+
+.allocoverxAxisGroupColumnBySector line {
+  stroke: #ddd;
+  stroke-dasharray: 2, 2;
+}
+
 .allocoverlegendCirclesText {
 	font-family: "Arial", sans-serif;
 	font-size: 9px;
