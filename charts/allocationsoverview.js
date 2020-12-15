@@ -25,6 +25,14 @@
 		clusterIconSize = 18,
 		clusterIconPadding = 2,
 		labelsColumnPadding = 2,
+		stackedPadding = [30, 14, 48, 14],
+		stackedSvgWidth = width,
+		stackedSvgHeight = 340,
+		stackedBarMaxWidth = 65,
+		barLabelPadding = 16,
+		barLabelPaddingBase = 3,
+		legendGroupRectSize = 12,
+		legendGroupPadding = legendGroupRectSize + 4,
 		unBlue = "#1F69B3",
 		cerfColor = "#F9D25B",
 		choroplethColorTotal = "#F9D25B",
@@ -88,8 +96,8 @@
 		partnersList = {},
 		clustersList = {},
 		allocationTypesList = {},
-		uNAgenciesNamesList = {},
-		uNAgenciesShortNamesList = {},
+		unAgenciesNamesList = {},
+		unAgenciesShortNamesList = {},
 		fundNamesListKeys = [],
 		separator = "##",
 		chartState = {
@@ -251,6 +259,22 @@
 	const yearsDescriptionDiv = containerDiv.append("div")
 		.attr("class", classPrefix + "YearsDescriptionDiv");
 
+	const stackedBarchartDiv = containerDiv.append("div")
+		.attr("class", classPrefix + "stackedBarchartDiv");
+
+	const stackedBarchartDivTitle = stackedBarchartDiv.append("div")
+		.attr("class", classPrefix + "stackedBarchartDivTitle");
+
+	stackedBarchartDivTitle.append("span")
+		.html("Title here");
+
+	const stackedBarchartContainerDiv = stackedBarchartDiv.append("div")
+		.attr("class", classPrefix + "stackedBarchartContainerDiv");
+
+	const stackedSvg = stackedBarchartContainerDiv.append("svg")
+		.attr("viewBox", "0 0 " + stackedSvgWidth + " " + stackedSvgHeight)
+		.style("background-color", "white");
+
 	const footerDiv = containerDiv.append("div")
 		.attr("class", classPrefix + "FooterDiv");
 
@@ -292,6 +316,10 @@
 
 	const tooltip = containerDiv.append("div")
 		.attr("id", classPrefix + "tooltipdiv")
+		.style("display", "none");
+
+	const tooltipBar = stackedBarchartContainerDiv.append("div")
+		.attr("id", classPrefix + "tooltipdivBar")
 		.style("display", "none");
 
 	containerDiv.on("contextmenu", function() {
@@ -397,6 +425,29 @@
 
 	const radiusScale = d3.scaleSqrt()
 		.range([minPieSize, maxPieSize]);
+
+	const xScaleBar = d3.scaleBand()
+		.paddingInner(0.4)
+		.paddingOuter(0.2);
+
+	const yScaleBar = d3.scaleLinear()
+		.range([stackedSvgHeight - stackedPadding[2], stackedPadding[0]]);
+
+	const xAxisBar = d3.axisBottom(xScaleBar)
+		.tickSizeInner(0)
+		.tickSizeOuter(0)
+		.tickPadding(6)
+		.tickFormat(d => unAgenciesShortNamesList[d]);
+
+	const xAxisBarGroup = stackedSvg.append("g")
+		.attr("class", classPrefix + "xAxisBarGroup")
+		.attr("transform", "translate(0," + (stackedSvgHeight - stackedPadding[2]) + ")");
+
+	const stackKeys = cerfTypeKeys.map(e => `cerf${separator}${e}`);
+
+	const stack = d3.stack()
+		.keys(stackKeys)
+		.order(d3.stackOrderDescending);
 
 	const colors = d3.range(0.1, 1.1, 0.1).map(function(d) {
 		return colorInterpolatorTotal(d);
@@ -598,6 +649,8 @@
 		createLegend(data);
 
 		createFooterDiv();
+
+		createStackedBar(data);
 
 		if (showHelp) createAnnotationsDiv();
 
@@ -992,16 +1045,18 @@
 			numberofRegionals = 0,
 			thisOffset;
 
-		const numberofFunds = data.map.length;
+		const numberofFunds = data.map.filter(row => row[`cerf${separator}${chartState.selectedCerfAllocation}${separator}0`]).length;
 
 		for (row of data.map) {
 			mainValue += row[`cerf${separator}0${separator}0`];
 			rapidResponseValue += row[`cerf${separator}3${separator}0`];
 			underfundedValue += row[`cerf${separator}4${separator}0`];
-			if (hardcodedRegionals.includes(row.id)) {
-				++numberofRegionals;
-			} else {
-				++numberofCountries;
+			if (row[`cerf${separator}${chartState.selectedCerfAllocation}${separator}0`]) {
+				if (hardcodedRegionals.includes(row.id)) {
+					++numberofRegionals;
+				} else {
+					++numberofCountries;
+				};
 			};
 		};
 
@@ -1705,6 +1760,8 @@
 
 			setYearsDescriptionDiv();
 
+			createStackedBar(data);
+
 			//end of clickButtonsRects
 		};
 
@@ -2158,6 +2215,237 @@
 		//end of createLegend
 	};
 
+	function createStackedBar(data) {
+
+		const legendGroup = stackedSvg.selectAll("." + classPrefix + "legendGroup")
+			.data([true])
+			.enter()
+			.append("g")
+			.attr("class", classPrefix + "legendGroup")
+			.attr("transform", "translate(" + stackedPadding[3] + "," + (stackedSvgHeight - legendGroupPadding) + ")");
+
+		const legend = legendGroup.selectAll(null)
+			.data(cerfTypeKeys)
+			.enter()
+			.append("g")
+			.attr("transform", (_, i) => "translate(" + (i * 120) + ",0)");
+
+		legend.append("rect")
+			.attr("width", legendGroupRectSize)
+			.attr("height", legendGroupRectSize)
+			.attr("fill", d => d === "3" ? choroplethColorRR : choroplethColorUnderfunded);
+
+		legend.append("text")
+			.attr("x", legendGroupRectSize + 4)
+			.attr("y", legendGroupRectSize / 2)
+			.text(d => cerfAllocationTypes[d]);
+
+		data.bar.sort((a, b) => b[`cerf${separator}0`] - a[`cerf${separator}0`]);
+
+		const dynamicWidth = Math.min(stackedSvgWidth - stackedPadding[3] - stackedPadding[1],
+			(stackedPadding[1] + stackedPadding[3] + data.bar.length * stackedBarMaxWidth));
+
+		xScaleBar.domain(data.bar.map(d => d.id))
+			.range([stackedPadding[3], dynamicWidth - stackedPadding[1]]);
+
+		yScaleBar.domain([0, data.bar[0][`cerf${separator}0`]]);
+
+		xAxisBarGroup.transition()
+			.duration(duration)
+			.call(xAxisBar);
+
+		const stackedData = stack(data.bar);
+
+		let barsGroups = stackedSvg.selectAll("." + classPrefix + "barsGroups")
+			.data(stackedData, d => d.key);
+
+		const barGroupsExit = barsGroups.exit().remove();
+
+		const barGroupsEnter = barsGroups.enter()
+			.append("g")
+			.attr("class", classPrefix + "barsGroups")
+			.attr("pointer-events", "none")
+			.style("fill", d => d.key === `cerf${separator}3` ? choroplethColorRR : choroplethColorUnderfunded);
+
+		barsGroups = barGroupsEnter.merge(barsGroups);
+
+		let bars = barsGroups.selectAll("." + classPrefix + "bars")
+			.data(d => d, d => d.data.id);
+
+		const barsExit = bars.exit()
+			.transition()
+			.duration(duration)
+			.attr("height", 0)
+			.attr("y", stackedSvgHeight - stackedPadding[2])
+			.style("opacity", 0)
+			.remove();
+
+		const barsEnter = bars.enter()
+			.append("rect")
+			.attr("class", classPrefix + "bars")
+			.attr("stroke", "#aaa")
+			.attr("stroke-width", 0.5)
+			.attr("width", xScaleBar.bandwidth())
+			.attr("height", 0)
+			.attr("y", yScaleBar(0))
+			.attr("x", d => xScaleBar(d.data.id))
+
+		bars = barsEnter.merge(bars);
+
+		bars.transition()
+			.duration(duration)
+			.style("opacity", 1)
+			.attr("width", xScaleBar.bandwidth())
+			.attr("x", d => xScaleBar(d.data.id))
+			.attr("y", d => d[0] === d[1] ? yScaleBar(0) : yScaleBar(d[1]))
+			.attr("height", d => yScaleBar(d[0]) - yScaleBar(d[1]));
+
+		let underfundedLabel = stackedSvg.selectAll("." + classPrefix + "underfundedLabel")
+			.data(data.bar.filter(d => d[`cerf${separator}4`]), d => d.id);
+
+		const underfundedLabelExit = underfundedLabel.exit()
+			.transition()
+			.duration(duration)
+			.style("opacity", 0)
+			.remove();
+
+		const underfundedLabelEnter = underfundedLabel.enter()
+			.append("text")
+			.attr("class", classPrefix + "underfundedLabel")
+			.style("opacity", 0)
+			.style("fill", d3.color(choroplethColorUnderfunded).darker(0.4))
+			.attr("x", d => xScaleBar(d.id) + xScaleBar.bandwidth() / 2)
+			.attr("y", stackedSvgHeight - stackedPadding[2]);
+
+		underfundedLabel = underfundedLabelEnter.merge(underfundedLabel);
+
+		underfundedLabel.transition()
+			.duration(duration)
+			.style("opacity", 1)
+			.attr("x", d => xScaleBar(d.id) + xScaleBar.bandwidth() / 2)
+			.attr("y", d => yScaleBar(d[`cerf${separator}0`]) - (d[`cerf${separator}3`] ? barLabelPadding : barLabelPaddingBase))
+			.textTween((d, i, n) => {
+				const interpolator = d3.interpolate(0, d[`cerf${separator}4`]);
+				return t => d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B") + (d[`cerf${separator}3`] ? "/" : "");
+			});
+
+		let rapidResponseLabel = stackedSvg.selectAll("." + classPrefix + "rapidResponseLabel")
+			.data(data.bar.filter(d => d[`cerf${separator}3`]), d => d.id);
+
+		const rapidResponseLabelExit = rapidResponseLabel.exit()
+			.transition()
+			.duration(duration)
+			.style("opacity", 0)
+			.remove();
+
+		const rapidResponseLabelEnter = rapidResponseLabel.enter()
+			.append("text")
+			.attr("class", classPrefix + "rapidResponseLabel")
+			.style("opacity", 0)
+			.style("fill", d3.color(choroplethColorRR).darker(0.5))
+			.attr("x", d => xScaleBar(d.id) + xScaleBar.bandwidth() / 2)
+			.attr("y", stackedSvgHeight - stackedPadding[2]);
+
+		rapidResponseLabel = rapidResponseLabelEnter.merge(rapidResponseLabel);
+
+		rapidResponseLabel.transition()
+			.duration(duration)
+			.style("opacity", 1)
+			.attr("x", d => xScaleBar(d.id) + xScaleBar.bandwidth() / 2)
+			.attr("y", d => yScaleBar(d[`cerf${separator}0`]) - barLabelPaddingBase)
+			.textTween((d, i, n) => {
+				const interpolator = d3.interpolate(0, d[`cerf${separator}3`]);
+				return t => d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
+			});
+
+		let barsTooltipRectangles = stackedSvg.selectAll("." + classPrefix + "barsTooltipRectangles")
+			.data(data.bar, d => d.id);
+
+		const barsTooltipRectanglesExit = barsTooltipRectangles.exit().remove();
+
+		const barsTooltipRectanglesEnter = barsTooltipRectangles.enter()
+			.append("rect")
+			.attr("class", classPrefix + "barsTooltipRectangles")
+			.attr("pointer-events", "all")
+			.style("opacity", 0)
+			.attr("y", stackedPadding[0])
+			.attr("height", stackedSvgHeight - stackedPadding[0] - stackedPadding[2])
+			.attr("width", xScaleBar.step())
+			.attr("x", d => xScaleBar(d.id) - (xScaleBar.step() - xScaleBar.bandwidth()) / 2);
+
+		barsTooltipRectangles = barsTooltipRectanglesEnter.merge(barsTooltipRectangles);
+
+		barsTooltipRectangles.transition()
+			.duration(duration)
+			.attr("width", xScaleBar.step())
+			.attr("x", d => xScaleBar(d.id) - (xScaleBar.step() - xScaleBar.bandwidth()) / 2);
+
+		barsTooltipRectangles.on("mouseover", mouseoverBarsTooltipRectangles)
+			.on("mouseout", mouseoutBarsTooltipRectangles);
+
+		function mouseoverBarsTooltipRectangles(d) {
+
+			tooltipBar.style("display", "block")
+				.html(null);
+
+			const innerTooltipDiv = tooltipBar.append("div")
+				.style("width", innerTooltipDivWidth + "px")
+				.attr("id", classPrefix + "innerTooltipDiv");
+
+			innerTooltipDiv.append("div")
+				.style("margin-bottom", "12px")
+				.append("strong")
+				.style("font-size", "16px")
+				.html(unAgenciesNamesList[d.id]);
+
+			const tooltipContainer = innerTooltipDiv.append("div")
+				.style("display", "flex")
+				.style("flex-wrap", "wrap")
+				.style("width", "100%");
+
+			Object.keys(cerfAllocationTypes).forEach(row => {
+				const rowDiv = tooltipContainer.append("div")
+					.style("width", "100%")
+					.style("margin-bottom", "4px")
+					.style("display", "flex");
+
+				rowDiv.append("div")
+					.style("display", "flex")
+					.style("flex", "0 60%")
+					.html(cerfAllocationTypes[row]);
+
+				rowDiv.append("div")
+					.style("display", "flex")
+					.style("flex", "0 40%")
+					.style("justify-content", "flex-end")
+					.html("$" + formatMoney0Decimals(d[`cerf${separator}${row}`]).replace("G", "B"));
+			});
+
+			const thisBox = this.getBoundingClientRect();
+
+			const containerBox = stackedBarchartContainerDiv.node().getBoundingClientRect();
+
+			const tooltipBox = tooltipBar.node().getBoundingClientRect();
+
+			const thisOffsetTop = (containerBox.height / 2) - (tooltipBox.height / 2);
+
+			const thisOffsetLeft = containerBox.right - thisBox.right > tooltipBox.width + tooltipMargin ?
+				thisBox.left - containerBox.left + thisBox.width :
+				thisBox.left - containerBox.left - tooltipBox.width;
+
+			tooltipBar.style("top", thisOffsetTop + "px")
+				.style("left", thisOffsetLeft + "px");
+
+		};
+
+		function mouseoutBarsTooltipRectangles() {
+			tooltipBar.style("display", "none")
+				.html(null);
+		};
+
+		//end of createStackedBar
+	};
+
 	function preProcessData(rawData) {
 
 		rawData.forEach(function(row) {
@@ -2184,8 +2472,8 @@
 
 	function createUnAgenciesNamesList(unAgenciesTypesData) {
 		unAgenciesTypesData.forEach(row => {
-			uNAgenciesNamesList[row.agencyID + ""] = row.agencyName.toLowerCase();
-			uNAgenciesShortNamesList[row.agencyID + ""] = row.agencyShortName.toLowerCase();
+			unAgenciesNamesList[row.agencyID + ""] = row.agencyName;
+			unAgenciesShortNamesList[row.agencyID + ""] = row.agencyShortName;
 		});
 	};
 
@@ -2238,7 +2526,9 @@
 		rawData.forEach(function(row) {
 			if (chartState.selectedYear.indexOf(+row.AllocationYear) > -1) {
 
-				row.ProjList.toString().split("##").forEach(e => data.projects.add(e));
+				if (chartState.selectedCerfAllocation === "0" || row.AllocationSurceId.toString() === chartState.selectedCerfAllocation) {
+					row.ProjList.toString().split("##").forEach(e => data.projects.add(e));
+				};
 
 				const foundCountry = data.map.find(function(d) {
 					return d.id === row.PooledFundId;
@@ -2263,6 +2553,27 @@
 					populateCountryObject(countryObject, row);
 					data.map.push(countryObject);
 				};
+
+				const foundAgency = data.bar.find(function(d) {
+					return d.id === row.PartnerCode;
+				});
+
+				if (foundAgency) {
+					populateAgencyObject(foundAgency, row);
+				} else {
+					const agencyObject = {
+						id: row.PartnerCode,
+						agency: unAgenciesNamesList[row.PartnerCode],
+						agencyAbbreviation: unAgenciesShortNamesList[row.PartnerCode],
+						allocations: []
+					};
+					Object.keys(cerfAllocationTypes).forEach(outerRow => {
+						agencyObject[`cerf${separator}${outerRow}`] = 0;
+					});
+					populateAgencyObject(agencyObject, row);
+					data.bar.push(agencyObject);
+				};
+
 			};
 		});
 
@@ -2273,6 +2584,12 @@
 			obj[`cerf${separator}0${separator}${row.ClusterId}`] += row.Budget;
 			obj[`cerf${separator}${row.AllocationSurceId}${separator}0`] += row.Budget;
 			obj[`cerf${separator}${row.AllocationSurceId}${separator}${row.ClusterId}`] += row.Budget;
+			obj.allocations.push(row);
+		};
+
+		function populateAgencyObject(obj, row) {
+			obj[`cerf${separator}0`] += row.Budget;
+			obj[`cerf${separator}${row.AllocationSurceId}`] += row.Budget;
 			obj.allocations.push(row);
 		};
 
