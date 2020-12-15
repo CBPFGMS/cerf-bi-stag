@@ -1814,6 +1814,8 @@
 
 			createLegend(data);
 
+			createStackedBar(data);
+
 		});
 
 		//end of createButtonsPanel
@@ -2215,7 +2217,11 @@
 		//end of createLegend
 	};
 
-	function createStackedBar(data) {
+	function createStackedBar(unfilteredData) {
+
+		const data = unfilteredData.bar.filter(function(d) {
+			return d[`cerf${separator}${chartState.selectedCerfAllocation}`];
+		});
 
 		const legendGroup = stackedSvg.selectAll("." + classPrefix + "legendGroup")
 			.data([true])
@@ -2240,21 +2246,21 @@
 			.attr("y", legendGroupRectSize / 2)
 			.text(d => cerfAllocationTypes[d]);
 
-		data.bar.sort((a, b) => b[`cerf${separator}0`] - a[`cerf${separator}0`]);
+		data.sort((a, b) => b[`cerf${separator}${chartState.selectedCerfAllocation}`] - a[`cerf${separator}${chartState.selectedCerfAllocation}`]);
 
 		const dynamicWidth = Math.min(stackedSvgWidth - stackedPadding[3] - stackedPadding[1],
-			(stackedPadding[1] + stackedPadding[3] + data.bar.length * stackedBarMaxWidth));
+			(stackedPadding[1] + stackedPadding[3] + data.length * stackedBarMaxWidth));
 
-		xScaleBar.domain(data.bar.map(d => d.id))
+		xScaleBar.domain(data.map(d => d.id))
 			.range([stackedPadding[3], dynamicWidth - stackedPadding[1]]);
 
-		yScaleBar.domain([0, data.bar[0][`cerf${separator}0`]]);
+		yScaleBar.domain([0, data[0][`cerf${separator}${chartState.selectedCerfAllocation}`]]);
 
 		xAxisBarGroup.transition()
 			.duration(duration)
 			.call(xAxisBar);
 
-		const stackedData = stack(data.bar);
+		const stackedData = stack(data);
 
 		let barsGroups = stackedSvg.selectAll("." + classPrefix + "barsGroups")
 			.data(stackedData, d => d.key);
@@ -2301,7 +2307,7 @@
 			.attr("height", d => yScaleBar(d[0]) - yScaleBar(d[1]));
 
 		let underfundedLabel = stackedSvg.selectAll("." + classPrefix + "underfundedLabel")
-			.data(data.bar.filter(d => d[`cerf${separator}4`]), d => d.id);
+			.data(data.filter(d => d[`cerf${separator}4`]), d => d.id);
 
 		const underfundedLabelExit = underfundedLabel.exit()
 			.transition()
@@ -2323,14 +2329,14 @@
 			.duration(duration)
 			.style("opacity", 1)
 			.attr("x", d => xScaleBar(d.id) + xScaleBar.bandwidth() / 2)
-			.attr("y", d => yScaleBar(d[`cerf${separator}0`]) - (d[`cerf${separator}3`] ? barLabelPadding : barLabelPaddingBase))
+			.attr("y", d => yScaleBar(d[`cerf${separator}3`] + d[`cerf${separator}4`]) - (d[`cerf${separator}3`] ? barLabelPadding : barLabelPaddingBase))
 			.textTween((d, i, n) => {
-				const interpolator = d3.interpolate(0, d[`cerf${separator}4`]);
+				const interpolator = d3.interpolate(reverseFormat(n[i].textContent) || 0, d[`cerf${separator}4`]);
 				return t => d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B") + (d[`cerf${separator}3`] ? "/" : "");
 			});
 
 		let rapidResponseLabel = stackedSvg.selectAll("." + classPrefix + "rapidResponseLabel")
-			.data(data.bar.filter(d => d[`cerf${separator}3`]), d => d.id);
+			.data(data.filter(d => d[`cerf${separator}3`]), d => d.id);
 
 		const rapidResponseLabelExit = rapidResponseLabel.exit()
 			.transition()
@@ -2352,14 +2358,14 @@
 			.duration(duration)
 			.style("opacity", 1)
 			.attr("x", d => xScaleBar(d.id) + xScaleBar.bandwidth() / 2)
-			.attr("y", d => yScaleBar(d[`cerf${separator}0`]) - barLabelPaddingBase)
+			.attr("y", d => yScaleBar(d[`cerf${separator}3`] + d[`cerf${separator}4`]) - barLabelPaddingBase)
 			.textTween((d, i, n) => {
-				const interpolator = d3.interpolate(0, d[`cerf${separator}3`]);
+				const interpolator = d3.interpolate(reverseFormat(n[i].textContent) || 0, d[`cerf${separator}3`]);
 				return t => d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
 			});
 
 		let barsTooltipRectangles = stackedSvg.selectAll("." + classPrefix + "barsTooltipRectangles")
-			.data(data.bar, d => d.id);
+			.data(data, d => d.id);
 
 		const barsTooltipRectanglesExit = barsTooltipRectangles.exit().remove();
 
@@ -2588,8 +2594,12 @@
 		};
 
 		function populateAgencyObject(obj, row) {
-			obj[`cerf${separator}0`] += row.Budget;
-			obj[`cerf${separator}${row.AllocationSurceId}`] += row.Budget;
+			if (chartState.selectedCerfAllocation === "0") {
+				obj[`cerf${separator}0`] += row.Budget;
+				obj[`cerf${separator}${row.AllocationSurceId}`] += row.Budget;
+			} else if (chartState.selectedCerfAllocation === row.AllocationSurceId.toString()) {
+				obj[`cerf${separator}${row.AllocationSurceId}`] += row.Budget;
+			};
 			obj.allocations.push(row);
 		};
 
