@@ -35,7 +35,7 @@
 		legendGroupPadding = legendGroupRectSize + 4,
 		unBlue = "#1F69B3",
 		cerfColor = "#F9D25B",
-		choroplethColorTotal = "#F9D25B",
+		choroplethColorTotal = "#5693CE",
 		choroplethColorRR = "#F0DA8A",
 		choroplethColorUnderfunded = "#B8C9E6",
 		countriesBackground = "#F4F4F4",
@@ -57,7 +57,7 @@
 		currentDate = new Date(),
 		currentYear = currentDate.getFullYear(),
 		localVariable = d3.local(),
-		localStorageTime = 600000,
+		localStorageTime = 1,
 		duration = 1000,
 		shortDuration = 250,
 		stickHeight = 2,
@@ -266,7 +266,7 @@
 		.attr("class", classPrefix + "stackedBarchartDivTitle");
 
 	stackedBarchartDivTitle.append("span")
-		.html("Title here");
+		.html("By Agency");
 
 	const stackedBarchartContainerDiv = stackedBarchartDiv.append("div")
 		.attr("class", classPrefix + "stackedBarchartContainerDiv");

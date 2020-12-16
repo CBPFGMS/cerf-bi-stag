@@ -263,7 +263,7 @@
 		windowHeight = window.innerHeight,
 		currentDate = new Date(),
 		currentYear = currentDate.getFullYear(),
-		localStorageTime = 600000,
+		localStorageTime = 1,
 		csvDateFormat = d3.utcFormat("_%Y%m%d_%H%M%S_UTC"),
 		lollipopGroupHeight = 23,
 		stickHeight = 2,
