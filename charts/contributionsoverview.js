@@ -254,6 +254,7 @@
 	};
 
 	const width = 1100,
+		height = 662,
 		padding = [4, 10, 24, 10],
 		topPanelHeight = 60,
 		buttonPanelHeight = 30,
@@ -264,7 +265,7 @@
 		currentYear = currentDate.getFullYear(),
 		localStorageTime = 600000,
 		csvDateFormat = d3.utcFormat("_%Y%m%d_%H%M%S_UTC"),
-		lollipopGroupHeight = 24,
+		lollipopGroupHeight = 23,
 		stickHeight = 2,
 		lollipopRadius = 4,
 		fadeOpacity = 0.3,
@@ -280,12 +281,17 @@
 		maxTextLength = 26,
 		localVariable = d3.local(),
 		legendPadding = 6,
+		maxDonorNumber = 20,
+		maxBarWidth = 56,
+		donorsPanelPercentage = 0.7,
+		othersId = "others",
 		paidColor = "#9063CD",
 		pledgedColor = "#E56A54",
 		unBlue = "#1F69B3",
 		highlightColor = "#F79A3B",
 		buttonsNumber = 12,
 		verticalLabelPadding = 0,
+		barLabelPadding = 6,
 		chartTitleDefault = "CERF Contributions",
 		contributionsTotals = {},
 		countryNames = {},
@@ -304,15 +310,14 @@
 		chartState = {
 			selectedYear: [],
 			selectedContribution: null,
-			selectedDonors: [],
-			selectedCbpfs: []
+			selectedDonors: []
 		};
 
-	let height = 500,
-		yearsArray,
+	let yearsArray,
 		isSnapshotTooltipVisible = false,
 		currentHoveredRect,
-		timer;
+		timer,
+		allTimeContributions = 0;
 
 	const queryStringValues = new URLSearchParams(location.search);
 
@@ -421,7 +426,7 @@
 		width: width - padding[1] - padding[3],
 		height: topPanelHeight,
 		moneyBagPadding: 0,
-		leftPadding: [176, 64 + (width - padding[1] - padding[3]) / 2],
+		leftPadding: [176, 580, 900],
 		mainValueVerPadding: 12,
 		mainValueHorPadding: 4
 	};
@@ -445,9 +450,19 @@
 		main: svg.append("g")
 			.attr("class", "pbiclcDonorsPanel")
 			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + topPanel.height + buttonPanel.height + (2 * panelHorizontalPadding)) + ")"),
-		width: width - padding[1] - padding[3] - panelVerticalPadding,
-		padding: [38, 6, 4, 0],
+		width: (width - padding[1] - padding[3] - panelVerticalPadding) * donorsPanelPercentage,
+		height: height - padding[0] - padding[2] - topPanel.height - buttonPanel.height - 2 * panelHorizontalPadding,
+		padding: [48, 28, 4, 0],
 		labelPadding: 8
+	};
+
+	const barchartPanel = {
+		main: svg.append("g")
+			.attr("class", "pbiclcbarchartPanel")
+			.attr("transform", "translate(" + (padding[3] + donorsPanel.width + panelVerticalPadding) + "," + (padding[0] + topPanel.height + buttonPanel.height + (2 * panelHorizontalPadding)) + ")"),
+		width: (width - padding[1] - padding[3] - panelVerticalPadding) * (1 - donorsPanelPercentage),
+		height: height - padding[0] - padding[2] - topPanel.height - buttonPanel.height - 2 * panelHorizontalPadding,
+		padding: [48, 20, 40, 30]
 	};
 
 	const xScaleDonors = d3.scaleLinear();
@@ -481,6 +496,21 @@
 		.type(d3.symbolTriangle)
 		.size(paidSymbolSize);
 
+	const xScaleBar = d3.scaleBand()
+		.paddingInner(0.6)
+		.paddingOuter(0.5);
+
+	const yScaleBar = d3.scaleLinear()
+		.range([barchartPanel.height - barchartPanel.padding[2], barchartPanel.padding[0]]);
+
+	const xAxisBar = d3.axisBottom(xScaleBar)
+		.tickSizeInner(0)
+		.tickPadding(6);
+
+	const xAxisBarGroup = barchartPanel.main.append("g")
+		.attr("class", "pbiclcaAxisBarsGroup")
+		.attr("transform", "translate(0," + (barchartPanel.height - barchartPanel.padding[2]) + ")");
+
 	if (localStorage.getItem("pbiclcpbiclipbifdcdata") &&
 		JSON.parse(localStorage.getItem("pbiclcpbiclipbifdcdata")).timestamp > (currentDate.getTime() - localStorageTime)) {
 		const rawData = d3.csvParse(JSON.parse(localStorage.getItem("pbiclcpbiclipbifdcdata")).data);
@@ -504,6 +534,7 @@
 	function csvCallback(rawData) {
 
 		yearsArray = rawData.map(function(d) {
+			allTimeContributions += (+d.PaidAmt);
 			if (!countryNames[d.GMSDonorISO2Code.toLowerCase()]) countryNames[d.GMSDonorISO2Code.toLowerCase()] = d.GMSDonorName;
 			if (!countryNames[d.PooledFundISO2Code.toLowerCase()]) countryNames[d.PooledFundISO2Code.toLowerCase()] = d.PooledFundName;
 			return +d.FiscalYear
@@ -551,20 +582,16 @@
 
 		const data = {
 			dataDonors: dataArray[0],
-			dataCbpfs: dataArray[1]
+			donorTypes: dataArray[1]
 		};
 
-		const allDonors = data.dataDonors.map(function(d) {
-			return d.isoCode;
-		});
+		// const allDonors = data.dataDonors.map(function(d) {
+		// 	return d.isoCode;
+		// });
 
-		const allCbpfs = data.dataCbpfs.map(function(d) {
-			return d.isoCode;
-		});
+		//validateCountries(selectedCountriesString, allDonors, allCbpfs);
 
-		validateCountries(selectedCountriesString, allDonors, allCbpfs);
-
-		createTitle();
+		//createTitle();
 
 		createFooterDiv();
 
@@ -579,6 +606,8 @@
 		createButtonPanel();
 
 		createDonorsPanel();
+
+		createBarChartPanel();
 
 		setYearsDescriptionDiv();
 
@@ -626,23 +655,14 @@
 			const dataArray = processData(rawData);
 
 			data.dataDonors = dataArray[0];
-
-			data.dataCbpfs = dataArray[1];
+			data.donorTypes = dataArray[1];
 
 			const allDonors = data.dataDonors.map(function(d) {
 				return d.isoCode;
 			});
 
-			const allCbpfs = data.dataCbpfs.map(function(d) {
-				return d.isoCode;
-			});
-
 			chartState.selectedDonors = chartState.selectedDonors.filter(function(d) {
 				return allDonors.indexOf(d) > -1;
-			});
-
-			chartState.selectedCbpfs = chartState.selectedCbpfs.filter(function(d) {
-				return allCbpfs.indexOf(d) > -1;
 			});
 
 			recalculateAndResize();
@@ -652,6 +672,8 @@
 			createTopPanel();
 
 			createDonorsPanel();
+
+			createBarChartPanel();
 
 			populateSelectedDescriptionDiv();
 
@@ -915,57 +937,8 @@
 
 		function createTopPanel() {
 
-			const dataDonors = !chartState.selectedDonors.length && !chartState.selectedCbpfs.length ?
-				data.dataDonors : chartState.selectedDonors.length ? data.dataDonors.filter(function(d) {
-					return chartState.selectedDonors.indexOf(d.isoCode) > -1;
-				}) : data.dataDonors.reduce(function(acc, curr) {
-					curr.donations.forEach(function(d) {
-						if (chartState.selectedCbpfs.indexOf(d.isoCode) > -1) {
-							const found = acc.find(function(e) {
-								return e.donor === curr.donor;
-							});
-							if (found) {
-								found.paid += d.paid;
-								found.pledge += d.pledge;
-								found.total += d.total;
-							} else {
-								acc.push({
-									donor: curr.donor,
-									paid: d.paid,
-									pledge: d.pledge,
-									total: d.total
-								})
-							}
-						};
-					});
-					return acc;
-				}, []);
-
-			const dataCbpfs = !chartState.selectedDonors.length && !chartState.selectedCbpfs.length ?
-				data.dataCbpfs : chartState.selectedCbpfs.length ? data.dataCbpfs.filter(function(d) {
-					return chartState.selectedCbpfs.indexOf(d.isoCode) > -1;
-				}) : data.dataCbpfs.reduce(function(acc, curr) {
-					curr.donors.forEach(function(d) {
-						if (chartState.selectedDonors.indexOf(d.isoCode) > -1) {
-							const found = acc.find(function(e) {
-								return e.cbpf === curr.cbpf;
-							});
-							if (found) {
-								found.paid += d.paid;
-								found.pledge += d.pledge;
-								found.total += d.total;
-							} else {
-								acc.push({
-									cbpf: curr.cbpf,
-									paid: d.paid,
-									pledge: d.pledge,
-									total: d.total
-								})
-							}
-						};
-					});
-					return acc;
-				}, []);
+			const dataDonors = data.dataDonors;
+			const donorTypes = data.donorTypes;
 
 			contributionType.forEach(function(d) {
 				contributionsTotals[d] = d3.sum(dataDonors, function(e) {
@@ -1074,7 +1047,7 @@
 				});
 
 			let topPanelDonorsNumber = mainValueGroup.selectAll(".pbiclctopPanelDonorsNumber")
-				.data([dataDonors.length]);
+				.data([donorTypes.length]);
 
 			topPanelDonorsNumber = topPanelDonorsNumber.enter()
 				.append("text")
@@ -1130,6 +1103,42 @@
 			overRectangle.on("mouseover", mouseOverTopPanel)
 				.on("mousemove", mouseMoveTopPanel)
 				.on("mouseout", mouseOutTopPanel);
+
+			const allTimeValue = mainValueGroup.selectAll(".pbiclctopPanelAllTimeValue")
+				.data([allTimeContributions])
+				.enter()
+				.append("text")
+				.attr("class", "pbiclctopPanelAllTimeValue contributionColorFill")
+				.attr("text-anchor", "end")
+				.attr("y", topPanel.height - topPanel.mainValueVerPadding)
+				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] - topPanel.mainValueHorPadding)
+				.text(d => "$" + formatSIFloat(d).substring(0, formatSIFloat(d).length - 1));
+
+			const allTimeText = mainValueGroup.selectAll(".pbiclctopPanelAllTimeText")
+				.data([allTimeContributions])
+				.enter()
+				.append("text")
+				.attr("class", "pbiclctopPanelAllTimeText")
+				.attr("text-anchor", "start")
+				.attr("y", topPanel.height - topPanel.mainValueVerPadding * 2.7)
+				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] + topPanel.mainValueHorPadding)
+				.text(function(d) {
+					const valueSI = formatSIFloat(d);
+					const unit = valueSI[valueSI.length - 1];
+					return (unit === "k" ? "Thousand" : unit === "M" ? "Million" : unit === "G" ? "Billion" : "") +
+						" received";
+				});
+
+			const allTimeSubText = mainValueGroup.selectAll(".pbiclctopPanelAllTimeSubText")
+				.data([true])
+				.enter()
+				.append("text")
+				.attr("class", "pbiclctopPanelAllTimeSubText")
+				.attr("text-anchor", "start")
+				.attr("y", topPanel.height - topPanel.mainValueVerPadding * 1.2)
+				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] + topPanel.mainValueHorPadding)
+				.text("in " + (currentYear - yearsArray[0] + 1) + " years");
+
 
 			//end of createTopPanel
 		};
@@ -1380,48 +1389,32 @@
 
 		function createDonorsPanel() {
 
-			let donorsArray;
-
-			if (chartState.selectedCbpfs.length === 0) {
-				donorsArray = data.dataDonors;
-			} else {
-				const selectedCbpfsData = data.dataCbpfs.filter(function(d) {
-					return chartState.selectedCbpfs.indexOf(d.isoCode) > -1;
-				}).map(function(d) {
-					return d.donors;
-				});
-				const mergedArray = JSON.parse(JSON.stringify(selectedCbpfsData))
-					.reduce(function(acc, curr) {
-						curr.forEach(function(d) {
-							const found = acc.find(function(e) {
-								return e.isoCode === d.isoCode;
-							});
-							if (found) {
-								found.paid += d.paid;
-								found.pledge += d.pledge;
-								found.total += d.total;
-							} else {
-								acc.push(d);
-							};
-						});
-						return acc;
-					});
-				donorsArray = mergedArray;
-			};
+			let donorsArray = data.dataDonors;
 
 			donorsArray.sort(function(a, b) {
-				return b[chartState.selectedContribution] - a[chartState.selectedContribution] ||
+				return a.isoCode === othersId ? 1 : b.isoCode === othersId ? -1 : (b[chartState.selectedContribution] - a[chartState.selectedContribution] ||
 					(a.donor.toLowerCase() < b.donor.toLowerCase() ? -1 :
-						a.donor.toLowerCase() > b.donor.toLowerCase() ? 1 : 0);
+						a.donor.toLowerCase() > b.donor.toLowerCase() ? 1 : 0));
 			});
 
 			yScaleDonors.domain(donorsArray.map(function(d) {
 				return d.donor;
-			}));
+			})).range([donorsPanel.padding[0], Math.min(donorsPanel.height - donorsPanel.padding[2], donorsPanel.padding[0] + lollipopGroupHeight * (donorsArray.length + 1))])
 
-			yScaleDonors.range([donorsPanel.padding[0],
-				(donorsArray.length * lollipopGroupHeight) + donorsPanel.padding[0]
-			]);
+			let donorsPanelTitle = donorsPanel.main.selectAll(".pbiclcDonorsPanelTitle")
+				.data([true]);
+
+			donorsPanelTitle = donorsPanelTitle.enter()
+				.append("text")
+				.attr("class", "pbiclcDonorsPanelTitle")
+				.attr("y", donorsPanel.padding[0] - titlePadding)
+				.attr("x", donorsPanel.padding[3])
+				.merge(donorsPanelTitle)
+				.text(donorsArray.length === 21 ? "Top 20 Donors" : donorsArray.length > 1 ? "Donors" : "Donor");
+
+			donorsPanelTitle.transition()
+				.duration(duration)
+				.attr("x", donorsPanel.padding[3]);
 
 			let donorGroup = donorsPanel.main.selectAll(".pbiclcDonorGroup")
 				.data(donorsArray, function(d) {
@@ -1573,7 +1566,7 @@
 			donorTooltipRectangle.on("mouseover", mouseoverTooltipRectangle)
 				.on("mouseout", mouseoutTooltipRectangle);
 
-			xAxisDonors.tickSizeInner(-(lollipopGroupHeight * donorsArray.length));
+			xAxisDonors.tickSizeInner(-(yScaleDonors.range()[1] - yScaleDonors.range()[0]));
 
 			groupYAxisDonors.selectAll(".tick")
 				.filter(function(d) {
@@ -1674,6 +1667,128 @@
 			};
 
 			//end of createDonorsPanel
+		};
+
+		function createBarChartPanel() {
+
+			const donorTypes = data.donorTypes;
+
+			const barChartPanelTitle = barchartPanel.main.selectAll(".pbiclcBarChartPanelTitle")
+				.data([true])
+				.enter()
+				.append("text")
+				.attr("class", "pbiclcBarChartPanelTitle")
+				.attr("y", barchartPanel.padding[0] - titlePadding)
+				.attr("x", barchartPanel.padding[3])
+				.text("Number of donors");
+
+			const dataBar = donorTypes.reduce((acc, curr) => {
+				const found = acc.find(e => e.type === curr.donorType);
+				if (found) {
+					++found.number;
+					found.total += curr.total;
+				} else {
+					acc.push({
+						type: curr.donorType,
+						number: 1,
+						total: curr.total
+					})
+				};
+				return acc;
+			}, []);
+
+			dataBar.sort((a, b) => b.number - a.number);
+
+			xScaleBar.domain(dataBar.map(d => d.type))
+				.range([barchartPanel.padding[3], Math.min(barchartPanel.width - barchartPanel.padding[1],
+					barchartPanel.padding[3] + maxBarWidth * (dataBar.length + 1))]);
+
+			yScaleBar.domain([0, d3.max(dataBar, d => d.number) * 1.1]);
+
+			let bars = barchartPanel.main.selectAll(".pbiclcbars")
+				.data(dataBar, d => d.type);
+
+			const barsExit = bars.exit()
+				.transition()
+				.duration(duration)
+				.style("opacity", 0)
+				.attr("height", 0)
+				.attr("y", barchartPanel.height - barchartPanel.padding[2])
+				.remove();
+
+			const barsEnter = bars.enter()
+				.append("rect")
+				.attr("class", "pbiclcbars contributionColorFill")
+				.attr("x", d => xScaleBar(d.type))
+				.attr("width", xScaleBar.bandwidth())
+				.attr("height", 0)
+				.attr("y", barchartPanel.height - barchartPanel.padding[2]);
+
+			bars = barsEnter.merge(bars);
+
+			bars.transition()
+				.duration(duration)
+				.attr("x", d => xScaleBar(d.type))
+				.attr("width", xScaleBar.bandwidth())
+				.attr("height", d => barchartPanel.height - barchartPanel.padding[2] - yScaleBar(d.number))
+				.attr("y", d => yScaleBar(d.number));
+
+			let barsLabels = barchartPanel.main.selectAll(".pbiclcbarsLabels")
+				.data(dataBar, d => d.type);
+
+			const barsLabelsExit = barsLabels.exit()
+				.remove();
+
+			const barsLabelsEnter = barsLabels.enter()
+				.append("text")
+				.attr("class", "pbiclcbarsLabels")
+				.attr("x", d => xScaleBar(d.type) + xScaleBar.bandwidth() / 2)
+				.attr("y", d => yScaleBar(0));
+
+			barsLabels = barsLabelsEnter.merge(barsLabels);
+
+			barsLabels.transition()
+				.duration(duration)
+				.attr("x", d => xScaleBar(d.type) + xScaleBar.bandwidth() / 2)
+				.attr("y", d => yScaleBar(d.number) - 3.5 * barLabelPadding)
+				.text(d => d.number + (d.number > 1 ? " donors" : " donor"));
+
+			let barsLabelsSpan = barchartPanel.main.selectAll(".pbiclcbarsLabelsSpan")
+				.data(dataBar, d => d.type);
+
+			const barsLabelsSpanExit = barsLabelsSpan.exit()
+				.remove();
+
+			const barsLabelsSpanEnter = barsLabelsSpan.enter()
+				.append("text")
+				.attr("class", "pbiclcbarsLabelsSpan")
+				.attr("x", d => xScaleBar(d.type) + xScaleBar.bandwidth() / 2)
+				.attr("y", d => yScaleBar(0));
+
+			barsLabelsSpan = barsLabelsSpanEnter.merge(barsLabelsSpan);
+
+			barsLabelsSpan.transition()
+				.duration(duration)
+				.attr("x", d => xScaleBar(d.type) + xScaleBar.bandwidth() / 2)
+				.attr("y", d => yScaleBar(d.number) - barLabelPadding)
+				.text(d => "($" + formatSIFloat(d.total) + ")");
+
+			xAxisBarGroup.transition()
+				.duration(duration)
+				.call(customAxisBarChart);
+
+			function customAxisBarChart(group) {
+				const sel = group.selection ? group.selection() : group;
+				group.call(xAxisBar);
+				sel.selectAll(".tick text")
+					.text(d => d)
+					.call(wrapText, xScaleBar.step() - 4)
+				if (sel !== group) group.selectAll(".tick text")
+					.attrTween("x", null)
+					.tween("text", null);
+			};
+
+			//end of createBarChartPanel
 		};
 
 		function mouseOverTopPanel() {
@@ -1782,15 +1897,11 @@
 
 		function recalculateAndResize() {
 
-			resizeSVGHeight(data.dataDonors.length, data.dataCbpfs.length);
-
 			const biggestLabelLengthDonors = calculateBiggestLabel(data.dataDonors, "donor");
 
-			const biggestLabelLengthCbpfs = calculateBiggestLabel(data.dataCbpfs, "cbpf");
+			setRanges(biggestLabelLengthDonors);
 
-			setRanges(biggestLabelLengthDonors, biggestLabelLengthCbpfs);
-
-			setDomains(data.dataDonors, data.dataCbpfs, "total");
+			setDomains(data.dataDonors, "total");
 
 			//end of recalculateAndResize
 		};
@@ -1802,122 +1913,36 @@
 
 		const aggregatedDonors = [];
 
-		const aggregatedCbpfs = [];
+		let tempSetDonors = [];
 
-		let tempSetDonors = [],
-			tempSetCbpfs = [];
+		rawData.forEach(function(d) {
 
-		const filteredData = rawData.filter(function(d) {
-			return chartState.selectedYear.indexOf(+d.FiscalYear) > -1;
-		});
+			if (chartState.selectedYear.indexOf(+d.FiscalYear) > -1) {
 
-		filteredData.forEach(function(d) {
+				if (tempSetDonors.indexOf(d.GMSDonorName) > -1) {
 
-			if (tempSetDonors.indexOf(d.GMSDonorName) > -1) {
+					const tempObject = aggregatedDonors.filter(function(e) {
+						return e.donor === d.GMSDonorName
+					})[0];
 
-				const tempObject = aggregatedDonors.filter(function(e) {
-					return e.donor === d.GMSDonorName
-				})[0];
-
-				const foundDonations = tempObject.donations.filter(function(e) {
-					return e.cbpf === d.PooledFundName
-				})[0];
-
-				if (foundDonations) {
-
-					foundDonations.paid += +d.PaidAmt;
-					foundDonations.pledge += +d.PledgeAmt;
-					foundDonations.total += (+d.PaidAmt) + (+d.PledgeAmt);
+					tempObject.paid += +d.PaidAmt;
+					tempObject.pledge += +d.PledgeAmt;
+					tempObject.total += (+d.PaidAmt) + (+d.PledgeAmt);
 
 				} else {
 
-					tempObject.donations.push({
-						cbpf: d.PooledFundName,
-						isoCode: d.PooledFundISO2Code.toLowerCase(),
-						paid: +d.PaidAmt,
-						pledge: +d.PledgeAmt,
-						total: (+d.PaidAmt) + (+d.PledgeAmt)
-					});
-
-				};
-
-				tempObject.paid += +d.PaidAmt;
-				tempObject.pledge += +d.PledgeAmt;
-				tempObject.total += (+d.PaidAmt) + (+d.PledgeAmt);
-
-			} else {
-
-				aggregatedDonors.push({
-					clicked: false,
-					donor: d.GMSDonorName,
-					isoCode: d.GMSDonorISO2Code.toLowerCase(),
-					donations: [{
-						cbpf: d.PooledFundName,
-						isoCode: d.PooledFundISO2Code.toLowerCase(),
-						paid: +d.PaidAmt,
-						pledge: +d.PledgeAmt,
-						total: (+d.PaidAmt) + (+d.PledgeAmt)
-					}],
-					paid: +d.PaidAmt,
-					pledge: +d.PledgeAmt,
-					total: (+d.PaidAmt) + (+d.PledgeAmt)
-				});
-
-				tempSetDonors.push(d.GMSDonorName);
-
-			};
-
-			if (tempSetCbpfs.indexOf(d.PooledFundName) > -1) {
-
-				const tempObject = aggregatedCbpfs.filter(function(e) {
-					return e.cbpf === d.PooledFundName
-				})[0];
-
-				const foundDonor = tempObject.donors.filter(function(e) {
-					return e.donor === d.GMSDonorName
-				})[0];
-
-				if (foundDonor) {
-
-					foundDonor.paid += +d.PaidAmt;
-					foundDonor.pledge += +d.PledgeAmt;
-					foundDonor.total += (+d.PaidAmt) + (+d.PledgeAmt);
-
-				} else {
-
-					tempObject.donors.push({
+					aggregatedDonors.push({
 						donor: d.GMSDonorName,
+						donorType: d.PooledFundName,
 						isoCode: d.GMSDonorISO2Code.toLowerCase(),
 						paid: +d.PaidAmt,
 						pledge: +d.PledgeAmt,
 						total: (+d.PaidAmt) + (+d.PledgeAmt)
 					});
 
+					tempSetDonors.push(d.GMSDonorName);
+
 				};
-
-				tempObject.paid += +d.PaidAmt;
-				tempObject.pledge += +d.PledgeAmt;
-				tempObject.total += (+d.PaidAmt) + (+d.PledgeAmt);
-
-			} else {
-
-				aggregatedCbpfs.push({
-					clicked: false,
-					cbpf: d.PooledFundName,
-					isoCode: d.PooledFundISO2Code.toLowerCase(),
-					donors: [{
-						donor: d.GMSDonorName,
-						isoCode: d.GMSDonorISO2Code.toLowerCase(),
-						paid: +d.PaidAmt,
-						pledge: +d.PledgeAmt,
-						total: (+d.PaidAmt) + (+d.PledgeAmt)
-					}],
-					paid: +d.PaidAmt,
-					pledge: +d.PledgeAmt,
-					total: (+d.PaidAmt) + (+d.PledgeAmt)
-				});
-
-				tempSetCbpfs.push(d.PooledFundName);
 
 			};
 
@@ -1929,11 +1954,36 @@
 
 		if (macedoniaObject) macedoniaObject.donor = "Macedonia";
 
+		aggregatedDonors.sort((a, b) => b[chartState.selectedContribution] - a[chartState.selectedContribution]);
+
+		const topData = aggregatedDonors.reduce((acc, curr, index) => {
+			if (index < maxDonorNumber) {
+				acc.push({
+					donor: curr.donor,
+					isoCode: curr.isoCode,
+					paid: curr.paid,
+					pledge: curr.pledge,
+					total: curr.total
+				});
+			} else if (index === maxDonorNumber) {
+				acc.push({
+					donor: "Others",
+					isoCode: othersId,
+					paid: curr.paid,
+					pledge: curr.pledge,
+					total: curr.total
+				});
+			} else {
+				acc[maxDonorNumber].paid += curr.paid;
+				acc[maxDonorNumber].pledge += curr.pledge;
+				acc[maxDonorNumber].total += curr.total;
+			};
+			return acc;
+		}, []);
+
 		tempSetDonors = [];
 
-		tempSetCbpfs = [];
-
-		return [aggregatedDonors, aggregatedCbpfs];
+		return [topData, aggregatedDonors];
 
 		//end of processData
 	};
@@ -2003,24 +2053,6 @@
 		//end of createCsv
 	};
 
-	function resizeSVGHeight(donorsLength, cbpfsLength) {
-
-		donorsPanel.height = (donorsLength * lollipopGroupHeight) + donorsPanel.padding[0] + donorsPanel.padding[2];
-
-		height = padding[0] + padding[2] + topPanel.height + buttonPanel.height +
-			donorsPanel.height + (2 * panelHorizontalPadding);
-
-		if (selectedResponsiveness === false) {
-			containerDiv.style("height", height + "px");
-		};
-
-		svg.transition()
-			.duration(shortDuration)
-			.attr("viewBox", "0 0 " + width + " " + height);
-
-		//end of resizeSvg
-	};
-
 	function calculateBiggestLabel(dataArray, property) {
 
 		const allTexts = dataArray.map(function(d) {
@@ -2051,7 +2083,7 @@
 		//end of calculateBiggestLabel
 	};
 
-	function setDomains(donors, cbpfs, property) {
+	function setDomains(donors, property) {
 
 		const maxXValue = d3.max(donors, function(d) {
 			return d[property]
@@ -2061,15 +2093,13 @@
 
 	};
 
-	function setRanges(labelSizeDonors, labelSizeCbpfs) {
+	function setRanges(labelSizeDonors) {
 
 		const labelSize = labelSizeDonors + yAxisDonors.tickPadding() + yAxisDonors.tickSizeInner()
 
 		donorsPanel.padding[3] = labelSize;
 
 		xScaleDonors.range([donorsPanel.padding[3], donorsPanel.width - donorsPanel.padding[1]]);
-
-		yScaleDonors.range([donorsPanel.padding[0], donorsPanel.height - donorsPanel.padding[2]]);
 
 	};
 
@@ -2093,7 +2123,7 @@
 
 	function populateSelectedDescriptionDiv() {
 
-		if (!chartState.selectedDonors.length && !chartState.selectedCbpfs.length) {
+		if (!chartState.selectedDonors.length) {
 			selectionDescriptionDiv.html(null);
 			return;
 		};
@@ -2376,6 +2406,30 @@
 
 		//end of createFooterDiv
 	};
+
+	function wrapText(text, width) {
+		text.each(function() {
+			var text = d3.select(this),
+				words = text.text().split(/\s+/).reverse(),
+				word,
+				line = [],
+				lineNumber = 0,
+				lineHeight = 1.1, // ems
+				y = text.attr("y"),
+				dy = parseFloat(text.attr("dy")),
+				tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+			while (word = words.pop()) {
+				line.push(word);
+				tspan.text(line.join(" "));
+				if (tspan.node().getComputedTextLength() > width) {
+					line.pop();
+					tspan.text(line.join(" "));
+					line = [word];
+					tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+				}
+			}
+		});
+	}
 
 	function wrapText2(text, width) {
 		text.each(function() {

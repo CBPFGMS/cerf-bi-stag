@@ -820,12 +820,12 @@ p#pbiclcd3chartTitle {
 	color: #418fde;
 }
 
-.pbiclctopPanelMainValue, .pbiclctopPanelDonorsNumber, .pbiclctopPanelCbpfsNumber {
+.pbiclctopPanelMainValue, .pbiclctopPanelDonorsNumber, .pbiclctopPanelCbpfsNumber, .pbiclctopPanelAllTimeValue {
 	font-family: "Arial", sans-serif;
 	font-size: 48px;
 }
 
-.pbiclctopPanelMainText, .pbiclctopPanelSubText {
+.pbiclctopPanelMainText, .pbiclctopPanelSubText, .pbiclctopPanelAllTimeText, .pbiclctopPanelAllTimeSubText {
 	font-family: "Arial", sans-serif;
 	font-size: 18px;
 	fill: #888;
@@ -855,10 +855,30 @@ p#pbiclcd3chartTitle {
 	pointer-events: none;
 }
 
-.pbiclcDonorsPanelTitle, .pbiclcCbpfsPanelTitle {
-	font-family: "Arial", sans-serif;
+.pbiclcDonorsPanelTitle, .pbiclcBarChartPanelTitle {
+	font-family: "Roboto", sans-serif;
 	font-size: 16px;
-	fill: #666;
+	font-weight: 300;
+	fill: #444;
+}
+
+.pbiclcaAxisBarsGroup path, .pbiclcaAxisBarsGroup line {
+	stroke: none;
+}
+
+.pbiclcaAxisBarsGroup text {
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	fill: darkslategray;
+	pointer-events: none;
+}
+
+.pbiclcbarsLabels, .pbiclcbarsLabelsSpan {
+	text-anchor: middle;
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	fill: #444;
+	pointer-events: none;
 }
 
 .pbiclcDonorsPanelTitleSpan, .pbiclcCbpfsPanelTitleSpan {
