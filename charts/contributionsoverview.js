@@ -307,6 +307,7 @@
 		duration = 1000,
 		shortDuration = 500,
 		titlePadding = 24,
+		classPrefix = "contribover",
 		chartState = {
 			selectedYear: [],
 			selectedContribution: null,
@@ -323,7 +324,7 @@
 
 	if (!queryStringValues.has("viz")) queryStringValues.append("viz", vizNameQueryString);
 
-	const containerDiv = d3.select("#d3chartcontainerpbiclc");
+	const containerDiv = d3.select("#d3chartcontainer" + classPrefix);
 
 	const showHelp = (containerDiv.node().getAttribute("data-showhelp") === "true");
 
@@ -349,30 +350,30 @@
 	};
 
 	const topDiv = containerDiv.append("div")
-		.attr("class", "pbiclcTopDiv");
+		.attr("class", classPrefix + "TopDiv");
 
 	const titleDiv = topDiv.append("div")
-		.attr("class", "pbiclcTitleDiv");
+		.attr("class", classPrefix + "TitleDiv");
 
 	const iconsDiv = topDiv.append("div")
-		.attr("class", "pbiclcIconsDiv d3chartIconsDiv");
+		.attr("class", classPrefix + "IconsDiv d3chartIconsDiv");
 
 	const svg = containerDiv.append("svg")
 		.attr("viewBox", "0 0 " + width + " " + height)
 		.style("background-color", "white");
 
 	const yearsDescriptionDiv = containerDiv.append("div")
-		.attr("class", "pbiclcYearsDescriptionDiv");
+		.attr("class", classPrefix + "YearsDescriptionDiv");
 
 	const selectionDescriptionDiv = containerDiv.append("div")
-		.attr("class", "pbiclcSelectionDescriptionDiv");
+		.attr("class", classPrefix + "SelectionDescriptionDiv");
 
 	const footerDiv = containerDiv.append("div")
-		.attr("class", "pbiclcFooterDiv");
+		.attr("class", classPrefix + "FooterDiv");
 
 	const snapshotTooltip = containerDiv.append("div")
-		.attr("id", "pbiclcSnapshotTooltip")
-		.attr("class", "pbiclcSnapshotContent")
+		.attr("id", classPrefix + "SnapshotTooltip")
+		.attr("class", classPrefix + "SnapshotContent")
 		.style("display", "none")
 		.on("mouseleave", function() {
 			isSnapshotTooltipVisible = false;
@@ -381,7 +382,7 @@
 		});
 
 	snapshotTooltip.append("p")
-		.attr("id", "pbiclcSnapshotTooltipPdfText")
+		.attr("id", classPrefix + "SnapshotTooltipPdfText")
 		.html("Download PDF")
 		.on("click", function() {
 			isSnapshotTooltipVisible = false;
@@ -389,7 +390,7 @@
 		});
 
 	snapshotTooltip.append("p")
-		.attr("id", "pbiclcSnapshotTooltipPngText")
+		.attr("id", classPrefix + "SnapshotTooltipPngText")
 		.html("Download Image (PNG)")
 		.on("click", function() {
 			isSnapshotTooltipVisible = false;
@@ -400,14 +401,14 @@
 
 	if (browserHasSnapshotIssues) {
 		snapshotTooltip.append("p")
-			.attr("id", "pbiclcTooltipBestVisualizedText")
+			.attr("id", classPrefix + "TooltipBestVisualizedText")
 			.html("For best results use Chrome, Firefox, Opera or Chromium-based Edge.")
 			.attr("pointer-events", "none")
 			.style("cursor", "default");
 	};
 
 	const tooltip = containerDiv.append("div")
-		.attr("id", "pbiclctooltipdiv")
+		.attr("id", classPrefix + "tooltipdiv")
 		.style("display", "none");
 
 	containerDiv.on("contextmenu", function() {
@@ -421,7 +422,7 @@
 
 	const topPanel = {
 		main: svg.append("g")
-			.attr("class", "pbiclcTopPanel")
+			.attr("class", classPrefix + "TopPanel")
 			.attr("transform", "translate(" + padding[3] + "," + padding[0] + ")"),
 		width: width - padding[1] - padding[3],
 		height: topPanelHeight,
@@ -433,7 +434,7 @@
 
 	const buttonPanel = {
 		main: svg.append("g")
-			.attr("class", "pbiclcButtonPanel")
+			.attr("class", classPrefix + "ButtonPanel")
 			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + topPanel.height + panelHorizontalPadding) + ")"),
 		width: width - padding[1] - padding[3],
 		height: buttonPanelHeight,
@@ -448,7 +449,7 @@
 
 	const donorsPanel = {
 		main: svg.append("g")
-			.attr("class", "pbiclcDonorsPanel")
+			.attr("class", classPrefix + "DonorsPanel")
 			.attr("transform", "translate(" + padding[3] + "," + (padding[0] + topPanel.height + buttonPanel.height + (2 * panelHorizontalPadding)) + ")"),
 		width: (width - padding[1] - padding[3] - panelVerticalPadding) * donorsPanelPercentage,
 		height: height - padding[0] - padding[2] - topPanel.height - buttonPanel.height - 2 * panelHorizontalPadding,
@@ -458,7 +459,7 @@
 
 	const barchartPanel = {
 		main: svg.append("g")
-			.attr("class", "pbiclcbarchartPanel")
+			.attr("class", classPrefix + "barchartPanel")
 			.attr("transform", "translate(" + (padding[3] + donorsPanel.width + panelVerticalPadding) + "," + (padding[0] + topPanel.height + buttonPanel.height + (2 * panelHorizontalPadding)) + ")"),
 		width: (width - padding[1] - padding[3] - panelVerticalPadding) * (1 - donorsPanelPercentage),
 		height: height - padding[0] - padding[2] - topPanel.height - buttonPanel.height - 2 * panelHorizontalPadding,
@@ -486,11 +487,11 @@
 		});
 
 	const groupXAxisDonors = donorsPanel.main.append("g")
-		.attr("class", "pbiclcgroupXAxisDonors")
+		.attr("class", classPrefix + "groupXAxisDonors")
 		.attr("transform", "translate(0," + donorsPanel.padding[0] + ")");
 
 	const groupYAxisDonors = donorsPanel.main.append("g")
-		.attr("class", "pbiclcgroupYAxisDonors");
+		.attr("class", classPrefix + "groupYAxisDonors");
 
 	const paidSymbol = d3.symbol()
 		.type(d3.symbolTriangle)
@@ -508,25 +509,25 @@
 		.tickPadding(6);
 
 	const xAxisBarGroup = barchartPanel.main.append("g")
-		.attr("class", "pbiclcaAxisBarsGroup")
+		.attr("class", classPrefix + "aAxisBarsGroup")
 		.attr("transform", "translate(0," + (barchartPanel.height - barchartPanel.padding[2]) + ")");
 
-	if (localStorage.getItem("pbiclcpbiclipbifdcdata") &&
-		JSON.parse(localStorage.getItem("pbiclcpbiclipbifdcdata")).timestamp > (currentDate.getTime() - localStorageTime)) {
-		const rawData = d3.csvParse(JSON.parse(localStorage.getItem("pbiclcpbiclipbifdcdata")).data);
-		console.info("pbiclc: data from local storage");
+	if (localStorage.getItem(classPrefix + "data") &&
+		JSON.parse(localStorage.getItem(classPrefix + "data")).timestamp > (currentDate.getTime() - localStorageTime)) {
+		const rawData = d3.csvParse(JSON.parse(localStorage.getItem(classPrefix + "data")).data);
+		console.info(classPrefix + ": data from local storage");
 		csvCallback(rawData);
 	} else {
 		d3.csv("https://cbpfgms.github.io/cerf-bi-stag/data/CERF_ContributionTotal.csv").then(function(rawData) {
 			try {
-				localStorage.setItem("pbiclcpbiclipbifdcdata", JSON.stringify({
+				localStorage.setItem(classPrefix + "data", JSON.stringify({
 					data: d3.csvFormat(rawData),
 					timestamp: currentDate.getTime()
 				}));
 			} catch (error) {
-				console.info("D3 chart pbiclc, " + error);
+				console.info("D3 chart Contribution Overview, " + error);
 			};
-			console.info("pbiclc: data from API");
+			console.info(classPrefix + ": data from API");
 			csvCallback(rawData);
 		});
 	};
@@ -558,17 +559,14 @@
 		if (!lazyLoad) {
 			draw(rawData);
 		} else {
-			d3.select(window).on("scroll.pbiclc", checkPosition);
-			d3.select("body").on("d3ChartsYear.pbiclc", function() {
-				chartState.selectedYear = [validateCustomEventYear(+d3.event.detail)]
-			});
+			d3.select(window).on("scroll." + classPrefix, checkPosition);
 			checkPosition();
 		};
 
 		function checkPosition() {
 			const containerPosition = containerDiv.node().getBoundingClientRect();
 			if (!(containerPosition.bottom < 0 || containerPosition.top - windowHeight > 0)) {
-				d3.select(window).on("scroll.pbiclc", null);
+				d3.select(window).on("scroll." + classPrefix, null);
 				draw(rawData);
 			};
 		};
@@ -640,12 +638,12 @@
 				queryStringValues.append("year", allYears);
 			};
 
-			d3.selectAll(".pbiclcbuttonsRects")
+			d3.selectAll("." + classPrefix + "buttonsRects")
 				.style("fill", function(e) {
 					return chartState.selectedYear.indexOf(e) > -1 ? unBlue : "#eaeaea";
 				});
 
-			d3.selectAll(".pbiclcbuttonsText")
+			d3.selectAll("." + classPrefix + "buttonsText")
 				.style("fill", function(e) {
 					return chartState.selectedYear.indexOf(e) > -1 ? "white" : "#444";
 				});
@@ -690,17 +688,17 @@
 				queryStringValues.append("contribution", d);
 			};
 
-			d3.selectAll(".pbiclcbuttonsContributionsRects")
+			d3.selectAll("." + classPrefix + "buttonsContributionsRects")
 				.style("fill", function(e) {
 					return e === chartState.selectedContribution ? unBlue : "#eaeaea";
 				});
 
-			d3.selectAll(".pbiclcbuttonsContributionsText")
+			d3.selectAll("." + classPrefix + "buttonsContributionsText")
 				.style("fill", function(e) {
 					return e === chartState.selectedContribution ? "white" : "#444";
 				});
 
-			d3.select(".pbiclcSvgLegend")
+			d3.select("." + classPrefix + "SvgLegend")
 				.style("opacity", chartState.selectedContribution === "total" ? 1 : 0);
 
 			createTopPanel();
@@ -712,12 +710,12 @@
 
 		function createSVGLegend() {
 
-			const legend = svg.selectAll(".pbiclcSvgLegend")
+			const legend = svg.selectAll("." + classPrefix + "SvgLegend")
 				.data([true]);
 
 			const legendEnter = legend.enter()
 				.append("text")
-				.attr("class", "pbiclcSvgLegend")
+				.attr("class", classPrefix + "SvgLegend")
 				.attr("y", height - legendPadding)
 				.attr("x", padding[3] + 2)
 				.text("Figures represent: ")
@@ -765,45 +763,45 @@
 		function createTitle() {
 
 			const title = titleDiv.append("p")
-				.attr("id", "pbiclcd3chartTitle")
+				.attr("id", classPrefix + "d3chartTitle")
 				.html(chartTitle);
 
 			const helpIcon = iconsDiv.append("button")
-				.attr("id", "pbiclcHelpButton");
+				.attr("id", classPrefix + "HelpButton");
 
 			helpIcon.html("HELP  ")
 				.append("span")
 				.attr("class", "fa fa-info");
 
 			const downloadIcon = iconsDiv.append("button")
-				.attr("id", "pbiclcDownloadButton");
+				.attr("id", classPrefix + "DownloadButton");
 
 			downloadIcon.html(".CSV  ")
 				.append("span")
 				.attr("class", "fa fa-download");
 
 			const snapshotDiv = iconsDiv.append("div")
-				.attr("class", "pbiclcSnapshotDiv");
+				.attr("class", classPrefix + "SnapshotDiv");
 
 			const snapshotIcon = snapshotDiv.append("button")
-				.attr("id", "pbiclcSnapshotButton");
+				.attr("id", classPrefix + "SnapshotButton");
 
 			snapshotIcon.html("IMAGE ")
 				.append("span")
 				.attr("class", "fa fa-camera");
 
 			const snapshotContent = snapshotDiv.append("div")
-				.attr("class", "pbiclcSnapshotContent");
+				.attr("class", classPrefix + "SnapshotContent");
 
 			const pdfSpan = snapshotContent.append("p")
-				.attr("id", "pbiclcSnapshotPdfText")
+				.attr("id", classPrefix + "SnapshotPdfText")
 				.html("Download PDF")
 				.on("click", function() {
 					createSnapshot("pdf", false);
 				});
 
 			const pngSpan = snapshotContent.append("p")
-				.attr("id", "pbiclcSnapshotPngText")
+				.attr("id", classPrefix + "SnapshotPngText")
 				.html("Download Image (PNG)")
 				.on("click", function() {
 					createSnapshot("png", false);
@@ -813,7 +811,7 @@
 				.datum({
 					clicked: false
 				})
-				.attr("id", "pbiclcPlayButton");
+				.attr("id", classPrefix + "PlayButton");
 
 			playIcon.html("PLAY  ")
 				.append("span")
@@ -839,7 +837,7 @@
 
 					chartState.selectedYear[0] = yearsArray[(index + 1) % yearsArray.length];
 
-					const yearButton = d3.selectAll(".pbiclcbuttonsRects")
+					const yearButton = d3.selectAll("." + classPrefix + "buttonsRects")
 						.filter(function(d) {
 							return d === chartState.selectedYear[0]
 						});
@@ -856,22 +854,22 @@
 					const currentTranslate = -(buttonPanel.buttonWidth * firstYearIndex);
 
 					if (currentTranslate === 0) {
-						svg.select(".pbiclcLeftArrowGroup").select("text").style("fill", "#ccc")
-						svg.select(".pbiclcLeftArrowGroup").attr("pointer-events", "none");
+						svg.select("." + classPrefix + "LeftArrowGroup").select("text").style("fill", "#ccc")
+						svg.select("." + classPrefix + "LeftArrowGroup").attr("pointer-events", "none");
 					} else {
-						svg.select(".pbiclcLeftArrowGroup").select("text").style("fill", "#666")
-						svg.select(".pbiclcLeftArrowGroup").attr("pointer-events", "all");
+						svg.select("." + classPrefix + "LeftArrowGroup").select("text").style("fill", "#666")
+						svg.select("." + classPrefix + "LeftArrowGroup").attr("pointer-events", "all");
 					};
 
 					if (Math.abs(currentTranslate) >= ((yearsArray.length - buttonsNumber) * buttonPanel.buttonWidth)) {
-						svg.select(".pbiclcRightArrowGroup").select("text").style("fill", "#ccc")
-						svg.select(".pbiclcRightArrowGroup").attr("pointer-events", "none");
+						svg.select("." + classPrefix + "RightArrowGroup").select("text").style("fill", "#ccc")
+						svg.select("." + classPrefix + "RightArrowGroup").attr("pointer-events", "none");
 					} else {
-						svg.select(".pbiclcRightArrowGroup").select("text").style("fill", "#666")
-						svg.select(".pbiclcRightArrowGroup").attr("pointer-events", "all");
+						svg.select("." + classPrefix + "RightArrowGroup").select("text").style("fill", "#666")
+						svg.select("." + classPrefix + "RightArrowGroup").attr("pointer-events", "all");
 					};
 
-					svg.select(".pbiclcbuttonsGroup").transition()
+					svg.select("." + classPrefix + "buttonsGroup").transition()
 						.duration(duration)
 						.attrTween("transform", function() {
 							return d3.interpolateString(this.getAttribute("transform"), "translate(" + currentTranslate + ",0)");
@@ -881,7 +879,7 @@
 
 			if (browserHasSnapshotIssues) {
 				const bestVisualizedSpan = snapshotContent.append("p")
-					.attr("id", "pbiclcBestVisualizedText")
+					.attr("id", classPrefix + "BestVisualizedText")
 					.html("For best results use Chrome, Firefox, Opera or Chromium-based Edge.")
 					.attr("pointer-events", "none")
 					.style("cursor", "default");
@@ -950,11 +948,11 @@
 				return d[chartState.selectedContribution]
 			});
 
-			const topPanelMoneyBag = topPanel.main.selectAll(".pbiclctopPanelMoneyBag")
+			const topPanelMoneyBag = topPanel.main.selectAll("." + classPrefix + "topPanelMoneyBag")
 				.data([true])
 				.enter()
 				.append("g")
-				.attr("class", "pbiclctopPanelMoneyBag contributionColorFill")
+				.attr("class", classPrefix + "topPanelMoneyBag contributionColorFill")
 				.attr("transform", "translate(" + topPanel.moneyBagPadding + ",6) scale(0.5)")
 				.each(function(_, i, n) {
 					moneyBagdAttribute.forEach(function(d) {
@@ -963,26 +961,26 @@
 					});
 				});
 
-			const previousValue = d3.select(".pbiclctopPanelMainValue").size() !== 0 ? d3.select(".pbiclctopPanelMainValue").datum() : 0;
+			const previousValue = d3.select("." + classPrefix + "topPanelMainValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelMainValue").datum() : 0;
 
-			const previousDonors = d3.select(".pbiclctopPanelDonorsNumber").size() !== 0 ? d3.select(".pbiclctopPanelDonorsNumber").datum() : 0;
+			const previousDonors = d3.select("." + classPrefix + "topPanelDonorsNumber").size() !== 0 ? d3.select("." + classPrefix + "topPanelDonorsNumber").datum() : 0;
 
-			const previousCbpfs = d3.select(".pbiclctopPanelCbpfsNumber").size() !== 0 ? d3.select(".pbiclctopPanelCbpfsNumber").datum() : 0;
+			const previousCbpfs = d3.select("." + classPrefix + "topPanelCbpfsNumber").size() !== 0 ? d3.select("." + classPrefix + "topPanelCbpfsNumber").datum() : 0;
 
-			let mainValueGroup = topPanel.main.selectAll(".pbiclcmainValueGroup")
+			let mainValueGroup = topPanel.main.selectAll("." + classPrefix + "mainValueGroup")
 				.data([true]);
 
 			mainValueGroup = mainValueGroup.enter()
 				.append("g")
-				.attr("class", "pbiclcmainValueGroup")
+				.attr("class", classPrefix + "mainValueGroup")
 				.merge(mainValueGroup);
 
-			let topPanelMainValue = mainValueGroup.selectAll(".pbiclctopPanelMainValue")
+			let topPanelMainValue = mainValueGroup.selectAll("." + classPrefix + "topPanelMainValue")
 				.data([mainValue]);
 
 			topPanelMainValue = topPanelMainValue.enter()
 				.append("text")
-				.attr("class", "pbiclctopPanelMainValue contributionColorFill")
+				.attr("class", classPrefix + "topPanelMainValue contributionColorFill")
 				.attr("text-anchor", "end")
 				.merge(topPanelMainValue)
 				.attr("y", topPanel.height - topPanel.mainValueVerPadding)
@@ -999,12 +997,12 @@
 					};
 				});
 
-			let topPanelMainText = mainValueGroup.selectAll(".pbiclctopPanelMainText")
+			let topPanelMainText = mainValueGroup.selectAll("." + classPrefix + "topPanelMainText")
 				.data([mainValue]);
 
 			topPanelMainText = topPanelMainText.enter()
 				.append("text")
-				.attr("class", "pbiclctopPanelMainText")
+				.attr("class", classPrefix + "topPanelMainText")
 				.style("opacity", 0)
 				.attr("text-anchor", "start")
 				.merge(topPanelMainText)
@@ -1024,12 +1022,12 @@
 						receivedOrDonated + yearsText;
 				});
 
-			let topPanelSubText = mainValueGroup.selectAll(".pbiclctopPanelSubText")
+			let topPanelSubText = mainValueGroup.selectAll("." + classPrefix + "topPanelSubText")
 				.data([true]);
 
 			topPanelSubText = topPanelSubText.enter()
 				.append("text")
-				.attr("class", "pbiclctopPanelSubText")
+				.attr("class", classPrefix + "topPanelSubText")
 				.style("opacity", 0)
 				.attr("text-anchor", "start")
 				.merge(topPanelSubText)
@@ -1046,12 +1044,12 @@
 						")"
 				});
 
-			let topPanelDonorsNumber = mainValueGroup.selectAll(".pbiclctopPanelDonorsNumber")
+			let topPanelDonorsNumber = mainValueGroup.selectAll("." + classPrefix + "topPanelDonorsNumber")
 				.data([donorTypes.length]);
 
 			topPanelDonorsNumber = topPanelDonorsNumber.enter()
 				.append("text")
-				.attr("class", "pbiclctopPanelDonorsNumber contributionColorFill")
+				.attr("class", classPrefix + "topPanelDonorsNumber contributionColorFill")
 				.attr("text-anchor", "end")
 				.merge(topPanelDonorsNumber)
 				.attr("y", topPanel.height - topPanel.mainValueVerPadding)
@@ -1067,35 +1065,35 @@
 					};
 				});
 
-			let topPanelDonorsText = mainValueGroup.selectAll(".pbiclctopPanelDonorsText")
+			let topPanelDonorsText = mainValueGroup.selectAll("." + classPrefix + "topPanelDonorsText")
 				.data([true]);
 
 			topPanelDonorsText = topPanelDonorsText.enter()
 				.append("text")
-				.attr("class", "pbiclctopPanelDonorsText")
+				.attr("class", classPrefix + "topPanelDonorsText")
 				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[1] + topPanel.mainValueHorPadding)
 				.attr("text-anchor", "start")
 				.merge(topPanelDonorsText)
 				.attr("y", topPanel.height - topPanel.mainValueVerPadding * (chartState.selectedDonors.length ? 2.5 : 1.9))
 				.text(dataDonors.length > 1 ? "Donors" : "Donor");
 
-			let topPanelDonorsTextSubText = mainValueGroup.selectAll(".pbiclctopPanelDonorsTextSubText")
+			let topPanelDonorsTextSubText = mainValueGroup.selectAll("." + classPrefix + "topPanelDonorsTextSubText")
 				.data([true]);
 
 			topPanelDonorsTextSubText = topPanelDonorsTextSubText.enter()
 				.append("text")
-				.attr("class", "pbiclctopPanelDonorsTextSubText")
+				.attr("class", classPrefix + "topPanelDonorsTextSubText")
 				.attr("y", topPanel.height - topPanel.mainValueVerPadding * 1.2)
 				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[1] + topPanel.mainValueHorPadding)
 				.attr("text-anchor", "start")
 				.merge(topPanelDonorsTextSubText)
 				.text(chartState.selectedDonors.length ? "(selected)" : "");
 
-			const overRectangle = topPanel.main.selectAll(".pbiclctopPanelOverRectangle")
+			const overRectangle = topPanel.main.selectAll("." + classPrefix + "topPanelOverRectangle")
 				.data([true])
 				.enter()
 				.append("rect")
-				.attr("class", "pbiclctopPanelOverRectangle")
+				.attr("class", classPrefix + "topPanelOverRectangle")
 				.attr("width", topPanel.width)
 				.attr("height", topPanel.height)
 				.style("opacity", 0);
@@ -1104,21 +1102,21 @@
 				.on("mousemove", mouseMoveTopPanel)
 				.on("mouseout", mouseOutTopPanel);
 
-			const allTimeValue = mainValueGroup.selectAll(".pbiclctopPanelAllTimeValue")
+			const allTimeValue = mainValueGroup.selectAll("." + classPrefix + "topPanelAllTimeValue")
 				.data([allTimeContributions])
 				.enter()
 				.append("text")
-				.attr("class", "pbiclctopPanelAllTimeValue contributionColorFill")
+				.attr("class", classPrefix + "topPanelAllTimeValue contributionColorFill")
 				.attr("text-anchor", "end")
 				.attr("y", topPanel.height - topPanel.mainValueVerPadding)
 				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] - topPanel.mainValueHorPadding)
 				.text(d => "$" + formatSIFloat(d).substring(0, formatSIFloat(d).length - 1));
 
-			const allTimeText = mainValueGroup.selectAll(".pbiclctopPanelAllTimeText")
+			const allTimeText = mainValueGroup.selectAll("." + classPrefix + "topPanelAllTimeText")
 				.data([allTimeContributions])
 				.enter()
 				.append("text")
-				.attr("class", "pbiclctopPanelAllTimeText")
+				.attr("class", classPrefix + "topPanelAllTimeText")
 				.attr("text-anchor", "start")
 				.attr("y", topPanel.height - topPanel.mainValueVerPadding * 2.7)
 				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] + topPanel.mainValueHorPadding)
@@ -1129,11 +1127,11 @@
 						" received";
 				});
 
-			const allTimeSubText = mainValueGroup.selectAll(".pbiclctopPanelAllTimeSubText")
+			const allTimeSubText = mainValueGroup.selectAll("." + classPrefix + "topPanelAllTimeSubText")
 				.data([true])
 				.enter()
 				.append("text")
-				.attr("class", "pbiclctopPanelAllTimeSubText")
+				.attr("class", classPrefix + "topPanelAllTimeSubText")
 				.attr("text-anchor", "start")
 				.attr("y", topPanel.height - topPanel.mainValueVerPadding * 1.2)
 				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] + topPanel.mainValueHorPadding)
@@ -1146,18 +1144,18 @@
 		function createButtonPanel() {
 
 			const clipPath = buttonPanel.main.append("clipPath")
-				.attr("id", "pbiclcclip")
+				.attr("id", classPrefix + "clip")
 				.append("rect")
 				.attr("width", buttonsNumber * buttonPanel.buttonWidth)
 				.attr("height", buttonPanel.height);
 
 			const clipPathGroup = buttonPanel.main.append("g")
-				.attr("class", "pbiclcClipPathGroup")
+				.attr("class", classPrefix + "ClipPathGroup")
 				.attr("transform", "translate(" + (buttonPanel.padding[3] + buttonPanel.arrowPadding) + ",0)")
-				.attr("clip-path", "url(#pbiclcclip)");
+				.attr("clip-path", "url(#" + classPrefix + "clip)");
 
 			const buttonsGroup = clipPathGroup.append("g")
-				.attr("class", "pbiclcbuttonsGroup")
+				.attr("class", classPrefix + "buttonsGroup")
 				.attr("transform", "translate(0,0)")
 				.style("cursor", "pointer");
 
@@ -1167,7 +1165,7 @@
 				.append("rect")
 				.attr("rx", "2px")
 				.attr("ry", "2px")
-				.attr("class", "pbiclcbuttonsRects")
+				.attr("class", classPrefix + "buttonsRects")
 				.attr("width", buttonPanel.buttonWidth - buttonPanel.buttonPadding)
 				.attr("height", buttonPanel.height - buttonPanel.buttonVerticalPadding * 2)
 				.attr("y", buttonPanel.buttonVerticalPadding)
@@ -1183,7 +1181,7 @@
 				.enter()
 				.append("text")
 				.attr("text-anchor", "middle")
-				.attr("class", "pbiclcbuttonsText")
+				.attr("class", classPrefix + "buttonsText")
 				.attr("y", buttonPanel.height / 1.6)
 				.attr("x", function(_, i) {
 					return i * buttonPanel.buttonWidth + buttonPanel.buttonWidth / 2;
@@ -1196,7 +1194,7 @@
 				});
 
 			const buttonsContributionsGroup = buttonPanel.main.append("g")
-				.attr("class", "pbiclcbuttonsContributionsGroup")
+				.attr("class", classPrefix + "buttonsContributionsGroup")
 				.attr("transform", "translate(" + (buttonPanel.buttonContributionsPadding) + ",0)")
 				.style("cursor", "pointer");
 
@@ -1206,7 +1204,7 @@
 				.append("rect")
 				.attr("rx", "2px")
 				.attr("ry", "2px")
-				.attr("class", "pbiclcbuttonsContributionsRects")
+				.attr("class", classPrefix + "buttonsContributionsRects")
 				.attr("width", buttonPanel.buttonContributionsWidth - buttonPanel.buttonPadding)
 				.attr("height", buttonPanel.height - buttonPanel.buttonVerticalPadding * 2)
 				.attr("y", buttonPanel.buttonVerticalPadding)
@@ -1222,7 +1220,7 @@
 				.enter()
 				.append("text")
 				.attr("text-anchor", "middle")
-				.attr("class", "pbiclcbuttonsContributionsText")
+				.attr("class", classPrefix + "buttonsContributionsText")
 				.attr("y", buttonPanel.height / 1.6)
 				.attr("x", function(_, i) {
 					return i * buttonPanel.buttonContributionsWidth + buttonPanel.buttonContributionsWidth / 2;
@@ -1239,7 +1237,7 @@
 				});
 
 			const leftArrow = buttonPanel.main.append("g")
-				.attr("class", "pbiclcLeftArrowGroup")
+				.attr("class", classPrefix + "LeftArrowGroup")
 				.style("cursor", "pointer")
 				.attr("transform", "translate(" + buttonPanel.padding[3] + ",0)");
 
@@ -1249,14 +1247,14 @@
 				.attr("height", buttonPanel.height);
 
 			const leftArrowText = leftArrow.append("text")
-				.attr("class", "pbiclcleftArrowText")
+				.attr("class", classPrefix + "leftArrowText")
 				.attr("x", 0)
 				.attr("y", buttonPanel.height - buttonPanel.buttonVerticalPadding * 2.1)
 				.style("fill", "#666")
 				.text("\u25c4");
 
 			const rightArrow = buttonPanel.main.append("g")
-				.attr("class", "pbiclcRightArrowGroup")
+				.attr("class", classPrefix + "RightArrowGroup")
 				.style("cursor", "pointer")
 				.attr("transform", "translate(" + (buttonPanel.padding[3] + buttonPanel.arrowPadding +
 					(buttonsNumber * buttonPanel.buttonWidth)) + ",0)");
@@ -1267,7 +1265,7 @@
 				.attr("height", buttonPanel.height);
 
 			const rightArrowText = rightArrow.append("text")
-				.attr("class", "pbiclcrightArrowText")
+				.attr("class", classPrefix + "rightArrowText")
 				.attr("x", -1)
 				.attr("y", buttonPanel.height - buttonPanel.buttonVerticalPadding * 2.1)
 				.style("fill", "#666")
@@ -1291,12 +1289,6 @@
 						localVariable.set(this, null);
 					};
 				});
-
-			d3.select("body").on("d3ChartsYear.pbiclc", function() {
-				clickButtonsRects(validateCustomEventYear(+d3.event.detail), true);
-				repositionButtonsGroup();
-				checkArrows();
-			});
 
 			buttonsContributionsRects.on("mouseover", mouseOverButtonsContributionsRects)
 				.on("mouseout", mouseOutButtonsContributionsRects)
@@ -1401,12 +1393,12 @@
 				return d.donor;
 			})).range([donorsPanel.padding[0], Math.min(donorsPanel.height - donorsPanel.padding[2], donorsPanel.padding[0] + lollipopGroupHeight * (donorsArray.length + 1))])
 
-			let donorsPanelTitle = donorsPanel.main.selectAll(".pbiclcDonorsPanelTitle")
+			let donorsPanelTitle = donorsPanel.main.selectAll("." + classPrefix + "DonorsPanelTitle")
 				.data([true]);
 
 			donorsPanelTitle = donorsPanelTitle.enter()
 				.append("text")
-				.attr("class", "pbiclcDonorsPanelTitle")
+				.attr("class", classPrefix + "DonorsPanelTitle")
 				.attr("y", donorsPanel.padding[0] - titlePadding)
 				.attr("x", donorsPanel.padding[3])
 				.merge(donorsPanelTitle)
@@ -1416,7 +1408,7 @@
 				.duration(duration)
 				.attr("x", donorsPanel.padding[3]);
 
-			let donorGroup = donorsPanel.main.selectAll(".pbiclcDonorGroup")
+			let donorGroup = donorsPanel.main.selectAll("." + classPrefix + "DonorGroup")
 				.data(donorsArray, function(d) {
 					return d.isoCode;
 				});
@@ -1426,13 +1418,13 @@
 
 			const donorGroupEnter = donorGroup.enter()
 				.append("g")
-				.attr("class", "pbiclcDonorGroup")
+				.attr("class", classPrefix + "DonorGroup")
 				.attr("transform", function(d) {
 					return "translate(0," + yScaleDonors(d.donor) + ")";
 				});
 
 			const donorStickEnter = donorGroupEnter.append("rect")
-				.attr("class", "pbiclcDonorStick")
+				.attr("class", classPrefix + "DonorStick")
 				.attr("x", donorsPanel.padding[3])
 				.attr("y", -(stickHeight / 2 - (stickHeight / 4)))
 				.attr("height", stickHeight)
@@ -1440,14 +1432,14 @@
 				.classed("contributionColorFill", true);
 
 			const donorLollipopEnter = donorGroupEnter.append("circle")
-				.attr("class", "pbiclcDonorLollipop")
+				.attr("class", classPrefix + "DonorLollipop")
 				.attr("cx", donorsPanel.padding[3])
 				.attr("cy", (stickHeight / 4))
 				.attr("r", lollipopRadius)
 				.classed("contributionColorFill", true);
 
 			const donorFlagEnter = donorGroupEnter.append("image")
-				.attr("class", "pbiclcDonorFlag")
+				.attr("class", classPrefix + "DonorFlag")
 				.attr("width", flagSize)
 				.attr("height", flagSize)
 				.attr("x", donorsPanel.padding[3] - flagPadding)
@@ -1461,7 +1453,7 @@
 				})
 
 			const donorPaidIndicatorEnter = donorGroupEnter.append("path")
-				.attr("class", "pbiclcDonorPaidIndicator")
+				.attr("class", classPrefix + "DonorPaidIndicator")
 				.attr("d", paidSymbol)
 				.style("fill", paidColor)
 				.style("opacity", chartState.selectedContribution === "total" ? 1 : 0)
@@ -1469,13 +1461,13 @@
 					((Math.sqrt(4 * paidSymbolSize / Math.sqrt(3)) / 2) + stickHeight) + ")");
 
 			const donorLabelEnter = donorGroupEnter.append("text")
-				.attr("class", "pbiclcDonorLabel")
+				.attr("class", classPrefix + "DonorLabel")
 				.attr("x", donorsPanel.padding[3] + donorsPanel.labelPadding)
 				.attr("y", verticalLabelPadding)
 				.text(formatNumberSI(0));
 
 			const donorTooltipRectangleEnter = donorGroupEnter.append("rect")
-				.attr("class", "pbiclcDonorTooltipRectangle")
+				.attr("class", classPrefix + "DonorTooltipRectangle")
 				.attr("y", -lollipopGroupHeight / 2)
 				.attr("height", lollipopGroupHeight)
 				.attr("width", donorsPanel.width)
@@ -1490,7 +1482,7 @@
 					return "translate(0," + yScaleDonors(d.donor) + ")";
 				});
 
-			donorGroup.select(".pbiclcDonorStick")
+			donorGroup.select("." + classPrefix + "DonorStick")
 				.transition()
 				.duration(duration)
 				.attr("x", donorsPanel.padding[3])
@@ -1498,19 +1490,19 @@
 					return xScaleDonors(d[chartState.selectedContribution]) - donorsPanel.padding[3];
 				});
 
-			donorGroup.select(".pbiclcDonorLollipop")
+			donorGroup.select("." + classPrefix + "DonorLollipop")
 				.transition()
 				.duration(duration)
 				.attr("cx", function(d) {
 					return xScaleDonors(d[chartState.selectedContribution]);
 				});
 
-			donorGroup.select(".pbiclcDonorFlag")
+			donorGroup.select("." + classPrefix + "DonorFlag")
 				.transition()
 				.duration(duration)
 				.attr("x", donorsPanel.padding[3] - flagPadding);
 
-			donorGroup.select(".pbiclcDonorPaidIndicator")
+			donorGroup.select("." + classPrefix + "DonorPaidIndicator")
 				.transition()
 				.duration(duration)
 				.style("opacity", chartState.selectedContribution === "total" ? 1 : 0)
@@ -1521,7 +1513,7 @@
 						((Math.sqrt(4 * paidSymbolSize / Math.sqrt(3)) / 2) + stickHeight + thisPadding) + ")";
 				});
 
-			donorGroup.select(".pbiclcDonorLabel")
+			donorGroup.select("." + classPrefix + "DonorLabel")
 				.transition()
 				.duration(duration)
 				.attr("x", function(d) {
@@ -1533,7 +1525,7 @@
 
 					function populateLabel(selection) {
 						selection.append("tspan")
-							.attr("class", "pbiclcDonorLabelPercentage")
+							.attr("class", classPrefix + "DonorLabelPercentage")
 							.attr("dy", "-0.5px")
 							.text(" (")
 							.append("tspan")
@@ -1561,7 +1553,7 @@
 					};
 				});
 
-			const donorTooltipRectangle = donorGroup.select(".pbiclcDonorTooltipRectangle");
+			const donorTooltipRectangle = donorGroup.select("." + classPrefix + "DonorTooltipRectangle");
 
 			donorTooltipRectangle.on("mouseover", mouseoverTooltipRectangle)
 				.on("mouseout", mouseoutTooltipRectangle);
@@ -1673,11 +1665,11 @@
 
 			const donorTypes = data.donorTypes;
 
-			const barChartPanelTitle = barchartPanel.main.selectAll(".pbiclcBarChartPanelTitle")
+			const barChartPanelTitle = barchartPanel.main.selectAll("." + classPrefix + "BarChartPanelTitle")
 				.data([true])
 				.enter()
 				.append("text")
-				.attr("class", "pbiclcBarChartPanelTitle")
+				.attr("class", classPrefix + "BarChartPanelTitle")
 				.attr("y", barchartPanel.padding[0] - titlePadding)
 				.attr("x", barchartPanel.padding[3])
 				.text("Number of donors");
@@ -1705,7 +1697,7 @@
 
 			yScaleBar.domain([0, d3.max(dataBar, d => d.number) * 1.1]);
 
-			let bars = barchartPanel.main.selectAll(".pbiclcbars")
+			let bars = barchartPanel.main.selectAll("." + classPrefix + "bars")
 				.data(dataBar, d => d.type);
 
 			const barsExit = bars.exit()
@@ -1718,7 +1710,7 @@
 
 			const barsEnter = bars.enter()
 				.append("rect")
-				.attr("class", "pbiclcbars contributionColorFill")
+				.attr("class", classPrefix + "bars contributionColorFill")
 				.attr("x", d => xScaleBar(d.type))
 				.attr("width", xScaleBar.bandwidth())
 				.attr("height", 0)
@@ -1733,7 +1725,7 @@
 				.attr("height", d => barchartPanel.height - barchartPanel.padding[2] - yScaleBar(d.number))
 				.attr("y", d => yScaleBar(d.number));
 
-			let barsLabels = barchartPanel.main.selectAll(".pbiclcbarsLabels")
+			let barsLabels = barchartPanel.main.selectAll("." + classPrefix + "barsLabels")
 				.data(dataBar, d => d.type);
 
 			const barsLabelsExit = barsLabels.exit()
@@ -1741,7 +1733,7 @@
 
 			const barsLabelsEnter = barsLabels.enter()
 				.append("text")
-				.attr("class", "pbiclcbarsLabels")
+				.attr("class", classPrefix + "barsLabels")
 				.attr("x", d => xScaleBar(d.type) + xScaleBar.bandwidth() / 2)
 				.attr("y", d => yScaleBar(0));
 
@@ -1753,7 +1745,7 @@
 				.attr("y", d => yScaleBar(d.number) - 3.5 * barLabelPadding)
 				.text(d => d.number + (d.number > 1 ? " donors" : " donor"));
 
-			let barsLabelsSpan = barchartPanel.main.selectAll(".pbiclcbarsLabelsSpan")
+			let barsLabelsSpan = barchartPanel.main.selectAll("." + classPrefix + "barsLabelsSpan")
 				.data(dataBar, d => d.type);
 
 			const barsLabelsSpanExit = barsLabelsSpan.exit()
@@ -1761,7 +1753,7 @@
 
 			const barsLabelsSpanEnter = barsLabelsSpan.enter()
 				.append("text")
-				.attr("class", "pbiclcbarsLabelsSpan")
+				.attr("class", classPrefix + "barsLabelsSpan")
 				.attr("x", d => xScaleBar(d.type) + xScaleBar.bandwidth() / 2)
 				.attr("y", d => yScaleBar(0));
 
@@ -1869,7 +1861,7 @@
 				.style("width", null);
 			if (chartState.selectedYear.indexOf(d) > -1) return;
 			d3.select(this).style("fill", "#eaeaea");
-			d3.selectAll(".pbiclcbuttonsText")
+			d3.selectAll("." + classPrefix + "buttonsText")
 				.filter(function(e) {
 					return e === d
 				})
@@ -1888,7 +1880,7 @@
 		function mouseOutButtonsContributionsRects(d) {
 			if (d === chartState.selectedContribution) return;
 			d3.select(this).style("fill", "#eaeaea");
-			d3.selectAll(".pbiclcbuttonsContributionsText")
+			d3.selectAll("." + classPrefix + "buttonsContributionsText")
 				.filter(function(e) {
 					return e === d
 				})
@@ -2066,7 +2058,7 @@
 		allTexts.forEach(function(d) {
 
 			const fakeText = svg.append("text")
-				.attr("class", "pbiclcgroupYAxisDonorsFake")
+				.attr("class", classPrefix + "groupYAxisDonorsFake")
 				.style("opacity", 0)
 				.text(d);
 
@@ -2229,7 +2221,7 @@
 			.style("pointer-events", "none");
 
 		const overDiv = containerDiv.append("div")
-			.attr("class", "pbiclcOverDivHelp");
+			.attr("class", classPrefix + "OverDivHelp");
 
 		const topDivSize = topDiv.node().getBoundingClientRect();
 
@@ -2276,7 +2268,7 @@
 			});
 
 		closeRects.append("text")
-			.attr("class", "pbiclcAnnotationMainText")
+			.attr("class", classPrefix + "AnnotationMainText")
 			.attr("text-anchor", "middle")
 			.attr("x", function(d, i) {
 				return width - padding[1] - (d.width / 2) - (i ? (helpButtons[0].width) + 8 : 0);
@@ -2340,7 +2332,7 @@
 				.style("stroke-width", "3px")
 				.style("fill", "none")
 				.style("opacity", 0.5)
-				.attr("class", "pbiclcHelpRectangle")
+				.attr("class", classPrefix + "HelpRectangle")
 				.attr("pointer-events", "all")
 				.on("mouseover", function() {
 					const self = this;
@@ -2359,7 +2351,7 @@
 			.style("stroke", "#888");
 
 		const explanationText = helpSVG.append("text")
-			.attr("class", "pbiclcAnnotationExplanationText")
+			.attr("class", classPrefix + "AnnotationExplanationText")
 			.attr("font-family", "Roboto")
 			.attr("font-size", "18px")
 			.style("fill", "#222")
@@ -2373,7 +2365,7 @@
 		function createTooltip(xPos, yPos, text, self) {
 			explanationText.style("opacity", 0);
 			explanationTextRect.style("opacity", 0);
-			helpSVG.selectAll(".pbiclcHelpRectangle").style("opacity", 0.1);
+			helpSVG.selectAll("." + classPrefix + "HelpRectangle").style("opacity", 0.1);
 			d3.select(self).style("opacity", 1);
 			const containerBox = containerDiv.node().getBoundingClientRect();
 			tooltip.style("top", yPos + "px")
@@ -2386,7 +2378,7 @@
 			tooltip.style("display", "none");
 			explanationText.style("opacity", 1);
 			explanationTextRect.style("opacity", 1);
-			helpSVG.selectAll(".pbiclcHelpRectangle").style("opacity", 0.5);
+			helpSVG.selectAll("." + classPrefix + "HelpRectangle").style("opacity", 0.5);
 		};
 
 		//end of createAnnotationsDiv
@@ -2469,12 +2461,12 @@
 
 		const downloadingDiv = d3.select("body").append("div")
 			.style("position", "fixed")
-			.attr("id", "pbiclcDownloadingDiv")
+			.attr("id", classPrefix + "DownloadingDiv")
 			.style("left", window.innerWidth / 2 - 100 + "px")
 			.style("top", window.innerHeight / 2 - 100 + "px");
 
 		const downloadingDivSvg = downloadingDiv.append("svg")
-			.attr("class", "pbiclcDownloadingDivSvg")
+			.attr("class", classPrefix + "DownloadingDivSvg")
 			.attr("width", 200)
 			.attr("height", 100);
 
@@ -2578,7 +2570,7 @@
 			};
 		});
 
-		d3.select("#pbiclcDownloadingDiv").remove();
+		d3.select("#" + classPrefix + "DownloadingDiv").remove();
 
 	};
 
@@ -2669,7 +2661,7 @@
 
 				pdf.save("CBPFcontributions_" + csvDateFormat(currentDate) + ".pdf");
 
-				d3.select("#pbiclcDownloadingDiv").remove();
+				d3.select("#" + classPrefix + "DownloadingDiv").remove();
 
 				function createLetterhead() {
 

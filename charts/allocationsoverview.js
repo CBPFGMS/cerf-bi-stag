@@ -587,19 +587,16 @@
 		if (!lazyLoad) {
 			draw(rawData, mapData);
 		} else {
-			const chartDiv = document.getElementById("allocation-overview");
-			let observer = new MutationObserver(function(mutations) {
-				const show = mutations.some(function(e) {
-					return e.target.classList.contains("show")
-				});
-				if (show) {
-					observer.disconnect();
-					draw(rawData, mapData)
-				};
-			});
-			observer.observe(chartDiv, {
-				attributes: true
-			});
+			d3.select(window).on("scroll." + classPrefix, checkPosition);
+			checkPosition();
+		};
+
+		function checkPosition() {
+			const containerPosition = containerDiv.node().getBoundingClientRect();
+			if (!(containerPosition.bottom < 0 || containerPosition.top - windowHeight > 0)) {
+				d3.select(window).on("scroll." + classPrefix, null);
+				draw(rawData, mapData);
+			};
 		};
 
 		//end of csvCallback
