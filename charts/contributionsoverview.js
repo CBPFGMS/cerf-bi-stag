@@ -274,7 +274,7 @@
 		formatMoney0Decimals = d3.format(",.0f"),
 		formatPercent = d3.format(".0%"),
 		formatNumberSI = d3.format(".3s"),
-		flagPadding = 28,
+		flagPadding = 30,
 		flagSize = 24,
 		paidSymbolSize = 16,
 		maxTextSize = 160,
@@ -701,9 +701,18 @@
 			d3.select("." + classPrefix + "SvgLegend")
 				.style("opacity", chartState.selectedContribution === "total" ? 1 : 0);
 
+			const dataArray = processData(rawData);
+
+			data.dataDonors = dataArray[0];
+			data.donorTypes = dataArray[1];
+
+			recalculateAndResize();
+
 			createTopPanel();
 
 			createDonorsPanel();
+
+			createBarChartPanel();
 
 			//end of clickButtonsContributionsRects
 		};
@@ -1675,16 +1684,22 @@
 				.text("Number of donors");
 
 			const dataBar = donorTypes.reduce((acc, curr) => {
-				const found = acc.find(e => e.type === curr.donorType);
-				if (found) {
-					++found.number;
-					found.total += curr.total;
-				} else {
-					acc.push({
-						type: curr.donorType,
-						number: 1,
-						total: curr.total
-					})
+				if (curr[chartState.selectedContribution]) {
+					const found = acc.find(e => e.type === curr.donorType);
+					if (found) {
+						++found.number;
+						found.total += curr.total;
+						found.paid += curr.paid;
+						found.pledge += curr.pledge;
+					} else {
+						acc.push({
+							type: curr.donorType,
+							number: 1,
+							total: curr.total,
+							paid: curr.paid,
+							pledge: curr.pledge
+						})
+					};
 				};
 				return acc;
 			}, []);
@@ -1893,7 +1908,7 @@
 
 			setRanges(biggestLabelLengthDonors);
 
-			setDomains(data.dataDonors, "total");
+			setDomains(data.dataDonors);
 
 			//end of recalculateAndResize
 		};
@@ -2075,10 +2090,12 @@
 		//end of calculateBiggestLabel
 	};
 
-	function setDomains(donors, property) {
+	function setDomains(donors) {
 
 		const maxXValue = d3.max(donors, function(d) {
-			return d[property]
+			return d[chartState.selectedContribution];
+		}) || d3.max(donors, function(d) {
+			return d.total;
 		});
 
 		xScaleDonors.domain([0, Math.floor(maxXValue * 1.1)]);
