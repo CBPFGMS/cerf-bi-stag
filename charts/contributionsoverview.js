@@ -1610,12 +1610,44 @@
 						return chartState.selectedDonors.indexOf(isoCode) > -1 ? 1 : fadeOpacity;
 					});
 
-				tooltip.style("display", "block")
-					.html("Donor: <strong>" + datum.donor + "</strong><br><br><div style='margin:0px;display:flex;flex-wrap:wrap;width:262px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
+				tooltip.style("display", "block");
+
+				if (datum.isoCode === othersId) {
+					const othersData = datum.donorsList.reduce((acc, curr) => {
+						if (curr[chartState.selectedContribution]) {
+							const found = acc.find(e => e.donorType === curr.donorType);
+							if (found) {
+								++found.number;
+								found.total += curr.total;
+								found.paid += curr.paid;
+								found.pledge += curr.pledge;
+							} else {
+								acc.push({
+									donorType: curr.donorType,
+									number: 1,
+									total: curr.total,
+									paid: curr.paid,
+									pledge: curr.pledge
+								})
+							};
+						};
+						return acc;
+					}, []);
+					othersData.forEach(row => {
+						tooltip.append("div")
+							.html("Type: <strong>" + row.donorType + "</strong> (" + row.number + ")<br><div style='margin-bottom:14px;margin-top:6px;display:flex;flex-wrap:wrap;width:262px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
+								"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(row.paid, row.total)) +
+								")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(row.paid) +
+								"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(row.pledge, row.total)) +
+								")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(row.pledge) + "</span></div></div>")
+					});
+				} else {
+					tooltip.html("Donor: <strong>" + datum.donor + "</strong><br><div style='margin-bottom:8px;margin-top:8px;'>Type: " + (datum.donorType || "n/a") + "</div><div style='margin:0px;display:flex;flex-wrap:wrap;width:262px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
 						"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(datum.paid, datum.total)) +
 						")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.paid) +
 						"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(datum.pledge, datum.total)) +
 						")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.pledge) + "</span></div></div>");
+				};
 
 				const thisBox = this.getBoundingClientRect();
 
@@ -1623,7 +1655,7 @@
 
 				const tooltipBox = tooltip.node().getBoundingClientRect();
 
-				const thisOffsetTop = thisBox.top - containerBox.top;
+				const thisOffsetTop = datum.isoCode === othersId ? thisBox.top - containerBox.top - tooltipBox.height - lollipopGroupHeight : thisBox.top - containerBox.top;
 
 				const thisOffsetLeft = thisBox.left - containerBox.left + (thisBox.width - tooltipBox.width) / 2;
 
@@ -1645,7 +1677,8 @@
 
 				setGroupOpacity();
 
-				tooltip.style("display", "none");
+				tooltip.style("display", "none")
+					.html(null);
 
 			};
 
@@ -1968,6 +2001,7 @@
 				acc.push({
 					donor: curr.donor,
 					isoCode: curr.isoCode,
+					donorType: curr.donorType,
 					paid: curr.paid,
 					pledge: curr.pledge,
 					total: curr.total
@@ -1978,12 +2012,14 @@
 					isoCode: othersId,
 					paid: curr.paid,
 					pledge: curr.pledge,
-					total: curr.total
+					total: curr.total,
+					donorsList: [curr]
 				});
 			} else {
 				acc[maxDonorNumber].paid += curr.paid;
 				acc[maxDonorNumber].pledge += curr.pledge;
 				acc[maxDonorNumber].total += curr.total;
+				acc[maxDonorNumber].donorsList.push(curr);
 			};
 			return acc;
 		}, []);
