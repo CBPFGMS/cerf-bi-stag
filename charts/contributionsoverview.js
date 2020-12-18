@@ -1828,6 +1828,71 @@
 					.tween("text", null);
 			};
 
+			let barsTooltip = barchartPanel.main.selectAll("." + classPrefix + "barsTooltip")
+				.data(dataBar, d => d.type);
+
+			const barsTooltipExit = barsTooltip.exit()
+				.remove();
+
+			const barsTooltipEnter = barsTooltip.enter()
+				.append("rect")
+				.attr("class", classPrefix + "barsTooltip")
+				.attr("x", d => xScaleBar(d.type))
+				.attr("width", xScaleBar.bandwidth())
+				.style("opacity", 0)
+				.style("pointer-events", "all")
+				.attr("height", barchartPanel.height - barchartPanel.padding[0] - barchartPanel.padding[2])
+				.attr("y", barchartPanel.padding[0]);
+
+			barsTooltip = barsTooltipEnter.merge(barsTooltip);
+
+			barsTooltip.transition()
+				.duration(duration)
+				.attr("x", d => xScaleBar(d.type))
+				.attr("width", xScaleBar.bandwidth());
+
+			barsTooltip.on("mouseover", mouseoverBarTooltip)
+				.on("mouseout", mouseoutBarTooltip)
+
+			///
+
+
+			function mouseoverBarTooltip(datum) {
+
+				currentHoveredRect = this;
+
+				tooltip.style("display", "block");
+
+				tooltip.html("Type: <strong>" + datum.type + "</strong> (" + datum.number + ")<br><div style='margin-bottom:14px;margin-top:6px;display:flex;flex-wrap:wrap;width:262px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
+					"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(datum.paid, datum.total)) +
+					")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.paid) +
+					"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(datum.pledge, datum.total)) +
+					")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.pledge) + "</span></div></div>")
+
+				const thisBox = this.getBoundingClientRect();
+
+				const containerBox = containerDiv.node().getBoundingClientRect();
+
+				const tooltipBox = tooltip.node().getBoundingClientRect();
+
+				const thisOffsetTop = thisBox.top - containerBox.top + thisBox.height / 2 - tooltipBox.height / 2;
+
+				const thisOffsetLeft = thisBox.left - containerBox.left + (thisBox.width - tooltipBox.width) / 2;
+
+				tooltip.style("top", thisOffsetTop + 22 + "px")
+					.style("left", thisOffsetLeft + "px");
+
+			};
+
+			function mouseoutBarTooltip(datum) {
+
+				if (isSnapshotTooltipVisible) return;
+
+				tooltip.style("display", "none")
+					.html(null);
+
+			};
+
 			//end of createBarChartPanel
 		};
 
