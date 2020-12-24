@@ -49,7 +49,7 @@ a:hover.txt-header {color:#333 !important;}
 .nav-tabs{border-bottom: 1px solid #ccc; border-top: 1px solid #ccc;}
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{color: #498bca; background-color: transparent; font-weight: 700; font-size: 1em;}
 .nav-tabs .nav-link{border-bottom: 2px solid transparent; padding: .2rem 0.5rem; border-left: none; border-top: none; border-right: none; font-family: 'Roboto', sans-serif; font-size: 1em; color:#58585e; font-weight: 300;}
-.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover{border:none; color: #498bca;}
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover{color: #333;}
 .btn-light {font-family: 'Roboto', sans-serif; color: #212529; background-color: #eee; border-color: #eee;padding: 1rem 2rem; border-radius: 300px;}
 .btn-light.focus, .btn-light:focus, .btn-light:hover {
   color: #212529;
