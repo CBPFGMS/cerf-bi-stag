@@ -12,7 +12,7 @@ function LoadData() {
 
 function LoadCBPFSummary(allocYear) {
     showLoader();
-    fetch('https://cbpfgms.github.io/pf-onebi-data/cerf_sample_data/CERFSummary-'+ allocYear + '.json')
+    fetch('https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERFSummary-'+ allocYear + '.json')
         .then(function (response) {
             if (response.ok) {
                 response.json().then(function (data) {
@@ -56,7 +56,7 @@ function LoadDate(){
 function LoadAmount() {
 
     var allocYear = 2020;
-    fetch('https://cbpfgms.github.io/pf-onebi-data/cerf_sample_data/CERFSummary-'+ allocYear + '.json')
+    fetch('https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERFSummary-'+ allocYear + '.json')
         .then(function (response) {
             if (response.ok) {
                 response.json().then(function (data) {
