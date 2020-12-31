@@ -518,7 +518,7 @@
 		console.info(classPrefix + ": data from local storage");
 		csvCallback(rawData);
 	} else {
-		d3.csv("https://cbpfgms.github.io/cerf-bi-stag/data/CERF_ContributionTotal.csv").then(function(rawData) {
+		d3.csv("https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERF_ContributionTotal.csv").then(function(rawData) {
 			try {
 				localStorage.setItem(classPrefix + "data", JSON.stringify({
 					data: d3.csvFormat(rawData),
