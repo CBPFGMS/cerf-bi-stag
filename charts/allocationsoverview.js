@@ -339,7 +339,7 @@
 		height: topPanelHeight,
 		padding: [0, 0, 0, 0],
 		moneyBagPadding: 4,
-		leftPadding: [180, 380, 710, 926, 1010],
+		leftPadding: [180, 395, 710, 926, 1010],
 		mainValueVerPadding: 12,
 		mainValueHorPadding: 1,
 		linePadding: 8
@@ -1152,7 +1152,7 @@
 			.duration(duration)
 			.style("opacity", 1)
 			.text(function(d) {
-				const yearsText = chartState.selectedYear.length === 1 ? chartState.selectedYear[0] : "years\u002A";
+				const yearsText = chartState.selectedYear.length === 1 ? chartState.selectedYear[0] : "selected years\u002A";
 				return "in " + yearsText;
 			});
 

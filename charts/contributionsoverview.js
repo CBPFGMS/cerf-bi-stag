@@ -1024,7 +1024,7 @@
 				.duration(duration)
 				.style("opacity", 1)
 				.text(function(d) {
-					const yearsText = chartState.selectedYear.length === 1 ? chartState.selectedYear[0] : "years\u002A";
+					const yearsText = chartState.selectedYear.length === 1 ? chartState.selectedYear[0] : "selected years\u002A";
 					const valueSI = formatSIFloat(d);
 					const unit = valueSI[valueSI.length - 1];
 					return (unit === "k" ? "Thousand" : unit === "M" ? "Million" : unit === "G" ? "Billion" : "") +
