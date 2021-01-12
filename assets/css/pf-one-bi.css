@@ -91,6 +91,8 @@ a:hover.txt-header {color:#333 !important;}
 .m-t-6{margin-top: 6rem;}
 .font-clr{color:#58585e; font-size: 1.125rem;}
 .font-3rem{font-size: 3rem;}
+.font-09em{font-size: 0.9em !important;}
+.clr-grey{color:#ccc;}
 .f-a{font-family: 'FontAwesome' !important; font-weight: normal !important;}
 .cookie-panel {
     background-color: rgba(0, 0, 0, 0.80);

@@ -57,13 +57,13 @@
 					<div class="col-md-auto">
 						<div class="figure-box-panel tooltip-custom">							
 							<p><b><span id="spnDonor"></span></b> Donors</p>
-							<span class="top"><p>The PF ONEBI portal provides detailed contribution and allocation data in real-time</p><i></i></span>
+							<span class="top"><p>The CERF BI Portal provides real-time information on CERF donors</p><i></i></span>
 						</div>
 					</div>
 					<div class="col-md-auto">
 						<div class="figure-box-panel tooltip-custom">							
 							<p><b><span id="spnPartners"></span></b> Recipients</p>
-							<span class="top1"><p>PF ONEBI empowers partners to respond to the needs in the field with timely fund and most innovative ways</p><i></i></span>
+							<span class="top1"><p>The CERF BI empowers partners to respond to the needs in the field with timely fund and most innovative ways</p><i></i></span>
 						</div>
 					</div>
 					<div class="col-md-auto">
@@ -75,13 +75,13 @@
 					<div class="col-md-auto">
 						<div class="figure-box-panel tooltip-custom">							
 							<p><b>$<span id="spnContributed"></span></b> Contributed</p>
-							<span class="top2"><p>The increase trend of donor contribution towards Country-based pooled funds reduces the gaps in HRP needs vs funding.</p><i></i></span>
+							<span class="top2"><p>The CERF BI Portal provides real-time information on contributions to CERF</p><i></i></span>
 						</div>
 					</div>
 					<div class="col-md-auto">
 						<div class="figure-box-panel tooltip-custom">							
 							<p><b>$<span id="spnAllocated"></span></b> Allocated</p>
-							<span class="top2"><p>Regular and timely allocations through Standard and Reserve mechanisms allow CERF to priortise the funding to the unreached affected people with quick response</p><i></i></span>
+							<span class="top2"><p>The CERF BI Portal provides real-time information on CERF allocations</p><i></i></span>
 						</div>
 					</div>				
 			</div>
@@ -102,19 +102,19 @@
 	<section id="Allocations">
 		<div class="container">
 			<div class="row">
-				<div class="col text-center mb-3 pt-5 link-style d-flex justify-content-left position-relative">					
-					<a class="txt-header text-uppercase js-scroll-trigger" href="#Allocations" role="button">Allocations</a><button class="video-btn" data-toggle="modal" data-src="https://ocha.fleeq.io/l/s7q22qmqus-53e65u965e" data-target="#myModal"><span class="video-info"><i class="fa fa-play-circle fa-2x"></i></span></button>
+				<div class="col text-center mb-2 pt-5 link-style d-flex justify-content-left position-relative">					
+					<a class="txt-header text-uppercase js-scroll-trigger" href="#Allocations" role="button"><i class="fa fa-map-o f-a mr-1 font-09em clr-grey"></i> Allocations</a><button class="video-btn" data-toggle="modal" data-src="https://ocha.fleeq.io/l/s7q22qmqus-53e65u965e" data-target="#myModal"><span class="video-info"><i class="fa fa-play-circle fa-2x"></i></span></button>
 				</div>
 			</div>
 			<div class="row mb-5">
 				<div class="col">
-					<ul class="nav nav-tabs mb-4 pt-1 pb-1" id="myTab" role="tablist">
+					<ul class="nav nav-tabs mb-4 pt-1 pb-1 d-none" id="myTab" role="tablist">
   						<li class="nav-item waves-effect waves-light mr-4">
     						<a class="nav-link active" id="allocation-overview-tab" data-toggle="tab" href="#allocation-overview" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-map-o f-a mr-1"></i> Allocations Overview</a>
   						</li>
   											
 					</ul>
-					<div class="tab-content" id="myTabContent">
+					<div class="tab-content border-top pt-3" id="myTabContent">
 						<div class="tab-pane active show" id="allocation-overview" role="tabpanel" aria-labelledby="allocation-overview-tab">
                             <div><div id="d3chartcontainerallocover" data-title=" " data-year="2021" data-cerfallocation="total" data-shownames="false" data-showhelp="false" data-showlink="false" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/allocationsoverview.js"></script></div>
                         </div>
@@ -130,18 +130,18 @@
 	<section id="Contributions">
 		<div class="container">
 			<div class="row">
-				<div class="col text-center mb-3 pt-5 link-style d-flex justify-content-left position-relative">					
-					<a class="txt-header text-uppercase js-scroll-trigger" href="#Contributions" role="button">Contributions</a><button class="video-btn" data-toggle="modal" data-src="https://ocha.fleeq.io/l/s7q22qmqus-53e65u965e" data-target="#myModal"><span class="video-info"><i class="fa fa-play-circle fa-2x"></i></span></button>
+				<div class="col text-center mb-2 pt-5 link-style d-flex justify-content-left position-relative">					
+					<a class="txt-header text-uppercase js-scroll-trigger" href="#Contributions" role="button"><i class="fa fa-money mr-1 clr-grey"></i> Contributions</a><button class="video-btn" data-toggle="modal" data-src="https://ocha.fleeq.io/l/s7q22qmqus-53e65u965e" data-target="#myModal"><span class="video-info"><i class="fa fa-play-circle fa-2x"></i></span></button>
 				</div>
 			</div>
 			<div class="row mb-5">
 				<div class="col">
-					<ul class="nav nav-tabs mb-4 pt-1 pb-1" id="myTab2" role="tablist">
+					<ul class="nav nav-tabs mb-4 pt-1 pb-1 d-none" id="myTab2" role="tablist">
   						<li class="nav-item waves-effect waves-light">
     						<a class="nav-link active" id="contributions-overview-tab" data-toggle="tab" href="#contributions-overview" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-money mr-1"></i> Contribution Overview</a>
   						</li>
 					</ul>
-					<div class="tab-content" id="myTabContent2">
+					<div class="tab-content border-top pt-3" id="myTabContent2">
                         <div class="tab-pane active center" id="contributions-overview" role="tabpanel" aria-labelledby="contributions-tab" style="width:100%;text-align: center;">
 							<div id="d3chartcontainercontribover" data-year="2021" data-contribution="total" data-responsive="true" data-lazyload="true"></div>
 							<script type="text/javascript" src="charts/contributionsoverview.js"></script>

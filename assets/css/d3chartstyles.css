@@ -669,6 +669,51 @@ stroke: darkslategray;
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
+#contribovertooltipdiv br{
+	display:none;
+}
+
+#contribovertooltipdiv > div:nth-child(3){
+	color:#418fde;	
+}
+
+#contribovertooltipdiv > div:nth-child(1){
+	color: #888;
+    font-weight: normal;
+}
+
+.contribovertooltipTitle{
+	padding: 6px 8px;
+    background-color: #418fde;
+    color: #fff !important;
+    margin-left: -8px;
+    margin-right: -8px;
+    margin-top: -8px;
+}
+
+.contribovertooltipRow{
+	color: #888;
+    font-weight: normal;
+}
+
+.contribovertooltipRow .contributionColorHTMLcolor{
+	color: #333;
+    font-weight: 600;
+}
+
+#contribovertooltipdiv > div:nth-child(1) > div:nth-child(2) > span.contributionColorHTMLcolor{
+	color: #333 !important;
+    font-weight: 600 !important;
+}
+#contribovertooltipdiv > div:nth-child(1) > div:nth-child(4) > span.contributionColorHTMLcolor{
+	color: #333 !important;
+    font-weight: 600 !important;
+}
+#contribovertooltipdiv > div:nth-child(1) > div:nth-child(6) > span.contributionColorHTMLcolor{
+	color: #333 !important;
+    font-weight: 600 !important;
+}
+
 .contriboverTopDiv {
 	display: flex;
 	width: 100%;
