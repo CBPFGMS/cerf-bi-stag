@@ -25,9 +25,9 @@
 		clusterIconSize = 18,
 		clusterIconPadding = 2,
 		labelsColumnPadding = 2,
-		stackedPadding = [30, 14, 48, 14],
+		stackedPadding = [30, 14, 98, 14],
 		stackedSvgWidth = width,
-		stackedSvgHeight = 340,
+		stackedSvgHeight = 380,
 		stackedBarMaxWidth = 65,
 		barLabelPadding = 16,
 		barLabelPaddingBase = 3,
@@ -437,7 +437,7 @@
 		.tickSizeInner(0)
 		.tickSizeOuter(0)
 		.tickPadding(6)
-		.tickFormat(d => unAgenciesShortNamesList[d]);
+		.tickFormat(d => unAgenciesNamesList[d]);
 
 	const xAxisBarGroup = stackedSvg.append("g")
 		.attr("class", classPrefix + "xAxisBarGroup")
@@ -2259,9 +2259,9 @@
 
 		yScaleBar.domain([0, data[0][`cerf${separator}${chartState.selectedCerfAllocation}`]]);
 
-		xAxisBarGroup.transition()
-			.duration(duration)
-			.call(xAxisBar);
+		xAxisBarGroup.call(xAxisBar)
+			.selectAll(".tick text")
+			.call(wrapText, xScaleBar.step())
 
 		const stackedData = stack(data);
 
@@ -2684,6 +2684,30 @@
 			}
 		});
 		return returnValue;
+	};
+
+	function wrapText(text, width) {
+		text.each(function() {
+			var text = d3.select(this),
+				words = text.text().split(/\s+/).reverse(),
+				word,
+				line = [],
+				lineNumber = 0,
+				lineHeight = 1.1, // ems
+				y = text.attr("y"),
+				dy = parseFloat(text.attr("dy")),
+				tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+			while (word = words.pop()) {
+				line.push(word);
+				tspan.text(line.join(" "));
+				if (tspan.node().getComputedTextLength() > width) {
+					line.pop();
+					tspan.text(line.join(" "));
+					line = [word];
+					tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+				}
+			}
+		});
 	};
 
 	function wrapText2(text, width) {

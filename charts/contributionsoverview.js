@@ -1811,7 +1811,7 @@
 				.duration(duration)
 				.attr("x", d => xScaleBar(d.type) + xScaleBar.bandwidth() / 2)
 				.attr("y", d => yScaleBar(d.number) - barLabelPadding)
-				.text(d => "($" + formatSIFloat(d.total) + ")");
+				.text(d => "($" + formatSIFloat(d.total).replace("G", "B") + ")");
 
 			xAxisBarGroup.transition()
 				.duration(duration)
@@ -1821,7 +1821,7 @@
 				const sel = group.selection ? group.selection() : group;
 				group.call(xAxisBar);
 				sel.selectAll(".tick text")
-					.text(d => d)
+					.text(d => d === "Member State" ? "Member States" : d)
 					.call(wrapText, xScaleBar.step() - 4)
 				if (sel !== group) group.selectAll(".tick text")
 					.attrTween("x", null)
