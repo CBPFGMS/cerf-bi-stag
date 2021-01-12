@@ -536,7 +536,7 @@
 			fetchFile("masterUnAgenciesTypes", masterUnAgenciesUrl, "master table for un agencies", "json"),
 			fetchFile("masterPartnerTypes", masterPartnerTypesUrl, "master table for partner types", "json"),
 			fetchFile("masterClusterTypes", masterClusterTypesUrl, "master table for cluster types", "json"),
-			fetchFile("allocationsData", dataUrl, "allocations data", "csv")
+			fetchFile("allocoverData", dataUrl, "allocations data", "csv")
 		])
 		.then(rawData => csvCallback(rawData));
 
