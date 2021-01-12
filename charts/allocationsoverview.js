@@ -832,9 +832,15 @@
 
 	function createMap(mapData) {
 
+		const mergedoPt = topojson.merge(mapData, mapData.objects.wrl_polbnda_int_simple_uncs.geometries.filter(d => d.properties.ISO_2 === "PS"));
+
 		const countryFeatures = topojson.feature(mapData, mapData.objects.wrl_polbnda_int_simple_uncs);
 
-		countryFeatures.features = countryFeatures.features.filter(d => d.properties.ISO_2 !== "AQ");
+		countryFeatures.features = countryFeatures.features.filter(d => d.properties.ISO_2 !== "AQ" && d.properties.Terr_Name !== "Gaza Strip");
+
+		const oPt = countryFeatures.features.find(d => d.properties.ISO_2 === "PS");
+
+		oPt.geometry = mergedoPt;
 
 		mapProjection.fitExtent([
 			[mapPanel.padding[3], mapPanel.padding[0]],
