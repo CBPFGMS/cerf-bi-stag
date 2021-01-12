@@ -1635,18 +1635,18 @@
 					}, []);
 					othersData.forEach(row => {
 						tooltip.append("div")
-							.html("<div class='" + classPrefix + "tooltipTitle'>Type: <strong>" + row.donorType + "</strong> (" + row.number + ")</div><br><div style='margin-bottom:14px;margin-top:6px;display:flex;flex-wrap:wrap;width:262px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
-								"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(row.paid, row.total)) +
-								")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(row.paid) +
-								"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(row.pledge, row.total)) +
-								")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(row.pledge) + "</span></div></div>")
+							.html("<div class='" + classPrefix + "tooltipTitle'>Type: <strong>" + row.donorType + "</strong> (" + row.number + ")</div><br><div style='margin-bottom:14px;margin-top:6px;display:flex;flex-wrap:wrap;width:262px;'><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;'>Total contributions:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
+								"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(row.paid, row.total)) +
+								")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(row.paid) +
+								"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(row.pledge, row.total)) +
+								")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(row.pledge) + "</span></div></div>")
 					});
 				} else {
-					tooltip.html("<div class='" + classPrefix + "tooltipTitle'>Donor: <strong>" + datum.donor + "</strong></div><br><div style='margin-bottom:8px;margin-top:8px;'>Type: " + (datum.donorType || "n/a") + "</div><div style='margin:0px;display:flex;flex-wrap:wrap;width:262px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
-						"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(datum.paid, datum.total)) +
-						")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.paid) +
-						"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(datum.pledge, datum.total)) +
-						")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.pledge) + "</span></div></div>");
+					tooltip.html("<div class='" + classPrefix + "tooltipTitle'>Donor: <strong>" + datum.donor + "</strong></div><br><div class='" + classPrefix + "tooltipRow' style='margin-bottom:8px;margin-top:8px;'>Type: " + (datum.donorType || "n/a") + "</div><div style='margin:0px;display:flex;flex-wrap:wrap;width:262px;'><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;'>Total contributions:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
+						"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(datum.paid, datum.total)) +
+						")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.paid) +
+						"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(datum.pledge, datum.total)) +
+						")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.pledge) + "</span></div></div>");
 				};
 
 				const thisBox = this.getBoundingClientRect();
@@ -1863,11 +1863,11 @@
 
 				tooltip.style("display", "block");
 
-				tooltip.html("<div class='" + classPrefix + "tooltipTitle'>Type: <strong>" + datum.type + "</strong> (" + datum.number + ")</div><br><div style='margin-bottom:14px;margin-top:6px;display:flex;flex-wrap:wrap;width:262px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
-					"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(datum.paid, datum.total)) +
-					")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.paid) +
-					"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(datum.pledge, datum.total)) +
-					")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.pledge) + "</span></div></div>")
+				tooltip.html("<div class='" + classPrefix + "tooltipTitle'>Type: <strong>" + datum.type + "</strong> (" + datum.number + ")</div><br><div style='margin-bottom:14px;margin-top:6px;display:flex;flex-wrap:wrap;width:262px;'><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;'>Total contributions:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
+					"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(datum.paid, datum.total)) +
+					")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.paid) +
+					"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(datum.pledge, datum.total)) +
+					")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.pledge) + "</span></div></div>")
 
 				const thisBox = this.getBoundingClientRect();
 
