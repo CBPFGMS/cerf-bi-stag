@@ -57,7 +57,7 @@
 		currentDate = new Date(),
 		currentYear = currentDate.getFullYear(),
 		localVariable = d3.local(),
-		localStorageTime = 1,
+		localStorageTime = 3600000,
 		duration = 1000,
 		shortDuration = 250,
 		stickHeight = 2,
