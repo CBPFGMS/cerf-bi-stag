@@ -1043,12 +1043,9 @@
 		let mainValue = 0,
 			rapidResponseValue = 0,
 			underfundedValue = 0,
-			projectsValue = data.projects.size,
 			numberofCountries = 0,
 			numberofRegionals = 0,
 			thisOffset;
-
-		const numberofFunds = data.map.filter(row => row[`cerf${separator}${chartState.selectedCerfAllocation}${separator}0`]).length;
 
 		for (row of data.map) {
 			mainValue += row[`cerf${separator}0${separator}0`];
@@ -1079,8 +1076,6 @@
 		const previousMainValue = d3.select("." + classPrefix + "topPanelMainValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelMainValue").datum() : 0;
 		const previousRapidResponseValue = d3.select("." + classPrefix + "topPanelRapidResponseValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelRapidResponseValue").datum() : 0;
 		const previousUnderfundedValue = d3.select("." + classPrefix + "topPanelUnderfundedValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelUnderfundedValue").datum() : 0;
-		const previousProjectsValue = d3.select("." + classPrefix + "topPanelProjectsValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelProjectsValue").datum() : 0;
-		const previousFundsValue = d3.select("." + classPrefix + "topPanelFundsValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelFundsValue").datum() : 0;
 		const previousCountriesValue = d3.select("." + classPrefix + "topPanelCountriesValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelCountriesValue").datum() : 0;
 		const previousRegionalsValue = d3.select("." + classPrefix + "topPanelRegionalsValue").size() !== 0 ? d3.select("." + classPrefix + "topPanelRegionalsValue").datum() : 0;
 
@@ -1218,68 +1213,6 @@
 			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[1] + topPanel.mainValueHorPadding)
 			.text("Underfunded");
 
-		let topPanelProjectsValue = mainValueGroup.selectAll("." + classPrefix + "topPanelProjectsValue")
-			.data([projectsValue]);
-
-		topPanelProjectsValue = topPanelProjectsValue.enter()
-			.append("text")
-			.attr("class", classPrefix + "topPanelProjectsValue contributionColorFill")
-			.attr("text-anchor", "end")
-			.merge(topPanelProjectsValue)
-			.attr("y", topPanel.height / 2)
-			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] - topPanel.mainValueHorPadding);
-
-		topPanelProjectsValue.transition()
-			.duration(duration)
-			.tween("text", function(d) {
-				const node = this;
-				const i = d3.interpolateRound(previousProjectsValue, d);
-				return function(t) {
-					node.textContent = i(t);
-				};
-			});
-
-		let topPanelProjectsText = mainValueGroup.selectAll("." + classPrefix + "topPanelProjectsText")
-			.data([projectsValue])
-			.enter()
-			.append("text")
-			.attr("class", classPrefix + "topPanelProjectsText")
-			.attr("text-anchor", "start")
-			.attr("y", topPanel.height / 2)
-			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] + topPanel.mainValueHorPadding)
-			.text(d => d > 1 ? "Projects" : "Project");
-
-		let topPanelFundsValue = mainValueGroup.selectAll("." + classPrefix + "topPanelFundsValue")
-			.data([numberofFunds]);
-
-		topPanelFundsValue = topPanelFundsValue.enter()
-			.append("text")
-			.attr("class", classPrefix + "topPanelFundsValue contributionColorFill")
-			.attr("text-anchor", "end")
-			.merge(topPanelFundsValue)
-			.attr("y", topPanel.height / 2)
-			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[3] - topPanel.mainValueHorPadding);
-
-		topPanelFundsValue.transition()
-			.duration(duration)
-			.tween("text", function(d) {
-				const node = this;
-				const i = d3.interpolateRound(previousFundsValue, d);
-				return function(t) {
-					node.textContent = i(t);
-				};
-			});
-
-		let topPanelFundsText = mainValueGroup.selectAll("." + classPrefix + "topPanelFundsText")
-			.data([numberofFunds])
-			.enter()
-			.append("text")
-			.attr("class", classPrefix + "topPanelFundsText")
-			.attr("text-anchor", "start")
-			.attr("y", topPanel.height / 2)
-			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[3] + topPanel.mainValueHorPadding)
-			.text(d => d > 1 ? "Funds" : "Fund");
-
 		let topPanelCountriesValue = mainValueGroup.selectAll("." + classPrefix + "topPanelCountriesValue")
 			.data([numberofCountries]);
 
@@ -1288,8 +1221,8 @@
 			.attr("class", classPrefix + "topPanelCountriesValue contributionColorFill")
 			.attr("text-anchor", "end")
 			.merge(topPanelCountriesValue)
-			.attr("y", topPanel.height * 0.33)
-			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[4] - topPanel.mainValueHorPadding);
+			.attr("y", topPanel.height / 2)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] - topPanel.mainValueHorPadding);
 
 		topPanelCountriesValue.transition()
 			.duration(duration)
@@ -1301,14 +1234,16 @@
 				};
 			});
 
-		const topPanelCountriesText = mainValueGroup.selectAll("." + classPrefix + "topPanelCountriesText")
-			.data([numberofCountries])
-			.enter()
+		let topPanelCountriesText = mainValueGroup.selectAll("." + classPrefix + "topPanelCountriesText")
+			.data([numberofCountries]);
+
+		topPanelCountriesText = topPanelCountriesText.enter()
 			.append("text")
 			.attr("class", classPrefix + "topPanelCountriesText")
 			.attr("text-anchor", "start")
-			.attr("y", topPanel.height * 0.33)
-			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[4] + topPanel.mainValueHorPadding)
+			.attr("y", topPanel.height / 2)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] + topPanel.mainValueHorPadding)
+			.merge(topPanelCountriesText)
 			.text(d => d > 1 ? "Countries" : "Country");
 
 		let topPanelRegionalsValue = mainValueGroup.selectAll("." + classPrefix + "topPanelRegionalsValue")
@@ -1319,8 +1254,8 @@
 			.attr("class", classPrefix + "topPanelRegionalsValue contributionColorFill")
 			.attr("text-anchor", "end")
 			.merge(topPanelRegionalsValue)
-			.attr("y", topPanel.height * 0.67)
-			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[4] - topPanel.mainValueHorPadding);
+			.attr("y", topPanel.height / 2)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[3] - topPanel.mainValueHorPadding);
 
 		topPanelRegionalsValue.transition()
 			.duration(duration)
@@ -1332,14 +1267,16 @@
 				};
 			});
 
-		const topPanelRegionalsText = mainValueGroup.selectAll("." + classPrefix + "topPanelRegionalsText")
-			.data([numberofRegionals])
-			.enter()
+		let topPanelRegionalsText = mainValueGroup.selectAll("." + classPrefix + "topPanelRegionalsText")
+			.data([numberofRegionals]);
+
+		topPanelRegionalsText = topPanelRegionalsText.enter()
 			.append("text")
 			.attr("class", classPrefix + "topPanelRegionalsText")
 			.attr("text-anchor", "start")
-			.attr("y", topPanel.height * 0.67)
-			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[4] + topPanel.mainValueHorPadding)
+			.attr("y", topPanel.height / 2)
+			.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[3] + topPanel.mainValueHorPadding)
+			.merge(topPanelRegionalsText)
 			.text(d => d > 1 ? "Regionals" : "Regional");
 
 		let overRectangle = topPanel.main.selectAll("." + classPrefix + "topPanelOverRectangle")

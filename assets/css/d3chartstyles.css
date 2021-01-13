@@ -384,32 +384,32 @@ p#allocoverd3chartTitle {
 	fill: #888;
 }
 
-.allocovertopPanelMainValue, .allocovertopPanelProjectsValue, .allocovertopPanelFundsValue {
+.allocovertopPanelMainValue, .allocovertopPanelCountriesValue, .allocovertopPanelRegionalsValue {
 	font-family: "Arial", sans-serif;
 	font-size: 48px;
 	dominant-baseline: central;
 }
 
-.allocovertopPanelRapidResponseValue, .allocovertopPanelUnderfundedValue, .allocovertopPanelCountriesValue, .allocovertopPanelRegionalsValue {
+.allocovertopPanelRapidResponseValue, .allocovertopPanelUnderfundedValue {
 	font-family: "Arial", sans-serif;
 	font-size: 18px;
 	dominant-baseline: central;
 }
 
-.allocovertopPanelRapidResponseText, .allocovertopPanelUnderfundedText, .allocovertopPanelCountriesText, .allocovertopPanelRegionalsText {
+.allocovertopPanelRapidResponseText, .allocovertopPanelUnderfundedText {
 	font-family: "Arial", sans-serif;
 	font-size: 14px;
 	dominant-baseline: central;
 	fill: #888;
 }
 
-.allocovertopPanelMainText, .allocovertopPanelSubText, .allocovertopPanelProjectsText, .allocovertopPanelFundsText {
+.allocovertopPanelMainText, .allocovertopPanelSubText, .allocovertopPanelCountriesText, .allocovertopPanelRegionalsText {
 	font-family: "Arial", sans-serif;
 	font-size: 18px;
 	fill: #888;
 }
 
-.allocovertopPanelProjectsText, .allocovertopPanelFundsText {
+.allocovertopPanelCountriesText, .allocovertopPanelRegionalsText {
 	dominant-baseline: central;
 }
 
