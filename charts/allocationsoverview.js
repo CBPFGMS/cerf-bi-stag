@@ -436,8 +436,7 @@
 	const xAxisBar = d3.axisBottom(xScaleBar)
 		.tickSizeInner(0)
 		.tickSizeOuter(0)
-		.tickPadding(6)
-		.tickFormat(d => unAgenciesNamesList[d]);
+		.tickPadding(6);
 
 	const xAxisBarGroup = stackedSvg.append("g")
 		.attr("class", classPrefix + "xAxisBarGroup")
@@ -2196,9 +2195,20 @@
 
 		yScaleBar.domain([0, data[0][`cerf${separator}${chartState.selectedCerfAllocation}`]]);
 
-		xAxisBarGroup.call(xAxisBar)
-			.selectAll(".tick text")
-			.call(wrapText, xScaleBar.step())
+		xAxisBarGroup.transition()
+			.duration(duration)
+			.call(customAxisBarChart);
+
+		function customAxisBarChart(group) {
+			const sel = group.selection ? group.selection() : group;
+			group.call(xAxisBar);
+			sel.selectAll(".tick text")
+				.text(d => unAgenciesNamesList[d])
+				.call(wrapText, xScaleBar.step());
+			if (sel !== group) group.selectAll(".tick text")
+				.attrTween("x", null)
+				.tween("text", null);
+		};
 
 		const stackedData = stack(data);
 
