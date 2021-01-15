@@ -1697,7 +1697,7 @@
 
 			createLegend(data);
 
-			setYearsDescriptionDiv();
+			setYearsDescriptionDiv(data);
 
 			createStackedBar(data);
 
@@ -2563,15 +2563,20 @@
 		return csv;
 	};
 
-	function setYearsDescriptionDiv() {
+	function setYearsDescriptionDiv(data) {
 		yearsDescriptionDiv.html(function() {
 			if (chartState.selectedYear.length === 1) return null;
+			const total = d3.sum(data.map, d => d[`cerf${separator}0${separator}0`]);
+			const valueSI = formatSIFloat(total);
+			const unit = valueSI[valueSI.length - 1];
+			const unitText = unit === "k" ? "Thousand" : unit === "M" ? "Million" : unit === "B" ? "Billion" : "";
+			const totalNumber = +valueSI === +valueSI ? valueSI : valueSI.substring(0, valueSI.length - 1);
 			const yearsList = chartState.selectedYear.sort(function(a, b) {
 				return a - b;
 			}).reduce(function(acc, curr, index) {
 				return acc + (index >= chartState.selectedYear.length - 2 ? index > chartState.selectedYear.length - 2 ? curr : curr + " and " : curr + ", ");
 			}, "");
-			return "\u002ASelected years: " + yearsList;
+			return `\u002A$${totalNumber} ${unitText} allocated in ${yearsList}`;
 		});
 	};
 
