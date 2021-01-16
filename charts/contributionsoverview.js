@@ -1144,7 +1144,7 @@
 				.attr("text-anchor", "start")
 				.attr("y", topPanel.height - topPanel.mainValueVerPadding * 1.2)
 				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] + topPanel.mainValueHorPadding)
-				.text("in " + (currentYear - yearsArray[0] + 1) + " years");
+				.text("since inception in 2006");
 
 
 			//end of createTopPanel
