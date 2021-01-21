@@ -6,7 +6,7 @@ header{background-image: url(../../assets/img/pf-one-bi-header-bg.png); display:
 
 .pf-onebi-logo{background-repeat: no-repeat; background-size: contain; background-position: center left; background-image: url(../../assets/img/cerf-bi-logo.png); float: left; margin: 0; text-indent: 58px;}
 
-#mainNav{transition: all .2s;}
+#mainNav{transition: all .2s; top: 35px;}
 #mainNav .nav-link{font-weight: 700; font-size: .9rem;}
 #mainNav a.nav-link {text-decoration: none; color:#bcbec0; margin-left: 10px;}
 #mainNav a.nav-link:hover {text-decoration: none; color: #fff;}
@@ -173,6 +173,7 @@ footer{background-color: #BCBEC0; padding: 15px 0; width: 100%; overflow: auto;}
 	#mainNav.navbar-shrink {
     box-shadow: 0 1px 5px 1px rgba(0,0,0,.1);
     background-color: #fff;
+	top: 0;
   }
   #mainNav.navbar-shrink .navbar-brand, #mainNav.navbar-shrink .navbar-brand:focus, #mainNav.navbar-shrink .navbar-brand:hover {
     color: #65A8DC;
@@ -195,8 +196,8 @@ footer{background-color: #BCBEC0; padding: 15px 0; width: 100%; overflow: auto;}
 }
 
 .cd-global-header {
-    background: #026cb6;
-    background-image: linear-gradient(-180deg, #026cb6 67%, #025995 97%);
+    background: #f4f4f4;
+    background-image: linear-gradient(-180deg, #f4f4f4 67%, #eaeaea 97%);
     color: #fff;
     height: 35px;
     position: relative;
@@ -206,12 +207,26 @@ footer{background-color: #BCBEC0; padding: 15px 0; width: 100%; overflow: auto;}
     float: left;
 }
 
+.cd-global-header button {
+    border: 0;
+}
+
+.cd-footer button, .cd-header button {
+    -webkit-appearance: none;
+    border-radius: 0;
+    box-shadow: none;
+    font-family: helvetica,arial,sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+}
+
 .cd-ocha button {
     border: none;
+	outline: none;
 }
 
 .cd-ocha-btn__logo {
-    background: url(../img/ocha-logo-white.svg) 50% no-repeat;
+    background: url("../img/ocha-logo-white.svg") 50% no-repeat;
     background-size: contain;
     display: inline-block;
     flex-shrink: 0;
@@ -223,7 +238,7 @@ footer{background-color: #BCBEC0; padding: 15px 0; width: 100%; overflow: auto;}
 .cd-ocha-btn {
     align-items: center;
     background: transparent;
-    color: #fff;
+    color: #555;
     display: flex;
     font-size: 12px;
     height: 35px;
@@ -239,7 +254,7 @@ svg.icon {
 }
 
 .icon--arrow-down {
-    fill: #fff;
+    fill: #555;
     width: 9px;
     height: 9px;
 }
@@ -254,11 +269,11 @@ svg.icon {
 }
 
 .cd-global-header__dropdown {
-    background: #026cb6;
+    background: #f4f4f4;
     box-shadow: 0 3px 6px 0 rgba(0, 0, 0, .3);
     left: 0;
     position: absolute;
-    z-index: 200;
+    z-index: 1050;
 }
 
 .cd-dropdown {
@@ -276,7 +291,7 @@ svg.icon {
 }
 
 .cd-ocha-dropdown__heading {
-    color: #b7e0ff;
+    color: #333;
     margin: 0 0 10px;
     padding-bottom: 2px;
 }
@@ -298,8 +313,35 @@ svg.icon {
 }
 
 .cd-global-header__dropdown a {
-    color: #fff;
+    color: #555;
 }
+
+.cd-nav .expanded > ul {
+  display: none
+}
+.cd-nav .expanded .icon--arrow-down {
+  fill: #eb5c6d;
+  margin-left: 4px;
+  margin-top: 4px
+}
+
+@media (min-width:1024px) {
+  .cd-nav .expanded .icon--arrow-down {
+    margin-top: -2px
+  }
+}
+.cd-nav .expanded.open > ul {
+  display: block;
+  z-index: 200
+}
+.cd-nav .expanded.open > a > .icon--arrow-down {
+  transform: rotate(180deg)
+}
+
+@media (min-width:1024px) {
+  .cd-nav .expanded.open .menu .icon--arrow-down {
+    margin-top: 4px
+  }
 
 a.cd-ocha-dropdown__see-all {
     display: block;
@@ -307,16 +349,16 @@ a.cd-ocha-dropdown__see-all {
     font-size: 14px;
     font-weight: 700;
     padding: 12px;
-    background: #80cbff;
-    color: #025995;
+    background: #498bca;
+    color: #fff;
     text-align: center;
     text-decoration: none;
     text-transform: uppercase;
 }
 
 a:hover.cd-ocha-dropdown__see-all {
-    background: #80cbff;
-    color: #146eb4 !important
+    background: #498bca;
+    color: #fff !important;
 }
 
 .cd-ocha-dropdown__section:after {
@@ -326,18 +368,18 @@ a:hover.cd-ocha-dropdown__see-all {
     clear: both;
     visibility: hidden;
 }
-
+	
 .open .cd-global-header__dropdown-btn:before {
-    content: "";
-    width: 0;
-    height: 0;
-    border-color: transparent transparent #026cb6;
-    border-style: solid;
-    border-width: 0 6px 6px;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    margin-left: -6px;
+  content: "";
+  width: 0;
+  height: 0;
+  border-color: transparent transparent #f4f4f4;
+  border-style: solid;
+  border-width: 0 6px 6px;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  margin-left: -6px
 }
 
 .cd-footer *,
@@ -385,6 +427,52 @@ a:hover.cd-ocha-dropdown__see-all {
 .region-header-top .menu>li a:hover {
     text-decoration: underline;
 }
+
+.cd-global-header__user-menu {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.cd-global-header__language-switcher, .cd-global-header__user-menu {
+    float: right;
+}
+
+.cd-global-header__user-menu .menu, .cd-user-menu, .region-header-top .menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.cd-global-header__user-menu .menu li, .cd-user-menu li, .region-header-top .menu li {
+    float: left;
+    position: relative;
+}
+
+.cd-global-header__user-menu .menu>li a, .cd-user-menu__item, .region-header-top .menu>li a {
+    background: transparent;
+    color: #555;
+    display: block;
+    height: 35px;
+    line-height: 35px;
+    overflow: hidden;
+    padding: 0 15px;
+    position: relative;
+    text-decoration: none;    
+    transition: background .3s ease;
+    white-space: nowrap;
+}
+
+	.cd-global-header__user-menu .menu>li a:hover{text-decoration: underline;}
+
+.cd-global-header__user-menu .menu>li a:after, .cd-user-menu__item:after, .region-header-top .menu>li a:after {
+    color: #9ec5e2;
+    content: "|";
+    position: absolute;
+    right: -1px;
+    top: 0;
+}
+	
+.cd-global-header__user-menu .menu>li:last-child a:after{display: none;}
 
 .cd-footer {
     grid-row: 3/3;
