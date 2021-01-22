@@ -370,16 +370,16 @@ a:hover.cd-ocha-dropdown__see-all {
 }
 	
 .open .cd-global-header__dropdown-btn:before {
-  content: "";
-  width: 0;
-  height: 0;
-  border-color: transparent transparent #f4f4f4;
-  border-style: solid;
-  border-width: 0 6px 6px;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  margin-left: -6px
+    content: "";
+    width: 0;
+    height: 0;
+    border-color: transparent transparent #f4f4f4;
+    border-style: solid;
+    border-width: 0 6px 6px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    margin-left: -6px;
 }
 
 .cd-footer *,
