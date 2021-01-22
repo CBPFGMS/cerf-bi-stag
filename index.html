@@ -18,6 +18,63 @@
 	<script type="text/javascript" src="assets/js/html2canvas.min.js"></script>
 </head>
 <body id="page-top">
+	<div class="cd-header">
+		<div class="cd-global-header">
+            <div class="container">
+                <div class="cd-ocha">
+                    <button type="button" class="cd-ocha-btn cd-global-header__dropdown-btn" data-toggle="dropdown" id="cd-ocha-dropdown-toggle" aria-expanded="false" aria-label="OCHA Services">
+                        <span class="cd-ocha-btn__logo" aria-hidden="true"></span>
+                        <span class="cd-ocha-btn__label">OCHA Services</span>
+                        <svg class="icon icon--arrow-down" style="background-color: transparent">
+                            <use xlink:href="#arrow-down"></use>
+                        </svg>
+                    </button>
+                    <div class="cd-global-header__dropdown cd-ocha-dropdown cd-dropdown" role="menu" id="cd-ocha-dropdown" aria-labelledby="cd-ocha-dropdown-toggle">
+                        <div class="cd-ocha-dropdown__inner">
+                            <div class="cd-ocha-dropdown__section">
+                                <p class="cd-ocha-dropdown__heading">Related Platforms</p>
+                                <ul class="cd-ocha-dropdown__list">
+                                    <li class="cd-ocha-dropdown__link"><a href="https://gms.unocha.org/">CBPF GMS Portal</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://gms-blog.unocha.org">CBPF GMS Blog</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://gms.unocha.org/support">GMS Help Portal</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://www.unocha.org/our-work/humanitarian-financing/country-based-pooled-funds-cbpf">About CBPF</a></li>
+                                </ul>
+                            </div>
+                            <div class="cd-ocha-dropdown__section">
+                                <p class="cd-ocha-dropdown__heading">Other OCHA Services</p>
+                                <ul class="cd-ocha-dropdown__list">
+                                    <li class="cd-ocha-dropdown__link"><a href="https://fts.unocha.org/">Financial Tracking Service</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://data.humdata.org/">Humanitarian Data Exchange</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://humanitarian.id/">Humanitarian ID</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://humanitarianresponse.info/">Humanitarian Response</a></li>
+                                </ul>
+                            </div>
+                            <div class="cd-ocha-dropdown__section">
+                                <p class="cd-ocha-dropdown__heading" aria-hidden="true">&nbsp;</p>
+                                <ul class="cd-ocha-dropdown__list">
+                                    <li class="cd-ocha-dropdown__link"><a href="https://interagencystandingcommittee.org/">Inter-Agency Standing Committee</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://unocha.org/">OCHA website</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://reliefweb.int/">ReliefWeb</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://vosocc.unocha.org/">Virtual OSOCC</a></li>
+                                </ul>
+                            </div>
+                            <div class="cd-ocha-dropdown__section">
+                                <a class="cd-ocha-dropdown__see-all" href="https://www.unocha.org/ocha-digital-services" target="_blank" rel="noopener">See all</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				<div class="cd-global-header__user-menu">
+      				<div id="block-hr-layout-hr-layout-login" class="block block-hr-layout">
+  						<ul class="menu">
+							<li><a href="https://pfbi.unocha.org/">Pooled Funds BI</a></li>
+							<li><a href="https://cbpfbi.unocha.org/">CBPF BI</a></li>
+						</ul>
+					</div>						
+   				</div>
+            </div>
+        </div>
+	</div>
 	<nav class="navbar navbar-light navbar-expand-lg fixed-top" id="mainNav">
 		<div class="container"><a class="navbar-brand js-scroll-trigger pf-onebi-logo" href="#page-top"><strong>CERF BI</strong><br></a><button data-toggle="collapse" data-target="#navbarResponsive" class="navbar-toggler navbar-toggler-right" type="button" aria-controls="navbarResponsive"
                 aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-align-justify"></i></button>
@@ -131,7 +188,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col text-center mb-2 pt-5 link-style d-flex justify-content-left position-relative">					
-					<a class="txt-header text-uppercase js-scroll-trigger" href="#Contributions" role="button"><i class="fa fa-money mr-1 clr-grey"></i> Contributions</a><button class="video-btn" data-toggle="modal" data-src="https://ocha.fleeq.io/l/s7q22qmqus-53e65u965e" data-target="#myModal"><span class="video-info"><i class="fa fa-play-circle fa-2x"></i></span></button>
+					<a class="txt-header text-uppercase js-scroll-trigger" href="#Contributions" role="button"><i class="fa fa-bar-chart mr-1 clr-grey"></i> Contributions</a><button class="video-btn" data-toggle="modal" data-src="https://ocha.fleeq.io/l/s7q22qmqus-53e65u965e" data-target="#myModal"><span class="video-info"><i class="fa fa-play-circle fa-2x"></i></span></button>
 				</div>
 			</div>
 			<div class="row mb-5">
@@ -155,7 +212,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col intro-txt mb-5">
-					<p>CERF receives broad support from United Nations Member States, observers, regional governments and international organizations, the private sector and individuals.</p>
+					<p>CERF receives broad support from the United Nations Member States, Observers, regional and local authorities, as well as international organizations, private sector and individuals.</p>
 					<a href="https://cerf.un.org/" target="_blank" class="btn btn-light btn-xl js-scroll-trigger text-uppercase font-weight-bold" title="Visit CERF Website for Updates">Visit CERF Website for Updates</a>
 				</div>
 			</div>
@@ -520,8 +577,7 @@
 	<script src="assets/js/jquery.min.js"></script>	
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.js"></script>
-	
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.js"></script>	
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function () {
@@ -530,11 +586,22 @@
         }); 
 		
 	</script>	
+	<script>
+        $(document).ready(function() {
+            $(".cd-ocha-btn").click(function() {
+                $(".cd-dropdown").toggle();
+            });
+            $(window).on('click', function() {
+                $('#cd-ocha-dropdown').css('display', 'none'); //$( '#layers' ).hide();
+            });
+        });
+    </script>
 	<script src="assets/js/jquery.blockUI.js"></script>
 	<script src="assets/js/popup-video.js"></script>
 	<script type="text/javascript" id="cookieinfo" src="assets/js/cookieinfo.min.js" data-bg="#002856" data-fg="#FFF" data-link="#FFF" data-cookie="CookieInfoScript" data-text-align="left" data-close-text="OK">
     </script>		
 	<script src="assets/js/respond.js"></script> 
+	<script src="assets/js/theme.js"></script>
 	<script src="assets/js/custom-one-bi.js"></script>	
 	<script src="assets/js/apiData.js"></script>
 </body>
