@@ -1,5 +1,7 @@
 (function d3ChartIIFE() {
 
+	return;//REMOVE THIS
+
 	const isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches);
 
 	const width = 1100,
