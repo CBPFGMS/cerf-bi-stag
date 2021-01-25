@@ -29,7 +29,7 @@
 		pledgedColor = "#E56A54",
 		unBlue = "#1F69B3",
 		highlightColor = "#F79A3B",
-		buttonsNumber = 12,
+		buttonsNumber = 14,
 		chartTitleDefault = "CERF Contributions",
 		contributionsTotals = {},
 		countryNames = {},
@@ -533,6 +533,8 @@
 				return d[chartState.selectedContribution]
 			});
 
+			const donorsNumber = data.filter(e => e[chartState.selectedContribution]).length;
+
 			const topPanelMoneyBag = topPanel.main.selectAll("." + classPrefix + "topPanelMoneyBag")
 				.data([true])
 				.enter()
@@ -630,7 +632,7 @@
 				});
 
 			let topPanelDonorsNumber = mainValueGroup.selectAll("." + classPrefix + "topPanelDonorsNumber")
-				.data([data.length]);
+				.data([donorsNumber]);
 
 			topPanelDonorsNumber = topPanelDonorsNumber.enter()
 				.append("text")
@@ -966,8 +968,10 @@
 
 		function createDonorsDivs() {
 
+			const donorsData = data.filter(e => e[chartState.selectedContribution]);
+
 			let donorDiv = donorsContainer.selectAll("." + classPrefix + "donorDiv")
-				.data(data, d => d.isoCode);
+				.data(donorsData, d => d.isoCode);
 
 			const donorDivExit = donorDiv.exit()
 				.remove();
