@@ -814,25 +814,6 @@ p#contriboverd3chartTitle {
 	fill: #444;
 }
 
-.contriboveraAxisBarsGroup path, .contriboveraAxisBarsGroup line {
-	stroke: none;
-}
-
-.contriboveraAxisBarsGroup text {
-	font-family: "Roboto", sans-serif;
-	font-size: 12px;
-	fill: darkslategray;
-	pointer-events: none;
-}
-
-.contriboverbarsLabels, .contriboverbarsLabelsSpan {
-	text-anchor: middle;
-	font-family: "Roboto", sans-serif;
-	font-size: 12px;
-	fill: #444;
-	pointer-events: none;
-}
-
 .contriboverDonorsPanelTitleSpan, .contriboverCbpfsPanelTitleSpan {
 	font-family: "Arial", sans-serif;
 	font-size: 12px;
@@ -843,55 +824,6 @@ p#contriboverd3chartTitle {
 	font-family: "Arial", sans-serif;
 	font-size: 10px;
 	fill: #666;
-}
-
-.contriboverDonorLabel, .contriboverCbpfLabel {
-	font-family: "Roboto", sans-serif;
-	font-size: 12px;
-	fill: #666;
-	pointer-events: none;
-	dominant-baseline: central;
-}
-
-.contriboverDonorLabelPercentage {
-	font-family: "Roboto", sans-serif;
-	font-size: 10px;
-	fill: #aaa;
-	pointer-events: none;
-}
-
-.contribovergroupYAxisDonorsFake {
-	font-family: "Roboto", sans-serif;
-	font-size: 12px;
-	fill: darkslategray;
-	pointer-events: none;
-}
-
-.contribovergroupYAxisDonors text, .contribovergroupYAxisCbpfs text {
-	font-family: "Roboto", sans-serif;
-	font-size: 12px;
-	fill: darkslategray;
-	pointer-events: none;
-}
-
-.contribovergroupYAxisDonors path, .contribovergroupYAxisDonors line, .contribovergroupYAxisCbpfs path, .contribovergroupYAxisCbpfs line {
-	stroke: none;
-}
-
-.contribovergroupXAxisDonors text, .contribovergroupXAxisCbpfs text{
-	font-family: "Roboto", sans-serif;
-	font-size: 10px;
-	fill: #aaa;
-	pointer-events: none;
-}
-
-.contribovergroupXAxisDonors path, .contribovergroupXAxisCbpfs path{
-	stroke: none;
-}
-
-.contribovergroupXAxisDonors line, .contribovergroupXAxisCbpfs line{
-	stroke: #ddd;
-	stroke-dasharray: 2, 2;
 }
 
 .contriboverAnnotationMainText {
@@ -945,4 +877,60 @@ p#contriboverd3chartTitle {
 .contriboverSnapshotContent #contriboverSnapshotPdfText:hover, .contriboverSnapshotContent #contriboverSnapshotPngText:hover, .contriboverSnapshotContent #contriboverSnapshotTooltipPdfText:hover, .contriboverSnapshotContent #contriboverSnapshotTooltipPngText:hover {
 	background-color: #1F69B3;
 	color: white;
+}
+
+.contriboverdonorsContainer {
+	margin-top: 22px;
+	width: 100%;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+	grid-auto-rows: 144px;
+	align-items: center;
+	justify-items: center;
+	grid-column-gap: 2px;
+}
+
+.contriboverdonorDiv {
+	display: flex;
+	flex-direction: column;
+	height: 144px;
+	width: 100%;
+	justify-content: center;
+	border-top: 2px dotted #ddd;
+}
+
+.contriboverflags {
+	display: flex;
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+}
+
+.contriboverflags img {
+	border: 0.5px solid #bbb;
+}
+
+.contriboverdonorName {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 4px;
+}
+
+.contriboverdonorNameText {
+	white-space: pre-wrap;
+	font-family: "Roboto", sans-serif;
+	font-size: 13px;
+	color: #222;
+	font-weight: 300;
+	letter-spacing: -0.02em;
+}
+
+.contriboverdonorNameValue {
+	font-family: "Roboto", sans-serif;
+	font-size: 13px;
+	color: #666;
+	font-weight: 500;
+	letter-spacing: normal;
 }

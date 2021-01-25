@@ -1,7 +1,5 @@
 (function d3ChartIIFE() {
 
-	return;//REMOVE THIS
-
 	const isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches);
 
 	const width = 1100,
@@ -20,9 +18,11 @@
 		formatMoney0Decimals = d3.format(",.0f"),
 		formatPercent = d3.format(".0%"),
 		formatNumberSI = d3.format(".3s"),
-		flagSize = 100,
-		maxTextSize = 160,
-		maxTextLength = 26,
+		flagWidth = 100,
+		flagHeight = 80,
+		donorDivWidth = 110,
+		donorDivNameHeight = 30,
+		donorDivHeight = donorDivNameHeight + flagHeight,
 		localVariable = d3.local(),
 		othersId = "others",
 		paidColor = "#9063CD",
@@ -30,11 +30,10 @@
 		unBlue = "#1F69B3",
 		highlightColor = "#F79A3B",
 		buttonsNumber = 12,
-		verticalLabelPadding = 0,
-		barLabelPadding = 6,
 		chartTitleDefault = "CERF Contributions",
 		contributionsTotals = {},
 		countryNames = {},
+		yearsArray = [],
 		vizNameQueryString = "contributions",
 		bookmarkSite = "https://bi-home.gitlab.io/CBPF-BI-Homepage/bookmark.html?",
 		helpPortalUrl = "https://gms.unocha.org/content/business-intelligence#CBPF_Contributions",
@@ -55,8 +54,7 @@
 			selectedDonors: []
 		};
 
-	let yearsArray,
-		isSnapshotTooltipVisible = false,
+	let isSnapshotTooltipVisible = false,
 		currentHoveredRect,
 		timer,
 		allTimeContributions = 0;
@@ -102,6 +100,9 @@
 	const svg = containerDiv.append("svg")
 		.attr("viewBox", "0 0 " + width + " " + height)
 		.style("background-color", "white");
+
+	const donorsContainer = containerDiv.append("div")
+		.attr("class", classPrefix + "donorsContainer");
 
 	const yearsDescriptionDiv = containerDiv.append("div")
 		.attr("class", classPrefix + "YearsDescriptionDiv");
@@ -188,98 +189,53 @@
 		buttonContributionsPadding: 860
 	};
 
-	const xScaleDonors = d3.scaleLinear();
+	Promise.all([fetchFile(classPrefix + "data", dataUrl, "data", "csv"),
+			fetchFile(classPrefix + "flags", flagsUrl, "flags images", "json")
+		])
+		.then(allData => csvCallback(allData));
 
-	const yScaleDonors = d3.scalePoint()
-		.padding(1);
-
-	const xAxisDonors = d3.axisTop(xScaleDonors)
-		.tickSizeOuter(0)
-		.ticks(5)
-		.tickFormat(function(d) {
-			return "$" + formatSIaxes(d).replace("G", "B");
-		});
-
-	const yAxisDonors = d3.axisLeft(yScaleDonors)
-		.tickSizeInner(2)
-		.tickSizeOuter(0)
-		.tickPadding(flagPadding)
-		.tickFormat(function(d) {
-			return d.length > maxTextLength ? d.substring(0, maxTextLength) + "..." : d;
-		});
-
-	const groupXAxisDonors = donorsPanel.main.append("g")
-		.attr("class", classPrefix + "groupXAxisDonors")
-		.attr("transform", "translate(0," + donorsPanel.padding[0] + ")");
-
-	const groupYAxisDonors = donorsPanel.main.append("g")
-		.attr("class", classPrefix + "groupYAxisDonors");
-
-	const paidSymbol = d3.symbol()
-		.type(d3.symbolTriangle)
-		.size(paidSymbolSize);
-
-	const xScaleBar = d3.scaleBand()
-		.paddingInner(0.6)
-		.paddingOuter(0.5);
-
-	const yScaleBar = d3.scaleLinear()
-		.range([barchartPanel.height - barchartPanel.padding[2], barchartPanel.padding[0]]);
-
-	const xAxisBar = d3.axisBottom(xScaleBar)
-		.tickSizeInner(0)
-		.tickPadding(6);
-
-	const xAxisBarGroup = barchartPanel.main.append("g")
-		.attr("class", classPrefix + "aAxisBarsGroup")
-		.attr("transform", "translate(0," + (barchartPanel.height - barchartPanel.padding[2]) + ")");
-
-	if (localStorage.getItem(classPrefix + "data") &&
-		JSON.parse(localStorage.getItem(classPrefix + "data")).timestamp > (currentDate.getTime() - localStorageTime)) {
-		const rawData = d3.csvParse(JSON.parse(localStorage.getItem(classPrefix + "data")).data);
-		console.info(classPrefix + ": data from local storage");
-		csvCallback(rawData);
-	} else {
-		d3.csv(dataUrl).then(function(rawData) {
-			try {
-				localStorage.setItem(classPrefix + "data", JSON.stringify({
-					data: d3.csvFormat(rawData),
-					timestamp: currentDate.getTime()
-				}));
-			} catch (error) {
-				console.info("D3 chart Contribution Overview, " + error);
-			};
-			console.info(classPrefix + ": data from API");
-			csvCallback(rawData);
-		});
+	function fetchFile(fileName, url, warningString, method) {
+		if (localStorage.getItem(fileName) &&
+			JSON.parse(localStorage.getItem(fileName)).timestamp > (currentDate.getTime() - localStorageTime)) {
+			const fetchedData = method === "csv" ? d3.csvParse(JSON.parse(localStorage.getItem(fileName)).data, d3.autoType) :
+				JSON.parse(localStorage.getItem(fileName)).data;
+			console.info("CERF BI chart info: " + warningString + " from local storage");
+			return Promise.resolve(fetchedData);
+		} else {
+			const fetchMethod = method === "csv" ? d3.csv : d3.json;
+			const rowFunction = method === "csv" ? d3.autoType : null;
+			return fetchMethod(url, rowFunction).then(fetchedData => {
+				try {
+					localStorage.setItem(fileName, JSON.stringify({
+						data: method === "csv" ? d3.csvFormat(fetchedData) : fetchedData,
+						timestamp: currentDate.getTime()
+					}));
+				} catch (error) {
+					console.info("CERF BI chart, " + error);
+				};
+				console.info("CERF BI chart info: " + warningString + " from API");
+				return fetchedData;
+			});
+		};
 	};
 
-	function csvCallback(rawData) {
+	function csvCallback([rawData, flagsData]) {
 
-		yearsArray = rawData.map(function(d) {
+		rawData.forEach(function(d) {
 			allTimeContributions += (+d.PaidAmt);
-			if (!countryNames[d.GMSDonorISO2Code.toLowerCase()]) countryNames[d.GMSDonorISO2Code.toLowerCase()] = d.GMSDonorName;
-			if (!countryNames[d.PooledFundISO2Code.toLowerCase()]) countryNames[d.PooledFundISO2Code.toLowerCase()] = d.PooledFundName;
-			return +d.FiscalYear
-		}).filter(function(value, index, self) {
-			return self.indexOf(value) === index;
-		}).sort();
+			if (d.GMSDonorISO2Code) countryNames[d.GMSDonorISO2Code.toLowerCase()] = d.GMSDonorName;
+			if (d.PooledFundISO2Code) countryNames[d.PooledFundISO2Code.toLowerCase()] = d.PooledFundName;
+			if (!yearsArray.includes(+d.FiscalYear)) yearsArray.push(+d.FiscalYear);
+		});
+
+		yearsArray.sort();
 
 		validateYear(selectedYearString);
 
 		chartState.selectedContribution = selectedContribution;
 
-		const allDonors = rawData.map(function(d) {
-			if (d.GMSDonorISO2Code === "") d.GMSDonorISO2Code = "UN";
-			return d.GMSDonorISO2Code.toLowerCase();
-		}).filter(function(value, index, self) {
-			return self.indexOf(value) === index;
-		});
-
-		saveFlags(allDonors);
-
 		if (!lazyLoad) {
-			draw(rawData);
+			draw(rawData, flagsData);
 		} else {
 			d3.select(window).on("scroll." + classPrefix, checkPosition);
 			checkPosition();
@@ -289,49 +245,28 @@
 			const containerPosition = containerDiv.node().getBoundingClientRect();
 			if (!(containerPosition.bottom < 0 || containerPosition.top - windowHeight > 0)) {
 				d3.select(window).on("scroll." + classPrefix, null);
-				draw(rawData);
+				draw(rawData, flagsData);
 			};
 		};
 
 		//end of csvCallback
 	};
 
-	function draw(rawData) {
+	function draw(rawData, flagsData) {
 
-		const dataArray = processData(rawData);
-
-		const data = {
-			dataDonors: dataArray[0],
-			donorTypes: dataArray[1]
-		};
-
-		// const allDonors = data.dataDonors.map(function(d) {
-		// 	return d.isoCode;
-		// });
-
-		//validateCountries(selectedCountriesString, allDonors, allCbpfs);
+		let data = processData(rawData);
 
 		//createTitle();
 
 		createFooterDiv();
 
-		recalculateAndResize();
-
-		translateAxes();
-
-		createSVGLegend();
-
 		createTopPanel();
 
 		createButtonPanel();
 
-		createDonorsPanel();
+		createDonorsDivs();
 
-		createBarChartPanel();
-
-		setYearsDescriptionDiv(data.dataDonors);
-
-		if (showHelp) createAnnotationsDiv();
+		setYearsDescriptionDiv(data);
 
 		function clickButtonsRects(d, singleSelection) {
 
@@ -370,32 +305,13 @@
 					return chartState.selectedYear.indexOf(e) > -1 ? "white" : "#444";
 				});
 
-			const dataArray = processData(rawData);
+			data = processData(rawData);
 
-			data.dataDonors = dataArray[0];
-			data.donorTypes = dataArray[1];
-
-			setYearsDescriptionDiv(data.dataDonors);
-
-			const allDonors = data.dataDonors.map(function(d) {
-				return d.isoCode;
-			});
-
-			chartState.selectedDonors = chartState.selectedDonors.filter(function(d) {
-				return allDonors.indexOf(d) > -1;
-			});
-
-			recalculateAndResize();
-
-			createSVGLegend();
+			setYearsDescriptionDiv(data);
 
 			createTopPanel();
 
-			createDonorsPanel();
-
-			createBarChartPanel();
-
-			populateSelectedDescriptionDiv();
+			createDonorsDivs();
 
 			//end of clickButtonsRects
 		};
@@ -423,72 +339,13 @@
 			d3.select("." + classPrefix + "SvgLegend")
 				.style("opacity", chartState.selectedContribution === "total" ? 1 : 0);
 
-			const dataArray = processData(rawData);
-
-			data.dataDonors = dataArray[0];
-			data.donorTypes = dataArray[1];
-
-			recalculateAndResize();
+			data = processData(rawData);
 
 			createTopPanel();
 
-			createDonorsPanel();
-
-			createBarChartPanel();
+			createDonorsDivs();
 
 			//end of clickButtonsContributionsRects
-		};
-
-		function createSVGLegend() {
-
-			const legend = svg.selectAll("." + classPrefix + "SvgLegend")
-				.data([true]);
-
-			const legendEnter = legend.enter()
-				.append("text")
-				.attr("class", classPrefix + "SvgLegend")
-				.attr("y", height - legendPadding)
-				.attr("x", padding[3] + 2)
-				.text("Figures represent: ")
-				.append("tspan")
-				.style("font-weight", "bold")
-				.style("fill", "#666")
-				.text("Total ")
-				.append("tspan")
-				.style("font-weight", "normal")
-				.text("(")
-				.append("tspan")
-				.style("font-weight", "bold")
-				.style("fill", paidColor)
-				.text("Paid")
-				.append("tspan")
-				.style("fill", "#666")
-				.style("font-weight", "normal")
-				.text("/")
-				.append("tspan")
-				.style("font-weight", "bold")
-				.style("fill", pledgedColor)
-				.text("Pledged")
-				.append("tspan")
-				.style("font-weight", "normal")
-				.style("fill", "#666")
-				.text(")")
-				.append("tspan")
-				.style("font-weight", "normal")
-				.style("fill", "#666")
-				.text(". The arrow (")
-				.append("tspan")
-				.style("fill", paidColor)
-				.text("\u25B2")
-				.append("tspan")
-				.style("fill", "#666")
-				.text(") indicates the paid amount.")
-
-			legend.transition()
-				.duration(duration)
-				.attr("y", height - legendPadding);
-
-			//end of createSVGLegend
 		};
 
 		function createTitle() {
@@ -622,7 +479,7 @@
 				snapshotContent.style("display", "none")
 			});
 
-			helpIcon.on("click", createAnnotationsDiv);
+			helpIcon.on("click", null); //CHANGE THIS!!!!!!!!!!!!
 
 			downloadIcon.on("click", function() {
 
@@ -666,16 +523,13 @@
 
 		function createTopPanel() {
 
-			const dataDonors = data.dataDonors;
-			const donorTypes = data.donorTypes;
-
 			contributionType.forEach(function(d) {
-				contributionsTotals[d] = d3.sum(dataDonors, function(e) {
+				contributionsTotals[d] = d3.sum(data, function(e) {
 					return e[d]
 				});
 			});
 
-			const mainValue = d3.sum(dataDonors, function(d) {
+			const mainValue = d3.sum(data, function(d) {
 				return d[chartState.selectedContribution]
 			});
 
@@ -776,7 +630,7 @@
 				});
 
 			let topPanelDonorsNumber = mainValueGroup.selectAll("." + classPrefix + "topPanelDonorsNumber")
-				.data([donorTypes.length]);
+				.data([data.length]);
 
 			topPanelDonorsNumber = topPanelDonorsNumber.enter()
 				.append("text")
@@ -806,7 +660,7 @@
 				.attr("text-anchor", "start")
 				.merge(topPanelDonorsText)
 				.attr("y", topPanel.height - topPanel.mainValueVerPadding * (chartState.selectedDonors.length ? 2.5 : 1.9))
-				.text(dataDonors.length > 1 ? "Donors" : "Donor");
+				.text(data.length > 1 ? "Donors" : "Donor");
 
 			let topPanelDonorsTextSubText = mainValueGroup.selectAll("." + classPrefix + "topPanelDonorsTextSubText")
 				.data([true]);
@@ -1110,512 +964,50 @@
 			//end of createButtonPanel
 		};
 
-		function createDonorsPanel() {
+		function createDonorsDivs() {
 
-			let donorsArray = data.dataDonors;
+			let donorDiv = donorsContainer.selectAll("." + classPrefix + "donorDiv")
+				.data(data, d => d.isoCode);
 
-			donorsArray.sort(function(a, b) {
-				return a.isoCode === othersId ? 1 : b.isoCode === othersId ? -1 : (b[chartState.selectedContribution] - a[chartState.selectedContribution] ||
-					(a.donor.toLowerCase() < b.donor.toLowerCase() ? -1 :
-						a.donor.toLowerCase() > b.donor.toLowerCase() ? 1 : 0));
-			});
-
-			yScaleDonors.domain(donorsArray.map(function(d) {
-				return d.donor;
-			})).range([donorsPanel.padding[0], Math.min(donorsPanel.height - donorsPanel.padding[2], donorsPanel.padding[0] + lollipopGroupHeight * (donorsArray.length + 1))])
-
-			let donorsPanelTitle = donorsPanel.main.selectAll("." + classPrefix + "DonorsPanelTitle")
-				.data([true]);
-
-			donorsPanelTitle = donorsPanelTitle.enter()
-				.append("text")
-				.attr("class", classPrefix + "DonorsPanelTitle")
-				.attr("y", donorsPanel.padding[0] - titlePadding)
-				.attr("x", donorsPanel.padding[3])
-				.merge(donorsPanelTitle)
-				.text(donorsArray.length === 21 ? "Top 20 Donors" : donorsArray.length > 1 ? "Donors" : "Donor");
-
-			donorsPanelTitle.transition()
-				.duration(duration)
-				.attr("x", donorsPanel.padding[3]);
-
-			let donorGroup = donorsPanel.main.selectAll("." + classPrefix + "DonorGroup")
-				.data(donorsArray, function(d) {
-					return d.isoCode;
-				});
-
-			const donorGroupExit = donorGroup.exit()
+			const donorDivExit = donorDiv.exit()
 				.remove();
 
-			const donorGroupEnter = donorGroup.enter()
-				.append("g")
-				.attr("class", classPrefix + "DonorGroup")
-				.attr("transform", function(d) {
-					return "translate(0," + yScaleDonors(d.donor) + ")";
-				});
+			const donorDivEnter = donorDiv.enter()
+				.append("div")
+				.attr("class", classPrefix + "donorDiv");
 
-			const donorStickEnter = donorGroupEnter.append("rect")
-				.attr("class", classPrefix + "DonorStick")
-				.attr("x", donorsPanel.padding[3])
-				.attr("y", -(stickHeight / 2 - (stickHeight / 4)))
-				.attr("height", stickHeight)
-				.attr("width", 0)
-				.classed("contributionColorFill", true);
+			const flags = donorDivEnter.append("div")
+				.attr("class", classPrefix + "flags")
+				.style("height", flagHeight + "px")
+				.append("img")
+				.attr("src", d => flagsData[d.isoCode])
+				.attr("alt", d => d.donor);
 
-			const donorLollipopEnter = donorGroupEnter.append("circle")
-				.attr("class", classPrefix + "DonorLollipop")
-				.attr("cx", donorsPanel.padding[3])
-				.attr("cy", (stickHeight / 4))
-				.attr("r", lollipopRadius)
-				.classed("contributionColorFill", true);
+			const donorName = donorDivEnter.append("div")
+				.attr("class", classPrefix + "donorName")
+				.style("height", donorDivNameHeight + "px");
 
-			const donorFlagEnter = donorGroupEnter.append("image")
-				.attr("class", classPrefix + "DonorFlag")
-				.attr("width", flagSize)
-				.attr("height", flagSize)
-				.attr("x", donorsPanel.padding[3] - flagPadding)
-				.attr("y", -flagSize / 2 + 1)
-				.attr("xlink:href", function(d) {
-					return localStorage.getItem("storedFlag" + d.isoCode) ? localStorage.getItem("storedFlag" + d.isoCode) :
-						flagsDirectory + d.isoCode + ".png";
-				})
-				.on("error", function(d) {
-					d3.select(this).attr("xlink:href", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAAAGklEQVR42mP8/5+BJMA4qmFUw6iGUQ201QAAYiIv6RZuPWMAAAAASUVORK5CYII=");
-				})
+			const donorNameText = donorName.append("span")
+				.attr("class", classPrefix + "donorNameText")
+				.html(d => d.donor + " ")
+				.append("span")
+				.attr("class", classPrefix + "donorNameValue")
+				.html("0");
 
-			const donorPaidIndicatorEnter = donorGroupEnter.append("path")
-				.attr("class", classPrefix + "DonorPaidIndicator")
-				.attr("d", paidSymbol)
-				.style("fill", paidColor)
-				.style("opacity", chartState.selectedContribution === "total" ? 1 : 0)
-				.attr("transform", "translate(" + donorsPanel.padding[3] + "," +
-					((Math.sqrt(4 * paidSymbolSize / Math.sqrt(3)) / 2) + stickHeight) + ")");
+			donorDiv = donorDivEnter.merge(donorDiv);
 
-			const donorLabelEnter = donorGroupEnter.append("text")
-				.attr("class", classPrefix + "DonorLabel")
-				.attr("x", donorsPanel.padding[3] + donorsPanel.labelPadding)
-				.attr("y", verticalLabelPadding)
-				.text(formatNumberSI(0));
+			donorDiv.order();
 
-			const donorTooltipRectangleEnter = donorGroupEnter.append("rect")
-				.attr("class", classPrefix + "DonorTooltipRectangle")
-				.attr("y", -lollipopGroupHeight / 2)
-				.attr("height", lollipopGroupHeight)
-				.attr("width", donorsPanel.width)
-				.style("fill", "none")
-				.attr("pointer-events", "all");
-
-			donorGroup = donorGroupEnter.merge(donorGroup);
-
-			donorGroup.transition()
-				.duration(duration)
-				.attr("transform", function(d) {
-					return "translate(0," + yScaleDonors(d.donor) + ")";
-				});
-
-			donorGroup.select("." + classPrefix + "DonorStick")
+			donorDiv.select("." + classPrefix + "donorNameValue")
 				.transition()
 				.duration(duration)
-				.attr("x", donorsPanel.padding[3])
-				.attr("width", function(d) {
-					return xScaleDonors(d[chartState.selectedContribution]) - donorsPanel.padding[3];
+				.tween("html", (d, i, n) => {
+					const interpolator = d3.interpolate(n[i].textContent !== "0" ? reverseFormat(n[i].textContent) : 0, d[chartState.selectedContribution]);
+					return t => n[i].textContent = d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
 				});
 
-			donorGroup.select("." + classPrefix + "DonorLollipop")
-				.transition()
-				.duration(duration)
-				.attr("cx", function(d) {
-					return xScaleDonors(d[chartState.selectedContribution]);
-				});
 
-			donorGroup.select("." + classPrefix + "DonorFlag")
-				.transition()
-				.duration(duration)
-				.attr("x", donorsPanel.padding[3] - flagPadding);
-
-			donorGroup.select("." + classPrefix + "DonorPaidIndicator")
-				.transition()
-				.duration(duration)
-				.style("opacity", chartState.selectedContribution === "total" ? 1 : 0)
-				.attr("transform", function(d) {
-					const thisPadding = xScaleDonors(d.total) - xScaleDonors(d.paid) < lollipopRadius ?
-						lollipopRadius - (stickHeight / 2) : 0;
-					return "translate(" + xScaleDonors(d.paid) + "," +
-						((Math.sqrt(4 * paidSymbolSize / Math.sqrt(3)) / 2) + stickHeight + thisPadding) + ")";
-				});
-
-			donorGroup.select("." + classPrefix + "DonorLabel")
-				.transition()
-				.duration(duration)
-				.attr("x", function(d) {
-					return xScaleDonors(d[chartState.selectedContribution]) + donorsPanel.labelPadding;
-				})
-				.tween("text", function(d) {
-					const node = this;
-					const i = d3.interpolate(reverseFormat(node.textContent) || 0, d[chartState.selectedContribution]);
-
-					function populateLabel(selection) {
-						selection.append("tspan")
-							.attr("class", classPrefix + "DonorLabelPercentage")
-							.attr("dy", "-0.5px")
-							.text(" (")
-							.append("tspan")
-							.style("fill", paidColor)
-							.text(d3.formatPrefix(".0", d.paid)(d.paid).replace("G", "B"))
-							.append("tspan")
-							.style("fill", "#aaa")
-							.text("/")
-							.append("tspan")
-							.style("fill", pledgedColor)
-							.text(d3.formatPrefix(".0", d.pledge)(d.pledge).replace("G", "B"))
-							.append("tspan")
-							.style("fill", "#aaa")
-							.text(")");
-					};
-
-					return function(t) {
-						const thisLabel = d3.select(node).text(d3.formatPrefix(".0", d[chartState.selectedContribution])(i(t)).replace("G", "B"));
-						if (chartState.selectedContribution === "total") {
-							thisLabel.call(populateLabel);
-						} else {
-							thisLabel.append("tspan")
-								.text(null);
-						};
-					};
-				});
-
-			const donorTooltipRectangle = donorGroup.select("." + classPrefix + "DonorTooltipRectangle");
-
-			donorTooltipRectangle.on("mouseover", mouseoverTooltipRectangle)
-				.on("mouseout", mouseoutTooltipRectangle);
-
-			xAxisDonors.tickSizeInner(-(yScaleDonors.range()[1] - yScaleDonors.range()[0]));
-
-			groupYAxisDonors.selectAll(".tick")
-				.filter(function(d) {
-					return yScaleDonors.domain().indexOf(d) === -1
-				})
-				.remove();
-
-			groupYAxisDonors.transition()
-				.duration(duration)
-				.attr("transform", "translate(" + donorsPanel.padding[3] + ",0)")
-				.call(yAxisDonors);
-
-			groupXAxisDonors.transition()
-				.duration(duration)
-				.call(xAxisDonors);
-
-			groupXAxisDonors.selectAll(".tick")
-				.filter(function(d) {
-					return d === 0;
-				})
-				.remove();
-
-			setGroupOpacity();
-
-			function mouseoverTooltipRectangle(datum) {
-
-				currentHoveredRect = this;
-
-				chartState.selectedDonors.push(datum.isoCode);
-
-				donorGroup.style("opacity", function(d) {
-					return chartState.selectedDonors.indexOf(d.isoCode) > -1 ? 1 : fadeOpacity;
-				});
-
-				groupYAxisDonors.selectAll(".tick")
-					.style("opacity", function(d) {
-						const isoCode = Object.keys(countryNames).find(function(e) {
-							return countryNames[e] === d;
-						});
-						return chartState.selectedDonors.indexOf(isoCode) > -1 ? 1 : fadeOpacity;
-					});
-
-				tooltip.style("display", "block");
-
-				if (datum.isoCode === othersId) {
-					const othersData = datum.donorsList.reduce((acc, curr) => {
-						if (curr[chartState.selectedContribution]) {
-							const found = acc.find(e => e.donorType === curr.donorType);
-							if (found) {
-								++found.number;
-								found.total += curr.total;
-								found.paid += curr.paid;
-								found.pledge += curr.pledge;
-							} else {
-								acc.push({
-									donorType: curr.donorType,
-									number: 1,
-									total: curr.total,
-									paid: curr.paid,
-									pledge: curr.pledge
-								})
-							};
-						};
-						return acc;
-					}, []);
-					othersData.forEach(row => {
-						tooltip.append("div")
-							.html("<div class='" + classPrefix + "tooltipTitle'>Type: <strong>" + row.donorType + "</strong> (" + row.number + ")</div><br><div style='margin-bottom:14px;margin-top:6px;display:flex;flex-wrap:wrap;width:262px;'><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;'>Total contributions:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
-								"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(row.paid, row.total)) +
-								")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(row.paid) +
-								"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(row.pledge, row.total)) +
-								")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(row.pledge) + "</span></div></div>")
-					});
-				} else {
-					tooltip.html("<div class='" + classPrefix + "tooltipTitle'>Donor: <strong>" + datum.donor + "</strong></div><br><div class='" + classPrefix + "tooltipRow' style='margin-bottom:8px;margin-top:8px;'>Type: " + (datum.donorType || "n/a") + "</div><div style='margin:0px;display:flex;flex-wrap:wrap;width:262px;'><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;'>Total contributions:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
-						"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(datum.paid, datum.total)) +
-						")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.paid) +
-						"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(datum.pledge, datum.total)) +
-						")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.pledge) + "</span></div></div>");
-				};
-
-				const thisBox = this.getBoundingClientRect();
-
-				const containerBox = containerDiv.node().getBoundingClientRect();
-
-				const tooltipBox = tooltip.node().getBoundingClientRect();
-
-				const thisOffsetTop = datum.isoCode === othersId ? thisBox.top - containerBox.top - tooltipBox.height - lollipopGroupHeight : thisBox.top - containerBox.top;
-
-				const thisOffsetLeft = thisBox.left - containerBox.left + (thisBox.width - tooltipBox.width) / 2;
-
-				tooltip.style("top", thisOffsetTop + 22 + "px")
-					.style("left", thisOffsetLeft + "px");
-
-			};
-
-			function mouseoutTooltipRectangle(datum) {
-
-				if (isSnapshotTooltipVisible) return;
-
-				currentHoveredRect = null;
-
-				const index = chartState.selectedDonors.indexOf(datum.isoCode);
-				if (index > -1) {
-					chartState.selectedDonors.splice(index, 1);
-				};
-
-				setGroupOpacity();
-
-				tooltip.style("display", "none")
-					.html(null);
-
-			};
-
-			function setGroupOpacity() {
-				if (!chartState.selectedDonors.length) {
-					donorGroup.style("opacity", 1);
-					groupYAxisDonors.selectAll(".tick").style("opacity", 1);
-				} else {
-					donorGroup.style("opacity", function(d) {
-						return chartState.selectedDonors.indexOf(d.isoCode) > -1 ? 1 : fadeOpacity;
-					});
-					groupYAxisDonors.selectAll(".tick")
-						.style("opacity", function(d) {
-							const isoCode = Object.keys(countryNames).find(function(e) {
-								return countryNames[e] === d;
-							});
-							return chartState.selectedDonors.indexOf(isoCode) > -1 ? 1 : fadeOpacity;
-						});
-				};
-			};
-
-			//end of createDonorsPanel
-		};
-
-		function createBarChartPanel() {
-
-			const donorTypes = data.donorTypes;
-
-			const barChartPanelTitle = barchartPanel.main.selectAll("." + classPrefix + "BarChartPanelTitle")
-				.data([true])
-				.enter()
-				.append("text")
-				.attr("class", classPrefix + "BarChartPanelTitle")
-				.attr("y", barchartPanel.padding[0] - titlePadding)
-				.attr("x", barchartPanel.padding[3])
-				.text("Number of donors");
-
-			const dataBar = donorTypes.reduce((acc, curr) => {
-				if (curr[chartState.selectedContribution]) {
-					const found = acc.find(e => e.type === curr.donorType);
-					if (found) {
-						++found.number;
-						found.total += curr.total;
-						found.paid += curr.paid;
-						found.pledge += curr.pledge;
-					} else {
-						acc.push({
-							type: curr.donorType,
-							number: 1,
-							total: curr.total,
-							paid: curr.paid,
-							pledge: curr.pledge
-						})
-					};
-				};
-				return acc;
-			}, []);
-
-			dataBar.sort((a, b) => b.number - a.number);
-
-			xScaleBar.domain(dataBar.map(d => d.type))
-				.range([barchartPanel.padding[3], Math.min(barchartPanel.width - barchartPanel.padding[1],
-					barchartPanel.padding[3] + maxBarWidth * (dataBar.length + 1))]);
-
-			yScaleBar.domain([0, d3.max(dataBar, d => d.number) * 1.1]);
-
-			let bars = barchartPanel.main.selectAll("." + classPrefix + "bars")
-				.data(dataBar, d => d.type);
-
-			const barsExit = bars.exit()
-				.transition()
-				.duration(duration)
-				.style("opacity", 0)
-				.attr("height", 0)
-				.attr("y", barchartPanel.height - barchartPanel.padding[2])
-				.remove();
-
-			const barsEnter = bars.enter()
-				.append("rect")
-				.attr("class", classPrefix + "bars contributionColorFill")
-				.attr("x", d => xScaleBar(d.type))
-				.attr("width", xScaleBar.bandwidth())
-				.attr("height", 0)
-				.attr("y", barchartPanel.height - barchartPanel.padding[2]);
-
-			bars = barsEnter.merge(bars);
-
-			bars.transition()
-				.duration(duration)
-				.attr("x", d => xScaleBar(d.type))
-				.attr("width", xScaleBar.bandwidth())
-				.attr("height", d => barchartPanel.height - barchartPanel.padding[2] - yScaleBar(d.number))
-				.attr("y", d => yScaleBar(d.number));
-
-			let barsLabels = barchartPanel.main.selectAll("." + classPrefix + "barsLabels")
-				.data(dataBar, d => d.type);
-
-			const barsLabelsExit = barsLabels.exit()
-				.remove();
-
-			const barsLabelsEnter = barsLabels.enter()
-				.append("text")
-				.attr("class", classPrefix + "barsLabels")
-				.attr("x", d => xScaleBar(d.type) + xScaleBar.bandwidth() / 2)
-				.attr("y", d => yScaleBar(0));
-
-			barsLabels = barsLabelsEnter.merge(barsLabels);
-
-			barsLabels.transition()
-				.duration(duration)
-				.attr("x", d => xScaleBar(d.type) + xScaleBar.bandwidth() / 2)
-				.attr("y", d => yScaleBar(d.number) - 3.5 * barLabelPadding)
-				.text(d => d.number + (d.number > 1 ? " donors" : " donor"));
-
-			let barsLabelsSpan = barchartPanel.main.selectAll("." + classPrefix + "barsLabelsSpan")
-				.data(dataBar, d => d.type);
-
-			const barsLabelsSpanExit = barsLabelsSpan.exit()
-				.remove();
-
-			const barsLabelsSpanEnter = barsLabelsSpan.enter()
-				.append("text")
-				.attr("class", classPrefix + "barsLabelsSpan")
-				.attr("x", d => xScaleBar(d.type) + xScaleBar.bandwidth() / 2)
-				.attr("y", d => yScaleBar(0));
-
-			barsLabelsSpan = barsLabelsSpanEnter.merge(barsLabelsSpan);
-
-			barsLabelsSpan.transition()
-				.duration(duration)
-				.attr("x", d => xScaleBar(d.type) + xScaleBar.bandwidth() / 2)
-				.attr("y", d => yScaleBar(d.number) - barLabelPadding)
-				.text(d => "($" + formatSIFloat(d.total).replace("G", "B") + ")");
-
-			xAxisBarGroup.transition()
-				.duration(duration)
-				.call(customAxisBarChart);
-
-			function customAxisBarChart(group) {
-				const sel = group.selection ? group.selection() : group;
-				group.call(xAxisBar);
-				sel.selectAll(".tick text")
-					.text(d => d === "Member State" ? "Member States" : d)
-					.call(wrapText, xScaleBar.step() - 4)
-				if (sel !== group) group.selectAll(".tick text")
-					.attrTween("x", null)
-					.tween("text", null);
-			};
-
-			let barsTooltip = barchartPanel.main.selectAll("." + classPrefix + "barsTooltip")
-				.data(dataBar, d => d.type);
-
-			const barsTooltipExit = barsTooltip.exit()
-				.remove();
-
-			const barsTooltipEnter = barsTooltip.enter()
-				.append("rect")
-				.attr("class", classPrefix + "barsTooltip")
-				.attr("x", d => xScaleBar(d.type))
-				.attr("width", xScaleBar.bandwidth())
-				.style("opacity", 0)
-				.style("pointer-events", "all")
-				.attr("height", barchartPanel.height - barchartPanel.padding[0] - barchartPanel.padding[2])
-				.attr("y", barchartPanel.padding[0]);
-
-			barsTooltip = barsTooltipEnter.merge(barsTooltip);
-
-			barsTooltip.transition()
-				.duration(duration)
-				.attr("x", d => xScaleBar(d.type))
-				.attr("width", xScaleBar.bandwidth());
-
-			barsTooltip.on("mouseover", mouseoverBarTooltip)
-				.on("mouseout", mouseoutBarTooltip)
-
-			///
-
-
-			function mouseoverBarTooltip(datum) {
-
-				currentHoveredRect = this;
-
-				tooltip.style("display", "block");
-
-				tooltip.html("<div class='" + classPrefix + "tooltipTitle'>Type: <strong>" + datum.type + "</strong> (" + datum.number + ")</div><br><div style='margin-bottom:14px;margin-top:6px;display:flex;flex-wrap:wrap;width:262px;'><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;'>Total contributions:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.total) +
-					"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(datum.paid, datum.total)) +
-					")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.paid) +
-					"</span></div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(datum.pledge, datum.total)) +
-					")</span>:</div><div class='" + classPrefix + "tooltipRow' style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(datum.pledge) + "</span></div></div>")
-
-				const thisBox = this.getBoundingClientRect();
-
-				const containerBox = containerDiv.node().getBoundingClientRect();
-
-				const tooltipBox = tooltip.node().getBoundingClientRect();
-
-				const thisOffsetTop = thisBox.top - containerBox.top + thisBox.height / 2 - tooltipBox.height / 2;
-
-				const thisOffsetLeft = thisBox.left - containerBox.left + (thisBox.width - tooltipBox.width) / 2;
-
-				tooltip.style("top", thisOffsetTop + 22 + "px")
-					.style("left", thisOffsetLeft + "px");
-
-			};
-
-			function mouseoutBarTooltip(datum) {
-
-				if (isSnapshotTooltipVisible) return;
-
-				tooltip.style("display", "none")
-					.html(null);
-
-			};
-
-			//end of createBarChartPanel
+			//end of createDonorsDivs
 		};
 
 		function mouseOverTopPanel() {
@@ -1722,98 +1114,49 @@
 				.style("fill", "#444");
 		};
 
-		function recalculateAndResize() {
-
-			const biggestLabelLengthDonors = calculateBiggestLabel(data.dataDonors, "donor");
-
-			setRanges(biggestLabelLengthDonors);
-
-			setDomains(data.dataDonors);
-
-			//end of recalculateAndResize
-		};
-
 		//end of draw
 	};
 
 	function processData(rawData) {
 
-		const aggregatedDonors = [];
+		const aggregatedDonors = rawData.reduce((acc, curr) => {
 
-		let tempSetDonors = [];
+			if (chartState.selectedYear.indexOf(+curr.FiscalYear) > -1) {
 
-		rawData.forEach(function(d) {
+				if (!curr.GMSDonorISO2Code) console.warn("Donor " + curr.GMSDonorName + " has no ISO code");
 
-			if (chartState.selectedYear.indexOf(+d.FiscalYear) > -1) {
+				const foundDonor = acc.find(e => e.isoCode === (curr.GMSDonorISO2Code ? curr.GMSDonorISO2Code.toLowerCase() : curr.GMSDonorISO2Code));
 
-				if (tempSetDonors.indexOf(d.GMSDonorName) > -1) {
+				if (foundDonor) {
 
-					const tempObject = aggregatedDonors.filter(function(e) {
-						return e.donor === d.GMSDonorName
-					})[0];
-
-					tempObject.paid += +d.PaidAmt;
-					tempObject.pledge += +d.PledgeAmt;
-					tempObject.total += (+d.PaidAmt) + (+d.PledgeAmt);
+					foundDonor.paid += +curr.PaidAmt;
+					foundDonor.pledge += +curr.PledgeAmt;
+					foundDonor.total += (+curr.PaidAmt) + (+curr.PledgeAmt);
 
 				} else {
 
-					aggregatedDonors.push({
-						donor: d.GMSDonorName,
-						donorType: d.PooledFundName,
-						isoCode: d.GMSDonorISO2Code.toLowerCase(),
-						paid: +d.PaidAmt,
-						pledge: +d.PledgeAmt,
-						total: (+d.PaidAmt) + (+d.PledgeAmt)
+					acc.push({
+						donor: curr.GMSDonorName,
+						donorType: curr.PooledFundName,
+						isoCode: (curr.GMSDonorISO2Code ? curr.GMSDonorISO2Code.toLowerCase() : curr.GMSDonorISO2Code),
+						paid: +curr.PaidAmt,
+						pledge: +curr.PledgeAmt,
+						total: (+curr.PaidAmt) + (+curr.PledgeAmt)
 					});
-
-					tempSetDonors.push(d.GMSDonorName);
 
 				};
 
 			};
 
-		});
-
-		const macedoniaObject = aggregatedDonors.find(function(d) {
-			return d.donor.indexOf("Macedonia") > -1;
-		});
-
-		if (macedoniaObject) macedoniaObject.donor = "Macedonia";
-
-		aggregatedDonors.sort((a, b) => b[chartState.selectedContribution] - a[chartState.selectedContribution]);
-
-		const topData = aggregatedDonors.reduce((acc, curr, index) => {
-			if (index < maxDonorNumber) {
-				acc.push({
-					donor: curr.donor,
-					isoCode: curr.isoCode,
-					donorType: curr.donorType,
-					paid: curr.paid,
-					pledge: curr.pledge,
-					total: curr.total
-				});
-			} else if (index === maxDonorNumber) {
-				acc.push({
-					donor: "Others",
-					isoCode: othersId,
-					paid: curr.paid,
-					pledge: curr.pledge,
-					total: curr.total,
-					donorsList: [curr]
-				});
-			} else {
-				acc[maxDonorNumber].paid += curr.paid;
-				acc[maxDonorNumber].pledge += curr.pledge;
-				acc[maxDonorNumber].total += curr.total;
-				acc[maxDonorNumber].donorsList.push(curr);
-			};
 			return acc;
+
 		}, []);
 
-		tempSetDonors = [];
+		aggregatedDonors.sort((a, b) => b[chartState.selectedContribution] - a[chartState.selectedContribution] ||
+			(a.donor.toLowerCase() < b.donor.toLowerCase() ? -1 :
+				a.donor.toLowerCase() > b.donor.toLowerCase() ? 1 : 0));
 
-		return [topData, aggregatedDonors];
+		return aggregatedDonors;
 
 		//end of processData
 	};
@@ -1883,64 +1226,6 @@
 		//end of createCsv
 	};
 
-	function calculateBiggestLabel(dataArray, property) {
-
-		const allTexts = dataArray.map(function(d) {
-			return d[property]
-		}).sort(function(a, b) {
-			return b.length - a.length;
-		}).slice(0, 5);
-
-		const textSizeArray = [];
-
-		allTexts.forEach(function(d) {
-
-			const fakeText = svg.append("text")
-				.attr("class", classPrefix + "groupYAxisDonorsFake")
-				.style("opacity", 0)
-				.text(d);
-
-			const fakeTextLength = Math.ceil(fakeText.node().getComputedTextLength());
-
-			textSizeArray.push(fakeTextLength);
-
-			fakeText.remove();
-
-		});
-
-		return Math.min(d3.max(textSizeArray), maxTextSize);
-
-		//end of calculateBiggestLabel
-	};
-
-	function setDomains(donors) {
-
-		const maxXValue = d3.max(donors, function(d) {
-			return d[chartState.selectedContribution];
-		}) || d3.max(donors, function(d) {
-			return d.total;
-		});
-
-		xScaleDonors.domain([0, Math.floor(maxXValue * 1.1)]);
-
-	};
-
-	function setRanges(labelSizeDonors) {
-
-		const labelSize = labelSizeDonors + yAxisDonors.tickPadding() + yAxisDonors.tickSizeInner()
-
-		donorsPanel.padding[3] = labelSize;
-
-		xScaleDonors.range([donorsPanel.padding[3], donorsPanel.width - donorsPanel.padding[1]]);
-
-	};
-
-	function translateAxes() {
-
-		groupYAxisDonors.attr("transform", "translate(" + donorsPanel.padding[3] + ",0)");
-
-	};
-
 	function parseTransform(translate) {
 
 		const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -1951,36 +1236,6 @@
 
 		return [matrix.e, matrix.f];
 
-	};
-
-	function populateSelectedDescriptionDiv() {
-
-		if (!chartState.selectedDonors.length) {
-			selectionDescriptionDiv.html(null);
-			return;
-		};
-
-		const selection = chartState.selectedDonors.length ? "selectedDonors" : "selectedCbpfs";
-
-		const type = chartState.selectedDonors.length ? "donor" : "CBPF";
-
-		selectionDescriptionDiv.html(function() {
-			if (chartState[selection].length === 0) return null;
-			const plural = chartState[selection].length === 1 ? "" : "s";
-			const countryList = chartState[selection].map(function(d) {
-					return countryNames[d];
-				})
-				.sort(function(a, b) {
-					return a.toLowerCase() < b.toLowerCase() ? -1 :
-						a.toLowerCase() > b.toLowerCase() ? 1 : 0;
-				})
-				.reduce(function(acc, curr, index) {
-					return acc + (index >= chartState[selection].length - 2 ? index > chartState[selection].length - 2 ? curr : curr + " and " : curr + ", ");
-				}, "");
-			return "\u207ASelected " + type + plural + ": " + countryList;
-		});
-
-		//end of populateSelectedDescriptionDiv
 	};
 
 	function setYearsDescriptionDiv(data) {
@@ -2000,235 +1255,6 @@
 		});
 	};
 
-	function saveFlags(donorsList) {
-
-		const blankFlag = "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAQAAABKfvVzAAAAGklEQVR42mP8/5+BJMA4qmFUw6iGUQ201QAAYiIv6RZuPWMAAAAASUVORK5CYII="
-
-		donorsList.forEach(function(d) {
-			if (!localStorage.getItem("storedFlag" + d)) {
-				getBase64FromImage("https://raw.githubusercontent.com/CBPFGMS/cbpfgms.github.io/master/img/flags/" + d + ".png", setLocal, null, d);
-			};
-		});
-
-		function getBase64FromImage(url, onSuccess, onError, isoCode) {
-			const xhr = new XMLHttpRequest();
-
-			xhr.responseType = "arraybuffer";
-			xhr.open("GET", url);
-
-			xhr.onload = function() {
-				let base64, base64Blank, binary, bytes, mediaType;
-
-				bytes = new Uint8Array(xhr.response);
-
-				binary = [].map.call(bytes, function(byte) {
-					return String.fromCharCode(byte);
-				}).join('');
-
-				mediaType = xhr.getResponseHeader('content-type');
-
-				base64 = [
-					'data:',
-					mediaType ? mediaType + ';' : '',
-					'base64,',
-					btoa(binary)
-				].join('');
-
-				base64Blank = [
-					'data:',
-					mediaType ? mediaType + ';' : '',
-					'base64,',
-					blankFlag
-				].join('');
-
-				if (xhr.status === 200) {
-					onSuccess(isoCode, base64)
-				} else {
-					onSuccess(isoCode, base64Blank)
-				};
-			};
-
-			xhr.onerror = onError;
-
-			xhr.send();
-		};
-
-		function setLocal(isoCode, base64) {
-			localStorage.setItem("storedFlag" + isoCode, base64);
-		};
-
-		//end of saveFlags
-	};
-
-	function createAnnotationsDiv() {
-
-		iconsDiv.style("opacity", 0)
-			.style("pointer-events", "none");
-
-		const overDiv = containerDiv.append("div")
-			.attr("class", classPrefix + "OverDivHelp");
-
-		const topDivSize = topDiv.node().getBoundingClientRect();
-
-		const iconsDivSize = iconsDiv.node().getBoundingClientRect();
-
-		const topDivHeight = topDivSize.height * (width / topDivSize.width);
-
-		const helpSVG = overDiv.append("svg")
-			.attr("viewBox", "0 0 " + width + " " + (height + topDivHeight));
-
-		const helpButtons = [{
-			text: "CLOSE",
-			width: 90
-		}, {
-			text: "GO TO HELP PORTAL",
-			width: 180
-		}];
-
-		const closeRects = helpSVG.selectAll(null)
-			.data(helpButtons)
-			.enter()
-			.append("g");
-
-		closeRects.append("rect")
-			.attr("rx", 4)
-			.attr("ry", 4)
-			.style("stroke", "rgba(0, 0, 0, 0.3)")
-			.style("stroke-width", "1px")
-			.style("fill", highlightColor)
-			.style("cursor", "pointer")
-			.attr("y", 6)
-			.attr("height", 22)
-			.attr("width", function(d) {
-				return d.width;
-			})
-			.attr("x", function(d, i) {
-				return width - padding[1] - d.width - (i ? helpButtons[0].width + 8 : 0);
-			})
-			.on("click", function(_, i) {
-				iconsDiv.style("opacity", 1)
-					.style("pointer-events", "all");
-				overDiv.remove();
-				if (i) window.open(helpPortalUrl, "help_portal");
-			});
-
-		closeRects.append("text")
-			.attr("class", classPrefix + "AnnotationMainText")
-			.attr("text-anchor", "middle")
-			.attr("x", function(d, i) {
-				return width - padding[1] - (d.width / 2) - (i ? (helpButtons[0].width) + 8 : 0);
-			})
-			.attr("y", 22)
-			.text(function(d) {
-				return d.text
-			});
-
-		const helpData = [{
-			x: 96,
-			y: 72 + topDivHeight,
-			width: 480,
-			height: 30,
-			xTooltip: 180 * (topDivSize.width / width),
-			yTooltip: (topDivHeight + 112) * (topDivSize.width / width),
-			text: "Use these buttons to select the year. You can select more than one year. Double click or press ALT when clicking to select just a single year. Click the arrows to reveal more years."
-		}, {
-			x: 592,
-			y: 72 + topDivHeight,
-			width: 224,
-			height: 30,
-			xTooltip: 550 * (topDivSize.width / width),
-			yTooltip: (topDivHeight + 112) * (topDivSize.width / width),
-			text: "Use these buttons to select the type of contribution: paid, pledged or total (paid plus pledged)."
-		}, {
-			x: 96,
-			y: 10 + topDivHeight,
-			width: 720,
-			height: 57,
-			xTooltip: 300 * (topDivSize.width / width),
-			yTooltip: (topDivHeight + 76) * (topDivSize.width / width),
-			text: "This banner shows the total amount of contributions received for the selected year (or years). It also shows the number of donors and CBPFs in that period."
-		}, {
-			x: 6,
-			y: 108 + topDivHeight,
-			width: 440,
-			height: 660,
-			xTooltip: 452 * (topDivSize.width / width),
-			yTooltip: (topDivHeight + 164) * (topDivSize.width / width),
-			text: "Hover over the donors to get additional information. Hovering over a donor filters the CBPFs accordingly, so only CBPFs that received from that donor are displayed. When “Total” is selected, the purple triangle indicates the paid amount, and the values between parentheses correspond to paid and pledged values, respectively."
-		}, {
-			x: 466,
-			y: 108 + topDivHeight,
-			width: 398,
-			height: 380,
-			xTooltip: 136 * (topDivSize.width / width),
-			yTooltip: (topDivHeight + 164) * (topDivSize.width / width),
-			text: "Hover over the CBPFs to get additional information. Hovering over a CBPF filters the donors accordingly, so only donors that donated to that CBPF are displayed. When “Total” is selected, the purple triangle indicates the paid amount, and the values between parentheses correspond to paid and pledged values, respectively."
-		}];
-
-		helpData.forEach(function(d) {
-			helpSVG.append("rect")
-				.attr("rx", 4)
-				.attr("ry", 4)
-				.attr("x", d.x)
-				.attr("y", d.y)
-				.attr("width", d.width)
-				.attr("height", d.height)
-				.style("stroke", unBlue)
-				.style("stroke-width", "3px")
-				.style("fill", "none")
-				.style("opacity", 0.5)
-				.attr("class", classPrefix + "HelpRectangle")
-				.attr("pointer-events", "all")
-				.on("mouseover", function() {
-					const self = this;
-					createTooltip(d.xTooltip, d.yTooltip, d.text, self);
-				})
-				.on("mouseout", removeTooltip);
-		});
-
-		const explanationTextRect = helpSVG.append("rect")
-			.attr("x", (width / 2) - 180)
-			.attr("y", 244)
-			.attr("width", 360)
-			.attr("height", 50)
-			.attr("pointer-events", "none")
-			.style("fill", "white")
-			.style("stroke", "#888");
-
-		const explanationText = helpSVG.append("text")
-			.attr("class", classPrefix + "AnnotationExplanationText")
-			.attr("font-family", "Roboto")
-			.attr("font-size", "18px")
-			.style("fill", "#222")
-			.attr("text-anchor", "middle")
-			.attr("x", width / 2)
-			.attr("y", 264)
-			.attr("pointer-events", "none")
-			.text("Hover over the elements surrounded by a blue rectangle to get additional information")
-			.call(wrapText2, 350);
-
-		function createTooltip(xPos, yPos, text, self) {
-			explanationText.style("opacity", 0);
-			explanationTextRect.style("opacity", 0);
-			helpSVG.selectAll("." + classPrefix + "HelpRectangle").style("opacity", 0.1);
-			d3.select(self).style("opacity", 1);
-			const containerBox = containerDiv.node().getBoundingClientRect();
-			tooltip.style("top", yPos + "px")
-				.style("left", xPos + "px")
-				.style("display", "block")
-				.html(text);
-		};
-
-		function removeTooltip() {
-			tooltip.style("display", "none");
-			explanationText.style("opacity", 1);
-			explanationTextRect.style("opacity", 1);
-			helpSVG.selectAll("." + classPrefix + "HelpRectangle").style("opacity", 0.5);
-		};
-
-		//end of createAnnotationsDiv
-	};
-
 	function createFooterDiv() {
 
 		let footerText = "© OCHA CERF Section " + currentYear;
@@ -2242,64 +1268,6 @@
 			.html(footerText);
 
 		//end of createFooterDiv
-	};
-
-	function wrapText(text, width) {
-		text.each(function() {
-			var text = d3.select(this),
-				words = text.text().split(/\s+/).reverse(),
-				word,
-				line = [],
-				lineNumber = 0,
-				lineHeight = 1.1, // ems
-				y = text.attr("y"),
-				dy = parseFloat(text.attr("dy")),
-				tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
-			while (word = words.pop()) {
-				line.push(word);
-				tspan.text(line.join(" "));
-				if (tspan.node().getComputedTextLength() > width) {
-					line.pop();
-					tspan.text(line.join(" "));
-					line = [word];
-					tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
-				}
-			}
-		});
-	}
-
-	function wrapText2(text, width) {
-		text.each(function() {
-			let text = d3.select(this),
-				words = text.text().split(/\s+/).reverse(),
-				word,
-				line = [],
-				lineNumber = 0,
-				lineHeight = 1.1,
-				y = text.attr("y"),
-				x = text.attr("x"),
-				dy = 0,
-				tspan = text.text(null)
-				.append("tspan")
-				.attr("x", x)
-				.attr("y", y)
-				.attr("dy", dy + "em");
-			while (word = words.pop()) {
-				line.push(word);
-				tspan.text(line.join(" "));
-				if (tspan.node()
-					.getComputedTextLength() > width) {
-					line.pop();
-					tspan.text(line.join(" "));
-					line = [word];
-					tspan = text.append("tspan")
-						.attr("x", x)
-						.attr("y", y)
-						.attr("dy", ++lineNumber * lineHeight + dy + "em")
-						.text(word);
-				}
-			}
-		});
 	};
 
 	function createSnapshot(type, fromContextMenu) {
@@ -2569,53 +1537,6 @@
 			if (d && yearsArray.indexOf(d) > -1) chartState.selectedYear.push(d);
 		});
 		if (!chartState.selectedYear.length) chartState.selectedYear.push(new Date().getFullYear());
-	};
-
-	function validateCustomEventYear(yearNumber) {
-		if (yearsArray.indexOf(yearNumber) > -1) {
-			return yearNumber;
-		};
-		while (yearsArray.indexOf(yearNumber) === -1) {
-			yearNumber = yearNumber >= currentYear ? yearNumber - 1 : yearNumber + 1;
-		};
-		return yearNumber;
-	};
-
-	function validateCountries(countriesString, allDonors, allCbpfs) {
-		if (!countriesString || countriesString.toLowerCase() === "none") return;
-		const namesArray = countriesString.split(",").map(function(d) {
-			return d.trim().toLowerCase();
-		});
-		const countryCodes = Object.keys(countryNames);
-		namesArray.forEach(function(d) {
-			const nameSplit = d.split("@");
-			if (nameSplit.length === 1) {
-				const foundDonor = countryCodes.find(function(e) {
-					return countryNames[e].toLowerCase() === nameSplit[0] && allDonors.indexOf(e) > -1;
-				});
-				const foundCbpf = countryCodes.find(function(e) {
-					return countryNames[e].toLowerCase() === nameSplit[0] && allCbpfs.indexOf(e) > -1;
-				});
-				if (foundDonor) chartState.selectedDonors.push(foundDonor);
-				if (foundCbpf) chartState.selectedCbpfs.push(foundCbpf);
-			} else {
-				if (nameSplit[1] === "donor") {
-					const foundDonor = countryCodes.find(function(e) {
-						return countryNames[e].toLowerCase() === nameSplit[0] && allDonors.indexOf(e) > -1;
-					});
-					if (foundDonor) chartState.selectedDonors.push(foundDonor);
-				} else if (nameSplit[1] === "fund") {
-					const foundCbpf = countryCodes.find(function(e) {
-						return countryNames[e].toLowerCase() === nameSplit[0] && allCbpfs.indexOf(e) > -1;
-					});
-					if (foundCbpf) chartState.selectedCbpfs.push(foundCbpf);
-				};
-			};
-		});
-		if (chartState.selectedDonors.length && chartState.selectedCbpfs.length) {
-			chartState.selectedDonors.length = 0;
-			chartState.selectedCbpfs.length = 0;
-		};
 	};
 
 	function capitalize(str) {
