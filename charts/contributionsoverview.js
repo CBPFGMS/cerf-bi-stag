@@ -1003,9 +1003,9 @@
 				.duration(duration)
 				.tween("html", (d, i, n) => {
 					const interpolator = d3.interpolate(n[i].textContent !== "0" ? reverseFormat(n[i].textContent) : 0, d[chartState.selectedContribution]);
-					return t => n[i].textContent = d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
-				});
-
+					return t => n[i].textContent = formatSIFloat(interpolator(t)).replace("G", "B");
+				})
+				.on("end", (_, i, n) => n[i].textContent = trimZeros(n[i].textContent));
 
 			//end of createDonorsDivs
 		};
@@ -1552,6 +1552,13 @@
 	function formatPercentCustom(dividend, divisor) {
 		const percentage = formatPercent(dividend / divisor);
 		return +(percentage.split("%")[0]) === 0 && (dividend / divisor) !== 0 ? "<1%" : percentage;
+	};
+
+	function trimZeros(numberString) {
+		while (numberString[numberString.length - 2] === "0" || numberString[numberString.length - 2] === ".") {
+			numberString = numberString.slice(0, -2) + numberString.slice(-1);
+		};
+		return numberString;
 	};
 
 	function reverseFormat(s) {
