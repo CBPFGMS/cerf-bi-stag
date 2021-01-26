@@ -912,7 +912,10 @@ p#contriboverd3chartTitle {
 
 .contriboverdonorName {
 	width: 100%;
-	display: block;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	line-height: 1.2;
 	overflow: hidden;
     text-overflow: ellipsis;
     max-height: 2em;
