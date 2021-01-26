@@ -33,6 +33,7 @@
 		highlightColor = "#F79A3B",
 		buttonsNumber = 14,
 		chartTitleDefault = "CERF Contributions",
+		maxDonorString = 30,
 		contributionsTotals = {},
 		countryNames = {},
 		yearsArray = [],
@@ -1001,7 +1002,7 @@
 
 			const donorNameText = donorName.append("span")
 				.attr("class", classPrefix + "donorNameText")
-				.html(d => d.donor);
+				.html(d => d.donor.length > maxDonorString ? d.donor.substring(0, maxDonorString) + "..." : d.donor);
 
 			const donorValue = donorDivEnter.append("div")
 				.attr("class", classPrefix + "donorValue")
