@@ -600,17 +600,14 @@
 				.attr("y", topPanel.height - topPanel.mainValueVerPadding * 2.7)
 				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[0] + topPanel.mainValueHorPadding);
 
-			const receivedOrDonated = chartState.selectedDonors.length ? " donated in " : " received in ";
-
 			topPanelMainText.transition()
 				.duration(duration)
 				.style("opacity", 1)
 				.text(function(d) {
-					const yearsText = chartState.selectedYear.length === 1 ? chartState.selectedYear[0] : "selected years\u002A";
 					const valueSI = formatSIFloat(d);
 					const unit = valueSI[valueSI.length - 1];
 					return (unit === "k" ? "Thousand" : unit === "M" ? "Million" : unit === "G" ? "Billion" : "") +
-						receivedOrDonated + yearsText;
+						" contributions";
 				});
 
 			let topPanelSubText = mainValueGroup.selectAll("." + classPrefix + "topPanelSubText")
@@ -628,12 +625,7 @@
 			topPanelSubText.transition()
 				.duration(duration)
 				.style("opacity", 1)
-				.text(function(d) {
-					return "(Total " +
-						(chartState.selectedContribution === "total" ? "Contributions" :
-							chartState.selectedContribution === "pledge" ? "Pledged" : "Paid") +
-						")"
-				});
+				.text("for " + (chartState.selectedYear.length === 1 ? chartState.selectedYear[0] : "selected years\u002A"));
 
 			let topPanelDonorsNumber = mainValueGroup.selectAll("." + classPrefix + "topPanelDonorsNumber")
 				.data([donorsNumber]);
