@@ -24,6 +24,7 @@
 		donorDivWidth = 110,
 		donorDivNameHeight = 30,
 		donorDivValueHeigh = 16,
+		tooltipMargin = 2,
 		donorDivHeight = donorDivNameHeight + flagDivHeight + donorDivValueHeigh,
 		localVariable = d3.local(),
 		othersId = "others",
@@ -1097,6 +1098,34 @@
 					})
 					.on("end", (_, i, n) => n[i].textContent = trimZeros(n[i].textContent));
 
+				donorDiv.on("mouseover", (d, i, n) => {
+
+					const thisBox = n[i].getBoundingClientRect();
+
+					const containerBox = containerDiv.node().getBoundingClientRect();
+
+					tooltip.style("display", "block")
+						.html("<div style='margin-bottom:12px;color:#222;font-size:14px;font-weight:500;'>" + d.donor + "</div><div style='margin:0px;display:flex;flex-wrap:wrap;width:256px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(d.total) +
+							"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(d.pledge, d.total)) +
+							")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(d.pledge) + "</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(d.paid, d.total)) +
+							")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(d.paid) +
+							"</span></div></div>");
+
+					const tooltipBox = tooltip.node().getBoundingClientRect();
+
+					const thisOffset = thisBox.top - containerBox.top + (thisBox.height - tooltipBox.height) / 2;
+
+					const thisOffsetLeft = containerBox.right - thisBox.right > tooltipBox.width + tooltipMargin ?
+						thisBox.left - containerBox.left + thisBox.width + tooltipMargin :
+						thisBox.left - containerBox.left - tooltipBox.width - tooltipMargin;
+
+					tooltip.style("top", thisOffset + "px")
+						.style("left", thisOffsetLeft + "px");
+				}).on("mouseout", () => {
+					if (isSnapshotTooltipVisible) return;
+					tooltip.style("display", "none");
+				});
+
 				//end of createDonors
 			};
 
@@ -1113,10 +1142,10 @@
 
 			tooltip.style("display", "block")
 				.html("<div style='margin:0px;display:flex;flex-wrap:wrap;width:256px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(contributionsTotals.total) +
-					"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(contributionsTotals.paid, contributionsTotals.total)) +
+					"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(contributionsTotals.pledge, contributionsTotals.total)) +
+					")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(contributionsTotals.pledge) + "</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(contributionsTotals.paid, contributionsTotals.total)) +
 					")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(contributionsTotals.paid) +
-					"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total pledge <span style='color: #888;'>(" + (formatPercentCustom(contributionsTotals.pledge, contributionsTotals.total)) +
-					")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(contributionsTotals.pledge) + "</span></div></div>");
+					"</span></div></div>");
 
 			const tooltipSize = tooltip.node().getBoundingClientRect();
 
