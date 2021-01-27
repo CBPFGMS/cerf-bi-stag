@@ -927,12 +927,19 @@ p#contriboverd3chartTitle {
 	margin-top: 8px;
 	width: 100%;
 	display: grid;
-	grid-template-columns: repeat(auto-fit, 120px);
 	justify-content: center;
 	grid-auto-rows: 154px;
 	align-items: center;
 	justify-items: center;
 	grid-column-gap: 2px;
+}
+
+.contriboverdonorsContainerMembers {
+	grid-template-columns: repeat(auto-fit, 120px);
+}
+
+.contriboverdonorsContainerNonMembers {
+	grid-template-columns: repeat(auto-fit, 124px);
 }
 
 .contriboverdonorDivMembers, .contriboverdonorDivNonMembers {
