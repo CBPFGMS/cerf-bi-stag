@@ -37,6 +37,7 @@
 		contributionsTotals = {},
 		countryNames = {},
 		yearsArray = [],
+		memberStateType = "Member State",
 		vizNameQueryString = "contributions",
 		bookmarkSite = "https://bi-home.gitlab.io/CBPF-BI-Homepage/bookmark.html?",
 		helpPortalUrl = "https://gms.unocha.org/content/business-intelligence#CBPF_Contributions",
@@ -47,6 +48,10 @@
 			"M40.614,57.349c0,0.84,0.299,1.615,0.898,2.324c0.599,0.729,1.504,1.303,2.718,1.745v-8.177 c-1.104,0.306-1.979,0.846-2.633,1.602C40.939,55.61,40.614,56.431,40.614,57.349z",
 			"M73.693,30.584H19.276c0,0-26.133,20.567-17.542,58.477c0,0,2.855,10.938,15.996,10.938h57.54 c13.125,0,15.97-10.938,15.97-10.938C99.827,51.151,73.693,30.584,73.693,30.584z M56.832,80.019 c-2.045,1.953-4.89,3.151-8.535,3.594v4.421H44.23v-4.311c-3.232-0.318-5.853-1.334-7.875-3.047 c-2.018-1.699-3.307-4.102-3.864-7.207l7.314-0.651c0.3,1.25,0.856,2.338,1.677,3.256c0.823,0.911,1.741,1.575,2.747,1.979v-9.903 c-3.659-0.879-6.348-2.22-8.053-3.997c-1.716-1.804-2.565-3.958-2.565-6.523c0-2.578,0.96-4.753,2.897-6.511 c1.937-1.751,4.508-2.767,7.721-3.034v-2.344h4.066v2.344c2.969,0.306,5.338,1.159,7.09,2.565c1.758,1.406,2.877,3.3,3.372,5.658 l-7.097,0.774c-0.43-1.849-1.549-3.118-3.365-3.776v9.238c4.485,1.035,7.539,2.357,9.16,3.984c1.634,1.635,2.441,3.725,2.441,6.289 C59.898,75.656,58.876,78.072,56.832,80.019z"
 		],
+		flagdAttribute = ["M42.49976,1.85205C31.6665-1.19629,20.8335,5.34863,10,2V22c10.8335,3.34863,21.6665-3.06836,32.49976-.02A.36246.36246,0,0,0,43,21.62793V2.5A.71722.71722,0,0,0,42.49976,1.85205Z",
+			"M10,45H8V2A2,2,0,0,0,4,2V45H2a2.0001,2.0001,0,0,0-2,2v1H12V47A2.0001,2.0001,0,0,0,10,45Z"
+		],
+		flagViewBox = "0 0 43 48",
 		blankFlag = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
 		duration = 1000,
 		shortDuration = 500,
@@ -105,14 +110,26 @@
 		.attr("viewBox", "0 0 " + width + " " + height)
 		.style("background-color", "white");
 
-	const donorsContainer = containerDiv.append("div")
-		.attr("class", classPrefix + "donorsContainer");
+	const donorsOuterDivMembers = containerDiv.append("div")
+		.attr("class", classPrefix + "donorsOuterDivMembers");
+
+	const donorsTopDivMembers = containerDiv.append("div")
+		.attr("class", classPrefix + "donorsTopDivMembers");
+
+	const donorsContainerMembers = containerDiv.append("div")
+		.attr("class", classPrefix + "donorsContainerMembers");
+
+	const donorsOuterDivNonMembers = containerDiv.append("div")
+		.attr("class", classPrefix + "donorsOuterDivNonMembers");
+
+	const donorsTopDivNonMembers = containerDiv.append("div")
+		.attr("class", classPrefix + "donorsTopDivNonMembers");
+
+	const donorsContainerNonMembers = containerDiv.append("div")
+		.attr("class", classPrefix + "donorsContainerNonMembers");
 
 	const yearsDescriptionDiv = containerDiv.append("div")
 		.attr("class", classPrefix + "YearsDescriptionDiv");
-
-	const selectionDescriptionDiv = containerDiv.append("div")
-		.attr("class", classPrefix + "SelectionDescriptionDiv");
 
 	const footerDiv = containerDiv.append("div")
 		.attr("class", classPrefix + "FooterDiv");
@@ -964,58 +981,124 @@
 
 		function createDonorsDivs() {
 
-			const donorsData = data.filter(e => e[chartState.selectedContribution]);
+			const donorsDataMembers = data.filter(e => e[chartState.selectedContribution] && e.donorType === memberStateType);
 
-			let donorDiv = donorsContainer.selectAll("." + classPrefix + "donorDiv")
-				.data(donorsData, d => d.isoCode);
+			const donorsDataNonMembers = data.filter(e => e[chartState.selectedContribution] && e.donorType !== memberStateType);
 
-			const donorDivExit = donorDiv.exit()
-				.remove();
+			if (donorsDataMembers.length && donorsDataNonMembers.length) {
+				donorsContainerMembers.style("border-bottom", "2px dotted #ddd");
+			} else {
+				donorsContainerMembers.style("border-bottom", null);
+			};
 
-			const donorDivEnter = donorDiv.enter()
-				.append("div")
-				.attr("class", classPrefix + "donorDiv");
+			createDonors(donorsDataMembers, "Members");
+			createDonors(donorsDataNonMembers, "NonMembers");
 
-			const flags = donorDivEnter.append("div")
-				.attr("class", classPrefix + "flags")
-				.style("height", flagDivHeight + "px")
-				.append("img")
-				.style("max-width", flagWidth + "px")
-				.attr("height", flagHeight + "px")
-				.attr("src", d => {
-					if (!flagsData[d.isoCode]) console.warn("Missing flag: " + d.donor, d);
-					return flagsData[d.isoCode] || blankFlag;
-				})
-				.attr("alt", d => d.donor);
+			function createDonors(dataArray, type) {
 
-			const donorName = donorDivEnter.append("div")
-				.attr("class", classPrefix + "donorName")
-				.style("height", donorDivNameHeight + "px");
+				const container = type === "Members" ? donorsContainerMembers : donorsContainerNonMembers;
 
-			const donorNameText = donorName.append("span")
-				.attr("class", classPrefix + "donorNameText")
-				.html(d => d.donor.length > maxDonorString ? d.donor.substring(0, maxDonorString) + "..." : d.donor);
+				const topDiv = type === "Members" ? donorsTopDivMembers : donorsTopDivNonMembers;
 
-			const donorValue = donorDivEnter.append("div")
-				.attr("class", classPrefix + "donorValue")
-				.style("height", donorDivValueHeigh + "px");
+				let topFigureDiv = topDiv.selectAll("." + classPrefix + "topFigureDiv" + type)
+					.data(dataArray.length ? [dataArray.length] : []);
 
-			const donorValueText = donorValue.append("span")
-				.attr("class", classPrefix + "donorValueText")
-				.html("0");
+				const topFigureDivExit = topFigureDiv.exit()
+					.remove();
 
-			donorDiv = donorDivEnter.merge(donorDiv);
+				const topFigureDivEnter = topFigureDiv.enter()
+					.append("div")
+					.attr("class", classPrefix + "topFigureDiv" + type);
 
-			donorDiv.order();
+				if (type === "Members") {
+					const topFlag = topFigureDivEnter.append("div")
+						.attr("class", classPrefix + "topFlag" + type);
 
-			donorDiv.select("." + classPrefix + "donorValueText")
-				.transition()
-				.duration(duration)
-				.tween("html", (d, i, n) => {
-					const interpolator = d3.interpolate(n[i].textContent !== "0" ? reverseFormat(n[i].textContent) : 0, d[chartState.selectedContribution]);
-					return t => n[i].textContent = formatSIFloat(interpolator(t)).replace("G", "B");
-				})
-				.on("end", (_, i, n) => n[i].textContent = trimZeros(n[i].textContent));
+					const flagSvg = topFlag.append("svg")
+						.attr("viewBox", flagViewBox)
+						.classed("contributionColorFill", true);
+
+					flagSvg.append("path")
+						.attr("d", flagdAttribute[0]);
+
+					flagSvg.append("path")
+						.attr("d", flagdAttribute[1]);
+				};
+
+				const topFigureRightDiv = topFigureDivEnter.append("div")
+					.attr("class", classPrefix + "topFigureRightDiv" + type);
+
+				const topFigureValue = topFigureRightDiv.append("div")
+					.attr("class", classPrefix + "topFigureValue" + type)
+					.html("0");
+
+				const topFigureText = topFigureRightDiv.append("div")
+					.attr("class", classPrefix + "topFigureText" + type)
+					.html(type === "Members" ? "MEMBER STATES" : "OTHER DONORS");
+
+				topFigureDiv = topFigureDivEnter.merge(topFigureDiv);
+
+				topFigureDiv.select("." + classPrefix + "topFigureValue" + type)
+					.transition()
+					.duration(duration)
+					.tween("html", (d, i, n) => {
+						const interpolator = d3.interpolateRound(+(n[i].textContent), d);
+						return t => n[i].textContent = interpolator(t);
+					});
+
+				let donorDiv = container.selectAll("." + classPrefix + "donorDiv" + type)
+					.data(dataArray, d => d.isoCode);
+
+				const donorDivExit = donorDiv.exit()
+					.remove();
+
+				const donorDivEnter = donorDiv.enter()
+					.append("div")
+					.attr("class", classPrefix + "donorDiv" + type);
+
+				const flags = donorDivEnter.append("div")
+					.attr("class", classPrefix + "flags" + type)
+					.style("height", flagDivHeight + "px")
+					.append("img")
+					.style("max-width", flagWidth + "px")
+					.attr("height", flagHeight + "px")
+					.attr("src", d => {
+						if (!flagsData[d.isoCode]) console.warn("Missing flag: " + d.donor, d);
+						return flagsData[d.isoCode] || blankFlag;
+					})
+					.attr("alt", d => d.donor);
+
+				const donorName = donorDivEnter.append("div")
+					.attr("class", classPrefix + "donorName" + type)
+					.style("height", donorDivNameHeight + "px");
+
+				const donorNameText = donorName.append("span")
+					.attr("class", classPrefix + "donorNameText" + type)
+					.html(d => d.donor.length > maxDonorString ? d.donor.substring(0, maxDonorString) + "..." : d.donor);
+
+				const donorValue = donorDivEnter.append("div")
+					.attr("class", classPrefix + "donorValue" + type)
+					.style("height", donorDivValueHeigh + "px");
+
+				const donorValueText = donorValue.append("span")
+					.attr("class", classPrefix + "donorValueText" + type)
+					.html("0");
+
+				donorDiv = donorDivEnter.merge(donorDiv);
+
+				donorDiv.order();
+
+				donorDiv.select("." + classPrefix + "donorValueText" + type)
+					.transition()
+					.duration(duration)
+					.tween("html", (d, i, n) => {
+						const interpolator = d3.interpolate(n[i].textContent !== "0" ? reverseFormat(n[i].textContent) : 0, d[chartState.selectedContribution]);
+						return t => n[i].textContent = formatSIFloat(interpolator(t)).replace("G", "B");
+					})
+					.on("end", (_, i, n) => n[i].textContent = trimZeros(n[i].textContent));
+
+				//end of createDonors
+			};
 
 			//end of createDonorsDivs
 		};

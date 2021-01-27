@@ -740,20 +740,13 @@ stroke: darkslategray;
 }
 
 .contriboverYearsDescriptionDiv {
+	margin-top: 18px;
 	margin-left: 12px;
 	font-family: "Arial", sans-serif;
 	font-size: 12px;
 	color: #888;
 	width: 98%;
 	text-align: left;
-}
-
-.contriboverSelectionDescriptionDiv {
-	margin-left: 13px;
-	font-family: "Arial", sans-serif;
-	font-size: 12px;
-	color: #888;
-	width: 98%;
 }
 
 .contriboverOverDivHelp {
@@ -879,18 +872,70 @@ p#contriboverd3chartTitle {
 	color: white;
 }
 
-.contriboverdonorsContainer {
-	margin-top: 22px;
+.contriboverdonorsOuterDivMembers, .contriboverdonorsOuterDivNonMembers {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	margin-top: 12px;
+}
+
+.contriboverdonorsTopDivMembers, .contriboverdonorsTopDivNonMembers {
+	margin-top: 2px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.contribovertopFigureDivMembers, .contribovertopFigureDivNonMembers {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.contribovertopFlagMembers, .contribovertopFlagNonMembers {
+	width: 50px;
+	margin-right: 12px;
+}
+
+.contribovertopFigureRightDivMembers {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.contribovertopFigureRightDivNonMembers {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.contribovertopFigureValueMembers, .contribovertopFigureValueNonMembers {
+	color: #444;
+	font-family: "Arial", sans-serif;
+	font-size: 48px;
+	margin-bottom: -0.35em;
+}
+
+.contribovertopFigureTextMembers, .contribovertopFigureTextNonMembers {
+	color: #888;
+	font-family: "Roboto", sans-serif;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.contriboverdonorsContainerMembers, .contriboverdonorsContainerNonMembers {
+	margin-top: 8px;
 	width: 100%;
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+	grid-template-columns: repeat(auto-fit, 120px);
+	justify-content: center;
 	grid-auto-rows: 154px;
 	align-items: center;
 	justify-items: center;
 	grid-column-gap: 2px;
 }
 
-.contriboverdonorDiv {
+.contriboverdonorDivMembers, .contriboverdonorDivNonMembers {
 	display: flex;
 	flex-direction: column;
 	height: 154px;
@@ -899,18 +944,18 @@ p#contriboverd3chartTitle {
 	border-top: 2px dotted #ddd;
 }
 
-.contriboverflags {
+.contriboverflagsMembers, .contriboverflagsNonMembers {
 	display: flex;
 	width: 100%;
 	justify-content: center;
 	align-items: center;
 }
 
-.contriboverflags img {
+.contriboverflagsMembers img, .contriboverflagsNonMembers img {
 	border: 0.5px solid #bbb;
 }
 
-.contriboverdonorName {
+.contriboverdonorNameMembers, .contriboverdonorNameNonMembers {
 	width: 100%;
 	display: flex;
 	justify-content: center;
@@ -920,7 +965,7 @@ p#contriboverd3chartTitle {
   	word-wrap: break-word;
 }
 
-.contriboverdonorValue {
+.contriboverdonorValueMembers, .contriboverdonorValueNonMembers {
 	width: 100%;
 	display: flex;
 	justify-content: center;
@@ -928,14 +973,14 @@ p#contriboverd3chartTitle {
 	margin-top: 6px;
 }
 
-.contriboverdonorNameText {
+.contriboverdonorNameTextMembers, .contriboverdonorNameTextNonMembers {
 	font-family: "Roboto", sans-serif;
 	font-size: 14px;
 	color: #444;
 	letter-spacing: -0.02em;
 }
 
-.contriboverdonorValueText {
+.contriboverdonorValueTextMembers, .contriboverdonorValueTextNonMembers {
 	font-family: "Roboto", sans-serif;
 	font-size: 13px;
 	color: #333;
