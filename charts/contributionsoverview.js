@@ -1677,7 +1677,7 @@
 	};
 
 	function trimZeros(numberString) {
-		while (numberString[numberString.length - 2] === "0" || numberString[numberString.length - 2] === ".") {
+		while ((numberString[numberString.length - 2] === "0" && numberString.indexOf(".") > -1) || numberString[numberString.length - 2] === ".") {
 			numberString = numberString.slice(0, -2) + numberString.slice(-1);
 		};
 		return numberString;
