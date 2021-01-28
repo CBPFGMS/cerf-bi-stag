@@ -587,6 +587,9 @@
 			draw(rawData, mapData);
 		} else {
 			d3.select(window).on("scroll." + classPrefix, checkPosition);
+			d3.select("body").on("d3ChartsYear." + classPrefix, function() {
+				chartState.selectedYear = [validateCustomEventYear(+d3.event.detail)]
+			});
 			checkPosition();
 		};
 
@@ -1560,6 +1563,12 @@
 					localVariable.set(this, null);
 				};
 			});
+
+		d3.select("body").on("d3ChartsYear." + classPrefix, function() {
+			clickButtonsRects(validateCustomEventYear(+d3.event.detail), true);
+			repositionButtonsGroup();
+			checkArrows();
+		});
 
 		function checkArrows() {
 
@@ -2590,6 +2599,16 @@
 			if (d && yearsArray.indexOf(d) > -1) chartState.selectedYear.push(d);
 		});
 		if (!chartState.selectedYear.length) chartState.selectedYear.push(new Date().getFullYear());
+	};
+
+	function validateCustomEventYear(yearNumber) {
+		if (yearsArray.indexOf(yearNumber) > -1) {
+			return yearNumber;
+		};
+		while (yearsArray.indexOf(yearNumber) === -1) {
+			yearNumber = yearNumber >= currentYear ? yearNumber - 1 : yearNumber + 1;
+		};
+		return yearNumber;
 	};
 
 	function capitalize(str) {

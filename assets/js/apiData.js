@@ -1,4 +1,4 @@
-$(function () {
+$(function() {
     LoadData();
 });
 
@@ -7,15 +7,19 @@ function LoadData() {
     LoadCBPFSummary(year);
     LoadAmount();
     LoadDate();
+    const event = new CustomEvent("d3ChartsYear", {
+        detail: +year
+    });
+    document.body.dispatchEvent(event);
 }
 
 
 function LoadCBPFSummary(allocYear) {
     showLoader();
-    fetch('https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERFSummary-'+ allocYear + '.json')
-        .then(function (response) {
+    fetch('https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERFSummary-' + allocYear + '.json')
+        .then(function(response) {
             if (response.ok) {
-                response.json().then(function (data) {
+                response.json().then(function(data) {
                     //$div1_.textContent = JSON.stringify(data);
                     var obj = data;
                     $("span[id*='spnDonor']").text(obj.donors);
@@ -26,21 +30,21 @@ function LoadCBPFSummary(allocYear) {
 
                 });
             } else console.log('Network response was not ok.');
-            
+
             hideLoader();
         })
-        .catch(function (error) {
+        .catch(function(error) {
             hideLoader();
             console.log('Fetch error: ');
         });
 }
 
-function LoadDate(){
+function LoadDate() {
 
     fetch('https://cbpfapi.unocha.org/vo2/odata/LastModified')
-        .then(function (response) {
+        .then(function(response) {
             if (response.ok) {
-                response.json().then(function (data) {
+                response.json().then(function(data) {
                     var obj = data;
                     $("span[id*='updatedOn']").text(ConvertJsonDateTime(obj.value[0].last_updated_date));
 
@@ -48,7 +52,7 @@ function LoadDate(){
             } else console.log('Network response was not ok.');
 
         })
-        .catch(function (error) {
+        .catch(function(error) {
             console.log('Fetch error: ');
         });
 }
@@ -56,10 +60,10 @@ function LoadDate(){
 function LoadAmount() {
 
     var allocYear = 2021;
-    fetch('https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERFSummary-'+ allocYear + '.json')
-        .then(function (response) {
+    fetch('https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERFSummary-' + allocYear + '.json')
+        .then(function(response) {
             if (response.ok) {
-                response.json().then(function (data) {
+                response.json().then(function(data) {
                     //$div1_.textContent = JSON.stringify(data);
                     var obj = data;
                     $("span[id*='spnAllocAmount']").text(formatNumber(obj.allocAmt));
@@ -69,7 +73,7 @@ function LoadAmount() {
                 });
             } else console.log('Network response was not ok.');
         })
-        .catch(function (error) {
+        .catch(function(error) {
             console.log('Fetch error: ');
         });
 }
@@ -77,8 +81,11 @@ function LoadAmount() {
 function showLoader() {
     //$('.loading-panel').show();
     $.blockUI({
-        message: $("#dvLoading"), overlayCSS:
-            { backgroundColor: "#aaaaaa", opacity: "0.3" }
+        message: $("#dvLoading"),
+        overlayCSS: {
+            backgroundColor: "#aaaaaa",
+            opacity: "0.3"
+        }
     });
 }
 
@@ -91,32 +98,25 @@ function formatNumber(num, digits) {
     var si = [{
         value: 1,
         symbol: ""
-    },
-    {
+    }, {
         value: 1E3,
         symbol: "k"
-    },
-    {
+    }, {
         value: 1E6,
         symbol: "M"
-    },
-    {
+    }, {
         value: 1E9,
         symbol: "B"
-    },
-    {
+    }, {
         value: 1E12,
         symbol: "T"
-    },
-    {
+    }, {
         value: 1E15,
         symbol: "P"
-    },
-    {
+    }, {
         value: 1E18,
         symbol: "E"
-    }
-    ];
+    }];
     var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
     var i;
     for (i = si.length - 1; i > 0; i--) {
@@ -131,32 +131,25 @@ function formatNumberWithoutSymbol(num, digits) {
     var si = [{
         value: 1,
         symbol: ""
-    },
-    {
+    }, {
         value: 1E3,
         symbol: "k"
-    },
-    {
+    }, {
         value: 1E6,
         symbol: "M"
-    },
-    {
+    }, {
         value: 1E9,
         symbol: "B"
-    },
-    {
+    }, {
         value: 1E12,
         symbol: "T"
-    },
-    {
+    }, {
         value: 1E15,
         symbol: "P"
-    },
-    {
+    }, {
         value: 1E18,
         symbol: "E"
-    }
-    ];
+    }];
     var rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
     var i;
     for (i = si.length - 1; i > 0; i--) {
