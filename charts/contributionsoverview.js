@@ -39,6 +39,8 @@
 		countryNames = {},
 		yearsArray = [],
 		memberStateType = "Member State",
+		privateDonorsName = "Private Contributions",
+		privateDonorsIsoCode = "xprv",
 		vizNameQueryString = "contributions",
 		bookmarkSite = "https://bi-home.gitlab.io/CBPF-BI-Homepage/bookmark.html?",
 		helpPortalUrl = "https://gms.unocha.org/content/business-intelligence#CBPF_Contributions",
@@ -1075,7 +1077,7 @@
 
 				const donorNameText = donorName.append("span")
 					.attr("class", classPrefix + "donorNameText" + type)
-					.html(d => d.donor.length > maxDonorString ? d.donor.substring(0, maxDonorString) + "..." : d.donor);
+					.html(d => d.isoCode === privateDonorsIsoCode ? privateDonorsName : (d.donor.length > maxDonorString ? d.donor.substring(0, maxDonorString) + "..." : d.donor));
 
 				const donorValue = donorDivEnter.append("div")
 					.attr("class", classPrefix + "donorValue" + type)
@@ -1105,7 +1107,7 @@
 					const containerBox = containerDiv.node().getBoundingClientRect();
 
 					tooltip.style("display", "block")
-						.html("<div style='margin-bottom:12px;color:#222;font-size:14px;font-weight:500;'>" + d.donor + "</div><div style='margin:0px;display:flex;flex-wrap:wrap;width:256px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(d.total) +
+						.html("<div style='margin-bottom:12px;color:#222;font-size:14px;font-weight:500;'>" + (d.isoCode === privateDonorsIsoCode ? privateDonorsName : d.donor) + "</div><div style='margin:0px;display:flex;flex-wrap:wrap;width:256px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(d.total) +
 							"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(d.pledge, d.total)) +
 							")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(d.pledge) + "</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(d.paid, d.total)) +
 							")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(d.paid) +
