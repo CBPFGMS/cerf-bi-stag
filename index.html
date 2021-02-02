@@ -15,7 +15,8 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js" integrity="sha512-4UKI/XKm3xrvJ6pZS5oTRvIQGIzZFoXR71rRBb1y2N+PbwAsKa5tPl2J6WvbEvwN3TxQCm8hMzsl/pO+82iRlg==" crossorigin="anonymous"></script>
 	<script src="https://unpkg.com/d3-sankey@0"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha512-cLuyDTDg9CSseBSFWNd4wkEaZ0TBEpclX0zD3D6HjI19pO39M58AgJ1SjHp6c7ZOp0/OCRcC2BCvvySU9KJaGw==" crossorigin="anonymous"></script>
-	<script type="text/javascript" src="assets/js/html2canvas.min.js"></script>
+    <script type="text/javascript" src="assets/js/html2canvas.min.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-1884029-23"></script>
 </head>
 <body id="page-top">
 	<div class="cd-header">
@@ -596,6 +597,17 @@
                 $('#cd-ocha-dropdown').css('display', 'none'); //$( '#layers' ).hide();
             });
         });
+    </script>
+    <script type="text/javascript">
+        if (document.location.hostname.search("cerf.data.unocha.org") !== -1) {
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'UA-1884029-23');
+        }
     </script>
 	<script src="assets/js/jquery.blockUI.js"></script>
 	<script src="assets/js/popup-video.js"></script>

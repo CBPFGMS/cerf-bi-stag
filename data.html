@@ -8,7 +8,8 @@
 	<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">	
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.css">
-	<link rel="stylesheet" href="assets/css/pf-one-bi.css">
+    <link rel="stylesheet" href="assets/css/pf-one-bi.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-1884029-23"></script>
 </head>
 <body id="page-top">
 	<nav class="navbar navbar-light navbar-expand-lg fixed-top" id="mainNav">
@@ -399,6 +400,17 @@
                 $('#cd-ocha-dropdown').css('display', 'none'); //$( '#layers' ).hide();
             });
         });
+    </script>
+    <script type="text/javascript">
+        if (document.location.hostname.search("cerf.data.unocha.org") !== -1) {
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'UA-1884029-23');
+        }
     </script>
 	<script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
