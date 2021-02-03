@@ -1199,7 +1199,7 @@
 		function mouseOverButtonsRects(d) {
 			tooltip.style("display", "block")
 				.style("width", "200px")
-				.html(d === allYearsOption ? "Click to show all years" : "Click for selecting a year. Double-click or ALT + click for selecting a single month.");
+				.html(d === allYearsOption ? "Click to show all years" : "Click for selecting a year. Double-click or ALT + click for selecting a single year.");
 
 			const containerSize = containerDiv.node().getBoundingClientRect();
 
