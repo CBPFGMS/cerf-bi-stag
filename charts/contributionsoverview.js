@@ -42,6 +42,7 @@
 		privateDonorsName = "Private Contributions",
 		privateDonorsIsoCode = "xprv",
 		vizNameQueryString = "contributions",
+		allYearsOption = "all",
 		bookmarkSite = "https://bi-home.gitlab.io/CBPF-BI-Homepage/bookmark.html?",
 		helpPortalUrl = "https://gms.unocha.org/content/business-intelligence#CBPF_Contributions",
 		dataUrl = "https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERF_ContributionTotal.csv",
@@ -297,7 +298,7 @@
 
 		function clickButtonsRects(d, singleSelection) {
 
-			if (singleSelection) {
+			if (singleSelection || d === allYearsOption || chartState.selectedYear[0] === allYearsOption) {
 				chartState.selectedYear = [d];
 			} else {
 				const index = chartState.selectedYear.indexOf(d);
@@ -312,9 +313,11 @@
 				};
 			};
 
-			const allYears = chartState.selectedYear.map(function(d) {
-				return d;
-			}).join("|");
+			const allYears = chartState.selectedYear[0] === allYearsOption ?
+				allYearsOption.toLowerCase() :
+				chartState.selectedYear.map(function(d) {
+					return d;
+				}).join("|");
 
 			if (queryStringValues.has("year")) {
 				queryStringValues.set("year", allYears);
@@ -648,7 +651,7 @@
 			topPanelSubText.transition()
 				.duration(duration)
 				.style("opacity", 1)
-				.text("for " + (chartState.selectedYear.length === 1 ? chartState.selectedYear[0] : "selected years\u002A"));
+				.text("for " + (chartState.selectedYear.length === 1 ? (chartState.selectedYear[0] === allYearsOption ? "all years" : chartState.selectedYear[0]) : "selected years\u002A"));
 
 			let topPanelDonorsNumber = mainValueGroup.selectAll("." + classPrefix + "topPanelDonorsNumber")
 				.data([donorsNumber]);
@@ -749,6 +752,8 @@
 
 		function createButtonPanel() {
 
+			yearsArray.push(allYearsOption);
+
 			const clipPath = buttonPanel.main.append("clipPath")
 				.attr("id", classPrefix + "clip")
 				.append("rect")
@@ -796,7 +801,7 @@
 					return chartState.selectedYear.indexOf(d) > -1 ? "white" : "#444";
 				})
 				.text(function(d) {
-					return d;
+					return d === allYearsOption ? capitalize(allYearsOption) : d;
 				});
 
 			const buttonsContributionsGroup = buttonPanel.main.append("g")
@@ -1194,7 +1199,7 @@
 		function mouseOverButtonsRects(d) {
 			tooltip.style("display", "block")
 				.style("width", "200px")
-				.html("Click for selecting a year. Double-click or ALT + click for selecting a single month.");
+				.html(d === allYearsOption ? "Click to show all years" : "Click for selecting a year. Double-click or ALT + click for selecting a single month.");
 
 			const containerSize = containerDiv.node().getBoundingClientRect();
 
@@ -1254,7 +1259,7 @@
 
 		const aggregatedDonors = rawData.reduce((acc, curr) => {
 
-			if (chartState.selectedYear.indexOf(+curr.FiscalYear) > -1) {
+			if (chartState.selectedYear[0] === allYearsOption || chartState.selectedYear.indexOf(+curr.FiscalYear) > -1) {
 
 				if (!curr.GMSDonorISO2Code) console.warn("Donor " + curr.GMSDonorName + " has no ISO code");
 
@@ -1661,6 +1666,10 @@
 	};
 
 	function validateYear(yearString) {
+		if (yearString.toLowerCase() === allYearsOption) {
+			chartState.selectedYear.push(allYearsOption);
+			return;
+		};
 		const allYears = yearString.split(",").map(function(d) {
 			return +(d.trim());
 		}).sort(function(a, b) {
