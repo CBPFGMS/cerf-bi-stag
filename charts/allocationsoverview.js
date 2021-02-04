@@ -1630,7 +1630,7 @@
 				.style("max-width", "200px")
 				.attr("id", "pbinadInnerTooltipDiv");
 
-			innerTooltip.html("Click for selecting a year. Double-click or ALT + click for selecting a single month.");
+			innerTooltip.html("Click for selecting a year. Double-click or ALT + click for selecting a single year.");
 
 			const containerSize = containerDiv.node().getBoundingClientRect();
 
