@@ -14,7 +14,7 @@
 		localStorageTime = 3600000,
 		csvDateFormat = d3.utcFormat("_%Y%m%d_%H%M%S_UTC"),
 		fadeOpacity = 0.3,
-		contributionType = ["paid", "pledge", "total"],
+		contributionType = ["pledge", "paid", "total"],
 		formatMoney0Decimals = d3.format(",.0f"),
 		formatPercent = d3.format(".0%"),
 		formatNumberSI = d3.format(".3s"),
@@ -840,11 +840,7 @@
 					return d === chartState.selectedContribution ? "white" : "#444";
 				})
 				.text(function(d) {
-					if (d === "pledge") {
-						return "Pledged"
-					} else {
-						return capitalize(d);
-					};
+					return d === "pledge" ? "Pledged" : capitalize(d);
 				});
 
 			const leftArrow = buttonPanel.main.append("g")
