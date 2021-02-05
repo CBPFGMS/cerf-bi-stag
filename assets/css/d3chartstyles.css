@@ -682,7 +682,7 @@ stroke: darkslategray;
     font-weight: normal;
 }
 
-#d3chartcontainercontribover .contriboverdonorsContainerMembers #contribovertooltipdiv > div:nth-child(1){
+.contriboverdonorsContainerMembers > #contribovertooltipdiv > div:nth-child(1){
 	font-weight: normal;
 	padding: 6px 8px;
     background-color: #418fde;
