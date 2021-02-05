@@ -682,16 +682,6 @@ stroke: darkslategray;
     font-weight: normal;
 }
 
-.contriboverdonorsContainerMembers > #contribovertooltipdiv > div:nth-child(1){
-	font-weight: normal;
-	padding: 6px 8px;
-    background-color: #418fde;
-    color: #fff !important; 
-    margin-left: -8px;
-    margin-right: -8px;
-    margin-top: -8px;
-}
-
 .contribovertooltipTitle{
 	padding: 6px 8px;
     background-color: #418fde;
