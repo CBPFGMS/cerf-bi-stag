@@ -882,17 +882,20 @@
 				.on("mouseout", mouseOutButtonsRects)
 				.on("click", function(d) {
 					const self = this;
-					if (d3.event.altKey) clickButtonsRects(d, true);
+					if (d3.event.altKey) {
+						clickButtonsRects(d, false);
+						return;
+					};
 					if (localVariable.get(this) !== "clicked") {
 						localVariable.set(this, "clicked");
 						setTimeout(function() {
 							if (localVariable.get(self) === "clicked") {
-								clickButtonsRects(d, false);
+								clickButtonsRects(d, true);
 							};
 							localVariable.set(self, null);
 						}, 250);
 					} else {
-						clickButtonsRects(d, true);
+						clickButtonsRects(d, false);
 						localVariable.set(this, null);
 					};
 				});
@@ -1195,7 +1198,7 @@
 		function mouseOverButtonsRects(d) {
 			tooltip.style("display", "block")
 				.style("width", "200px")
-				.html(d === allYearsOption ? "Click to show all years" : "Click for selecting a year. Double-click or ALT + click for selecting a single year.");
+				.html(d === allYearsOption ? "Click to show all years" : "Click for selecting a single year. Double-click or ALT + click for selecting multiple years.");
 
 			const containerSize = containerDiv.node().getBoundingClientRect();
 
