@@ -1120,11 +1120,30 @@
 					const containerBox = containerDiv.node().getBoundingClientRect();
 
 					tooltip.style("display", "block")
-						.html("<div style='margin-bottom:12px;color:#222;font-size:14px;font-weight:500;'>" + (d.isoCode === privateDonorsIsoCode ? privateDonorsName : d.donor) + "</div><div style='margin:0px;display:flex;flex-wrap:wrap;width:256px;'><div style='display:flex;flex:0 54%;'>Total contributions:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(d.total) +
-							"</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total pledged <span style='color: #888;'>(" + (formatPercentCustom(d.pledge, d.total)) +
-							")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(d.pledge) + "</span></div><div style='display:flex;flex:0 54%;white-space:pre;'>Total paid <span style='color: #888;'>(" + (formatPercentCustom(d.paid, d.total)) +
-							")</span>:</div><div style='display:flex;flex:0 46%;justify-content:flex-end;'><span class='contributionColorHTMLcolor'>$" + formatMoney0Decimals(d.paid) +
-							"</span></div></div>");
+						.html(null);
+
+					const innerTooltipDiv = tooltip.append("div")
+						.attr("class", classPrefix + "innerTooltipDiv");
+
+					const topDiv = innerTooltipDiv.append("div")
+						.attr("class", classPrefix + "topDiv")
+						.html(d.isoCode === privateDonorsIsoCode ? privateDonorsName : d.donor);
+
+					const valuesContainerDiv = innerTooltipDiv.append("div")
+						.attr("class", classPrefix + "valuesContainerDiv");
+
+					contributionType.forEach(function(type) {
+						const textDiv = valuesContainerDiv.append("div")
+							.attr("class", classPrefix + "textDiv")
+							.html("Total " + (type === "total" ? "contributions " : type === "pledge" ? "pledged " : "paid ") + "<span class=" + classPrefix + "textDivPercentage></span>:");
+
+						textDiv.select("span")
+							.html(type === "total" ? "" : "(" + formatPercentCustom(d[type], d.total) + ")");
+
+						const valueDiv = valuesContainerDiv.append("div")
+							.attr("class", classPrefix + "valueDiv")
+							.html(formatMoney0Decimals(d[type]));
+					});
 
 					const tooltipBox = tooltip.node().getBoundingClientRect();
 

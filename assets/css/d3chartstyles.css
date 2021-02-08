@@ -664,7 +664,6 @@ stroke: darkslategray;
 	border-radius: 4px;
 	pointer-events: none;
 	cursor: none;
-	max-width: 300px;
 	z-index: 1500;
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
@@ -997,4 +996,37 @@ p#contriboverd3chartTitle {
 	border-radius: 8px;
 	padding-right: 5px;
 	padding-left: 5px;
+}
+
+.contriboverinnerTooltipDiv {
+	max-width: 256px;
+}
+
+.contribovertopDiv {
+	margin-bottom: 12px;
+	color: #222;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.contribovervaluesContainerDiv {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0px;
+}
+
+.contribovertextDiv {
+	display: flex;
+	flex: 0 54%;
+	white-space: pre;
+}
+
+.contribovervalueDiv {
+	display: flex;
+	flex: 0 46%;
+	justify-content: flex-end;
+}
+
+.contribovertextDivPercentage {
+	color: #888;
 }
