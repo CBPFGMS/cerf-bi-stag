@@ -553,6 +553,8 @@
 
 		function createTopPanel() {
 
+			let infoIconDiv, infoIcon;
+
 			contributionType.forEach(function(d) {
 				contributionsTotals[d] = d3.sum(data, function(e) {
 					return e[d]
@@ -634,7 +636,12 @@
 					const unit = valueSI[valueSI.length - 1];
 					return (unit === "k" ? "Thousand" : unit === "M" ? "Million" : unit === "G" ? "Billion" : "") +
 						" contributions";
-				});
+				})
+				.on("end", function() {
+					const thisBox = this.getBBox();
+					infoIcon.style("opacity", chartState.selectedYear[0] === allYearsOption ? 1 : 0);
+					infoIconDiv.attr("transform", "translate(" + (thisBox.x + thisBox.width + 4) + "," + (thisBox.y + 18) + ")");
+				})
 
 			let topPanelSubText = mainValueGroup.selectAll("." + classPrefix + "topPanelSubText")
 				.data([true]);
@@ -745,6 +752,47 @@
 				.attr("y", topPanel.height - topPanel.mainValueVerPadding * 1.2)
 				.attr("x", topPanel.moneyBagPadding + topPanel.leftPadding[2] + topPanel.mainValueHorPadding)
 				.text("since inception in 2006");
+
+			infoIconDiv = topPanel.main.selectAll("." + classPrefix + "infoIconDiv")
+				.data([true]);
+
+			infoIconDiv = infoIconDiv.enter()
+				.append("g")
+				.attr("class", classPrefix + "infoIconDiv")
+				.merge(infoIconDiv);
+
+			infoIcon = infoIconDiv.selectAll("." + classPrefix + "infoIcon")
+				.data(chartState.selectedYear[0] === allYearsOption && chartState.selectedContribution === "total" ? [true] : []);
+
+			const infoIconExit = infoIcon.exit().remove();
+
+			infoIcon = infoIcon.enter()
+				.append("text")
+				.attr("class", classPrefix + "infoIcon")
+				.classed("contributionColorFill", true)
+				.style("font-family", "FontAwesome")
+				.style("font-size", "20px")
+				.style("cursor", "default")
+				.style("opacity", 0)
+				.text("\uf05a");
+
+			infoIcon.on("mouseover", function() {
+				const thisBox = this.getBoundingClientRect();
+				const containerBox = containerDiv.node().getBoundingClientRect();
+
+				const thisOffsetTop = thisBox.top - containerBox.top;
+
+				const thisOffsetLeft = thisBox.left - containerBox.left + thisBox.width + 14;
+
+				tooltip.style("display", "block")
+					.html("Includes paid and pledged contributions.");
+
+				tooltip.style("top", thisOffsetTop + "px")
+					.style("left", thisOffsetLeft + "px");
+			}).on("mouseout", function() {
+				if (isSnapshotTooltipVisible) return;
+				tooltip.style("display", "none");
+			});
 
 
 			//end of createTopPanel
