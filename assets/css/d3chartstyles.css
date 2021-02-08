@@ -1005,7 +1005,7 @@ p#contriboverd3chartTitle {
 .contribovertopDiv {
 	margin-bottom: 12px;
 	font-size: 14px;
-	font-weight: 500;
+	font-weight: 600;
 	padding: 6px 8px;
     background-color: #418fde;
     color: #fff;
@@ -1030,6 +1030,8 @@ p#contriboverd3chartTitle {
 	display: flex;
 	flex: 0 46%;
 	justify-content: flex-end;
+	color: #333;
+    font-weight: 600;
 }
 
 .contribovertextDivPercentage {
