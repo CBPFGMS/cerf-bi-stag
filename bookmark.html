@@ -1,14 +1,23 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html style="font-family:'Roboto Slab', serif;">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-	<title>Bookmark - CERF BI</title>
+	<title>CERF Data Hub Bookmark Page | CERF</title>
 	<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">	
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.css">
     <link rel="stylesheet" href="assets/css/pf-one-bi.css">
+    <link rel="stylesheet" href="assets/css/smoothproducts.css">
+    <link rel="stylesheet" href="assets/css/pf-one-bi.css">
+    <link rel="stylesheet" href="assets/css/d3chartstyles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js" integrity="sha512-FHsFVKQ/T1KWJDGSbrUhTJyS1ph3eRrxI228ND0EGaEp6v4a/vGwPWd3Dtd/+9cI7ccofZvl/wulICEurHN1pg==" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js" integrity="sha512-4UKI/XKm3xrvJ6pZS5oTRvIQGIzZFoXR71rRBb1y2N+PbwAsKa5tPl2J6WvbEvwN3TxQCm8hMzsl/pO+82iRlg==" crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/d3-sankey@0"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha512-cLuyDTDg9CSseBSFWNd4wkEaZ0TBEpclX0zD3D6HjI19pO39M58AgJ1SjHp6c7ZOp0/OCRcC2BCvvySU9KJaGw==" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="assets/js/html2canvas.min.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-1884029-23"></script>
     <style>
         .header {
@@ -49,6 +58,11 @@
 				<div class="col intro-txt mt-3 mb-4">	
 					<p class="mt-3"></p>
 				</div>
+                <div class="col-md-12">
+                    
+                    <div id="d3chartcontainerallocover" data-title=" " data-year="2021" data-cerfallocation="total" data-shownames="false" data-showhelp="false" data-showlink="false" data-responsive="true" data-lazyload="true"></div>                    
+                    <div id="d3chartcontainercontribover" data-year="2021" data-contribution="total" data-responsive="true" data-lazyload="true"></div>
+                </div>
 			</div>
 		</div>
 	</section>
@@ -391,23 +405,6 @@
             </symbol>
         </svg>
     </div>
-	<script type="text/javascript">
-		$(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-            //$('#lnkvideotutorial').tooltip();
-        }); 
-		
-	</script>
-	<script>
-        $(document).ready(function() {
-            $(".cd-ocha-btn").click(function() {
-                $(".cd-dropdown").toggle();
-            });
-            $(window).on('click', function() {
-                $('#cd-ocha-dropdown').css('display', 'none'); //$( '#layers' ).hide();
-            });
-        });
-    </script>
     <script type="text/javascript">
         if (document.location.hostname.search("cerf.data.unocha.org") !== -1) {
             window.dataLayer = window.dataLayer || [];
@@ -419,13 +416,7 @@
             gtag('config', 'UA-1884029-23');
         }
     </script>
-	<script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-	<script src="assets/js/custom-one-bi.js"></script>
 	<script>
         var urlParams;
         (window.onpopstate = function () {
@@ -442,41 +433,11 @@
 
         x = urlParams["viz"];
         if ("viz" in urlParams) {
-            if (x === "contributions") {
-                fileSrc = "https://cbpfgms.github.io/pbiclc/src/d3chartpbiclc.js";
+            if (x === "allocations") {
+                fileSrc = "charts/allocationsoverview.js";
                 includeJsFile(fileSrc);
-            } else if (x === "contribution-trends") {
-                fileSrc = "https://cbpfgms.github.io/pbicli/src/d3chartpbicli.js";
-                includeJsFile(fileSrc);
-            } else if (x === "allocations") {
-                fileSrc = "https://cbpfgms.github.io/pbialp/src/d3chartpbialp.js";
-                includeJsFile(fileSrc);
-            } else if (x === "allocation-trends") {
-                fileSrc = "https://cbpfgms.github.io/pbiali/src/d3chartpbiali.js";
-                includeJsFile(fileSrc);
-            } else if (x === "funding-overview") {
-                fileSrc = "https://cbpfgms.github.io/pbifdc/src/d3chartpbifdc.js";
-                includeJsFile(fileSrc);
-            } else if (x === "clusters") {
-                fileSrc = "https://cbpfgms.github.io/pbiolc/src/d3chartpbiolc.js";
-                includeJsFile(fileSrc);
-            } else if (x === "affected-persons-trends") {
-                fileSrc = "https://cbpfgms.github.io/pbiobe/src/d3chartpbiobe.js";
-                includeJsFile(fileSrc);
-            } else if (x === "allocations-timeline") {
-                fileSrc = "https://cbpfgms.github.io/pbiuac/src/d3chartpbiuac.js";
-                includeJsFile(fileSrc);
-            } else if (x === "allocations-overview") {
-                fileSrc = "https://cbpfgms.github.io/pbimap/src/d3chartpbimap.js";
-                includeJsFile(fileSrc);
-            } else if (x === "cbpfvshrp") {
-                fileSrc = "https://cbpfgms.github.io/pbihrp/src/d3chartpbihrp.js";
-                includeJsFile(fileSrc);
-    } else if (x === "covid19") {
-                fileSrc = "https://cbpfgms.github.io/covmap/src/d3chartcovmap.js";
-                includeJsFile(fileSrc);
-            } else if (x === "netfunding") {
-                fileSrc = "https://cbpfgms.github.io/pbinad/src/d3chartpbinad.js";
+            } else if (x === "contributions") {
+                fileSrc = "charts/contributionsoverview.js";
                 includeJsFile(fileSrc);
             } else {
                 alert("There is no dashboard to display");
@@ -508,5 +469,19 @@
             }
         }
     </script>
+    <script type="text/javascript">
+        if (document.location.hostname.search("cerf.data.unocha.org") !== -1) {
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+            gtag('config', 'UA-1884029-23');
+        }
+    </script>
+    
+	<script type="text/javascript" id="cookieinfo" src="assets/js/cookieinfo.min.js" data-bg="#002856" data-fg="#FFF" data-link="#FFF" data-cookie="CookieInfoScript" data-text-align="left" data-close-text="OK">
+    </script>		
 </body>
 </html>
