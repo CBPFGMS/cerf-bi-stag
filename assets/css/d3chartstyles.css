@@ -214,14 +214,12 @@ These styles apply to all D3 charts*/
 
 #allocoverDownloadingDiv {
 	position: absolute;
-	padding: 8px;
 	background: #fcfcfc; 
-	border: 1px solid #222; 
+	border: 1px solid #666; 
 	border-radius: 8px;
 	pointer-events: none;
 	cursor: none;
 	width: 200px;
-	height: 100px;
 	z-index: 1500;
 }
 
@@ -639,14 +637,12 @@ stroke: darkslategray;
 
 #contriboverDownloadingDiv {
 	position: absolute;
-	padding: 8px;
 	background: #fcfcfc; 
-	border: 1px solid #222; 
+	border: 1px solid #666; 
 	border-radius: 8px;
 	pointer-events: none;
 	cursor: none;
 	width: 200px;
-	height: 100px;
 	z-index: 1500;
 }
 

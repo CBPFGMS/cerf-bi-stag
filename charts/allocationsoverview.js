@@ -46,6 +46,8 @@
 		colorInterpolatorRR = d3.interpolateRgb("#FFFFFF", d3.color(choroplethColorRR).darker(0.1)),
 		colorInterpolatorUnderfunded = d3.interpolateRgb("#FFFFFF", d3.color(choroplethColorUnderfunded).darker(0.1)),
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
+		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
+		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
 		fadeOpacity = 0.2,
 		tooltipMargin = 8,
 		tooltipSvgWidth = 310,
@@ -67,8 +69,7 @@
 		formatSIaxes = d3.format("~s"),
 		formatNumberSI = d3.format(".3s"),
 		chartTitleDefault = "Allocations",
-		vizNameQueryString = "allocationsmap",
-		bookmarkSite = "https://pfbi.unocha.org/bookmark.html?",
+		vizNameQueryString = "allocations",
 		dataUrl = "https://cbpfgms.github.io/pfbi-data/cerf/cerf_allocationSummary_byorg.csv",
 		mapUrl = "https://cbpfgms.github.io/pfbi-data/map/unworldmap.json",
 		masterFundsUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstCountry.json",
@@ -163,7 +164,7 @@
 		]);
 
 	let isSnapshotTooltipVisible = false,
-		currentHoveredElem;
+		currentHoveredElement;
 
 	const hardcodedAllocations = [{
 		isoCode: "XX",
@@ -631,7 +632,7 @@
 
 		verifyCentroids(data.map);
 
-		//createTitle(rawData);
+		createTitle(rawData);
 
 		createButtonsPanel(rawData);
 
@@ -723,7 +724,7 @@
 			if (d.clicked) {
 				chartState.selectedYear.length = 1;
 				loopButtons();
-				timer = d3.interval(loopButtons, 2 * duration);
+				timer = d3.interval(loopButtons, 3 * duration);
 			} else {
 				timer.stop();
 			};
@@ -738,7 +739,6 @@
 						return d === chartState.selectedYear[0]
 					});
 
-				yearButton.dispatch("click");
 				yearButton.dispatch("click");
 
 				if (yearsArray.length > buttonsNumber) {
@@ -776,6 +776,58 @@
 			};
 		});
 
+		if (!isBookmarkPage) {
+
+			const shareIcon = iconsDiv.append("button")
+				.attr("id", classPrefix + "ShareButton");
+
+			shareIcon.html("SHARE  ")
+				.append("span")
+				.attr("class", "fa fa-share");
+
+			const shareDiv = containerDiv.append("div")
+				.attr("class", "d3chartShareDiv")
+				.style("display", "none");
+
+			shareIcon.on("mouseover", function() {
+					shareDiv.html("Click to copy")
+						.style("display", "block");
+					const thisBox = this.getBoundingClientRect();
+					const containerBox = containerDiv.node().getBoundingClientRect();
+					const shareBox = shareDiv.node().getBoundingClientRect();
+					const thisOffsetTop = thisBox.top - containerBox.top - (shareBox.height - thisBox.height) / 2;
+					const thisOffsetLeft = thisBox.left - containerBox.left - shareBox.width - 12;
+					shareDiv.style("top", thisOffsetTop + "px")
+						.style("left", thisOffsetLeft + "20px");
+				}).on("mouseout", function() {
+					shareDiv.style("display", "none");
+				})
+				.on("click", function() {
+
+					const newURL = bookmarkSite + queryStringValues.toString();
+
+					const shareInput = shareDiv.append("input")
+						.attr("type", "text")
+						.attr("readonly", true)
+						.attr("spellcheck", "false")
+						.property("value", newURL);
+
+					shareInput.node().select();
+
+					document.execCommand("copy");
+
+					shareDiv.html("Copied!");
+
+					const thisBox = this.getBoundingClientRect();
+					const containerBox = containerDiv.node().getBoundingClientRect();
+					const shareBox = shareDiv.node().getBoundingClientRect();
+					const thisOffsetLeft = thisBox.left - containerBox.left - shareBox.width - 12;
+					shareDiv.style("left", thisOffsetLeft + "20px");
+
+				});
+
+		};
+
 		if (browserHasSnapshotIssues) {
 			const bestVisualizedSpan = snapshotContent.append("p")
 				.attr("id", classPrefix + "BestVisualizedText")
@@ -790,7 +842,7 @@
 			snapshotContent.style("display", "none")
 		});
 
-		helpIcon.on("click", createAnnotationsDiv);
+		helpIcon.on("click", null); //CHANGE THIS!!!!!!!!!!!!
 
 		downloadIcon.on("click", function() {
 
@@ -1295,6 +1347,8 @@
 
 		overRectangle.on("mouseover", function() {
 
+				currentHoveredElement = this;
+
 				const mouseContainer = d3.mouse(containerDiv.node());
 
 				const mouse = d3.mouse(this);
@@ -1358,6 +1412,7 @@
 			})
 			.on("mouseout", function() {
 				if (isSnapshotTooltipVisible) return;
+				currentHoveredElement = null;
 				tooltip.style("display", "none");
 			});
 
@@ -1631,7 +1686,7 @@
 
 			const innerTooltip = tooltip.append("div")
 				.style("max-width", "200px")
-				.attr("id", "pbinadInnerTooltipDiv");
+				.attr("id", classPrefix + "InnerTooltipDiv");
 
 			innerTooltip.html("Click for selecting a single year. Double-click or ALT + click for selecting multiple years.");
 
@@ -1864,11 +1919,15 @@
 
 		countries.on("mouseover", mouseover)
 			.on("mouseout", function() {
+				if (isSnapshotTooltipVisible) return;
+				currentHoveredElement = null;
 				tooltip.html(null)
 					.style("display", "none");
 			});
 
 		function mouseover(d) {
+
+			currentHoveredElement = this;
 
 			tooltip.style("display", "block")
 				.html(null);
@@ -2353,6 +2412,8 @@
 
 		function mouseoverBarsTooltipRectangles(d) {
 
+			currentHoveredElement = this;
+
 			tooltipBar.style("display", "block")
 				.html(null);
 
@@ -2407,6 +2468,8 @@
 		};
 
 		function mouseoutBarsTooltipRectangles() {
+			if (isSnapshotTooltipVisible) return;
+			currentHoveredElement = null;
 			tooltipBar.style("display", "none")
 				.html(null);
 		};
@@ -2718,54 +2781,6 @@
 		});
 	};
 
-	function createAnnotationsDiv() {
-
-		const padding = 6;
-
-		const overDiv = containerDiv.append("div")
-			.attr("class", classPrefix + "OverDivHelp");
-
-		const helpSVG = overDiv.append("svg")
-			.attr("viewBox", "0 0 " + width + " " + height);
-
-		const arrowMarker = helpSVG.append("defs")
-			.append("marker")
-			.attr("id", classPrefix + "ArrowMarker")
-			.attr("viewBox", "0 -5 10 10")
-			.attr("refX", 0)
-			.attr("refY", 0)
-			.attr("markerWidth", 12)
-			.attr("markerHeight", 12)
-			.attr("orient", "auto")
-			.append("path")
-			.style("fill", "#E56A54")
-			.attr("d", "M0,-5L10,0L0,5");
-
-		const mainTextWhite = helpSVG.append("text")
-			.attr("font-family", "Roboto")
-			.attr("font-size", "26px")
-			.style("stroke-width", "5px")
-			.attr("font-weight", 700)
-			.style("stroke", "white")
-			.attr("text-anchor", "middle")
-			.attr("x", width / 2)
-			.attr("y", 320)
-			.text("CLICK ANYWHERE TO START");
-
-		const mainText = helpSVG.append("text")
-			.attr("class", classPrefix + "AnnotationMainText contributionColorFill")
-			.attr("text-anchor", "middle")
-			.attr("x", width / 2)
-			.attr("y", 320)
-			.text("CLICK ANYWHERE TO START");
-
-		helpSVG.on("click", function() {
-			overDiv.remove();
-		});
-
-		//end of createAnnotationsDiv
-	};
-
 	function createFooterDiv() {
 
 		let footerText = "© OCHA CERF Section " + currentYear;
@@ -2796,10 +2811,17 @@
 
 		const downloadingDivText = "Downloading " + type.toUpperCase();
 
+		createProgressWheel(downloadingDivSvg, 200, 175, downloadingDivText);
+
 		const svgRealSize = svg.node().getBoundingClientRect();
 
 		svg.attr("width", svgRealSize.width)
 			.attr("height", svgRealSize.height);
+
+		const stackedSvgRealSize = stackedSvg.node().getBoundingClientRect();
+
+		stackedSvg.attr("width", stackedSvgRealSize.width)
+			.attr("height", stackedSvgRealSize.height);
 
 		const listOfStyles = [
 			"font-size",
@@ -2814,12 +2836,21 @@
 			"text-transform",
 			"shape-rendering",
 			"letter-spacing",
-			"white-space"
+			"white-space",
+			"dominant-baseline",
+			"letter-spacing",
+			"paint-order"
 		];
 
 		const imageDiv = containerDiv.node();
 
 		setSvgStyles(svg.node());
+		setSvgStyles(stackedSvg.node());
+
+		if (fromContextMenu && currentHoveredElement) {
+			if (tooltip.select("svg").size()) setSvgStyles(tooltip.select("svg").node());
+			if (tooltipBar.select("svg").size()) setSvgStyles(tooltipBar.select("svg").node())
+		};
 
 		if (type === "png") {
 			iconsDiv.style("opacity", 0);
@@ -2846,7 +2877,7 @@
 				downloadSnapshotPdf(canvas);
 			};
 
-			if (fromContextMenu && currentHoveredElem) d3.select(currentHoveredElem).dispatch("mouseout");
+			if (fromContextMenu && currentHoveredElement) d3.select(currentHoveredElement).dispatch("mouseout");
 
 		});
 
@@ -2889,6 +2920,8 @@
 			};
 		});
 
+		removeProgressWheel();
+
 		d3.select("#" + classPrefix + "DownloadingDiv").remove();
 
 	};
@@ -2897,12 +2930,12 @@
 
 		const pdfMargins = {
 			top: 10,
-			bottom: 16,
+			bottom: 30,
 			left: 20,
 			right: 30
 		};
 
-		d3.image("https://raw.githubusercontent.com/CBPFGMS/cbpfgms.github.io/master/img/assets/bilogo.png")
+		d3.image("./assets/img/UNOCHA_logo_vertical_blue_RGB.png")
 			.then(function(logo) {
 
 				let pdf;
@@ -2930,68 +2963,76 @@
 
 				createLetterhead();
 
-				const intro = pdf.splitTextToSize("TEXT HERE.", (210 - pdfMargins.left - pdfMargins.right), {
-					fontSize: 12
-				});
-
-				const fullDate = d3.timeFormat("%A, %d %B %Y")(new Date());
-
-				pdf.setTextColor(60);
-				pdf.setFont('helvetica');
-				pdf.setFontType("normal");
-				pdf.setFontSize(12);
-				pdf.text(pdfMargins.left, 48, intro);
-
-				pdf.setTextColor(65, 143, 222);
+				pdf.setTextColor(80, 80, 90);
 				pdf.setFont('helvetica');
 				pdf.setFontType("bold");
-				pdf.setFontSize(16);
-				pdf.text(chartTitle, pdfMargins.left, 65);
+				pdf.setFontSize(14);
+				pdf.text("Allocations", pdfMargins.left, 44);
 
-				pdf.setFontSize(12);
-
-				pdf.fromHTML("<div style='margin-bottom: 2px; font-family: Arial, sans-serif; color: rgb(60, 60 60);'>Date: <span style='color: rgb(65, 143, 222); font-weight: 700;'>" +
-					fullDate + "</span></div>", pdfMargins.left, 70, {
-						width: 210 - pdfMargins.left - pdfMargins.right
-					},
-					function(position) {
-						pdfTextPosition = position;
-					});
-
-				pdf.addImage(source, "PNG", pdfMargins.left, pdfTextPosition.y + 2, widthInMilimeters, heightInMilimeters);
+				pdf.addImage(source, "PNG", pdfMargins.left, 48, widthInMilimeters, heightInMilimeters);
 
 				const currentDate = new Date();
 
-				pdf.save(classPrefix + "_" + csvDateFormat(currentDate) + ".pdf");
+				pdf.output("dataurlnewwindow");
+				//pdf.save(vizNameQueryString + "_" + csvDateFormat(currentDate) + ".pdf");
+
+				removeProgressWheel();
 
 				d3.select("#" + classPrefix + "DownloadingDiv").remove();
 
 				function createLetterhead() {
 
-					const footer = "© OCHA CBPF Section 2019 | For more information, please visit pfbi.unocha.org";
+					const footer = pdf.splitTextToSize("The mission of the United Nations Office for the Coordination of Humanitarian Affairs (OCHA) is to Coordinate the global emergency response to save lives and protect people in humanitarian crises. We advocate for effective and principled humanitarian action by all, for all.", (210 - pdfMargins.left - pdfMargins.right), {
+						fontSize: 8
+					});
 
 					pdf.setFillColor(65, 143, 222);
-					pdf.rect(0, pdfMargins.top, 210, 15, "F");
+					pdf.rect(pdfMargins.left, pdfMargins.top + 20, 210 - pdfMargins.right, 0.75, "F");
+					pdf.rect(pdfMargins.left, pdfHeight - pdfMargins.bottom, 210 - pdfMargins.right, 0.75, "F");
+					pdf.rect(pdfMargins.left + 22, pdfMargins.top + 2, 0.25, 15, "F");
 
-					pdf.setFillColor(236, 161, 84);
-					pdf.rect(0, pdfMargins.top + 15, 210, 2, "F");
+					const fullDate = d3.timeFormat("%A, %d %B %Y")(new Date());
 
-					pdf.setFillColor(255, 255, 255);
-					pdf.rect(pdfMargins.left, pdfMargins.top - 1, 94, 20, "F");
+					pdf.setTextColor(35, 143, 222);
+					pdf.setFontType("normal");
+					pdf.setFontSize(14);
+					pdf.text("CERF DATA HUB", pdfMargins.left + 26, 20);
 
-					pdf.ellipse(pdfMargins.left, pdfMargins.top + 9, 5, 9, "F");
-					pdf.ellipse(pdfMargins.left + 94, pdfMargins.top + 9, 5, 9, "F");
-
-					pdf.addImage(logo, "PNG", pdfMargins.left + 2, pdfMargins.top, 90, 18);
-
-					pdf.setFillColor(236, 161, 84);
-					pdf.rect(0, pdfHeight - pdfMargins.bottom, 210, 2, "F");
-
-					pdf.setTextColor(60);
-					pdf.setFont("arial");
+					pdf.setTextColor(35, 143, 222);
 					pdf.setFontType("normal");
 					pdf.setFontSize(10);
-					pdf.text(footer, pdfMargins.left, pdfHeight - pdfMargins.bottom + 10);
+					pdf.text(fullDate, pdfMargins.left + 26, 26.1);
+
+
+					// pdf.setFillColor(236, 161, 84);
+					// pdf.rect(0, pdfMargins.top + 15, 210, 2, "F");
+
+					// pdf.setFillColor(255, 255, 255);
+					// pdf.rect(pdfMargins.left, pdfMargins.top - 1, 94, 20, "F");
+
+					// pdf.ellipse(pdfMargins.left, pdfMargins.top + 9, 5, 9, "F");
+					// pdf.ellipse(pdfMargins.left + 94, pdfMargins.top + 9, 5, 9, "F");
+
+					pdf.addImage(logo, "PNG", pdfMargins.left + 2, pdfMargins.top, 14, 18);
+
+					// pdf.setFillColor(236, 161, 84);
+					// pdf.rect(0, pdfHeight - pdfMargins.bottom, 210, 2, "F");
+
+					pdf.setTextColor(35, 143, 222);
+					pdf.setFont("helvetica");
+					pdf.setFontType("normal");
+					pdf.setFontSize(8);
+					pdf.text(footer, 105, pdfHeight - pdfMargins.bottom + 6, {
+						align: "center"
+					});
+
+					pdf.setTextColor(35, 143, 222);
+					pdf.setFont("helvetica");
+					pdf.setFontType("bold");
+					pdf.setFontSize(8);
+					pdf.text("www.unocha.org", 105, pdfHeight - pdfMargins.bottom + 16, {
+						align: "center"
+					});
 
 				};
 
@@ -3030,6 +3071,72 @@
 			siString = siString.slice(0, -1) + "B";
 		};
 		return siString;
+	};
+
+	function createProgressWheel(thissvg, thiswidth, thisheight, thistext) {
+		const wheelGroup = thissvg.append("g")
+			.attr("class", classPrefix + "d3chartwheelGroup")
+			.attr("transform", "translate(" + thiswidth / 2 + "," + thisheight / 4 + ")");
+
+		const loadingText = wheelGroup.append("text")
+			.attr("text-anchor", "middle")
+			.style("font-family", "Roboto")
+			.style("font-weight", "bold")
+			.style("font-size", "11px")
+			.attr("y", 50)
+			.attr("class", "contributionColorFill")
+			.text(thistext);
+
+		const arc = d3.arc()
+			.outerRadius(25)
+			.innerRadius(20);
+
+		const wheel = wheelGroup.append("path")
+			.datum({
+				startAngle: 0,
+				endAngle: 0
+			})
+			.classed("contributionColorFill", true)
+			.attr("d", arc);
+
+		transitionIn();
+
+		function transitionIn() {
+			wheel.transition()
+				.duration(1000)
+				.attrTween("d", function(d) {
+					const interpolate = d3.interpolate(0, Math.PI * 2);
+					return function(t) {
+						d.endAngle = interpolate(t);
+						return arc(d)
+					}
+				})
+				.on("end", transitionOut)
+		};
+
+		function transitionOut() {
+			wheel.transition()
+				.duration(1000)
+				.attrTween("d", function(d) {
+					const interpolate = d3.interpolate(0, Math.PI * 2);
+					return function(t) {
+						d.startAngle = interpolate(t);
+						return arc(d)
+					}
+				})
+				.on("end", function(d) {
+					d.startAngle = 0;
+					transitionIn()
+				})
+		};
+
+		//end of createProgressWheel
+	};
+
+	function removeProgressWheel() {
+		const wheelGroup = d3.select("." + classPrefix + "d3chartwheelGroup");
+		wheelGroup.select("path").interrupt();
+		wheelGroup.remove();
 	};
 
 	//end of d3ChartIIFE
