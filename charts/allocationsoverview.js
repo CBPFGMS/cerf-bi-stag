@@ -2989,8 +2989,8 @@
 
 				const currentDate = new Date();
 
-				pdf.output("dataurlnewwindow");
-				//pdf.save(vizNameQueryString + "_" + csvDateFormat(currentDate) + ".pdf");
+				//pdf.output("dataurlnewwindow");
+				pdf.save(vizNameQueryString + "_" + csvDateFormat(currentDate) + ".pdf");
 
 				removeProgressWheel();
 
