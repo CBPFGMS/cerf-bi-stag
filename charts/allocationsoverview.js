@@ -663,12 +663,13 @@
 			.attr("id", classPrefix + "d3chartTitle")
 			.html(chartTitle);
 
-		const helpIcon = iconsDiv.append("button")
-			.attr("id", classPrefix + "HelpButton");
+		//NO HELP ICON FOR NOW
+		// const helpIcon = iconsDiv.append("button")
+		// 	.attr("id", classPrefix + "HelpButton");
 
-		helpIcon.html("HELP  ")
-			.append("span")
-			.attr("class", "fa fa-info")
+		// helpIcon.html("HELP  ")
+		// 	.append("span")
+		// 	.attr("class", "fa fa-info")
 
 		const downloadIcon = iconsDiv.append("button")
 			.attr("id", classPrefix + "DownloadButton");
@@ -842,15 +843,15 @@
 			snapshotContent.style("display", "none")
 		});
 
-		helpIcon.on("click", null); //CHANGE THIS!!!!!!!!!!!!
+		//helpIcon.on("click", null); //CHANGE THIS
 
 		downloadIcon.on("click", function() {
 
-			const csv = createCsv(rawData); //CHANGE
+			const csv = createCsv(rawData);
 
 			const currentDate = new Date();
 
-			const fileName = classPrefix + "_" + csvDateFormat(currentDate) + ".csv";
+			const fileName = vizNameQueryString + "_" + csvDateFormat(currentDate) + ".csv";
 
 			const blob = new Blob([csv], {
 				type: 'text/csv;charset=utf-8;'
@@ -2631,9 +2632,24 @@
 		//end of processData
 	};
 
-	function createCsv(datahere) {
+	function createCsv(rawData) {
 
-		const csv = d3.csvFormat(changedDataHere);
+		const csvData = [];
+
+		rawData.forEach(function(row) {
+			if (chartState.selectedYear.indexOf(+row.AllocationYear) > -1) {
+				csvData.push({
+					Year: row.AllocationYear,
+					Cluster: clustersList[row.ClusterId],
+					Window: cerfAllocationTypes[row.AllocationSurceId],
+					"Number of projects": row.NumbofProj,
+					Fund: fundNamesList[row.PooledFundId],
+					Agency: unAgenciesNamesList[row.PartnerCode]
+				});
+			};
+		});
+
+		const csv = d3.csvFormat(csvData);
 
 		return csv;
 	};
