@@ -842,6 +842,7 @@ p#contriboverd3chartTitle {
 	cursor: pointer;
 	border-radius: 4px;
 	overflow: hidden;
+	text-align: left;
 }
 
 .contriboverSnapshotContent #contriboverSnapshotPdfText, .contriboverSnapshotContent #contriboverSnapshotPngText, .contriboverSnapshotContent #contriboverSnapshotTooltipPdfText, .contriboverSnapshotContent #contriboverSnapshotTooltipPngText {

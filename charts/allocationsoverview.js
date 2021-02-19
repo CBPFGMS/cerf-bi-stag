@@ -2644,7 +2644,8 @@
 					Window: cerfAllocationTypes[row.AllocationSurceId],
 					"Number of projects": row.NumbofProj,
 					Fund: fundNamesList[row.PooledFundId],
-					Agency: unAgenciesNamesList[row.PartnerCode]
+					Agency: unAgenciesNamesList[row.PartnerCode],
+					Budget: row.Budget
 				});
 			};
 		});
@@ -2919,7 +2920,7 @@
 
 		const currentDate = new Date();
 
-		const fileName = classPrefix + "_" + csvDateFormat(currentDate) + ".png";
+		const fileName = vizNameQueryString + "_" + csvDateFormat(currentDate) + ".png";
 
 		source.toBlob(function(blob) {
 			const url = URL.createObjectURL(blob);

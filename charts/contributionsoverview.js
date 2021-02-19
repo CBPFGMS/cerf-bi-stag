@@ -43,7 +43,8 @@
 		privateDonorsIsoCode = "xprv",
 		vizNameQueryString = "contributions",
 		allYearsOption = "all",
-		bookmarkSite = "https://bi-home.gitlab.io/CBPF-BI-Homepage/bookmark.html?",
+		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
+		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
 		helpPortalUrl = "https://gms.unocha.org/content/business-intelligence#CBPF_Contributions",
 		dataUrl = "https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERF_ContributionTotal.csv",
 		flagsUrl = "./assets/img/flags.json",
@@ -68,7 +69,7 @@
 		};
 
 	let isSnapshotTooltipVisible = false,
-		currentHoveredRect,
+		currentHoveredElement,
 		timer,
 		allTimeContributions = 0;
 
@@ -284,7 +285,7 @@
 
 		let data = processData(rawData);
 
-		//createTitle();
+		createTitle(rawData);
 
 		createFooterDiv();
 
@@ -378,18 +379,19 @@
 			//end of clickButtonsContributionsRects
 		};
 
-		function createTitle() {
+		function createTitle(rawData) {
 
 			const title = titleDiv.append("p")
 				.attr("id", classPrefix + "d3chartTitle")
 				.html(chartTitle);
 
-			const helpIcon = iconsDiv.append("button")
-				.attr("id", classPrefix + "HelpButton");
+			//NO HELP ICON FOR NOW
+			// const helpIcon = iconsDiv.append("button")
+			// 	.attr("id", classPrefix + "HelpButton");
 
-			helpIcon.html("HELP  ")
-				.append("span")
-				.attr("class", "fa fa-info");
+			// helpIcon.html("HELP  ")
+			// 	.append("span")
+			// 	.attr("class", "fa fa-info")
 
 			const downloadIcon = iconsDiv.append("button")
 				.attr("id", classPrefix + "DownloadButton");
@@ -445,7 +447,7 @@
 				if (d.clicked) {
 					chartState.selectedYear.length = 1;
 					loopButtons();
-					timer = d3.interval(loopButtons, 2 * duration);
+					timer = d3.interval(loopButtons, 3 * duration);
 				} else {
 					timer.stop();
 				};
@@ -461,39 +463,93 @@
 						});
 
 					yearButton.dispatch("click");
-					yearButton.dispatch("click");
 
-					const firstYearIndex = chartState.selectedYear[0] < yearsArray[buttonsNumber / 2] ?
-						0 :
-						chartState.selectedYear[0] > yearsArray[yearsArray.length - (buttonsNumber / 2)] ?
-						yearsArray.length - buttonsNumber :
-						yearsArray.indexOf(chartState.selectedYear[0]) - (buttonsNumber / 2);
+					if (yearsArray.length > buttonsNumber) {
 
-					const currentTranslate = -(buttonPanel.buttonWidth * firstYearIndex);
+						const firstYearIndex = chartState.selectedYear[0] < yearsArray[buttonsNumber / 2] ?
+							0 :
+							chartState.selectedYear[0] > yearsArray[yearsArray.length - (buttonsNumber / 2)] || chartState.selectedYear[0] === allYearsOption ?
+							yearsArray.length - buttonsNumber :
+							yearsArray.indexOf(chartState.selectedYear[0]) - (buttonsNumber / 2);
 
-					if (currentTranslate === 0) {
-						svg.select("." + classPrefix + "LeftArrowGroup").select("text").style("fill", "#ccc")
-						svg.select("." + classPrefix + "LeftArrowGroup").attr("pointer-events", "none");
-					} else {
-						svg.select("." + classPrefix + "LeftArrowGroup").select("text").style("fill", "#666")
-						svg.select("." + classPrefix + "LeftArrowGroup").attr("pointer-events", "all");
+						const currentTranslate = -(buttonPanel.buttonWidth * firstYearIndex);
+
+						if (currentTranslate === 0) {
+							svg.select("." + classPrefix + "LeftArrowGroup").select("text").style("fill", "#ccc")
+							svg.select("." + classPrefix + "LeftArrowGroup").attr("pointer-events", "none");
+						} else {
+							svg.select("." + classPrefix + "LeftArrowGroup").select("text").style("fill", "#666")
+							svg.select("." + classPrefix + "LeftArrowGroup").attr("pointer-events", "all");
+						};
+
+						if (Math.abs(currentTranslate) >= ((yearsArray.length - buttonsNumber) * buttonPanel.buttonWidth)) {
+							svg.select("." + classPrefix + "RightArrowGroup").select("text").style("fill", "#ccc")
+							svg.select("." + classPrefix + "RightArrowGroup").attr("pointer-events", "none");
+						} else {
+							svg.select("." + classPrefix + "RightArrowGroup").select("text").style("fill", "#666")
+							svg.select("." + classPrefix + "RightArrowGroup").attr("pointer-events", "all");
+						};
+
+						svg.select("." + classPrefix + "buttonsGroup").transition()
+							.duration(duration)
+							.attrTween("transform", function() {
+								return d3.interpolateString(this.getAttribute("transform"), "translate(" + currentTranslate + ",0)");
+							});
 					};
-
-					if (Math.abs(currentTranslate) >= ((yearsArray.length - buttonsNumber) * buttonPanel.buttonWidth)) {
-						svg.select("." + classPrefix + "RightArrowGroup").select("text").style("fill", "#ccc")
-						svg.select("." + classPrefix + "RightArrowGroup").attr("pointer-events", "none");
-					} else {
-						svg.select("." + classPrefix + "RightArrowGroup").select("text").style("fill", "#666")
-						svg.select("." + classPrefix + "RightArrowGroup").attr("pointer-events", "all");
-					};
-
-					svg.select("." + classPrefix + "buttonsGroup").transition()
-						.duration(duration)
-						.attrTween("transform", function() {
-							return d3.interpolateString(this.getAttribute("transform"), "translate(" + currentTranslate + ",0)");
-						});
 				};
 			});
+
+			if (!isBookmarkPage) {
+
+				const shareIcon = iconsDiv.append("button")
+					.attr("id", classPrefix + "ShareButton");
+
+				shareIcon.html("SHARE  ")
+					.append("span")
+					.attr("class", "fa fa-share");
+
+				const shareDiv = containerDiv.append("div")
+					.attr("class", "d3chartShareDiv")
+					.style("display", "none");
+
+				shareIcon.on("mouseover", function() {
+						shareDiv.html("Click to copy")
+							.style("display", "block");
+						const thisBox = this.getBoundingClientRect();
+						const containerBox = containerDiv.node().getBoundingClientRect();
+						const shareBox = shareDiv.node().getBoundingClientRect();
+						const thisOffsetTop = thisBox.top - containerBox.top - (shareBox.height - thisBox.height) / 2;
+						const thisOffsetLeft = thisBox.left - containerBox.left - shareBox.width - 12;
+						shareDiv.style("top", thisOffsetTop + "px")
+							.style("left", thisOffsetLeft + "20px");
+					}).on("mouseout", function() {
+						shareDiv.style("display", "none");
+					})
+					.on("click", function() {
+
+						const newURL = bookmarkSite + queryStringValues.toString();
+
+						const shareInput = shareDiv.append("input")
+							.attr("type", "text")
+							.attr("readonly", true)
+							.attr("spellcheck", "false")
+							.property("value", newURL);
+
+						shareInput.node().select();
+
+						document.execCommand("copy");
+
+						shareDiv.html("Copied!");
+
+						const thisBox = this.getBoundingClientRect();
+						const containerBox = containerDiv.node().getBoundingClientRect();
+						const shareBox = shareDiv.node().getBoundingClientRect();
+						const thisOffsetLeft = thisBox.left - containerBox.left - shareBox.width - 12;
+						shareDiv.style("left", thisOffsetLeft + "20px");
+
+					});
+
+			};
 
 			if (browserHasSnapshotIssues) {
 				const bestVisualizedSpan = snapshotContent.append("p")
@@ -509,7 +565,7 @@
 				snapshotContent.style("display", "none")
 			});
 
-			helpIcon.on("click", null); //CHANGE THIS!!!!!!!!!!!!
+			//helpIcon.on("click", null); //CHANGE THIS
 
 			downloadIcon.on("click", function() {
 
@@ -517,7 +573,7 @@
 
 				const currentDate = new Date();
 
-				const fileName = "CBPFcontributions_" + csvDateFormat(currentDate) + ".csv";
+				const fileName = vizNameQueryString + "_" + csvDateFormat(currentDate) + ".csv";
 
 				const blob = new Blob([csv], {
 					type: 'text/csv;charset=utf-8;'
@@ -1163,6 +1219,8 @@
 
 				donorDiv.on("mouseover", (d, i, n) => {
 
+					currentHoveredElement = this;
+
 					const thisBox = n[i].getBoundingClientRect();
 
 					const containerBox = containerDiv.node().getBoundingClientRect();
@@ -1205,6 +1263,7 @@
 						.style("left", thisOffsetLeft + "px");
 				}).on("mouseout", () => {
 					if (isSnapshotTooltipVisible) return;
+					currentHoveredElement = null;
 					tooltip.style("display", "none");
 				});
 
@@ -1215,6 +1274,8 @@
 		};
 
 		function mouseOverTopPanel() {
+
+			currentHoveredElement = this;
 
 			const thisOffset = this.getBoundingClientRect().top - containerDiv.node().getBoundingClientRect().top;
 
@@ -1259,6 +1320,7 @@
 
 		function mouseOutTopPanel() {
 			if (isSnapshotTooltipVisible) return;
+			currentHoveredElement = null;
 			tooltip.style("display", "none");
 		};
 
@@ -1367,65 +1429,24 @@
 
 	function createCsv(rawData) {
 
-		const filteredDataRaw = rawData.filter(function(d) {
-			if (!chartState.selectedDonors.length && !chartState.selectedCbpfs.length) {
-				return chartState.selectedYear.indexOf(+d.FiscalYear) > -1;
-			} else if (chartState.selectedDonors.length) {
-				return chartState.selectedYear.indexOf(+d.FiscalYear) > -1 && chartState.selectedDonors.indexOf(d.GMSDonorISO2Code.toLowerCase()) > -1;
-			} else {
-				return chartState.selectedYear.indexOf(+d.FiscalYear) > -1 && chartState.selectedCbpfs.indexOf(d.PooledFundISO2Code.toLowerCase()) > -1;
+		const csvData = [];
+
+		rawData.forEach(function(row) {
+			if (chartState.selectedYear.indexOf(+row.FiscalYear) > -1) {
+				csvData.push({
+					Year: row.FiscalYear,
+					Donor: row.GMSDonorName,
+					"Donor type": row.PooledFundName,
+					Paid: row.PaidAmt,
+					Pledged: row.PledgeAmt,
+					Total: (+row.PaidAmt) + (+row.PledgeAmt)
+				});
 			};
-		}).sort(function(a, b) {
-			return (+b.FiscalYear) - (+a.FiscalYear) || (a.GMSDonorName.toLowerCase() < b.GMSDonorName.toLowerCase() ? -1 :
-				a.GMSDonorName.toLowerCase() > b.GMSDonorName.toLowerCase() ? 1 : 0) || (a.PooledFundName.toLowerCase() < b.PooledFundName.toLowerCase() ? -1 :
-				a.PooledFundName.toLowerCase() > b.PooledFundName.toLowerCase() ? 1 : 0);
 		});
 
-		const filteredData = JSON.parse(JSON.stringify(filteredDataRaw));
+		const csv = d3.csvFormat(csvData);
 
-		filteredData.forEach(function(d) {
-			d.Year = +d.FiscalYear;
-			d["Donor Name"] = d.GMSDonorName;
-			d["CBPF Name"] = d.PooledFundName;
-			d["Paid Amount"] = +d.PaidAmt;
-			d["Pledged Amount"] = +d.PledgeAmt;
-			d["Total Contributions"] = (+d.PaidAmt) + (+d.PledgeAmt);
-			d["Local Curency"] = d.PaidAmtLocalCurrency;
-			d["Exchange Rate"] = d.PaidAmtCurrencyExchangeRate;
-			d["Paid Amount (Local Currency)"] = +d.PaidAmtLocal;
-			d["Pledged Amount (Local Currency)"] = +d.PledgeAmtLocal;
-			d["Total Contributions (Local Currency)"] = (+d.PaidAmtLocal) + (+d.PledgeAmtLocal);
-
-			delete d.FiscalYear;
-			delete d.GMSDonorName;
-			delete d.PooledFundName;
-			delete d.PaidAmt;
-			delete d.PledgeAmt;
-			delete d.PaidAmtLocal;
-			delete d.PledgeAmtLocal;
-			delete d.GMSDonorISO2Code;
-			delete d.PooledFundISO2Code;
-			delete d.PledgeAmtLocalCurrency;
-			delete d.PledgeAmtCurrencyExchangeRate;
-			delete d.PaidAmtLocalCurrency;
-			delete d.PaidAmtCurrencyExchangeRate;
-		});
-
-		const header = d3.keys(filteredData[0]);
-
-		const replacer = function(key, value) {
-			return value === null ? '' : value
-		};
-
-		let rows = filteredData.map(function(row) {
-			return header.map(function(fieldName) {
-				return JSON.stringify(row[fieldName], replacer)
-			}).join(',')
-		});
-
-		rows.unshift(header.join(','));
-
-		return rows.join('\r\n');
+		return csv;
 
 		//end of createCsv
 	};
@@ -1489,10 +1510,7 @@
 
 		const downloadingDivText = "Downloading " + type.toUpperCase();
 
-		const svgRealSize = svg.node().getBoundingClientRect();
-
-		svg.attr("width", svgRealSize.width)
-			.attr("height", svgRealSize.height);
+		createProgressWheel(downloadingDivSvg, 200, 175, downloadingDivText);
 
 		const listOfStyles = [
 			"font-size",
@@ -1510,9 +1528,15 @@
 			"white-space"
 		];
 
-		const imageDiv = containerDiv.node();
+		containerDiv.selectAll("svg")
+			.each(function() {
+				const svgRealSize = this.getBoundingClientRect();
+				d3.select(this).attr("width", svgRealSize.width)
+					.attr("height", svgRealSize.height);
+				setSvgStyles(this);
+			});
 
-		setSvgStyles(svg.node());
+		const imageDiv = containerDiv.node();
 
 		if (type === "png") {
 			iconsDiv.style("opacity", 0);
@@ -1544,7 +1568,7 @@
 				downloadSnapshotPdf(canvas);
 			};
 
-			if (fromContextMenu && currentHoveredRect) d3.select(currentHoveredRect).dispatch("mouseout");
+			if (fromContextMenu && currentHoveredElement) d3.select(currentHoveredElement).dispatch("mouseout");
 
 		});
 
@@ -1570,7 +1594,7 @@
 
 		const currentDate = new Date();
 
-		const fileName = "CBPFcontributions_" + csvDateFormat(currentDate) + ".png";
+		const fileName = vizNameQueryString + "_" + csvDateFormat(currentDate) + ".png";
 
 		source.toBlob(function(blob) {
 			const url = URL.createObjectURL(blob);
@@ -1587,6 +1611,8 @@
 			};
 		});
 
+		removeProgressWheel();
+
 		d3.select("#" + classPrefix + "DownloadingDiv").remove();
 
 	};
@@ -1600,7 +1626,7 @@
 			right: 30
 		};
 
-		d3.image("https://raw.githubusercontent.com/CBPFGMS/cbpfgms.github.io/master/img/assets/bilogo.png")
+		d3.image("./assets/img/UNOCHA_logo_vertical_blue_RGB.png")
 			.then(function(logo) {
 
 				let pdf;
@@ -1628,104 +1654,79 @@
 
 				createLetterhead();
 
-				const intro = pdf.splitTextToSize("Since the first CBPF was opened in Angola in 1997, donors have contributed more than $5 billion to 27 funds operating in the most severe and complex emergencies around the world.", (210 - pdfMargins.left - pdfMargins.right), {
-					fontSize: 12
-				});
-
-				const fullDate = d3.timeFormat("%A, %d %B %Y")(new Date());
-
-				pdf.setTextColor(60);
-				pdf.setFont('helvetica');
-				pdf.setFontType("normal");
-				pdf.setFontSize(12);
-				pdf.text(pdfMargins.left, 48, intro);
-
-				pdf.setTextColor(65, 143, 222);
+				pdf.setTextColor(80, 80, 90);
 				pdf.setFont('helvetica');
 				pdf.setFontType("bold");
-				pdf.setFontSize(16);
-				pdf.text(chartTitle, pdfMargins.left, 65);
+				pdf.setFontSize(14);
+				pdf.text("Contributions", pdfMargins.left, 44);
 
-				pdf.setFontSize(12);
-
-				const yearsList = chartState.selectedYear.sort(function(a, b) {
-					return a - b;
-				}).reduce(function(acc, curr, index) {
-					return acc + (index >= chartState.selectedYear.length - 2 ? index > chartState.selectedYear.length - 2 ? curr : curr + " and " : curr + ", ");
-				}, "");
-
-				const yearsText = chartState.selectedYear.length > 1 ? "Selected years: " : "Selected year: ";
-
-				const contributions = chartState.selectedContribution === "total" ? "Total (Paid + Pledged)" : chartState.selectedContribution === "paid" ? "Paid" : "Pledged";
-
-				const selectedCountry = !chartState.selectedDonors.length && !chartState.selectedCbpfs.length ?
-					"Selected countries-all" : countriesList();
-
-				pdf.fromHTML("<div style='margin-bottom: 2px; font-family: Arial, sans-serif; color: rgb(60, 60 60);'>Date: <span style='color: rgb(65, 143, 222); font-weight: 700;'>" +
-					fullDate + "</span></div><div style='margin-bottom: 2px; font-family: Arial, sans-serif; color: rgb(60, 60 60);'>" + yearsText + "<span style='color: rgb(65, 143, 222); font-weight: 700;'>" +
-					yearsList + "</span></div><div style='margin-bottom: 2px; font-family: Arial, sans-serif; color: rgb(60, 60 60);'>Contributions: <span style='color: rgb(65, 143, 222); font-weight: 700;'>" +
-					contributions + "</span></div><div style='margin-bottom: 2px; font-family: Arial, sans-serif; color: rgb(60, 60 60);'>" + selectedCountry.split("-")[0] + ": <span style='color: rgb(65, 143, 222); font-weight: 700;'>" +
-					selectedCountry.split("-")[1] + "</span></div>", pdfMargins.left, 70, {
-						width: 210 - pdfMargins.left - pdfMargins.right
-					},
-					function(position) {
-						pdfTextPosition = position;
-					});
-
-				pdf.addImage(source, "PNG", pdfMargins.left, pdfTextPosition.y + 2, widthInMilimeters, heightInMilimeters);
+				pdf.addImage(source, "PNG", pdfMargins.left, 48, widthInMilimeters, heightInMilimeters);
 
 				const currentDate = new Date();
 
-				pdf.save("CBPFcontributions_" + csvDateFormat(currentDate) + ".pdf");
+				//pdf.output("dataurlnewwindow");
+				pdf.save(vizNameQueryString + "_" + csvDateFormat(currentDate) + ".pdf");
+
+				removeProgressWheel();
 
 				d3.select("#" + classPrefix + "DownloadingDiv").remove();
 
 				function createLetterhead() {
 
-					const footer = "© OCHA CBPF Section 2019 | For more information, please visit pfbi.unocha.org";
+					const footer = pdf.splitTextToSize("The mission of the United Nations Office for the Coordination of Humanitarian Affairs (OCHA) is to Coordinate the global emergency response to save lives and protect people in humanitarian crises. We advocate for effective and principled humanitarian action by all, for all.", (210 - pdfMargins.left - pdfMargins.right), {
+						fontSize: 8
+					});
 
 					pdf.setFillColor(65, 143, 222);
-					pdf.rect(0, pdfMargins.top, 210, 15, "F");
+					pdf.rect(pdfMargins.left, pdfMargins.top + 20, 210 - pdfMargins.right, 0.75, "F");
+					pdf.rect(pdfMargins.left, pdfHeight - pdfMargins.bottom, 210 - pdfMargins.right, 0.75, "F");
+					pdf.rect(pdfMargins.left + 22, pdfMargins.top + 2, 0.25, 15, "F");
 
-					pdf.setFillColor(236, 161, 84);
-					pdf.rect(0, pdfMargins.top + 15, 210, 2, "F");
+					const fullDate = d3.timeFormat("%A, %d %B %Y")(new Date());
 
-					pdf.setFillColor(255, 255, 255);
-					pdf.rect(pdfMargins.left, pdfMargins.top - 1, 94, 20, "F");
+					pdf.setTextColor(35, 143, 222);
+					pdf.setFontType("normal");
+					pdf.setFontSize(14);
+					pdf.text("CERF DATA HUB", pdfMargins.left + 26, 20);
 
-					pdf.ellipse(pdfMargins.left, pdfMargins.top + 9, 5, 9, "F");
-					pdf.ellipse(pdfMargins.left + 94, pdfMargins.top + 9, 5, 9, "F");
-
-					pdf.addImage(logo, "PNG", pdfMargins.left + 2, pdfMargins.top, 90, 18);
-
-					pdf.setFillColor(236, 161, 84);
-					pdf.rect(0, pdfHeight - pdfMargins.bottom, 210, 2, "F");
-
-					pdf.setTextColor(60);
-					pdf.setFont("arial");
+					pdf.setTextColor(35, 143, 222);
 					pdf.setFontType("normal");
 					pdf.setFontSize(10);
-					pdf.text(footer, pdfMargins.left, pdfHeight - pdfMargins.bottom + 10);
+					pdf.text(fullDate, pdfMargins.left + 26, 26.1);
+
+
+					// pdf.setFillColor(236, 161, 84);
+					// pdf.rect(0, pdfMargins.top + 15, 210, 2, "F");
+
+					// pdf.setFillColor(255, 255, 255);
+					// pdf.rect(pdfMargins.left, pdfMargins.top - 1, 94, 20, "F");
+
+					// pdf.ellipse(pdfMargins.left, pdfMargins.top + 9, 5, 9, "F");
+					// pdf.ellipse(pdfMargins.left + 94, pdfMargins.top + 9, 5, 9, "F");
+
+					pdf.addImage(logo, "PNG", pdfMargins.left + 2, pdfMargins.top, 14, 18);
+
+					// pdf.setFillColor(236, 161, 84);
+					// pdf.rect(0, pdfHeight - pdfMargins.bottom, 210, 2, "F");
+
+					pdf.setTextColor(35, 143, 222);
+					pdf.setFont("helvetica");
+					pdf.setFontType("normal");
+					pdf.setFontSize(8);
+					pdf.text(footer, 105, pdfHeight - pdfMargins.bottom + 6, {
+						align: "center"
+					});
+
+					pdf.setTextColor(35, 143, 222);
+					pdf.setFont("helvetica");
+					pdf.setFontType("bold");
+					pdf.setFontSize(8);
+					pdf.text("www.unocha.org", 105, pdfHeight - pdfMargins.bottom + 16, {
+						align: "center"
+					});
 
 				};
 
-				function countriesList() {
-					const selection = chartState.selectedDonors.length ? "selectedDonors" : "selectedCbpfs";
-					const type = chartState.selectedDonors.length ? "donor" : "CBPF";
-					const plural = chartState[selection].length === 1 ? "" : "s";
-					const countryList = chartState[selection].map(function(d) {
-							return countryNames[d];
-						})
-						.sort(function(a, b) {
-							return a.toLowerCase() < b.toLowerCase() ? -1 :
-								a.toLowerCase() > b.toLowerCase() ? 1 : 0;
-						})
-						.reduce(function(acc, curr, index) {
-							return acc + (index >= chartState[selection].length - 2 ? index > chartState[selection].length - 2 ? curr : curr + " and " : curr + ", ");
-						}, "");
-					return "Selected " + type + plural + "-" + countryList;
-
-				};
 			});
 
 		//end of downloadSnapshotPdf
@@ -1812,6 +1813,72 @@
 			}
 		});
 		return returnValue;
+	};
+
+	function createProgressWheel(thissvg, thiswidth, thisheight, thistext) {
+		const wheelGroup = thissvg.append("g")
+			.attr("class", classPrefix + "d3chartwheelGroup")
+			.attr("transform", "translate(" + thiswidth / 2 + "," + thisheight / 4 + ")");
+
+		const loadingText = wheelGroup.append("text")
+			.attr("text-anchor", "middle")
+			.style("font-family", "Roboto")
+			.style("font-weight", "bold")
+			.style("font-size", "11px")
+			.attr("y", 50)
+			.attr("class", "contributionColorFill")
+			.text(thistext);
+
+		const arc = d3.arc()
+			.outerRadius(25)
+			.innerRadius(20);
+
+		const wheel = wheelGroup.append("path")
+			.datum({
+				startAngle: 0,
+				endAngle: 0
+			})
+			.classed("contributionColorFill", true)
+			.attr("d", arc);
+
+		transitionIn();
+
+		function transitionIn() {
+			wheel.transition()
+				.duration(1000)
+				.attrTween("d", function(d) {
+					const interpolate = d3.interpolate(0, Math.PI * 2);
+					return function(t) {
+						d.endAngle = interpolate(t);
+						return arc(d)
+					}
+				})
+				.on("end", transitionOut)
+		};
+
+		function transitionOut() {
+			wheel.transition()
+				.duration(1000)
+				.attrTween("d", function(d) {
+					const interpolate = d3.interpolate(0, Math.PI * 2);
+					return function(t) {
+						d.startAngle = interpolate(t);
+						return arc(d)
+					}
+				})
+				.on("end", function(d) {
+					d.startAngle = 0;
+					transitionIn()
+				})
+		};
+
+		//end of createProgressWheel
+	};
+
+	function removeProgressWheel() {
+		const wheelGroup = d3.select("." + classPrefix + "d3chartwheelGroup");
+		wheelGroup.select("path").interrupt();
+		wheelGroup.remove();
 	};
 
 	//end of d3ChartIIFE
