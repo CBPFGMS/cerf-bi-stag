@@ -1034,3 +1034,150 @@ p#contriboverd3chartTitle {
 .contribovertextDivPercentage {
 	color: #888;
 }
+
+/*Sankey diagram (code: cesank)*/
+
+#d3chartcontainercesank {
+	position: relative;
+}
+
+#cesankDownloadingDiv {
+	position: absolute;
+	background: #fcfcfc; 
+	border: 1px solid #666; 
+	border-radius: 8px;
+	pointer-events: none;
+	cursor: none;
+	width: 200px;
+	z-index: 1500;
+}
+
+#cesanktooltipdiv {    
+	position: absolute;
+	text-align: left;
+	color: #333;
+	font-family: 'Roboto', sans-serif;
+	white-space: normal;	
+	line-height: 120%;
+	font-size: 14px;
+	padding: 8px;
+	background: #f8f8f8; 
+	border: 1px solid #418fde; 
+	border-radius: 4px;
+	pointer-events: none;
+	cursor: none;
+	z-index: 1500;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.cesankTopDiv {
+	display: flex;
+	width: 100%;
+	margin-bottom: 4px;
+}
+
+.cesankTitleDiv {
+	display: flex;
+	flex:0 50%;
+	margin-left: 8px;
+}
+
+.cesankIconsDiv {
+	display: flex;
+	flex:0 50%;
+	flex-direction: row-reverse;
+	align-items: center;
+	margin-right: 16px;
+}
+
+.cesankFooterDiv {
+	width: 100%;
+	margin-top: 8px;
+}
+
+.cesankYearsDescriptionDiv {
+	margin-left: 22px;
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	color: #888;
+	width: 98%;
+}
+
+p#cesankd3chartTitle {
+	font-size: 26px;
+	font-family: "Arial", sans-serif;
+	margin: 0px;
+	color: #418fde;
+}
+
+.cesankbuttonsText {
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	pointer-events: none;
+}
+
+.cesankleftArrowText, .cesankrightArrowText {
+	font-family: "Arial", sans-serif;
+	font-size: 20px;
+	pointer-events: none;
+}
+
+#cesankSnapshotTooltip {
+	z-index: 1600;
+}
+
+.cesankSnapshotContent {
+	position: absolute;
+	min-width: 100px;
+	display: none;
+	background-color: #f9f9f9;
+	box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.25);
+	cursor: pointer;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.cesankSnapshotContent #cesankSnapshotPdfText, .cesankSnapshotContent #cesankSnapshotPngText, .cesankSnapshotContent #cesankSnapshotTooltipPdfText, .cesankSnapshotContent #cesankSnapshotTooltipPngText {
+	font-size: 14px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+}
+
+.cesankSnapshotContent #cesankBestVisualizedText, .cesankSnapshotContent #cesankTooltipBestVisualizedText {
+	font-size: 11px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+	border-top: 1px solid lightgray;
+	width: 202px;
+}
+
+.cesankSnapshotContent #cesankSnapshotPdfText:hover, .cesankSnapshotContent #cesankSnapshotPngText:hover, .cesankSnapshotContent #cesankSnapshotTooltipPdfText:hover, .cesankSnapshotContent #cesankSnapshotTooltipPngText:hover {
+	background-color: #1F69B3;
+	color: white;
+}
+
+.cesankcentralLine {
+	stroke: white;
+	stroke-width: 3px;
+	stroke-dasharray: 0, 6;
+	stroke-linecap: round;
+}
+
+.cesankcontributionsValueText, .cesankcontributionsText, .cesankcontributionsSubText, .cesankallocationsValueText, .cesankallocationsText, .cesankallocationsSubText {
+	font-family: "Roboto", sans-serif;
+	font-size: 22px;
+	fill: white;
+	font-weight: 300;
+	text-anchor: middle;
+}
+
+.cesankcontributionsValueTextSpan, .cesankallocationsValueTextSpan {
+	font-size: 44px;
+	font-weight: 700;
+}
+
+
