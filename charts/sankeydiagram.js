@@ -4,7 +4,7 @@
 	//All listeners using the arguments in the sequence: datum, index, node group
 
 	const width = 1100,
-		padding = [4, 4, 4, 4],
+		padding = [14, 4, 4, 4],
 		panelHorizontalPadding = 4,
 		buttonsPanelHeight = 30,
 		buttonsNumber = 18,
@@ -23,6 +23,11 @@
 		fundId = "fund",
 		maxYearsListNumber = 4,
 		partnersPadding = 50,
+		namesPadding = 10,
+		donorValuesPadding = 10,
+		textMinimumMargin = 6,
+		nameWidth = 92,
+		angle = -45,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -801,7 +806,7 @@
 
 		d3.select("body").on("d3ChartsYear." + classPrefix, function() {
 			clickButtonsRects(validateCustomEventYear(+d3.event.detail), true);
-			repositionButtonsGroup();
+			if (yearsArray.length > buttonsNumber) repositionButtonsGroup();
 			checkArrows();
 		});
 
@@ -1084,8 +1089,11 @@
 
 		const sankeyDataContributions = dataContributions.nodes.length ? sankeyGeneratorContributions(dataContributions) : dataContributions;
 
-		spreadNodes(sankeyDataContributions.nodes.filter(e => e.level === 1), false);
-		spreadNodes(sankeyDataContributions.nodes.filter(e => e.level === 2), false);
+		const donorNodes = sankeyDataContributions.nodes.filter(e => e.level === 1);
+		const fundNode = sankeyDataContributions.nodes.filter(e => e.level === 2);
+
+		spreadNodes(donorNodes, false);
+		spreadNodes(fundNode, false);
 
 		sankeyGeneratorContributions.update(sankeyDataContributions);
 
@@ -1144,6 +1152,62 @@
 			.attr("stroke-width", d => d.width)
 			.attr("d", drawLinks());
 
+		let sankeyDonorNames = contributionsPanel.main.selectAll("." + classPrefix + "sankeyDonorNames")
+			.data(donorNodes, d => d.id);
+
+		const sankeyDonorNamesExit = sankeyDonorNames.exit()
+			.transition()
+			.duration(duration)
+			.style("opacity", 0)
+			.remove();
+
+		const sankeyDonorNamesEnter = sankeyDonorNames.enter()
+			.append("text")
+			.attr("class", classPrefix + "sankeyDonorNames")
+			.style("opacity", 1)
+			.attr("x", d => (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2)
+			.attr("y", contributionsPanel.padding[0] - namesPadding)
+			.text(d => d.codeId === othersId ? "Others" : lists.donorNames[d.codeId]);
+
+		sankeyDonorNames = sankeyDonorNamesEnter.merge(sankeyDonorNames);
+
+		sankeyDonorNames.transition()
+			.duration(duration)
+			.style("opacity", 1)
+			.attr("x", d => (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2);
+
+		let sankeyDonorValues = contributionsPanel.main.selectAll("." + classPrefix + "sankeyDonorValues")
+			.data(donorNodes, d => d.id);
+
+		const sankeyDonorValuesExit = sankeyDonorValues.exit()
+			.transition()
+			.duration(duration)
+			.style("opacity", 0)
+			.remove();
+
+		const sankeyDonorValuesEnter = sankeyDonorValues.enter()
+			.append("text")
+			.attr("class", classPrefix + "sankeyDonorValues")
+			.style("opacity", 1)
+			.attr("x", d => (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2)
+			.attr("y", d => d.x1 + namesPadding)
+			.text(d => "$0");
+
+		sankeyDonorValues = sankeyDonorValuesEnter.merge(sankeyDonorValues);
+
+		sankeyDonorValues.transition()
+			.duration(duration)
+			.style("opacity", 1)
+			.attr("x", d => (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2)
+			.textTween((d, i, n) => {
+				const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, d.value);
+				return t => "$" + formatSIFloat(interpolator(t));
+			});
+
+		//sankeyDonorNames.call(wrapNames, nameWidth);
+
+		//sankeyDonorNames.call(checkCollision);
+
 		//end of drawSankeyContributions
 	};
 
@@ -1153,9 +1217,13 @@
 
 		const sankeyDataAllocations = dataAllocations.nodes.length ? sankeyGeneratorAllocations(dataAllocations) : dataAllocations;
 
-		spreadNodes(sankeyDataAllocations.nodes.filter(e => e.level === 1), false);
-		spreadNodes(sankeyDataAllocations.nodes.filter(e => e.level === 2), true);
-		spreadNodes(sankeyDataAllocations.nodes.filter(e => e.level === 3), false);
+		const fundNode = sankeyDataAllocations.nodes.filter(e => e.level === 1);
+		const partnerNodes = sankeyDataAllocations.nodes.filter(e => e.level === 2);
+		const clusterNodes = sankeyDataAllocations.nodes.filter(e => e.level === 3);
+
+		spreadNodes(fundNode, false);
+		spreadNodes(partnerNodes, true);
+		spreadNodes(clusterNodes, false);
 
 		sankeyGeneratorAllocations.update(sankeyDataAllocations);
 
@@ -1213,6 +1281,112 @@
 			.style("stroke-opacity", linksOpacity)
 			.attr("stroke-width", d => d.width)
 			.attr("d", drawLinks());
+
+		let sankeyPartnerNames = allocationsPanel.main.selectAll("." + classPrefix + "sankeyPartnerNames")
+			.data(partnerNodes, d => d.id);
+
+		const sankeyPartnerNamesExit = sankeyPartnerNames.exit()
+			.transition()
+			.duration(duration)
+			.style("opacity", 0)
+			.remove();
+
+		const sankeyPartnerNamesEnter = sankeyPartnerNames.enter()
+			.append("text")
+			.attr("class", classPrefix + "sankeyPartnerNames")
+			.style("opacity", 1)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
+			.attr("y", d => d.x0 - namesPadding)
+			.text(d => lists.unAgencyShortNames[d.codeId]);
+
+		sankeyPartnerNames = sankeyPartnerNamesEnter.merge(sankeyPartnerNames);
+
+		sankeyPartnerNames.transition()
+			.duration(duration)
+			.style("opacity", 1)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2);
+
+		let sankeyPartnerValues = allocationsPanel.main.selectAll("." + classPrefix + "sankeyPartnerValues")
+			.data(partnerNodes, d => d.id);
+
+		const sankeyPartnerValuesExit = sankeyPartnerValues.exit()
+			.transition()
+			.duration(duration)
+			.style("opacity", 0)
+			.remove();
+
+		const sankeyPartnerValuesEnter = sankeyPartnerValues.enter()
+			.append("text")
+			.attr("class", classPrefix + "sankeyPartnerValues")
+			.style("opacity", 1)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
+			.attr("y", d => d.x1 + namesPadding)
+			.text(d => "$0");
+
+		sankeyPartnerValues = sankeyPartnerValuesEnter.merge(sankeyPartnerValues);
+
+		sankeyPartnerValues.transition()
+			.duration(duration)
+			.style("opacity", 1)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
+			.textTween((d, i, n) => {
+				const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, d.value);
+				return t => "$" + formatSIFloat(interpolator(t));
+			});
+
+		let sankeyClusterNames = allocationsPanel.main.selectAll("." + classPrefix + "sankeyClusterNames")
+			.data(clusterNodes, d => d.id);
+
+		const sankeyClusterNamesExit = sankeyClusterNames.exit()
+			.transition()
+			.duration(duration)
+			.style("opacity", 0)
+			.remove();
+
+		const sankeyClusterNamesEnter = sankeyClusterNames.enter()
+			.append("text")
+			.attr("class", classPrefix + "sankeyClusterNames")
+			.style("opacity", 1)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
+			.attr("y", d => d.x0 - namesPadding)
+			.text(d => lists.clusterShortNames[d.codeId]);
+
+		sankeyClusterNames = sankeyClusterNamesEnter.merge(sankeyClusterNames);
+
+		sankeyClusterNames.transition()
+			.duration(duration)
+			.style("opacity", 1)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2);
+
+		let sankeyClusterValues = allocationsPanel.main.selectAll("." + classPrefix + "sankeyClusterValues")
+			.data(clusterNodes, d => d.id);
+
+		const sankeyClusterValuesExit = sankeyClusterValues.exit()
+			.transition()
+			.duration(duration)
+			.style("opacity", 0)
+			.remove();
+
+		const sankeyClusterValuesEnter = sankeyClusterValues.enter()
+			.append("text")
+			.attr("class", classPrefix + "sankeyClusterValues")
+			.style("opacity", 1)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
+			.attr("y", d => d.x1 + namesPadding)
+			.text(d => "$0");
+
+		sankeyClusterValues = sankeyClusterValuesEnter.merge(sankeyClusterValues);
+
+		sankeyClusterValues.transition()
+			.duration(duration)
+			.style("opacity", 1)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
+			.textTween((d, i, n) => {
+				const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, d.value);
+				return t => "$" + formatSIFloat(interpolator(t));
+			});
+
+		//sankeyPartnerNames.call(wrapNames, nameWidth);
 
 		//end of drawSankeyAllocations
 	};
@@ -1432,6 +1606,54 @@
 		return d3.linkVertical()
 			.source(horizontalSource)
 			.target(horizontalTarget);
+	};
+
+	function checkCollision(selection) {
+		selection.each((_, i, n) => {
+			if (n[i + 1]) {
+				const previousElementBox = (n[i + 1]).getBoundingClientRect();
+				const currentElementBox = (n[i]).getBoundingClientRect();
+				if (previousElementBox.right + namesPadding > currentElementBox.left) {
+					d3.select(n[i]).style("transform-box", "fill-box")
+						.attr("transform", `rotate(${angle})`)
+				};
+			};
+		});
+	};
+
+	function wrapNames(text, width) {
+		text.each(function() {
+			let text = d3.select(this),
+				words = text.text().split(/\s+/);
+			if (words.length < 2) return;
+			let word,
+				line = [],
+				lineNumber = 0,
+				lineHeight = -1.1,
+				y = text.attr("y"),
+				x = text.attr("x"),
+				dy = 0,
+				tspan = text.text(null)
+				.append("tspan")
+				.attr("x", x)
+				.attr("y", y)
+				.attr("dy", dy + "em");
+			while (word = words.pop()) {
+				line.unshift(word);
+				tspan.text(line.join(" "));
+				if (tspan.node()
+					.getComputedTextLength() > width) {
+					line.shift();
+					tspan.text(line.join(" "));
+					line = [word];
+					tspan = text.append("tspan")
+						.attr("x", x)
+						.attr("y", y)
+						.attr("dy", ++lineNumber * lineHeight + dy + "em")
+						.text(word);
+				}
+			}
+		});
 	};
 
 	function createDonorNamesList(donorsData) {

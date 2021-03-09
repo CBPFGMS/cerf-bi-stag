@@ -1180,4 +1180,21 @@ p#cesankd3chartTitle {
 	font-weight: 700;
 }
 
+.cesanksankeyDonorNames, .cesanksankeyPartnerNames, .cesanksankeyClusterNames {
+	text-anchor: middle;
+	dominant-baseline: central;
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	fill: darkslategray;
+	font-weight: 400;
+}
+
+.cesanksankeyDonorValues, .cesanksankeyPartnerValues, .cesanksankeyClusterValues {
+	text-anchor: middle;
+	dominant-baseline: central;
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: darkslategray;
+	font-weight: 300;
+}
 
