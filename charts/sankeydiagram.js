@@ -1216,11 +1216,14 @@
 		sankeyNodesContributions.on("mouseover", mouseOverNodesContributions)
 			.on("mouseout", mouseOutNodesContributions);
 
+		sankeyDonorNames.on("mouseover", mouseOverNodesContributions)
+			.on("mouseout", mouseOutNodesContributions);
+
 		sankeyLinksContributions.on("mouseover", mouseOverLinksContributions)
 			.on("mouseout", mouseOutLinksContributions);
 
 		function mouseOverNodesContributions(datum) {
-			sankeyNodesContributions.style("opacity", (_, i, n) => n[i] === this ? 1 : fadeOpacityNodes);
+			sankeyNodesContributions.style("opacity", d => d.id === datum.id ? 1 : fadeOpacityNodes);
 			sankeyLinksContributions.style("stroke-opacity", d => d.source.codeId === datum.codeId ? linksOpacity : fadeOpacityLinks);
 			sankeyDonorNames.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
 			sankeyDonorValues.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
@@ -1433,8 +1436,14 @@
 			.on("mouseover", mouseOverPartnerNodes)
 			.on("mouseout", mouseOutPartnerNodes);
 
+		sankeyPartnerNames.on("mouseover", mouseOverPartnerNodes)
+			.on("mouseout", mouseOutPartnerNodes);
+
 		sankeyNodesAllocations.filter(d => d.level === 3)
 			.on("mouseover", mouseOverClusterNodes)
+			.on("mouseout", mouseOutClusterNodes);
+
+		sankeyClusterNames.on("mouseover", mouseOverClusterNodes)
 			.on("mouseout", mouseOutClusterNodes);
 
 		sankeyLinksAllocations.filter(d => d.source.level === 1)
@@ -1446,7 +1455,7 @@
 			.on("mouseout", mouseOutClusterLinks);
 
 		function mouseOverPartnerNodes(datum) {
-			sankeyNodesAllocations.style("opacity", (d, i, n) => d.level === 2 && n[i] === this ? 1 :
+			sankeyNodesAllocations.style("opacity", d => d.level === 2 && d.id === datum.id ? 1 :
 				d.targetLinks.filter(e => e.source.id === datum.id).length ? 1 : fadeOpacityNodes);
 			sankeyLinksAllocations.style("stroke-opacity", d => d.source.id === datum.id || d.target.id === datum.id ? linksOpacity : fadeOpacityLinks);
 			sankeyPartnerNames.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
@@ -1472,7 +1481,7 @@
 		};
 
 		function mouseOverClusterNodes(datum) {
-			sankeyNodesAllocations.style("opacity", (d, i, n) => d.level === 3 && n[i] === this ? 1 :
+			sankeyNodesAllocations.style("opacity", d => d.level === 3 && d.id === datum.id ? 1 :
 				d.sourceLinks.filter(e => e.target.id === datum.id).length ? 1 : fadeOpacityNodes);
 			const linksToCluster = sankeyDataAllocations.nodes.reduce((acc, curr) => {
 				const targets = curr.sourceLinks.map(e => e.target.id);
@@ -1503,7 +1512,7 @@
 		};
 
 		function mouseOverPartnerLinks(datum) {
-			sankeyNodesAllocations.style("opacity", (d, i, n) => datum.target.id === d.id ||
+			sankeyNodesAllocations.style("opacity", d => datum.target.id === d.id ||
 				d.targetLinks.filter(e => e.source.id === datum.target.id).length ? 1 : fadeOpacityNodes);
 			sankeyLinksAllocations.style("stroke-opacity", d => d.target.id === datum.target.id || d.source.id === datum.target.id ? linksOpacity : fadeOpacityLinks);
 			sankeyPartnerNames.style("opacity", d => d.codeId === datum.target.codeId ? 1 : fadeOpacityNodes);
@@ -1529,7 +1538,7 @@
 		};
 
 		function mouseOverClusterLinks(datum) {
-			sankeyNodesAllocations.style("opacity", (d, i, n) => datum.target.id === d.id || d.id === datum.source.id ? 1 : fadeOpacityNodes);
+			sankeyNodesAllocations.style("opacity", d => datum.target.id === d.id || d.id === datum.source.id ? 1 : fadeOpacityNodes);
 			sankeyLinksAllocations.style("stroke-opacity", (d, i, n) => d.target.id === datum.source.id || n[i] === this ? linksOpacity : fadeOpacityLinks);
 			sankeyPartnerNames.style("opacity", d => d.id === datum.source.id ? 1 : fadeOpacityNodes);
 			sankeyPartnerValues.style("opacity", d => d.id === datum.source.id ? 1 : fadeOpacityNodes);

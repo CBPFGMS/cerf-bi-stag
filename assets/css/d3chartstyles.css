@@ -1196,5 +1196,6 @@ p#cesankd3chartTitle {
 	font-size: 10px;
 	fill: darkslategray;
 	font-weight: 300;
+	pointer-events: none;
 }
 
