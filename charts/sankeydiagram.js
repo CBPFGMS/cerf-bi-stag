@@ -28,6 +28,7 @@
 		textMinimumMargin = 6,
 		nameWidth = 92,
 		angle = -45,
+		minStrokeWidth = 1,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -36,6 +37,8 @@
 		circleWhiteBorder = 14,
 		nodeWidth = 16,
 		linksOpacity = 0.3,
+		fadeOpacityNodes = 0.1,
+		fadeOpacityLinks = 0.02,
 		freeNodeSpace = (width - padding[1] - padding[3]) * (1 - 2 * centralCircleRadiusRate),
 		windowHeight = window.innerHeight,
 		currentDate = new Date(),
@@ -47,6 +50,7 @@
 		formatMoney0Decimals = d3.format(",.0f"),
 		formatSIaxes = d3.format("~s"),
 		formatNumberSI = d3.format(".3s"),
+		partnerColorsArray = d3.schemeCategory10.reverse(),
 		allYearsOption = "all",
 		chartTitleDefault = "Sankey diagram",
 		vizNameQueryString = "sankey",
@@ -288,8 +292,6 @@
 		.attr("offset", "100%")
 		.attr("stop-color", allocationColor);
 
-	//create scales and sankey generators
-
 	const sankeyGeneratorContributions = d3.sankey()
 		.nodeSort(null)
 		.linkSort((a, b) => a.value - b.value)
@@ -311,6 +313,9 @@
 			[allocationsPanel.padding[0], 0],
 			[allocationsPanel.height - allocationsPanel.padding[2], 2 * centralCirclePanel.radius]
 		]);
+
+	const partnerColorsScale = d3.scaleOrdinal()
+		.range(partnerColorsArray);
 
 	const inverseContributionsScale = d3.scaleLinear()
 		.domain([0, contributionsPanel.width - contributionsPanel.padding[1] - contributionsPanel.padding[3]])
@@ -413,6 +418,8 @@
 		drawSankeyContributions(dataContributions);
 
 		drawSankeyAllocations(dataAllocations);
+
+		setYearsDescriptionDiv();
 
 		//end of draw;
 	};
@@ -936,6 +943,8 @@
 				return chartState.selectedYear.indexOf(e) > -1 ? "white" : "#444";
 			});
 
+			setYearsDescriptionDiv();
+
 			const dataAllocations = processDataAllocations(rawDataAllocations);
 
 			const dataContributions = processDataContributions(rawDataContributions);
@@ -1138,7 +1147,7 @@
 		const sankeyLinksContributionsEnter = sankeyLinksContributions.enter()
 			.append("path")
 			.attr("class", classPrefix + "sankeyLinksContributions")
-			.attr("stroke-width", d => d.width)
+			.attr("stroke-width", d => Math.max(d.width, minStrokeWidth))
 			.style("fill", "none")
 			.style("stroke", contributionColor)
 			.style("stroke-opacity", 0)
@@ -1149,7 +1158,7 @@
 		sankeyLinksContributions.transition()
 			.duration(duration)
 			.style("stroke-opacity", linksOpacity)
-			.attr("stroke-width", d => d.width)
+			.attr("stroke-width", d => Math.max(d.width, minStrokeWidth))
 			.attr("d", drawLinks());
 
 		let sankeyDonorNames = contributionsPanel.main.selectAll("." + classPrefix + "sankeyDonorNames")
@@ -1204,6 +1213,40 @@
 				return t => "$" + formatSIFloat(interpolator(t));
 			});
 
+		sankeyNodesContributions.on("mouseover", mouseOverNodesContributions)
+			.on("mouseout", mouseOutNodesContributions);
+
+		sankeyLinksContributions.on("mouseover", mouseOverLinksContributions)
+			.on("mouseout", mouseOutLinksContributions);
+
+		function mouseOverNodesContributions(datum) {
+			sankeyNodesContributions.style("opacity", (_, i, n) => n[i] === this ? 1 : fadeOpacityNodes);
+			sankeyLinksContributions.style("stroke-opacity", d => d.source.codeId === datum.codeId ? linksOpacity : fadeOpacityLinks);
+			sankeyDonorNames.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
+			sankeyDonorValues.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
+		};
+
+		function mouseOutNodesContributions() {
+			sankeyNodesContributions.style("opacity", 1);
+			sankeyLinksContributions.style("stroke-opacity", linksOpacity);
+			sankeyDonorNames.style("opacity", 1);
+			sankeyDonorValues.style("opacity", 1);
+		};
+
+		function mouseOverLinksContributions(datum) {
+			sankeyNodesContributions.style("opacity", d => datum.source.codeId === d.codeId ? 1 : fadeOpacityNodes);
+			sankeyLinksContributions.style("stroke-opacity", (_, i, n) => n[i] === this ? linksOpacity : fadeOpacityLinks);
+			sankeyDonorNames.style("opacity", d => d.codeId === datum.source.codeId ? 1 : fadeOpacityNodes);
+			sankeyDonorValues.style("opacity", d => d.codeId === datum.source.codeId ? 1 : fadeOpacityNodes);
+		};
+
+		function mouseOutLinksContributions() {
+			sankeyNodesContributions.style("opacity", 1);
+			sankeyLinksContributions.style("stroke-opacity", linksOpacity);
+			sankeyDonorNames.style("opacity", 1);
+			sankeyDonorValues.style("opacity", 1);
+		};
+
 		//sankeyDonorNames.call(wrapNames, nameWidth);
 
 		//sankeyDonorNames.call(checkCollision);
@@ -1239,7 +1282,7 @@
 		const sankeyNodesAllocationsEnter = sankeyNodesAllocations.enter()
 			.append("rect")
 			.attr("class", classPrefix + "sankeyNodesAllocations")
-			.style("fill", allocationColor)
+			.style("fill", d => d.level === 2 ? partnerColorsScale(d.id) : contributionColor)
 			.style("opacity", 0)
 			.attr("y", d => d.x0)
 			.attr("x", d => inverseAllocationsScale(d.y1))
@@ -1268,9 +1311,9 @@
 		const sankeyLinksAllocationsEnter = sankeyLinksAllocations.enter()
 			.append("path")
 			.attr("class", classPrefix + "sankeyLinksAllocations")
-			.attr("stroke-width", d => d.width)
+			.attr("stroke-width", d => Math.max(d.width, minStrokeWidth))
 			.style("fill", "none")
-			.style("stroke", allocationColor)
+			.style("stroke", d => d.source.level === 1 ? allocationColor : partnerColorsScale(d.source.id))
 			.style("stroke-opacity", 0)
 			.attr("d", drawLinks());
 
@@ -1279,7 +1322,7 @@
 		sankeyLinksAllocations.transition()
 			.duration(duration)
 			.style("stroke-opacity", linksOpacity)
-			.attr("stroke-width", d => d.width)
+			.attr("stroke-width", d => Math.max(d.width, minStrokeWidth))
 			.attr("d", drawLinks());
 
 		let sankeyPartnerNames = allocationsPanel.main.selectAll("." + classPrefix + "sankeyPartnerNames")
@@ -1385,6 +1428,163 @@
 				const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, d.value);
 				return t => "$" + formatSIFloat(interpolator(t));
 			});
+
+		sankeyNodesAllocations.filter(d => d.level === 2)
+			.on("mouseover", mouseOverPartnerNodes)
+			.on("mouseout", mouseOutPartnerNodes);
+
+		sankeyNodesAllocations.filter(d => d.level === 3)
+			.on("mouseover", mouseOverClusterNodes)
+			.on("mouseout", mouseOutClusterNodes);
+
+		sankeyLinksAllocations.filter(d => d.source.level === 1)
+			.on("mouseover", mouseOverPartnerLinks)
+			.on("mouseout", mouseOutPartnerLinks);
+
+		sankeyLinksAllocations.filter(d => d.source.level === 2)
+			.on("mouseover", mouseOverClusterLinks)
+			.on("mouseout", mouseOutClusterLinks);
+
+		function mouseOverPartnerNodes(datum) {
+			sankeyNodesAllocations.style("opacity", (d, i, n) => d.level === 2 && n[i] === this ? 1 :
+				d.targetLinks.filter(e => e.source.id === datum.id).length ? 1 : fadeOpacityNodes);
+			sankeyLinksAllocations.style("stroke-opacity", d => d.source.id === datum.id || d.target.id === datum.id ? linksOpacity : fadeOpacityLinks);
+			sankeyPartnerNames.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
+			sankeyPartnerValues.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
+			sankeyClusterNames.style("opacity", d => d.targetLinks.filter(e => e.source.id === datum.id).length ? 1 : fadeOpacityNodes);
+			sankeyClusterValues.style("opacity", d => d.targetLinks.filter(e => e.source.id === datum.id).length ? 1 : fadeOpacityNodes);
+			sankeyClusterValues.each((d, i, n) => {
+				const amountFromPartner = d.targetLinks.reduce((acc, curr) => {
+					if (curr.source.id === datum.id) acc += curr.value;
+					return acc;
+				}, 0);
+				d3.select(n[i]).transition()
+					.duration(duration)
+					.textTween(() => {
+						const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, amountFromPartner);
+						return t => "$" + formatSIFloat(interpolator(t));
+					});
+			});
+		};
+
+		function mouseOutPartnerNodes() {
+			resetOpacity();
+		};
+
+		function mouseOverClusterNodes(datum) {
+			sankeyNodesAllocations.style("opacity", (d, i, n) => d.level === 3 && n[i] === this ? 1 :
+				d.sourceLinks.filter(e => e.target.id === datum.id).length ? 1 : fadeOpacityNodes);
+			const linksToCluster = sankeyDataAllocations.nodes.reduce((acc, curr) => {
+				const targets = curr.sourceLinks.map(e => e.target.id);
+				if (curr.level === 2 && targets.includes(datum.id)) acc.push(curr.id);
+				return acc;
+			}, []);
+			sankeyLinksAllocations.style("stroke-opacity", d => d.target.id === datum.id || linksToCluster.includes(d.target.id) ? linksOpacity : fadeOpacityLinks);
+			sankeyPartnerNames.style("opacity", d => linksToCluster.includes(d.id) ? 1 : fadeOpacityNodes);
+			sankeyPartnerValues.style("opacity", d => linksToCluster.includes(d.id) ? 1 : fadeOpacityNodes);
+			sankeyClusterNames.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
+			sankeyClusterValues.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
+			sankeyPartnerValues.each((d, i, n) => {
+				const amountFromCluster = d.sourceLinks.reduce((acc, curr) => {
+					if (curr.target.id === datum.id) acc += curr.value;
+					return acc;
+				}, 0);
+				d3.select(n[i]).transition()
+					.duration(duration)
+					.textTween(() => {
+						const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, amountFromCluster);
+						return t => "$" + formatSIFloat(interpolator(t));
+					});
+			});
+		};
+
+		function mouseOutClusterNodes() {
+			resetOpacity();
+		};
+
+		function mouseOverPartnerLinks(datum) {
+			sankeyNodesAllocations.style("opacity", (d, i, n) => datum.target.id === d.id ||
+				d.targetLinks.filter(e => e.source.id === datum.target.id).length ? 1 : fadeOpacityNodes);
+			sankeyLinksAllocations.style("stroke-opacity", d => d.target.id === datum.target.id || d.source.id === datum.target.id ? linksOpacity : fadeOpacityLinks);
+			sankeyPartnerNames.style("opacity", d => d.codeId === datum.target.codeId ? 1 : fadeOpacityNodes);
+			sankeyPartnerValues.style("opacity", d => d.codeId === datum.target.codeId ? 1 : fadeOpacityNodes);
+			sankeyClusterNames.style("opacity", d => d.targetLinks.filter(e => e.source.id === datum.target.id).length ? 1 : fadeOpacityNodes);
+			sankeyClusterValues.style("opacity", d => d.targetLinks.filter(e => e.source.id === datum.target.id).length ? 1 : fadeOpacityNodes);
+			sankeyClusterValues.each((d, i, n) => {
+				const amountFromPartner = d.targetLinks.reduce((acc, curr) => {
+					if (curr.source.id === datum.target.id) acc += curr.value;
+					return acc;
+				}, 0);
+				d3.select(n[i]).transition()
+					.duration(duration)
+					.textTween(() => {
+						const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, amountFromPartner);
+						return t => "$" + formatSIFloat(interpolator(t));
+					});
+			});
+		};
+
+		function mouseOutPartnerLinks(datum) {
+			resetOpacity();
+		};
+
+		function mouseOverClusterLinks(datum) {
+			sankeyNodesAllocations.style("opacity", (d, i, n) => datum.target.id === d.id || d.id === datum.source.id ? 1 : fadeOpacityNodes);
+			sankeyLinksAllocations.style("stroke-opacity", (d, i, n) => d.target.id === datum.source.id || n[i] === this ? linksOpacity : fadeOpacityLinks);
+			sankeyPartnerNames.style("opacity", d => d.id === datum.source.id ? 1 : fadeOpacityNodes);
+			sankeyPartnerValues.style("opacity", d => d.id === datum.source.id ? 1 : fadeOpacityNodes);
+			sankeyClusterNames.style("opacity", d => d.codeId === datum.target.codeId ? 1 : fadeOpacityNodes);
+			sankeyClusterValues.style("opacity", d => d.codeId === datum.target.codeId ? 1 : fadeOpacityNodes);
+			sankeyPartnerValues.each((d, i, n) => {
+				const amountFromCluster = d.sourceLinks.reduce((acc, curr) => {
+					if (curr.target.id === datum.target.id) acc += curr.value;
+					return acc;
+				}, 0);
+				d3.select(n[i]).transition()
+					.duration(duration)
+					.textTween(() => {
+						const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, amountFromCluster);
+						return t => "$" + formatSIFloat(interpolator(t));
+					});
+			});
+			sankeyClusterValues.each((d, i, n) => {
+				const amountFromPartner = d.targetLinks.reduce((acc, curr) => {
+					if (curr.source.id === datum.source.id) acc += curr.value;
+					return acc;
+				}, 0);
+				d3.select(n[i]).transition()
+					.duration(duration)
+					.textTween(() => {
+						const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, amountFromPartner);
+						return t => "$" + formatSIFloat(interpolator(t));
+					});
+			});
+		};
+
+		function mouseOutClusterLinks(datum) {
+			resetOpacity();
+		};
+
+		function resetOpacity() {
+			sankeyNodesAllocations.style("opacity", 1);
+			sankeyLinksAllocations.style("stroke-opacity", linksOpacity);
+			sankeyPartnerNames.style("opacity", 1);
+			sankeyPartnerValues.style("opacity", 1);
+			sankeyClusterNames.style("opacity", 1);
+			sankeyClusterValues.style("opacity", 1);
+			sankeyClusterValues.transition()
+				.duration(duration)
+				.textTween((d, i, n) => {
+					const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, d.value);
+					return t => "$" + formatSIFloat(interpolator(t));
+				});
+			sankeyPartnerValues.transition()
+				.duration(duration)
+				.textTween((d, i, n) => {
+					const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, d.value);
+					return t => "$" + formatSIFloat(interpolator(t));
+				});
+		};
 
 		//sankeyPartnerNames.call(wrapNames, nameWidth);
 
@@ -1746,6 +1946,18 @@
 			yearNumber = yearNumber >= currentYear ? yearNumber - 1 : yearNumber + 1;
 		};
 		return yearNumber;
+	};
+
+	function setYearsDescriptionDiv() {
+		yearsDescriptionDiv.html(function() {
+			if (chartState.selectedYear.length <= maxYearsListNumber) return null;
+			const yearsList = chartState.selectedYear.sort(function(a, b) {
+				return a - b;
+			}).reduce(function(acc, curr, index) {
+				return acc + (index >= chartState.selectedYear.length - 2 ? index > chartState.selectedYear.length - 2 ? curr : curr + " and " : curr + ", ");
+			}, "");
+			return "\u002ASelected years: " + yearsList;
+		});
 	};
 
 	function parseTransform(translate) {
