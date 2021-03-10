@@ -29,6 +29,7 @@
 		nameWidth = 92,
 		angle = -45,
 		minStrokeWidth = 1,
+		minNodeWidth = 1,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -1122,7 +1123,7 @@
 			.style("opacity", 0)
 			.attr("y", d => d.x0)
 			.attr("x", d => inverseContributionsScale(d.y1))
-			.attr("width", d => Math.max(1, inverseContributionsScale(d.y0) - inverseContributionsScale(d.y1)))
+			.attr("width", d => Math.max(minNodeWidth, inverseContributionsScale(d.y0) - inverseContributionsScale(d.y1)))
 			.attr("height", d => d.x1 - d.x0);
 
 		sankeyNodesContributions = sankeyNodesContributionsEnter.merge(sankeyNodesContributions);
@@ -1132,7 +1133,7 @@
 			.style("opacity", 1)
 			.attr("y", d => d.x0)
 			.attr("x", d => inverseContributionsScale(d.y1))
-			.attr("width", d => Math.max(1, inverseContributionsScale(d.y0) - inverseContributionsScale(d.y1)))
+			.attr("width", d => Math.max(minNodeWidth, inverseContributionsScale(d.y0) - inverseContributionsScale(d.y1)))
 			.attr("height", d => d.x1 - d.x0);
 
 		let sankeyLinksContributions = contributionsPanel.main.selectAll("." + classPrefix + "sankeyLinksContributions")
@@ -1289,7 +1290,7 @@
 			.style("opacity", 0)
 			.attr("y", d => d.x0)
 			.attr("x", d => inverseAllocationsScale(d.y1))
-			.attr("width", d => Math.max(1, inverseAllocationsScale(d.y0) - inverseAllocationsScale(d.y1)))
+			.attr("width", d => Math.max(minNodeWidth, inverseAllocationsScale(d.y0) - inverseAllocationsScale(d.y1)))
 			.attr("height", d => d.x1 - d.x0);
 
 		sankeyNodesAllocations = sankeyNodesAllocationsEnter.merge(sankeyNodesAllocations);
@@ -1299,7 +1300,7 @@
 			.style("opacity", 1)
 			.attr("y", d => d.x0)
 			.attr("x", d => inverseAllocationsScale(d.y1))
-			.attr("width", d => Math.max(1, inverseAllocationsScale(d.y0) - inverseAllocationsScale(d.y1)))
+			.attr("width", d => Math.max(minNodeWidth, inverseAllocationsScale(d.y0) - inverseAllocationsScale(d.y1)))
 			.attr("height", d => d.x1 - d.x0);
 
 		let sankeyLinksAllocations = allocationsPanel.main.selectAll("." + classPrefix + "sankeyLinksAllocations")
