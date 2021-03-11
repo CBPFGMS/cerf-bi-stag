@@ -1193,9 +1193,9 @@ p#cesankd3chartTitle {
 	text-anchor: middle;
 	dominant-baseline: central;
 	font-family: "Roboto", sans-serif;
-	font-size: 10px;
+	font-size: 11px;
 	fill: darkslategray;
-	font-weight: 300;
+	font-weight: 400;
 	pointer-events: none;
 }
 
