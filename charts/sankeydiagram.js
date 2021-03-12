@@ -4,7 +4,7 @@
 	//All listeners using the arguments in the sequence: datum, index, node group
 
 	const width = 1100,
-		padding = [14, 4, 4, 4],
+		padding = [14, 8, 4, 4],
 		panelHorizontalPadding = 4,
 		buttonsPanelHeight = 30,
 		buttonsNumber = 18,
@@ -25,12 +25,15 @@
 		partnersPadding = 50,
 		donorNamesPadding = 4,
 		namesPadding = 10,
-		valuesPadding = 13,
-		valuesHorizontalPadding = -5,
+		valuesPadding = 10,
+		collisionPadding = 4,
 		angle = -45,
 		minStrokeWidth = 1,
 		minNodeWidth = 1,
 		maxDonorTextLength = 120,
+		donorValuesMeanLength = 33,
+		otherFlagsNumber = 5,
+		otherFlagsPadding = 4,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -52,7 +55,7 @@
 		shortDuration = 250,
 		flagSize = 24,
 		flagPadding = 1,
-		clusterIconsSize = 24,
+		clusterIconsSize = 32,
 		clusterIconsPadding = 1,
 		formatMoney0Decimals = d3.format(",.0f"),
 		formatSIaxes = d3.format("~s"),
@@ -139,19 +142,19 @@
 		])
 		.range(["Food Security",
 			"Health",
-			"Shelter",
-			"Water",
+			"Emergency Shelter",
+			"Water Sanitation",
 			"Protection",
 			"Nutrition",
 			"Logistics",
 			"Education",
 			"COVID-19",
-			"Coordination",
+			"Coordination and Support",
 			"Camp Coordination",
 			"Early Recovery",
 			"Multi-Sector",
-			"Multi-purpose",
-			"Emergency Telecom.",
+			"Multi-purpose cash",
+			"Emergency Telecommunications",
 			"Mine Action"
 		]);
 
@@ -1201,6 +1204,37 @@
 			.style("opacity", 1)
 			.attr("x", d => (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2 - flagSize / 2);
 
+		let otherFlags = contributionsPanel.main.selectAll("." + classPrefix + "otherFlags")
+			.data(donorNodes[0].codeId === othersId ? donorNodes[0].othersData.slice(0, otherFlagsNumber).reverse() : [], d => d.id);
+
+		const otherFlagsExit = otherFlags.exit()
+			.transition()
+			.duration(duration)
+			.style("opacity", 0)
+			.remove();
+
+		const otherFlagsEnter = otherFlags.enter()
+			.append("image")
+			.attr("class", classPrefix + "otherFlags")
+			.style("opacity", 0)
+			.attr("pointer-events", "none")
+			.attr("x", (inverseContributionsScale(donorNodes[0].y1) + inverseContributionsScale(donorNodes[0].y0)) / 2 - flagSize / 2)
+			.attr("y", contributionsPanel.padding[0] - flagPadding - flagSize)
+			.attr("width", flagSize)
+			.attr("height", flagSize)
+			.attr("href", d => {
+				if (lists.donorIsoCodes[d.codeId].toLowerCase() && !flagsData[lists.donorIsoCodes[d.codeId].toLowerCase()]) console.warn("Missing flag: " + d.name, d);
+				return flagsData[lists.donorIsoCodes[d.codeId].toLowerCase()] || blankFlag;
+			});
+
+		otherFlags = otherFlagsEnter.merge(otherFlags);
+
+		otherFlags.transition()
+			.duration(duration)
+			.style("opacity", (_, i) => (i + 1) / otherFlagsNumber)
+			.attr("x", (_, i) => ((otherFlagsNumber - i - 1) * otherFlagsPadding) + (inverseContributionsScale(donorNodes[0].y1) + inverseContributionsScale(donorNodes[0].y0)) / 2 - flagSize / 2)
+			.attr("y", (_, i) => contributionsPanel.padding[0] - flagPadding - flagSize + ((otherFlagsNumber - i - 1) * otherFlagsPadding / 3));
+
 		let sankeyDonorNames = contributionsPanel.main.selectAll("." + classPrefix + "sankeyDonorNames")
 			.data(donorNodes, d => d.id);
 
@@ -1218,16 +1252,17 @@
 			.attr("y", contributionsPanel.padding[0] - donorNamesPadding - flagSize - flagPadding)
 			.attr("transform", d => `rotate(${angle}, ${(inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2}, ${contributionsPanel.padding[0] - donorNamesPadding - flagSize - flagPadding})`)
 			.text(d => d.codeId === othersId ? "Others" : lists.donorNames[d.codeId])
-			.call(createEllipsis);
+			.call(createEllipsis, "donor");
 
 		sankeyDonorNames = sankeyDonorNamesEnter.merge(sankeyDonorNames);
 
-		sankeyDonorNames.transition()
+		sankeyDonorNames.text(d => d.codeId === othersId ? "Others" : lists.donorNames[d.codeId])
+			.transition()
 			.duration(duration)
 			.style("opacity", 1)
 			.attr("transform", d => `rotate(${angle}, ${(inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2}, ${contributionsPanel.padding[0] - donorNamesPadding - flagSize - flagPadding})`)
 			.attr("x", d => (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2)
-			.call(createEllipsis);
+			.call(createEllipsis, "donor");
 
 		let sankeyDonorValues = contributionsPanel.main.selectAll("." + classPrefix + "sankeyDonorValues")
 			.data(donorNodes, d => d.id);
@@ -1242,9 +1277,9 @@
 			.append("text")
 			.attr("class", classPrefix + "sankeyDonorValues")
 			.style("opacity", 0)
-			.attr("x", d => valuesHorizontalPadding + (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2)
+			.attr("x", d => (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2)
 			.attr("y", d => d.x1 + valuesPadding)
-			.attr("transform", d => `rotate(${angle}, ${valuesHorizontalPadding + (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2}, ${d.x1 + valuesPadding})`)
+			.attr("dy", "0em")
 			.text(d => "$0");
 
 		sankeyDonorValues = sankeyDonorValuesEnter.merge(sankeyDonorValues);
@@ -1252,8 +1287,23 @@
 		sankeyDonorValues.transition()
 			.duration(duration)
 			.style("opacity", 1)
-			.attr("x", d => valuesHorizontalPadding + (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2)
-			.attr("transform", d => `rotate(${angle}, ${valuesHorizontalPadding + (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2}, ${d.x1 + valuesPadding})`)
+			.attr("x", d => (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2)
+			.attr("dy", (d, i, n) => {
+				if (!n[i + 1]) {
+					return "0em";
+				} else {
+					const previousElement = d3.select(n[i + 1]);
+					const previousElementDatum = previousElement.datum();
+					const nextElement = d3.select(n[i - 1]);
+					const nextDisplaced = n[i - 1] && nextElement.datum().displaced;
+					if (!nextDisplaced && (inverseContributionsScale(previousElementDatum.y1) + inverseContributionsScale(previousElementDatum.y0)) / 2 + collisionPadding + donorValuesMeanLength > (inverseContributionsScale(d.y1) + inverseContributionsScale(d.y0)) / 2) {
+						d.displaced = true;
+						return "1.2em";
+					} else {
+						return "0em";
+					};
+				};
+			})
 			.textTween((d, i, n) => {
 				const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, d.value);
 				return t => "$" + formatSIFloat(interpolator(t));
@@ -1393,15 +1443,18 @@
 			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
 			.attr("y", d => d.x0 - namesPadding)
 			.attr("transform", d => `rotate(${angle}, ${(inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2}, ${d.x0 - namesPadding})`)
-			.text(d => lists.unAgencyShortNames[d.codeId]);
+			.text(d => lists.unAgencyShortNames[d.codeId])
+			.call(createEllipsis, "partner");
 
 		sankeyPartnerNames = sankeyPartnerNamesEnter.merge(sankeyPartnerNames);
 
-		sankeyPartnerNames.transition()
+		sankeyPartnerNames.text(d => lists.unAgencyShortNames[d.codeId])
+			.transition()
 			.duration(duration)
 			.style("opacity", 1)
 			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
-			.attr("transform", d => `rotate(${angle}, ${(inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2}, ${d.x0 - namesPadding})`);
+			.attr("transform", d => `rotate(${angle}, ${(inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2}, ${d.x0 - namesPadding})`)
+			.call(createEllipsis, "partner");
 
 		let sankeyPartnerValues = allocationsPanel.main.selectAll("." + classPrefix + "sankeyPartnerValues")
 			.data(partnerNodes, d => d.id);
@@ -1416,9 +1469,8 @@
 			.append("text")
 			.attr("class", classPrefix + "sankeyPartnerValues")
 			.style("opacity", 0)
-			.attr("x", d => valuesHorizontalPadding + (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
 			.attr("y", d => d.x1 + valuesPadding)
-			.attr("transform", d => `rotate(${angle}, ${valuesHorizontalPadding + (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2}, ${d.x1 + valuesPadding})`)
 			.text(d => "$0");
 
 		sankeyPartnerValues = sankeyPartnerValuesEnter.merge(sankeyPartnerValues);
@@ -1426,8 +1478,7 @@
 		sankeyPartnerValues.transition()
 			.duration(duration)
 			.style("opacity", 1)
-			.attr("x", d => valuesHorizontalPadding + (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
-			.attr("transform", d => `rotate(${angle}, ${valuesHorizontalPadding + (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2}, ${d.x1 + valuesPadding})`)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
 			.textTween((d, i, n) => {
 				const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, d.value);
 				return t => "$" + formatSIFloat(interpolator(t));
@@ -1449,15 +1500,18 @@
 			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
 			.attr("y", d => d.x0 - namesPadding)
 			.attr("transform", d => `rotate(${angle}, ${(inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2}, ${d.x0 - namesPadding})`)
-			.text(d => lists.clusterShortNames[d.codeId]);
+			.text(d => lists.clusterShortNames[d.codeId])
+			.call(createEllipsis, "cluster");
 
 		sankeyClusterNames = sankeyClusterNamesEnter.merge(sankeyClusterNames);
 
-		sankeyClusterNames.transition()
+		sankeyClusterNames.text(d => lists.clusterShortNames[d.codeId])
+			.transition()
 			.duration(duration)
 			.style("opacity", 1)
 			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
-			.attr("transform", d => `rotate(${angle}, ${(inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2}, ${d.x0 - namesPadding})`);
+			.attr("transform", d => `rotate(${angle}, ${(inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2}, ${d.x0 - namesPadding})`)
+			.call(createEllipsis, "cluster");
 
 		let sankeyClusterIcons = allocationsPanel.main.selectAll("." + classPrefix + "sankeyClusterIcons")
 			.data(clusterNodes, d => d.id);
@@ -1498,9 +1552,8 @@
 			.append("text")
 			.attr("class", classPrefix + "sankeyClusterValues")
 			.style("opacity", 0)
-			.attr("x", d => valuesHorizontalPadding + (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
-			.attr("y", d => d.x1 + valuesPadding + clusterIconsSize + clusterIconsPadding)
-			.attr("transform", d => `rotate(${angle}, ${valuesHorizontalPadding + (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2}, ${d.x1 + valuesPadding + clusterIconsSize + clusterIconsPadding})`)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
+			.attr("y", d => d.x1 + valuesPadding + clusterIconsSize)
 			.text(d => "$0");
 
 		sankeyClusterValues = sankeyClusterValuesEnter.merge(sankeyClusterValues);
@@ -1508,8 +1561,7 @@
 		sankeyClusterValues.transition()
 			.duration(duration)
 			.style("opacity", 1)
-			.attr("x", d => valuesHorizontalPadding + (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
-			.attr("transform", d => `rotate(${angle}, ${valuesHorizontalPadding + (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2}, ${d.x1 + valuesPadding + clusterIconsSize + clusterIconsPadding})`)
+			.attr("x", d => (inverseAllocationsScale(d.y1) + inverseAllocationsScale(d.y0)) / 2)
 			.textTween((d, i, n) => {
 				const interpolator = d3.interpolate(reverseFormat(n[i].textContent.split("$")[1]) || 0, d.value);
 				return t => "$" + formatSIFloat(interpolator(t));
@@ -1844,10 +1896,12 @@
 						level: 1,
 						name: othersName,
 						value: curr.value,
-						id: "donor#" + othersId
+						id: "donor#" + othersId,
+						othersData: []
 					});
 				} else {
 					acc[maxDonorsNumber].value += curr.value;
+					acc[maxDonorsNumber].othersData.push(curr);
 				};
 			};
 			return acc;
@@ -1906,8 +1960,9 @@
 			.target(horizontalTarget);
 	};
 
-	function createEllipsis(selection) {
+	function createEllipsis(selection, type) {
 		selection.each((d, i, n) => {
+			if (type !== "donor" && i) return;
 			let thisText = n[i].textContent;
 			while (n[i].getComputedTextLength() > maxDonorTextLength / (i < 2 ? 1.6 : 1)) {
 				d3.select(n[i]).text((thisText = thisText.slice(0, -1)) + "...");
@@ -1949,7 +2004,7 @@
 	function createUnAgenciesNamesList(unAgenciesData) {
 		unAgenciesData.forEach(row => {
 			lists.unAgencyNames[row.agencyID + ""] = row.agencyName;
-			lists.unAgencyShortNames[row.agencyID + ""] = row.agencyShortName;
+			lists.unAgencyShortNames[row.agencyID + ""] = row.agencyCode;
 		});
 	};
 
