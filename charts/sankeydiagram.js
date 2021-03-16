@@ -21,6 +21,7 @@
 		othersId = "others",
 		othersName = "Others",
 		fundId = "fund",
+		maxOthersNumber = 30,
 		maxYearsListNumber = 4,
 		partnersPadding = 50,
 		donorNamesPadding = 4,
@@ -34,6 +35,9 @@
 		donorValuesMeanLength = 33,
 		otherFlagsNumber = 5,
 		otherFlagsPadding = 4,
+		tooltipWidth = 270,
+		tooltipWidthAllocations = 300,
+		memberStateString = "Member State",
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -54,8 +58,11 @@
 		duration = 1000,
 		shortDuration = 250,
 		flagSize = 24,
+		flagSizeTooltip = 14,
+		maxOthersNameLength = 32,
 		flagPadding = 1,
 		clusterIconsSize = 32,
+		clusterIconsSizeTooltip = 16,
 		clusterIconsPadding = 1,
 		formatMoney0Decimals = d3.format(",.0f"),
 		formatSIaxes = d3.format("~s"),
@@ -1310,47 +1317,171 @@
 			});
 
 		sankeyNodesContributions.on("mouseover", mouseOverNodesContributions)
-			.on("mouseout", mouseOutNodesContributions);
+			.on("mouseout", mouseOutContributions);
 
 		sankeyDonorNames.on("mouseover", mouseOverNodesContributions)
-			.on("mouseout", mouseOutNodesContributions);
+			.on("mouseout", mouseOutContributions);
 
 		sankeyDonorFlags.on("mouseover", mouseOverNodesContributions)
-			.on("mouseout", mouseOutNodesContributions);
+			.on("mouseout", mouseOutContributions);
 
 		sankeyLinksContributions.on("mouseover", mouseOverLinksContributions)
-			.on("mouseout", mouseOutLinksContributions);
+			.on("mouseout", mouseOutContributions);
 
 		function mouseOverNodesContributions(datum) {
+			currentHoveredElement = this;
 			sankeyNodesContributions.style("opacity", d => d.id === datum.id ? 1 : fadeOpacityNodes);
 			sankeyLinksContributions.style("stroke-opacity", d => d.source.codeId === datum.codeId ? linksOpacity : fadeOpacityLinks);
 			sankeyDonorNames.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
 			sankeyDonorFlags.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
 			sankeyDonorValues.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
-		};
-
-		function mouseOutNodesContributions() {
-			sankeyNodesContributions.style("opacity", 1);
-			sankeyLinksContributions.style("stroke-opacity", linksOpacity);
-			sankeyDonorNames.style("opacity", 1);
-			sankeyDonorFlags.style("opacity", 1);
-			sankeyDonorValues.style("opacity", 1);
+			otherFlags.style("opacity", (_, i) => (i + 1) / otherFlagsNumber * (datum.codeId === othersId ? 1 : fadeOpacityNodes));
+			generateDonorTooltip(datum);
 		};
 
 		function mouseOverLinksContributions(datum) {
+			currentHoveredElement = this;
 			sankeyNodesContributions.style("opacity", d => datum.source.codeId === d.codeId ? 1 : fadeOpacityNodes);
 			sankeyLinksContributions.style("stroke-opacity", (_, i, n) => n[i] === this ? linksOpacity : fadeOpacityLinks);
 			sankeyDonorNames.style("opacity", d => d.codeId === datum.source.codeId ? 1 : fadeOpacityNodes);
 			sankeyDonorFlags.style("opacity", d => d.codeId === datum.source.codeId ? 1 : fadeOpacityNodes);
 			sankeyDonorValues.style("opacity", d => d.codeId === datum.source.codeId ? 1 : fadeOpacityNodes);
+			generateDonorTooltip(datum.source);
 		};
 
-		function mouseOutLinksContributions() {
+		function mouseOutContributions() {
+			if (isSnapshotTooltipVisible) return;
+			currentHoveredElement = null;
 			sankeyNodesContributions.style("opacity", 1);
 			sankeyLinksContributions.style("stroke-opacity", linksOpacity);
 			sankeyDonorNames.style("opacity", 1);
 			sankeyDonorFlags.style("opacity", 1);
 			sankeyDonorValues.style("opacity", 1);
+			otherFlags.style("opacity", (_, i) => (i + 1) / otherFlagsNumber);
+			tooltip.style("display", "none")
+				.html(null);
+		};
+
+		function generateDonorTooltip(datum) {
+			tooltip.style("display", "block")
+				.html(null)
+
+			const innerTooltipDiv = tooltip.append("div")
+				.style("max-width", tooltipWidth + "px")
+				.attr("id", classPrefix + "innerTooltipDiv");
+
+			const titleDiv = innerTooltipDiv.append("div")
+				.attr("class", classPrefix + "tooltipTitleDiv")
+				.style("margin-bottom", "18px");
+
+			if (datum.codeId !== othersId) {
+				titleDiv.append("img")
+					.attr("width", flagSize)
+					.attr("height", flagSize)
+					.style("margin-right", "8px")
+					.attr("src", () => {
+						if (lists.donorIsoCodes[datum.codeId].toLowerCase() && !flagsData[lists.donorIsoCodes[datum.codeId].toLowerCase()]) console.warn("Missing flag: " + datum.name, d);
+						return flagsData[lists.donorIsoCodes[datum.codeId].toLowerCase()] || blankFlag;
+					});
+			};
+
+			const titleNameDiv = titleDiv.append("div")
+				.attr("class", classPrefix + "titleNameDiv");
+
+			titleNameDiv.append("strong")
+				.style("font-size", "16px")
+				.html(datum.codeId !== othersId ? datum.name : "Other donors");
+
+			if (lists.donorTypes[datum.codeId] && lists.donorTypes[datum.codeId] !== memberStateString) {
+				titleNameDiv.append("div")
+					.attr("class", classPrefix + "tooltipFooter")
+					.html("(" + lists.donorTypes[datum.codeId] + ")");
+			};
+
+			const tooltipContainer = innerTooltipDiv.append("div")
+				.style("margin", "0px")
+				.style("display", "flex")
+				.style("flex-wrap", "wrap")
+				.style("white-space", "pre")
+				.style("line-height", 1.4)
+				.style("width", "100%");
+
+			const rowDiv = tooltipContainer.append("div")
+				.style("display", "flex")
+				.style("align-items", "center")
+				.style("margin-bottom", "4px")
+				.style("width", "100%");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipKeys")
+				.html("Total");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipLeader");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipValues")
+				.html("$" + formatMoney0Decimals(datum.value));
+
+			if (datum.codeId === othersId) {
+				const headerDiv = tooltipContainer.append("div")
+					.attr("class", classPrefix + "tooltipheaderDiv")
+					.html("List of donors" + (datum.othersData.length > maxOthersNumber ? ` (top ${maxOthersNumber} donors)` : ""));
+
+				datum.othersData.slice(0, maxDonorsNumber).forEach(row => {
+					const rowDivOthers = tooltipContainer.append("div")
+						.attr("class", classPrefix + "tooltipDivOthers")
+						.style("display", "flex")
+						.style("align-items", "center")
+						.style("margin-bottom", "4px")
+						.style("width", "100%");
+
+					rowDivOthers.append("img")
+						.attr("class", classPrefix + "tooltipKeys")
+						.attr("width", flagSizeTooltip)
+						.attr("height", flagSizeTooltip)
+						.style("margin-right", "2px")
+						.attr("src", () => {
+							if (lists.donorIsoCodes[row.codeId].toLowerCase() && !flagsData[lists.donorIsoCodes[row.codeId].toLowerCase()]) console.warn("Missing flag: " + row.name, d);
+							return flagsData[lists.donorIsoCodes[row.codeId].toLowerCase()] || blankFlag;
+						});
+
+					rowDivOthers.append("span")
+						.attr("class", classPrefix + "tooltipKeys")
+						.html(row.name.slice(0, maxOthersNameLength));
+
+					rowDivOthers.append("span")
+						.attr("class", classPrefix + "tooltipLeader");
+
+					rowDivOthers.append("span")
+						.attr("class", classPrefix + "tooltipValues")
+						.html("$" + formatMoney0Decimals(row.value));
+				});
+
+			};
+
+			const thisNodeBox = sankeyNodesContributions.filter(e => e.codeId === datum.codeId).node().getBoundingClientRect();
+
+			const flagBox = sankeyDonorFlags.filter(e => e.codeId === datum.codeId).node().getBoundingClientRect();
+
+			const containerBox = containerDiv.node().getBoundingClientRect();
+
+			const tooltipBox = tooltip.node().getBoundingClientRect();
+
+			const thisBoxLeft = Math.min(thisNodeBox.left, flagBox.left);
+
+			const thisBoxRight = Math.max(thisNodeBox.right, flagBox.right);
+
+			const thisBoxWidth = Math.max(thisNodeBox.width, flagBox.width);
+
+			const thisOffsetTop = (flagBox.top + flagBox.height / 2 - tooltipBox.height / 2) - containerBox.top;
+
+			const thisOffsetLeft = containerBox.right - thisBoxRight > tooltipBox.width + tooltipMargin ?
+				thisBoxLeft - containerBox.left + thisBoxWidth + tooltipMargin :
+				thisBoxLeft - containerBox.left - tooltipBox.width - tooltipMargin;
+
+			tooltip.style("top", thisOffsetTop + "px")
+				.style("left", thisOffsetLeft + "px");
 		};
 
 		//end of drawSankeyContributions
@@ -1593,6 +1724,7 @@
 			.on("mouseout", mouseOutClusterLinks);
 
 		function mouseOverPartnerNodes(datum) {
+			currentHoveredElement = this;
 			sankeyNodesAllocations.style("opacity", d => d.level === 2 && d.id === datum.id ? 1 :
 				d.targetLinks.filter(e => e.source.id === datum.id).length ? 1 : fadeOpacityNodes);
 			sankeyLinksAllocations.style("stroke-opacity", d => d.source.id === datum.id || d.target.id === datum.id ? linksOpacity : fadeOpacityLinks);
@@ -1613,13 +1745,19 @@
 						return t => "$" + formatSIFloat(interpolator(t));
 					});
 			});
+			generatePartnerTooltip(datum);
 		};
 
 		function mouseOutPartnerNodes() {
+			if (isSnapshotTooltipVisible) return;
+			currentHoveredElement = null;
 			resetOpacity();
+			tooltip.style("display", "none")
+				.html(null);
 		};
 
 		function mouseOverClusterNodes(datum) {
+			currentHoveredElement = this;
 			sankeyNodesAllocations.style("opacity", d => d.level === 3 && d.id === datum.id ? 1 :
 				d.sourceLinks.filter(e => e.target.id === datum.id).length ? 1 : fadeOpacityNodes);
 			const linksToCluster = sankeyDataAllocations.nodes.reduce((acc, curr) => {
@@ -1645,13 +1783,19 @@
 						return t => "$" + formatSIFloat(interpolator(t));
 					});
 			});
+			generateClusterTooltip(datum, "node");
 		};
 
 		function mouseOutClusterNodes() {
+			if (isSnapshotTooltipVisible) return;
+			currentHoveredElement = null;
 			resetOpacity();
+			tooltip.style("display", "none")
+				.html(null);
 		};
 
 		function mouseOverPartnerLinks(datum) {
+			currentHoveredElement = this;
 			sankeyNodesAllocations.style("opacity", d => datum.target.id === d.id ||
 				d.targetLinks.filter(e => e.source.id === datum.target.id).length ? 1 : fadeOpacityNodes);
 			sankeyLinksAllocations.style("stroke-opacity", d => d.target.id === datum.target.id || d.source.id === datum.target.id ? linksOpacity : fadeOpacityLinks);
@@ -1672,13 +1816,19 @@
 						return t => "$" + formatSIFloat(interpolator(t));
 					});
 			});
+			generatePartnerTooltip(datum.target);
 		};
 
-		function mouseOutPartnerLinks(datum) {
+		function mouseOutPartnerLinks() {
+			if (isSnapshotTooltipVisible) return;
+			currentHoveredElement = null;
 			resetOpacity();
+			tooltip.style("display", "none")
+				.html(null);
 		};
 
 		function mouseOverClusterLinks(datum) {
+			currentHoveredElement = this;
 			sankeyNodesAllocations.style("opacity", d => datum.target.id === d.id || d.id === datum.source.id ? 1 : fadeOpacityNodes);
 			sankeyLinksAllocations.style("stroke-opacity", (d, i, n) => d.target.id === datum.source.id || n[i] === this ? linksOpacity : fadeOpacityLinks);
 			sankeyPartnerNames.style("opacity", d => d.id === datum.source.id ? 1 : fadeOpacityNodes);
@@ -1710,10 +1860,232 @@
 						return t => "$" + formatSIFloat(interpolator(t));
 					});
 			});
+			generateClusterTooltip(datum, "link");
 		};
 
-		function mouseOutClusterLinks(datum) {
+		function mouseOutClusterLinks() {
+			if (isSnapshotTooltipVisible) return;
+			currentHoveredElement = null;
 			resetOpacity();
+			tooltip.style("display", "none")
+				.html(null);
+		};
+
+		function generatePartnerTooltip(datum) {
+			tooltip.style("display", "block")
+				.html(null)
+
+			const innerTooltipDiv = tooltip.append("div")
+				.style("max-width", tooltipWidthAllocations + "px")
+				.attr("id", classPrefix + "innerTooltipDiv");
+
+			const titleDiv = innerTooltipDiv.append("div")
+				.attr("class", classPrefix + "tooltipTitleDiv")
+				.style("margin-bottom", "18px");
+
+			const titleNameDiv = titleDiv.append("div")
+				.attr("class", classPrefix + "titleNameDiv");
+
+			titleNameDiv.append("strong")
+				.style("font-size", "16px")
+				.html(lists.unAgencyNames[datum.codeId]);
+
+			const tooltipContainer = innerTooltipDiv.append("div")
+				.style("margin", "0px")
+				.style("display", "flex")
+				.style("flex-wrap", "wrap")
+				.style("white-space", "pre")
+				.style("line-height", 1.4)
+				.style("width", "100%");
+
+			const rowDiv = tooltipContainer.append("div")
+				.style("display", "flex")
+				.style("align-items", "center")
+				.style("margin-bottom", "4px")
+				.style("width", "100%");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipKeys")
+				.html("Total");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipLeader");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipValues")
+				.html("$" + formatMoney0Decimals(datum.value));
+
+			const clustersData = clusterNodes.reduce((acc, curr) => {
+				const foundPartner = curr.targetLinks.find(e => e.source.id === datum.id);
+				if (foundPartner) {
+					acc.push({
+						codeId: foundPartner.target.codeId,
+						value: foundPartner.value
+					});
+				};
+				return acc;
+			}, []).sort((a, b) => b.value - a.value);
+
+			const headerDiv = tooltipContainer.append("div")
+				.attr("class", classPrefix + "tooltipheaderDiv")
+				.html("List of sectors");
+
+			clustersData.forEach(row => {
+				const rowDivOthers = tooltipContainer.append("div")
+					.attr("class", classPrefix + "tooltipDivOthers")
+					.style("display", "flex")
+					.style("align-items", "center")
+					.style("margin-bottom", "4px")
+					.style("width", "100%");
+
+				rowDivOthers.append("img")
+					.attr("class", classPrefix + "tooltipKeys")
+					.attr("width", clusterIconsSizeTooltip)
+					.attr("height", clusterIconsSizeTooltip)
+					.style("margin-right", "2px")
+					.attr("src", clustersIconsData[row.codeId])
+
+				rowDivOthers.append("span")
+					.attr("class", classPrefix + "tooltipKeys")
+					.html(lists.clusterNames[row.codeId]);
+
+				rowDivOthers.append("span")
+					.attr("class", classPrefix + "tooltipLeader");
+
+				rowDivOthers.append("span")
+					.attr("class", classPrefix + "tooltipValues")
+					.html("$" + formatMoney0Decimals(row.value));
+			});
+
+			const thisNodeBox = sankeyNodesAllocations.filter(e => e.id === datum.id).node().getBoundingClientRect();
+
+			const containerBox = containerDiv.node().getBoundingClientRect();
+
+			const tooltipBox = tooltip.node().getBoundingClientRect();
+
+			const thisOffsetTop = (thisNodeBox.top + thisNodeBox.height / 2 - tooltipBox.height / 2) - containerBox.top;
+
+			const thisOffsetLeft = containerBox.right - thisNodeBox.right > tooltipBox.width + tooltipMargin ?
+				thisNodeBox.left - containerBox.left + thisNodeBox.width + tooltipMargin :
+				thisNodeBox.left - containerBox.left - tooltipBox.width - tooltipMargin;
+
+			tooltip.style("top", thisOffsetTop + "px")
+				.style("left", thisOffsetLeft + "px");
+		};
+
+		function generateClusterTooltip(datum, type) {
+			console.log(datum);
+			tooltip.style("display", "block")
+				.html(null)
+
+			const innerTooltipDiv = tooltip.append("div")
+				.style("max-width", tooltipWidthAllocations + "px")
+				.attr("id", classPrefix + "innerTooltipDiv");
+
+			const titleDiv = innerTooltipDiv.append("div")
+				.attr("class", classPrefix + "tooltipTitleDiv")
+				.style("margin-bottom", "18px");
+
+			titleDiv.append("img")
+				.attr("width", clusterIconsSize)
+				.attr("height", clusterIconsSize)
+				.style("margin-right", "8px")
+				.style("filter", "grayscale(100%) brightness(10)")
+				.attr("src", type === "node" ? clustersIconsData[datum.codeId] : clustersIconsData[datum.target.codeId]);
+
+			const titleNameDiv = titleDiv.append("div")
+				.attr("class", classPrefix + "titleNameDiv");
+
+			titleNameDiv.append("strong")
+				.style("font-size", "16px")
+				.html(type === "node" ? lists.clusterNames[datum.codeId] : lists.clusterNames[datum.target.codeId]);
+
+			if (type === "link") {
+				titleNameDiv.append("div")
+					.attr("class", classPrefix + "tooltipFooter")
+					.html("(from: " + lists.unAgencyNames[datum.source.codeId] + ")");
+			};
+
+			const tooltipContainer = innerTooltipDiv.append("div")
+				.style("margin", "0px")
+				.style("display", "flex")
+				.style("flex-wrap", "wrap")
+				.style("white-space", "pre")
+				.style("line-height", 1.4)
+				.style("width", "100%");
+
+			const rowDiv = tooltipContainer.append("div")
+				.style("display", "flex")
+				.style("align-items", "center")
+				.style("margin-bottom", "4px")
+				.style("width", "100%");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipKeys")
+				.html("Total");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipLeader");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipValues")
+				.html("$" + formatMoney0Decimals(datum.value));
+
+			if (type === "node") {
+
+				const partnersData = partnerNodes.reduce((acc, curr) => {
+					const foundCluster = curr.sourceLinks.find(e => e.target.id === datum.id);
+					if (foundCluster) {
+						acc.push({
+							codeId: foundCluster.source.codeId,
+							value: foundCluster.value
+						});
+					};
+					return acc;
+				}, []).sort((a, b) => b.value - a.value);
+
+				const headerDiv = tooltipContainer.append("div")
+					.attr("class", classPrefix + "tooltipheaderDiv")
+					.html("List of Agencies");
+
+				partnersData.forEach(row => {
+					const rowDivOthers = tooltipContainer.append("div")
+						.attr("class", classPrefix + "tooltipDivOthers")
+						.style("display", "flex")
+						.style("align-items", "center")
+						.style("margin-bottom", "4px")
+						.style("width", "100%");
+
+					rowDivOthers.append("span")
+						.attr("class", classPrefix + "tooltipKeys")
+						.html(lists.unAgencyNames[row.codeId]);
+
+					rowDivOthers.append("span")
+						.attr("class", classPrefix + "tooltipLeader");
+
+					rowDivOthers.append("span")
+						.attr("class", classPrefix + "tooltipValues")
+						.html("$" + formatMoney0Decimals(row.value));
+				});
+
+			};
+
+			const thisNodeBox = type === "node" ?
+				sankeyNodesAllocations.filter(e => e.id === datum.id).node().getBoundingClientRect() :
+				sankeyLinksAllocations.filter(e => e.source.id === datum.source.id && e.target.id === datum.target.id).node().getBoundingClientRect();
+
+			const containerBox = containerDiv.node().getBoundingClientRect();
+
+			const tooltipBox = tooltip.node().getBoundingClientRect();
+
+			const thisOffsetTop = (thisNodeBox.top + thisNodeBox.height / 2 - tooltipBox.height / 2) - containerBox.top;
+
+			const thisOffsetLeft = containerBox.right - thisNodeBox.right > tooltipBox.width + tooltipMargin ?
+				thisNodeBox.left - containerBox.left + thisNodeBox.width + tooltipMargin :
+				thisNodeBox.left - containerBox.left - tooltipBox.width - tooltipMargin;
+
+			tooltip.style("top", thisOffsetTop + "px")
+				.style("left", thisOffsetLeft + "px");
 		};
 
 		function resetOpacity() {
@@ -1767,7 +2139,7 @@
 		};
 
 		rawDataAllocations.forEach(row => {
-			if (chartState.selectedYear.includes(row.allocationYear) && chartState.selectedFund.includes(row.fundId)) {
+			if (chartState.selectedYear.includes(row.allocationYear) && chartState.selectedFund.includes(row.fundId) && row.budget) {
 
 				const foundPartner = data.nodes.find(d => d.level === 2 && d.codeId === row.partnerCode);
 
@@ -1851,7 +2223,7 @@
 		};
 
 		rawDataContributions.forEach(row => {
-			if (chartState.selectedYear.includes(row.contributionYear) && chartState.selectedFund.includes(row.fundId)) {
+			if (chartState.selectedYear.includes(row.contributionYear) && chartState.selectedFund.includes(row.fundId) && (row.paidAmount + row.pledgedAmount)) {
 
 				const foundSource = data.nodes.find(d => d.level === 1 && d.codeId === row.donorId);
 

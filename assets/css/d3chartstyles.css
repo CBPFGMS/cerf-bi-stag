@@ -1061,8 +1061,8 @@ p#contriboverd3chartTitle {
 	line-height: 120%;
 	font-size: 14px;
 	padding: 8px;
-	background: #f8f8f8; 
-	border: 1px solid #418fde; 
+	background: #f2f4f4; 
+	border: 1px solid #3189c9; 
 	border-radius: 4px;
 	pointer-events: none;
 	cursor: none;
@@ -1205,3 +1205,70 @@ p#cesankd3chartTitle {
 	paint-order: stroke;
 }
 
+#cesankinnerTooltipDiv{
+  background-color: #f2f4f4;
+  border-radius: 4px;
+}
+
+#cesankinnerTooltipDiv > div:nth-child(1){
+	padding:8px !important;
+	background-color: #3189c9;
+	color: #fff;
+	border-radius: 2px 2px 0px 0px;
+    line-height: normal;
+	margin-top: -8px;
+    margin-left: -8px;
+    margin-right: -8px;
+} 
+
+.cesanktooltipTitleDiv {
+  display: flex;
+  align-items: center;
+  white-space: pre-wrap;
+}
+
+.cesanktooltipTitleNameDiv {
+  display: flex;
+  flex-direction: column;
+}
+
+.cesanktooltipFooter {
+  width: 100%;
+  margin-top: 4px;
+  font-weight: 300;
+  font-size: 12px;
+  font-style: italic;
+}
+
+.cesanktooltipKeys {
+	font-weight: 600;
+}
+
+.cesanktooltipLeader {
+  flex: 0 1 auto;
+  overflow: hidden;
+  color: #ccc;
+}
+
+.cesanktooltipLeader::before {
+   display: block;
+   overflow: hidden;
+   text-overflow: clip;
+   content: 
+     ". . . . . . . . . . . . . . . . . . . . "
+     ". . . . . . . . . . . . . . . . . . . . "
+     ". . . . . . . . . . . . . . . . . . . . "
+     ". . . . . . . . . . . . . . . . . . . . "
+}
+
+.cesanktooltipheaderDiv {
+	margin-top: 8px;
+	margin-bottom: 8px;
+	font-size: 12px;
+}
+
+.cesanktooltipDivOthers {
+	font-family: "Roboto", sans-serif;
+	font-size: 11px;
+	letter-spacing: -0.03em;
+}
