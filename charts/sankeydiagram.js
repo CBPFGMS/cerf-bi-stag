@@ -467,9 +467,6 @@
 			.attr("id", classPrefix + "d3chartTitle")
 			.html(chartTitle);
 
-		//REMOVE THIS:
-		topDiv.style("pointer-events", "none");
-
 		//NO HELP ICON FOR NOW
 		// const helpIcon = iconsDiv.append("button")
 		// 	.attr("id", classPrefix + "HelpButton");
@@ -654,35 +651,62 @@
 
 		downloadIcon.on("click", function() {
 
-			const csv = createCsv(rawDataAllocations, rawDataContributions);
+			const csvAllocations = createCsvAllocations(rawDataAllocations);
+
+			const csvContributions = createCsvContributions(rawDataContributions);
 
 			const currentDate = new Date();
 
-			const fileName = vizNameQueryString + "_" + csvDateFormat(currentDate) + ".csv";
+			const fileNameAllocations = "Allocations_" + csvDateFormat(currentDate) + ".csv";
 
-			const blob = new Blob([csv], {
+			const fileNameContributions = "Contributions_" + csvDateFormat(currentDate) + ".csv";
+
+			const blobAllocations = new Blob([csvAllocations], {
+				type: 'text/csv;charset=utf-8;'
+			});
+
+			const blobContributions = new Blob([csvContributions], {
 				type: 'text/csv;charset=utf-8;'
 			});
 
 			if (navigator.msSaveBlob) {
-				navigator.msSaveBlob(blob, filename);
+				navigator.msSaveBlob(blobAllocations, fileNameAllocations);
+				navigator.msSaveBlob(blobContributions, fileNameContributions);
 			} else {
 
-				const link = document.createElement("a");
+				const linkAllocations = document.createElement("a");
 
-				if (link.download !== undefined) {
+				if (linkAllocations.download !== undefined) {
 
-					const url = URL.createObjectURL(blob);
+					const urlAllocations = URL.createObjectURL(blobAllocations);
 
-					link.setAttribute("href", url);
-					link.setAttribute("download", fileName);
-					link.style = "visibility:hidden";
+					linkAllocations.setAttribute("href", urlAllocations);
+					linkAllocations.setAttribute("download", fileNameAllocations);
+					linkAllocations.style = "visibility:hidden";
 
-					document.body.appendChild(link);
+					document.body.appendChild(linkAllocations);
 
-					link.click();
+					linkAllocations.click();
 
-					document.body.removeChild(link);
+					document.body.removeChild(linkAllocations);
+
+				};
+
+				const linkContributions = document.createElement("a");
+
+				if (linkContributions.download !== undefined) {
+
+					const urlContributions = URL.createObjectURL(blobContributions);
+
+					linkContributions.setAttribute("href", urlContributions);
+					linkContributions.setAttribute("download", fileNameContributions);
+					linkContributions.style = "visibility:hidden";
+
+					document.body.appendChild(linkContributions);
+
+					linkContributions.click();
+
+					document.body.removeChild(linkContributions);
 
 				};
 			};
@@ -1510,7 +1534,7 @@
 
 			const thisBoxWidth = Math.max(thisNodeBox.width, flagBox.width);
 
-			const thisOffsetTop = (flagBox.top + flagBox.height / 2 - tooltipBox.height / 2) - containerBox.top;
+			const thisOffsetTop = Math.max(padding[0], (flagBox.top + flagBox.height / 2 - tooltipBox.height / 2) - containerBox.top);
 
 			const thisOffsetLeft = containerBox.right - thisBoxRight > tooltipBox.width + tooltipMargin ?
 				thisBoxLeft - containerBox.left + thisBoxWidth + tooltipMargin :
@@ -2113,7 +2137,7 @@
 
 			const tooltipBox = tooltip.node().getBoundingClientRect();
 
-			const thisOffsetTop = (thisNodeBox.top + thisNodeBox.height / 2 - tooltipBox.height / 2) - containerBox.top;
+			const thisOffsetTop = Math.min(containerBox.height - tooltipBox.height - padding[2], (thisNodeBox.top + thisNodeBox.height / 2 - tooltipBox.height / 2) - containerBox.top);
 
 			const thisOffsetLeft = containerBox.right - thisNodeBox.right > tooltipBox.width + tooltipMargin ?
 				thisNodeBox.left - containerBox.left + thisNodeBox.width + tooltipMargin :
@@ -2341,6 +2365,282 @@
 		//end of processDataContributions;
 	};
 
+	function createCsvAllocations(rawDataAllocations) {
+
+		const csvData = [];
+
+		rawDataAllocations.forEach(function(row) {
+			if (chartState.selectedYear.includes(row.allocationYear) && chartState.selectedFund.includes(row.fundId)) {
+				csvData.push({
+					Year: row.allocationYear,
+					Cluster: lists.clusterNames[row.ClusterCBPFCERFId],
+					Agency: lists.unAgencyShortNames[row.partnerCode],
+					Budget: row.budget
+				});
+			};
+		});
+
+		const csv = d3.csvFormat(csvData);
+
+		return csv;
+	};
+
+	function createCsvContributions(rawDataContributions) {
+
+		const csvData = [];
+
+		rawDataContributions.forEach(function(row) {
+			if (chartState.selectedYear.includes(row.contributionYear) && chartState.selectedFund.includes(row.fundId)) {
+				csvData.push({
+					Year: row.contributionYear,
+					Donor: lists.donorNames[row.donorId],
+					"Donor type": lists.donorTypes[row.donorId],
+					Paid: row.paidAmount,
+					Pledged: row.pledgedAmount,
+					Total: row.paidAmount + row.pledgedAmount
+				});
+			};
+		});
+
+		const csv = d3.csvFormat(csvData);
+
+		return csv;
+	};
+
+	function createSnapshot(type, fromContextMenu) {
+
+		const downloadingDiv = d3.select("body").append("div")
+			.style("position", "fixed")
+			.attr("id", classPrefix + "DownloadingDiv")
+			.style("left", window.innerWidth / 2 - 100 + "px")
+			.style("top", window.innerHeight / 2 - 100 + "px");
+
+		const downloadingDivSvg = downloadingDiv.append("svg")
+			.attr("class", classPrefix + "DownloadingDivSvg")
+			.attr("width", 200)
+			.attr("height", 100);
+
+		const downloadingDivText = "Downloading " + type.toUpperCase();
+
+		createProgressWheel(downloadingDivSvg, 200, 175, downloadingDivText);
+
+		const svgRealSize = svg.node().getBoundingClientRect();
+
+		svg.attr("width", svgRealSize.width)
+			.attr("height", svgRealSize.height);
+
+		const listOfStyles = [
+			"font-size",
+			"font-family",
+			"font-weight",
+			"fill",
+			"stroke",
+			"stroke-dasharray",
+			"stroke-width",
+			"opacity",
+			"text-anchor",
+			"text-transform",
+			"shape-rendering",
+			"letter-spacing",
+			"white-space",
+			"dominant-baseline",
+			"letter-spacing",
+			"paint-order"
+		];
+
+		const imageDiv = containerDiv.node();
+
+		setSvgStyles(svg.node());
+
+		if (type === "png") {
+			iconsDiv.style("opacity", 0);
+		} else {
+			topDiv.style("opacity", 0)
+		};
+
+		snapshotTooltip.style("display", "none");
+
+		html2canvas(imageDiv).then(function(canvas) {
+
+			svg.attr("width", null)
+				.attr("height", null);
+
+			if (type === "png") {
+				iconsDiv.style("opacity", 1);
+			} else {
+				topDiv.style("opacity", 1)
+			};
+
+			if (type === "png") {
+				downloadSnapshotPng(canvas);
+			} else {
+				downloadSnapshotPdf(canvas);
+			};
+
+			if (fromContextMenu && currentHoveredElement) d3.select(currentHoveredElement).dispatch("mouseout");
+
+		});
+
+		function setSvgStyles(node) {
+
+			if (!node.style) return;
+
+			let styles = getComputedStyle(node);
+
+			for (let i = 0; i < listOfStyles.length; i++) {
+				node.style[listOfStyles[i]] = styles[listOfStyles[i]];
+			};
+
+			for (let i = 0; i < node.childNodes.length; i++) {
+				setSvgStyles(node.childNodes[i]);
+			};
+		};
+
+		//end of createSnapshot
+	};
+
+	function downloadSnapshotPng(source) {
+
+		const currentDate = new Date();
+
+		const fileName = vizNameQueryString + "_" + csvDateFormat(currentDate) + ".png";
+
+		source.toBlob(function(blob) {
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			if (link.download !== undefined) {
+				link.setAttribute("href", url);
+				link.setAttribute("download", fileName);
+				link.style = "visibility:hidden";
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			} else {
+				window.location.href = url;
+			};
+		});
+
+		removeProgressWheel();
+
+		d3.select("#" + classPrefix + "DownloadingDiv").remove();
+
+	};
+
+	function downloadSnapshotPdf(source) {
+
+		const pdfMargins = {
+			top: 10,
+			bottom: 30,
+			left: 20,
+			right: 30
+		};
+
+		d3.image("./assets/img/UNOCHA_logo_vertical_blue_RGB.png")
+			.then(function(logo) {
+
+				let pdf;
+
+				const point = 2.834646;
+
+				const sourceDimentions = containerDiv.node().getBoundingClientRect();
+				const widthInMilimeters = 210 - pdfMargins.left * 2;
+				const heightInMilimeters = widthInMilimeters * (sourceDimentions.height / sourceDimentions.width);
+				const maxHeightInMilimeters = 180;
+				let pdfHeight;
+
+				if (heightInMilimeters > maxHeightInMilimeters) {
+					pdfHeight = 297 + heightInMilimeters - maxHeightInMilimeters;
+					pdf = new jsPDF({
+						format: [210 * point, (pdfHeight) * point],
+						unit: "mm"
+					})
+				} else {
+					pdfHeight = 297;
+					pdf = new jsPDF();
+				}
+
+				let pdfTextPosition;
+
+				createLetterhead();
+
+				pdf.setTextColor(80, 80, 90);
+				pdf.setFont('helvetica');
+				pdf.setFontType("bold");
+				pdf.setFontSize(14);
+				pdf.text("CERF by year", pdfMargins.left, 44);
+
+				pdf.addImage(source, "PNG", pdfMargins.left, 48, widthInMilimeters, heightInMilimeters);
+
+				const currentDate = new Date();
+
+				//pdf.output("dataurlnewwindow");
+				pdf.save(vizNameQueryString + "_" + csvDateFormat(currentDate) + ".pdf");
+
+				removeProgressWheel();
+
+				d3.select("#" + classPrefix + "DownloadingDiv").remove();
+
+				function createLetterhead() {
+
+					const footer = pdf.splitTextToSize("The mission of the United Nations Office for the Coordination of Humanitarian Affairs (OCHA) is to Coordinate the global emergency response to save lives and protect people in humanitarian crises. We advocate for effective and principled humanitarian action by all, for all.", (210 - pdfMargins.left - pdfMargins.right), {
+						fontSize: 8
+					});
+
+					pdf.setFillColor(65, 143, 222);
+					pdf.rect(pdfMargins.left, pdfMargins.top + 20, 210 - pdfMargins.right, 0.75, "F");
+					pdf.rect(pdfMargins.left, pdfHeight - pdfMargins.bottom, 210 - pdfMargins.right, 0.75, "F");
+					pdf.rect(pdfMargins.left + 22, pdfMargins.top + 2, 0.25, 15, "F");
+
+					const fullDate = d3.timeFormat("%A, %d %B %Y")(new Date());
+
+					pdf.setTextColor(35, 143, 222);
+					pdf.setFontType("normal");
+					pdf.setFontSize(14);
+					pdf.text("CERF DATA HUB", pdfMargins.left + 26, 20);
+
+					pdf.setTextColor(35, 143, 222);
+					pdf.setFontType("normal");
+					pdf.setFontSize(10);
+					pdf.text(fullDate, pdfMargins.left + 26, 26.1);
+
+
+					// pdf.setFillColor(236, 161, 84);
+					// pdf.rect(0, pdfMargins.top + 15, 210, 2, "F");
+
+					// pdf.setFillColor(255, 255, 255);
+					// pdf.rect(pdfMargins.left, pdfMargins.top - 1, 94, 20, "F");
+
+					// pdf.ellipse(pdfMargins.left, pdfMargins.top + 9, 5, 9, "F");
+					// pdf.ellipse(pdfMargins.left + 94, pdfMargins.top + 9, 5, 9, "F");
+
+					pdf.addImage(logo, "PNG", pdfMargins.left + 2, pdfMargins.top, 14, 18);
+
+					// pdf.setFillColor(236, 161, 84);
+					// pdf.rect(0, pdfHeight - pdfMargins.bottom, 210, 2, "F");
+
+					pdf.setTextColor(35, 143, 222);
+					pdf.setFont("helvetica");
+					pdf.setFontType("normal");
+					pdf.setFontSize(8);
+					pdf.text(footer, 105, pdfHeight - pdfMargins.bottom + 6, {
+						align: "center"
+					});
+
+					pdf.setTextColor(35, 143, 222);
+					pdf.setFont("helvetica");
+					pdf.setFontType("bold");
+					pdf.setFontSize(8);
+					pdf.text("www.unocha.org", 105, pdfHeight - pdfMargins.bottom + 16, {
+						align: "center"
+					});
+
+				};
+
+			});
+
+		//end of downloadSnapshotPdf
+	};
+
 	function spreadNodes(nodes, padding) {
 		const spacer = freeNodeSpace / (nodes.length + 1);
 		nodes.forEach((node, index) => {
@@ -2527,6 +2827,72 @@
 			}
 		});
 		return returnValue;
+	};
+
+	function createProgressWheel(thissvg, thiswidth, thisheight, thistext) {
+		const wheelGroup = thissvg.append("g")
+			.attr("class", classPrefix + "d3chartwheelGroup")
+			.attr("transform", "translate(" + thiswidth / 2 + "," + thisheight / 4 + ")");
+
+		const loadingText = wheelGroup.append("text")
+			.attr("text-anchor", "middle")
+			.style("font-family", "Roboto")
+			.style("font-weight", "bold")
+			.style("font-size", "11px")
+			.attr("y", 50)
+			.attr("class", "contributionColorFill")
+			.text(thistext);
+
+		const arc = d3.arc()
+			.outerRadius(25)
+			.innerRadius(20);
+
+		const wheel = wheelGroup.append("path")
+			.datum({
+				startAngle: 0,
+				endAngle: 0
+			})
+			.classed("contributionColorFill", true)
+			.attr("d", arc);
+
+		transitionIn();
+
+		function transitionIn() {
+			wheel.transition()
+				.duration(1000)
+				.attrTween("d", function(d) {
+					const interpolate = d3.interpolate(0, Math.PI * 2);
+					return function(t) {
+						d.endAngle = interpolate(t);
+						return arc(d)
+					}
+				})
+				.on("end", transitionOut)
+		};
+
+		function transitionOut() {
+			wheel.transition()
+				.duration(1000)
+				.attrTween("d", function(d) {
+					const interpolate = d3.interpolate(0, Math.PI * 2);
+					return function(t) {
+						d.startAngle = interpolate(t);
+						return arc(d)
+					}
+				})
+				.on("end", function(d) {
+					d.startAngle = 0;
+					transitionIn()
+				})
+		};
+
+		//end of createProgressWheel
+	};
+
+	function removeProgressWheel() {
+		const wheelGroup = d3.select("." + classPrefix + "d3chartwheelGroup");
+		wheelGroup.select("path").interrupt();
+		wheelGroup.remove();
 	};
 
 	//end of d3ChartIIFE
