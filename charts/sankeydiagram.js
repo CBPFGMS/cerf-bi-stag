@@ -18,7 +18,9 @@
 		classPrefix = "cesank",
 		countryNameMaxLength = 60,
 		maxDonorsNumber = 20,
+		maxOtherDonorsNumber = 20,
 		othersId = "others",
+		tooltipOthersId = "tooltipothers",
 		othersName = "Others",
 		fundId = "fund",
 		maxOthersNumber = 30,
@@ -1405,7 +1407,7 @@
 
 			titleNameDiv.append("strong")
 				.style("font-size", "16px")
-				.html(datum.codeId !== othersId ? datum.name : "Other donors");
+				.html(datum.codeId !== othersId ? datum.name : `Other donors (${datum.othersData.length} donors)`);
 
 			if (lists.donorTypes[datum.codeId] && lists.donorTypes[datum.codeId] !== memberStateString) {
 				titleNameDiv.append("div")
@@ -1441,9 +1443,26 @@
 			if (datum.codeId === othersId) {
 				const headerDiv = tooltipContainer.append("div")
 					.attr("class", classPrefix + "tooltipheaderDiv")
-					.html("List of donors" + (datum.othersData.length > maxOthersNumber ? ` (top ${maxOthersNumber} donors)` : ""));
+					.html("List of donors" + (datum.othersData.length > (maxOtherDonorsNumber + 1) ? ` (top ${maxOtherDonorsNumber} donors)` : ""));
 
-				datum.othersData.slice(0, maxDonorsNumber).forEach(row => {
+				const tooltipOthersData = datum.othersData.length <= (maxOtherDonorsNumber + 1) ? datum.othersData :
+					datum.othersData.reduce((acc, curr, index) => {
+						if (curr.level === 1) {
+							if (index < maxOtherDonorsNumber) {
+								acc.push(curr)
+							} else if (index === maxOtherDonorsNumber) {
+								acc.push({
+									codeId: tooltipOthersId,
+									value: curr.value,
+								});
+							} else {
+								acc[maxOtherDonorsNumber].value += curr.value;
+							};
+						};
+						return acc;
+					}, []);
+
+				tooltipOthersData.forEach(row => {
 					const rowDivOthers = tooltipContainer.append("div")
 						.attr("class", classPrefix + "tooltipDivOthers")
 						.style("display", "flex")
@@ -1457,13 +1476,15 @@
 						.attr("height", flagSizeTooltip)
 						.style("margin-right", "2px")
 						.attr("src", () => {
+							if (row.codeId === tooltipOthersId) return blankFlag;
 							if (lists.donorIsoCodes[row.codeId].toLowerCase() && !flagsData[lists.donorIsoCodes[row.codeId].toLowerCase()]) console.warn("Missing flag: " + row.name, d);
 							return flagsData[lists.donorIsoCodes[row.codeId].toLowerCase()] || blankFlag;
 						});
 
 					rowDivOthers.append("span")
 						.attr("class", classPrefix + "tooltipKeys")
-						.html(row.name.slice(0, maxOthersNameLength));
+						.html(row.codeId !== tooltipOthersId ? row.name.slice(0, maxOthersNameLength) :
+							`Remaining donors (${datum.othersData.length - maxOtherDonorsNumber} donors)`);
 
 					rowDivOthers.append("span")
 						.attr("class", classPrefix + "tooltipLeader");
@@ -2072,7 +2093,7 @@
 
 					rowDivOthers.append("span")
 						.attr("class", classPrefix + "tooltipKeys")
-						.html(lists.unAgencyNames[row.codeId]);
+						.html(lists.unAgencyShortNames[row.codeId]);
 
 					rowDivOthers.append("span")
 						.attr("class", classPrefix + "tooltipLeader");
