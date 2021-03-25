@@ -1279,9 +1279,9 @@
 
 		otherFlags.transition()
 			.duration(duration)
-			.style("opacity", (_, i) => (i + 1) / otherFlagsNumber)
-			.attr("x", (_, i) => ((otherFlagsNumber - i - 1) * otherFlagsPadding) + (inverseContributionsScale(donorNodes[0].y1) + inverseContributionsScale(donorNodes[0].y0)) / 2 - flagSize / 2)
-			.attr("y", (_, i) => contributionsPanel.padding[0] - flagPadding - flagSize + ((otherFlagsNumber - i - 1) * otherFlagsPadding / 3));
+			.style("opacity", (_, i) => (i + 1) / (Math.min(otherFlagsNumber, donorNodes[0].othersData.length)))
+			.attr("x", (_, i) => (((Math.min(otherFlagsNumber, donorNodes[0].othersData.length)) - i - 1) * otherFlagsPadding) + (inverseContributionsScale(donorNodes[0].y1) + inverseContributionsScale(donorNodes[0].y0)) / 2 - flagSize / 2)
+			.attr("y", (_, i) => contributionsPanel.padding[0] - flagPadding - flagSize + (((Math.min(otherFlagsNumber, donorNodes[0].othersData.length)) - i - 1) * otherFlagsPadding / 3));
 
 		let sankeyDonorNames = contributionsPanel.main.selectAll("." + classPrefix + "sankeyDonorNames")
 			.data(donorNodes, d => d.id);
@@ -1376,7 +1376,7 @@
 			sankeyDonorNames.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
 			sankeyDonorFlags.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
 			sankeyDonorValues.style("opacity", d => d.codeId === datum.codeId ? 1 : fadeOpacityNodes);
-			otherFlags.style("opacity", (_, i) => (i + 1) / otherFlagsNumber * (datum.codeId === othersId ? 1 : fadeOpacityNodes));
+			otherFlags.style("opacity", (_, i) => (i + 1) / (Math.min(otherFlagsNumber, donorNodes[0].othersData.length)) * (datum.codeId === othersId ? 1 : fadeOpacityNodes));
 			generateDonorTooltip(datum);
 		};
 
@@ -1398,7 +1398,7 @@
 			sankeyDonorNames.style("opacity", 1);
 			sankeyDonorFlags.style("opacity", 1);
 			sankeyDonorValues.style("opacity", 1);
-			otherFlags.style("opacity", (_, i) => (i + 1) / otherFlagsNumber);
+			otherFlags.style("opacity", (_, i) => (i + 1) / (Math.min(otherFlagsNumber, donorNodes[0].othersData.length)));
 			tooltip.style("display", "none")
 				.html(null);
 		};
@@ -2259,7 +2259,7 @@
 
 		data.nodes.sort((a, b) => b.value - a.value);
 
-		data.nodes.push(fundNode);
+		if (data.nodes.length) data.nodes.push(fundNode);
 
 		return data;
 
@@ -2317,8 +2317,8 @@
 
 		data.nodes.sort((a, b) => b.value - a.value);
 
-		data.nodes = data.nodes.reduce((acc, curr, index) => {
-			if (curr.level === 1) {
+		data.nodes = data.nodes.length <= maxOtherDonorsNumber + 1 ? data.nodes :
+			data.nodes.reduce((acc, curr, index) => {
 				if (index < maxDonorsNumber) {
 					acc.push(curr)
 				} else if (index === maxDonorsNumber) {
@@ -2328,17 +2328,16 @@
 						name: othersName,
 						value: curr.value,
 						id: "donor#" + othersId,
-						othersData: []
+						othersData: [curr]
 					});
 				} else {
 					acc[maxDonorsNumber].value += curr.value;
 					acc[maxDonorsNumber].othersData.push(curr);
 				};
-			};
-			return acc;
-		}, []);
+				return acc;
+			}, []);
 
-		data.nodes.push(fundNode);
+		if (data.nodes.length) data.nodes.push(fundNode);
 
 		const donorsInData = data.nodes.map(d => d.id);
 
