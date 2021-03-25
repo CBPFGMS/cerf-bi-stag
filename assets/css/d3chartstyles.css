@@ -1272,3 +1272,11 @@ p#cesankd3chartTitle {
 	font-size: 11px;
 	letter-spacing: -0.03em;
 }
+
+.cesankcontributionsNoData, .cesankallocationsNoData {
+	font-family: "Arial", sans-serif;
+	font-size: 18px;
+	fill: #666;
+	pointer-events: none;
+	text-anchor: middle;
+}

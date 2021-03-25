@@ -1155,6 +1155,27 @@
 
 	function drawSankeyContributions(dataContributions, flagsData) {
 
+		let contributionsNoData = contributionsPanel.main.selectAll("." + classPrefix + "contributionsNoData")
+			.data(dataContributions.nodes.length ? [] : [true]);
+
+		const contributionsNoDataExit = contributionsNoData.exit()
+			.transition()
+			.duration(duration)
+			.style("opacity", 0)
+			.remove();
+
+		contributionsNoData = contributionsNoData.enter()
+			.append("text")
+			.attr("class", classPrefix + "contributionsNoData")
+			.attr("x", contributionsPanel.width / 2)
+			.attr("y", contributionsPanel.height / 3)
+			.style("opacity", 0)
+			.text("No data for contributions")
+			.merge(contributionsNoData)
+			.transition()
+			.duration(duration)
+			.style("opacity", 1);
+
 		dataContributions.nodes.reverse();
 
 		const sankeyDataContributions = dataContributions.nodes.length ? sankeyGeneratorContributions(dataContributions) : dataContributions;
@@ -1548,6 +1569,27 @@
 	};
 
 	function drawSankeyAllocations(dataAllocations) {
+
+		let allocationsNoData = allocationsPanel.main.selectAll("." + classPrefix + "allocationsNoData")
+			.data(dataAllocations.nodes.length ? [] : [true]);
+
+		const allocationsNoDataExit = allocationsNoData.exit()
+			.transition()
+			.duration(duration)
+			.style("opacity", 0)
+			.remove();
+
+		allocationsNoData = allocationsNoData.enter()
+			.append("text")
+			.attr("class", classPrefix + "allocationsNoData")
+			.attr("x", allocationsPanel.width / 2)
+			.attr("y", allocationsPanel.height / 2)
+			.style("opacity", 0)
+			.text("No data for allocations")
+			.merge(allocationsNoData)
+			.transition()
+			.duration(duration)
+			.style("opacity", 1);
 
 		dataAllocations.nodes.reverse();
 
