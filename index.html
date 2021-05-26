@@ -81,8 +81,9 @@
 		<div class="container"><a class="navbar-brand js-scroll-trigger pf-onebi-logo" href="#page-top"><strong>CERF DATA HUB</strong><br></a><button data-toggle="collapse" data-target="#navbarResponsive" class="navbar-toggler navbar-toggler-right" type="button" aria-controls="navbarResponsive"
                 aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-align-justify"></i></button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="nav navbar-nav ml-auto font-weight-bold text-uppercase">
-                    <li class="nav-item" role="presentation"><a class="nav-link js-scroll-trigger" href="#Allocations">Allocations</a></li>
+                <ul class="nav navbar-nav ml-auto font-weight-bold text-uppercase" aria-labelledby="navbarDropdownMenuLink">
+                    <li class="nav-item" role="presentation"><a class="nav-link js-scroll-trigger" href="#Allocations" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Allocations</a>
+					</li>
                     <li class="nav-item" role="presentation"><a class="nav-link js-scroll-trigger" href="#Contributions">Contributions</a></li>
                     <!--<li class="nav-item" role="presentation"><a class="nav-link js-scroll-trigger" href="data.html">Data Explorer</a></li>-->
                 </ul>
@@ -584,10 +585,11 @@
     </div>
 	
 	<script src="assets/js/jquery.min.js"></script>	
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>	
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.js"></script>	
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+	
 	<script type="text/javascript">
 		$(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
@@ -616,12 +618,13 @@
             gtag('config', 'UA-1884029-23');
         }
     </script>
+	
 	<script src="assets/js/jquery.blockUI.js"></script>
 	<script src="assets/js/popup-video.js"></script>
 	<script type="text/javascript" id="cookieinfo" src="assets/js/cookieinfo.min.js" data-bg="#002856" data-fg="#FFF" data-link="#FFF" data-cookie="CookieInfoScript" data-text-align="left" data-close-text="OK">
     </script>		
 	<script src="assets/js/respond.js"></script> 
-	<script src="assets/js/theme.js"></script>
+	
 	<script src="assets/js/custom-one-bi.js"></script>	
 	<script src="assets/js/apiData.js"></script>
 </body>
