@@ -1069,7 +1069,7 @@
 			.attr("x", 16)
 			.attr("y", 11)
 			.style("stroke", "white")
-			.style("stroke-width", "1.5px")
+			.style("stroke-width", "2px")
 			.style("paint-order", "stroke")
 			.text("Show All");
 
