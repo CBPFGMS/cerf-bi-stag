@@ -42,7 +42,7 @@
 		chartTitleDefault = "Allocation Timeline",
 		vizNameQueryString = "alloctimeline",
 		allocationsDataUrl = "https://cbpfgms.github.io/pfbi-data/cerf/cerf_applications.csv",
-		masterEmergencyTypeUrl = "http://cbpfgms.github.io/pfbi-data/mst/MstEmergencyType.json",
+		masterEmergencyTypeUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstEmergencyType.json",
 		masterEmergencyGroupUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstEmergencyGroup.json",
 		masterFundsUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstFundv2.json",
 		masterRegionsUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstRegion.json",
