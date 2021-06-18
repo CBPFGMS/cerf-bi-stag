@@ -1280,3 +1280,309 @@ p#cesankd3chartTitle {
 	pointer-events: none;
 	text-anchor: middle;
 }
+
+
+/*Stacked area chart (code:  alloctimeline)*/
+
+#d3chartcontaineralloctimeline {
+	position: relative;
+	--unblue: #1f69b3;
+}
+
+#alloctimelineDownloadingDiv {
+	position: absolute;
+	background: #fcfcfc; 
+	border: 1px solid #666; 
+	border-radius: 8px;
+	pointer-events: none;
+	cursor: none;
+	width: 200px;
+	z-index: 1500;
+}
+
+#alloctimelinetooltipdiv {    
+	position: absolute;
+	text-align: left;
+	color: #333;
+	font-family: 'Roboto', sans-serif;
+	white-space: normal;	
+	line-height: 120%;
+	font-size: 14px;
+	padding: 8px;
+	background: #f2f4f4; 
+	border: 1px solid #3189c9; 
+	border-radius: 4px;
+	pointer-events: none;
+	cursor: none;
+	z-index: 1500;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.alloctimelineTopDiv {
+	display: flex;
+	width: 100%;
+	margin-bottom: 4px;
+}
+
+.alloctimelineTitleDiv {
+	display: flex;
+	flex:0 50%;
+	margin-left: 8px;
+}
+
+.alloctimelineIconsDiv {
+	display: flex;
+	flex:0 50%;
+	flex-direction: row-reverse;
+	align-items: center;
+	margin-right: 16px;
+}
+
+.alloctimelineFooterDiv {
+	width: 100%;
+	margin-top: 8px;
+}
+
+.alloctimelineYearsDescriptionDiv {
+	margin-left: 22px;
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	color: #888;
+	width: 98%;
+}
+
+p#alloctimelined3chartTitle {
+	font-size: 26px;
+	font-family: "Arial", sans-serif;
+	margin: 0px;
+	color: #418fde;
+}
+
+.alloctimelinebuttonsText {
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	pointer-events: none;
+}
+
+#alloctimelineSnapshotTooltip {
+	z-index: 1600;
+}
+
+.alloctimelineSnapshotContent {
+	position: absolute;
+	min-width: 100px;
+	display: none;
+	background-color: #f9f9f9;
+	box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.25);
+	cursor: pointer;
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.alloctimelineSnapshotContent #alloctimelineSnapshotPdfText, .alloctimelineSnapshotContent #alloctimelineSnapshotPngText, .alloctimelineSnapshotContent #alloctimelineSnapshotTooltipPdfText, .alloctimelineSnapshotContent #alloctimelineSnapshotTooltipPngText {
+	font-size: 14px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+}
+
+.alloctimelineSnapshotContent #alloctimelineBestVisualizedText, .alloctimelineSnapshotContent #alloctimelineTooltipBestVisualizedText {
+	font-size: 11px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+	border-top: 1px solid lightgray;
+	width: 202px;
+}
+
+.alloctimelineSnapshotContent #alloctimelineSnapshotPdfText:hover, .alloctimelineSnapshotContent #alloctimelineSnapshotPngText:hover, .alloctimelineSnapshotContent #alloctimelineSnapshotTooltipPdfText:hover, .alloctimelineSnapshotContent #alloctimelineSnapshotTooltipPngText:hover {
+	background-color: #1F69B3;
+	color: white;
+}
+
+.alloctimelineyearButtonsDiv {
+	width: 100%;
+	display: flex;
+	margin-bottom: 6px;
+	margin-top: 8px;
+	align-items: center;
+	overflow-y: auto;
+	height: 30px;
+	scrollbar-width: thin;
+  scrollbar-color: lightgray white;
+}
+
+.alloctimelineyearButtonsDiv::-webkit-scrollbar {
+  height: 12px;               /* width of the entire scrollbar */
+}
+
+.alloctimelineyearButtonsDiv::-webkit-scrollbar-track {
+  background: transparent;        /* color of the tracking area */
+}
+
+.alloctimelineyearButtonsDiv::-webkit-scrollbar-thumb {
+  background-color: #eee;    /* color of the scroll thumb */
+  border-radius: 20px;       /* roundness of the scroll thumb */
+  border: 3px solid #fff;  /* creates padding around scroll thumb */
+}
+
+.alloctimelineyearButtonsDiv button, .alloctimelineselectViewDiv button {
+  margin: 0px 0px 0px 8px;
+  display: inline-flex;
+  align-items: center; 
+  white-space: pre;
+  z-index: 1000;
+  border: 1px solid #BCBEC0;
+  font-size: 0.8rem;
+  padding: 2px 10px 2px 10px;
+  border-radius: 3px;
+  background-color: #eee;
+  line-height: normal;
+  transition: all 0.2s linear;
+  outline: 0;
+  cursor: pointer;
+}
+
+.alloctimelineyearButtonsDiv button:hover, .alloctimelineselectViewDiv button:hover{
+	background-color: #3289C9; 
+	color:#fff; 
+	border-color:#3289C9;
+}
+
+.alloctimelineyearButtonsDiv button.active, .alloctimelineselectViewDiv button.active{
+	background-color: #3289C9; 
+	color:#fff; 
+	border-color:#3289C9;
+}
+
+.alloctimelinebottomFiltersDiv {
+	width: 100%;
+	display: flex;
+	margin-bottom: 8px;
+	align-items: center;
+	height: 30px;
+	padding-left: 8px;
+}
+
+.alloctimelinedropdownDiv {
+	display: flex;
+	flex: 0 70%;
+	height: 100%;
+	font-family: "Roboto", sans-serif;
+	font-size: 14px;
+	z-index: 900;
+}
+
+.alloctimelineselectViewDiv {
+	display: flex;
+	flex: 0 30%;
+	height: 100%;
+	justify-content: flex-end;
+	padding-right: 8px;
+}
+
+.alloctimelineregionContainer, .alloctimelinefundContainer, .alloctimelineemergencyContainer {
+	width: 27%;
+	height: 100%;
+	position: relative;
+	margin-right: 1rem;
+}
+
+.alloctimelineregionTitleDiv, .alloctimelinefundTitleDiv, .alloctimelineemergencyTitleDiv {
+	display: flex;
+	align-items: center;
+	height: 100%;
+	background: #f2f4f4; 
+	border: 1px solid #3189c9; 
+	border-radius: 4px;
+	padding: 2px 16px 2px 16px;
+	cursor: pointer;
+}
+
+.alloctimelineregionArrow, .alloctimelinefundArrow, .alloctimelineemergencyArrow {
+	margin-left: auto;
+	font-weight: bold;
+	transition: transform 0.25s ease-in-out;
+}
+
+.alloctimelineregionDropdown, .alloctimelinefundDropdown, .alloctimelineemergencyDropdown {
+	position: absolute;
+	margin-top: 4px;
+	padding: 2px 16px 2px 16px;
+	background: #f2f4f4; 
+	border: 1px solid #3189c9; 
+	border-radius: 4px;
+	max-height: 400px;
+	overflow-y: scroll;
+	white-space: nowrap;
+	font-family: "Roboto", sans-serif;
+	font-size: 13px;
+	transform-origin: 50% 0;
+	transform: scale(1, 0);
+	transition: transform 0.25s ease-in-out;
+}
+
+.alloctimelineregionContainer.active .alloctimelineregionDropdown, .alloctimelinefundContainer.active .alloctimelinefundDropdown, .alloctimelineemergencyContainer.active .alloctimelineemergencyDropdown {
+	transform: scale(1, 1);
+}
+
+.alloctimelineregionContainer.active .alloctimelineregionArrow, .alloctimelinefundContainer.active .alloctimelinefundArrow, .alloctimelineemergencyContainer.active .alloctimelineemergencyArrow {
+	transform: rotate(180deg);
+}
+
+.alloctimelineregionCheckboxDiv label, .alloctimelinefundCheckboxDiv label, .alloctimelineemergencyCheckboxDiv label {
+	margin-bottom: 0px;
+}
+
+.alloctimelineregionCheckboxDiv input, .alloctimelinefundCheckboxDiv input, .alloctimelineemergencyCheckboxDiv input {
+	vertical-align: text-top;
+}
+
+.alloctimelinecheckboxText {
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	color: #333;
+	margin-left: 4px;
+}
+
+.alloctimelinecheckboxTextAllRegions, .alloctimelinecheckboxTextAllFunds, .alloctimelinecheckboxTextAllEmergencies {
+	font-family: "Arial", sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	margin-left: 4px;
+	color: var(--unblue);
+}
+
+.alloctimelinexAxisGroupAggregated text {
+	font-family: "Roboto", sans-serif;
+	font-size: 11px;
+	fill: #444;
+}
+
+.alloctimelinexAxisGroupAggregated path {
+	stroke: #666;
+}
+
+.alloctimelinexAxisGroupAggregated line {
+	stroke: #ddd;
+	stroke-dasharray: 3, 2;
+}
+
+.alloctimelineyAxisGroupAggregated text {
+	font-family: "Roboto", sans-serif;
+	font-size: 11px;
+	fill: #444;
+}
+
+.alloctimelineyAxisGroupAggregated path {
+	stroke: none;
+}
+
+.alloctimelineyAxisGroupAggregated line {
+	stroke: #ccc;
+}
+
+
+

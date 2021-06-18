@@ -12,8 +12,6 @@
     <link rel="stylesheet" href="assets/css/d3chartstyles.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js" integrity="sha512-FHsFVKQ/T1KWJDGSbrUhTJyS1ph3eRrxI228ND0EGaEp6v4a/vGwPWd3Dtd/+9cI7ccofZvl/wulICEurHN1pg==" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js" integrity="sha512-4UKI/XKm3xrvJ6pZS5oTRvIQGIzZFoXR71rRBb1y2N+PbwAsKa5tPl2J6WvbEvwN3TxQCm8hMzsl/pO+82iRlg==" crossorigin="anonymous"></script>
-	<script src="https://unpkg.com/d3-sankey@0"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha512-cLuyDTDg9CSseBSFWNd4wkEaZ0TBEpclX0zD3D6HjI19pO39M58AgJ1SjHp6c7ZOp0/OCRcC2BCvvySU9KJaGw==" crossorigin="anonymous"></script>
     <script type="text/javascript" src="assets/js/html2canvas.min.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-1884029-23"></script>
@@ -44,7 +42,7 @@
 			<div class="row">
 				<div class="col intro-txt mt-3 mb-4">	
 					<p class="mt-3">main div goes here.</p>
-                    <div id="d3chartcontainercesank" data-title=" " data-year="2021" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/sankeydiagram.js"></script>
+                    <div id="d3chartcontaineralloctimeline" data-title="" data-year="all" data-fund="all" data-region="all" data-emergencygroup="all" data-view="aggregated" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/allocationtimeline.js"></script>
 				</div>
 			</div>
 		</div>
@@ -388,6 +386,13 @@
             </symbol>
         </svg>
     </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <script src="assets/js/custom-one-bi.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function () {
             $('[data-toggle="tooltip"]').tooltip();
@@ -416,13 +421,5 @@
             gtag('config', 'UA-1884029-23');
         }
     </script>
-	<script src="assets/js/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-	<script src="assets/js/custom-one-bi.js"></script>
-	
 </body>
 </html>
