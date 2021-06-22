@@ -8,8 +8,9 @@
 		chartWidth = width - padding[1] - padding[3],
 		stackedHeight = 150,
 		stackedHeightAggregate = 450,
-		stackedPadding = [8, 16, 20, 120],
+		stackedPadding = [8, 16, 20, 190],
 		maxYearsListNumber = 1,
+		legendPadding = 40,
 		unBlue = "#1F69B3",
 		classPrefix = "alloctimeline",
 		tooltipWidth = 270,
@@ -19,7 +20,8 @@
 		fadeOpacity = 0.2,
 		tooltipMargin = 8,
 		stackGap = 3,
-		precision = 12,
+		precision = 18,
+		closeFactor = 0.2,
 		windowHeight = window.innerHeight,
 		currentDate = new Date(),
 		currentYear = currentDate.getFullYear(),
@@ -29,8 +31,9 @@
 		shortDuration = 250,
 		tooltipPadding = 12,
 		disabledOpacity = 0.4,
-		tickNumberAggregate = 5,
-		tickNumberByGroup = 3,
+		tickNumberAggregate = 4,
+		tickNumberByGroup = 2,
+		colorArray = ["#66c2a5", "#fc8d62", "#e5c494", "#8da0cb", "#b3b3b3"],
 		monthFormat = d3.timeFormat("%b"),
 		monthParse = d3.timeParse("%m"),
 		monthsArray = d3.range(1, 13, 1).map(d => monthFormat(monthParse(d))),
@@ -78,14 +81,16 @@
 			selectedFund: [],
 			selectedRegion: [],
 			selectedEmergencyGroup: [],
-			selectedView: null
+			selectedView: null,
+			baseline: null
 		};
 
 	let isSnapshotTooltipVisible = false,
+		height,
 		currentHoveredElement;
 
 	const emergencyIconsData = { //just an example:
-		"1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA4JJREFUeNrsWstx2zAQpTi+hx2IriB0BaavuZiqwNI9M5IqsFiBpZncQ1UQ5pJrqArCVCCkgigdBPAsM2uEn90lJeqAN6OhBYLEfh72A9nzHBwcHBwcHBwczoOJ9MF3H7/F+hLD1+LPpw/FuYTUa831JdSfk/7kei11UYW1AC/6srKGUy3IZmBFA335rj8RGjZKP+i1Ssk7fYEQUY2yBs/6Xjiwc1eWsgbGCF+kL/QFzyTCexLcN4yHl1T4JLx3FZAonDcodoJ7Q2LfMF5cTGGIkGtLafP3Qt8b1MP6fZm+bK1hE6xmY6SlCO3ZXBo1BWkp62PYiWBxk5LmEC1tSu+GSk2Q519qorSBYdlestZEoOyqY9pWC7LuqWxCTD3G24uzKAw59kicftunGtJr/a5hUBMeOFUeJ2g9M+Yue+7XgPHI0+BRGko8TlEx78HoR+b8Ocg3qIcTptUD8BTXuyEyLGdLJEMrvCQm/VxKtRrB0465awkrfKLVq9SQdXkWzYkFzcQTo2or0VoJldY+07sp6oHrEFmeWTLpXBl2Rywu9lxa+4wAlFH2blUNCbonPHdLLD0LtMUeeysMBUCAvEuhKPZyCO/g0JlbOu45tPYZQqgOOv9TGOZmVMtbdE45mx4aDEVllE/MvZUQU4IMU+uZN3nSpCv92VgBrVqnEFZoKdW4fgc1sXc9BqWrNjLHY1CLf4aq7YiUfl8FK2GxUvXosVhhCAgPVr6LqQpD4WE8t0a1btQQEFMQWnRWBXv+DuRtxQ0hCmKKU6usABQwHjWHe1UgOtW0eZUhE2p0bjmYGLR5iDhzQcEZRPkjHBgswBDGkOZYN9PjK6C54gascx/xcBQOEUNSUPoHUDYBjy61skdgwatxOtKRXdLG51a4BOELi5KYShnMUYhqG0TV2CpSqmOb/w7W4cRjPA8bb4HwuxaFX49d7IYcTkDuGox4SzwP21+a0vjsCgtMNVjdXMWoqtRYCr/Ro6cgP5nz1dgKG/zyLgDYJlehsCeh+FjwhZZuq3g4mDKpfEBj92N4uPD6/YAWEvO+Gs3DA9GY8qNbcK1Bqy5d1bWbuJA4MN99GFth1cPTaszg1ldhJXxWtdC2jT3lqJQ2LZngv3dK1MpFnDjR0GKycCN8ztTTX9H3NcH6JWr0Pa/7R+2q4ThZRp1BE5J7Dg4ODg4ODg4OV4S/AgwACGRWo71tfIgAAAAASUVORK5CYII=",
+		"1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC5klEQVRogc2ay24TMRSGv1DaSEE8Ga36CqyD6BoWQEVaknJRaAUIwQ54DUqRWLIPiEvSNEmDKBvKkjAsnEFTx/bYY3uGX/KiU5/LNxf7+LQAy0ALGAFToAs08NMKsANMgDHQmV+LohaQSOMtcMHDZ0fhs+OXpl5jRbAEeAdcLOhzovB37J2pRlNFMN8nofMXRV1DwKIQpQI0EEmGhCgVAATEviGw6zdROgCEhagEAMJBVAYAYSAqBQB/CBeAGnAV+AwcIXbwetUQtgA1YE8xL9iuXRTCBqAG7GrmDUMBgFj/bfaJbAGoKk/GlsknwMeQALYQ3cx8VTHXzvx+I8fXldAANhDTzNyVOcQYdTl9aPDzAPGEosj0TRw5+Pmu8dE2GYWS7kncdvDxSGG/GTTLHDWAh4jXZoQ4FC072j8BfgCfgMuB8/PWOnAA/JqPN8BalQm5SLUCpWO7jATqwH3Ux8J0TIC7LG756wabdKxKNueBW5hXJnkcAjfntgu65+BoR7I9sLDZl2w2HeLJ44YK4NjBgXxQP7Ww+SnZDD0AhucUAImKSiOXuTqbIj5S/VEBvHJw8EL6+b2FjTznuUM8Wc9UF+uID9T0Eeu6bWsGm3RckmyWgOvAF2BmYT9DnB2uzW2Da9sQvBUjYAytIlab0/l4zeKdr1Q1REk8AE4QtY1LQ3gF2AL6QA9oErEClaU7Bj528LGlsN+lBAhd8gniSdiqr/ERFSLvGDjIzK0jdvT07wNtzq5YPYOfKBB5ySeI1kgqVTmSLeSaOb6CQtgk/1QK+E0xJ9tpqCHOEy4+oyUv360lzbzfBXx7He6L3HkXgDSG6Un0Yiave09dAPJi9ctOvgiAKWah0iOv6ZS3QhQBSCGawAfgK+6Ngn8aeCTvAxBMuqbTHnbLWuUAqqaTbfLwHwA0EBAniNdpA7cNpXIAX5UKoDoT+2rG2U51qrHimrdiAIC6MfAyUqwoyjYGRsAdIv27zV/Gn7GG4FVqYAAAAABJRU5ErkJggg==",
 	};
 
 	const queryStringValues = new URLSearchParams(location.search);
@@ -113,8 +118,7 @@
 	const selectedViewString = queryStringValues.has("view") ? queryStringValues.get("view") : containerDiv.node().getAttribute("data-view") === viewOptions[1] ? viewOptions[1] : viewOptions[0];
 
 	if (selectedResponsiveness === false) {
-		containerDiv.style("width", width + "px")
-			.style("height", height + "px");
+		containerDiv.style("width", width + "px");
 	};
 
 	const topDiv = containerDiv.append("div")
@@ -139,8 +143,8 @@
 		.attr("class", classPrefix + "selectViewDiv");
 
 	const svg = containerDiv.append("svg")
-		.attr("viewBox", "0 0 " + width + " 0")
-		.style("background-color", "lavender"); //CHANGE!!!
+		.attr("viewBox", "0 0 " + width + " " + stackedHeightAggregate)
+		.style("background-color", "wheat"); //CHANGE!!!!!!!!!!!!!!!
 
 	const yearsDescriptionDiv = containerDiv.append("div")
 		.attr("class", classPrefix + "YearsDescriptionDiv");
@@ -210,25 +214,26 @@
 		.range([stackedPadding[3], chartWidth - stackedPadding[1]]);
 
 	const yAxis = d3.axisLeft(yScale)
-		.tickFormat(d => d3.formatPrefix(".0", d)(d));
+		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d));
 
 	const yAxisByGroup = d3.axisLeft(yScaleByGroup);
 
 	const xAxis = d3.axisBottom(xScale)
 		.tickSizeOuter(0)
+		.tickSizeInner(0)
 		.tickPadding(6);
 
 	const stackGenerator = d3.stack()
-	//.order(d3.stackOrderDescending);
+		.order(stackCustomOrder);
 
 	const stackGeneratorByGroup = d3.stack()
-	//.order(d3.stackOrderDescending);
+		.order(d3.stackOrderDescending);
 
 	const areaGenerator = d3.area()
-		.curve(d3.curveMonotoneX);
+		.curve(curveBumpX);
 
 	const colorScale = d3.scaleOrdinal()
-		.range(d3.schemeTableau10);
+		.range(colorArray);
 
 	Promise.all([
 			fetchFile(classPrefix + "MasterFunds", masterFundsUrl, "master table for funds", "json"),
@@ -935,13 +940,19 @@
 
 	function drawStackedAreaChart(data) {
 
-		data.sort((a, b) => chartState.selectedYear.includes(allYearsOption) ?
-			a.year - b.year :
-			monthsArray.indexOf(a.month) - monthsArray.indexOf(b.month));
+		stackGenerator.keys(inDataLists.emergencyGroupsInData.map(d => "eg" + d));
 
-		console.log(data);
+		const dataAggregated = chartState.selectedView === viewOptions[0] ? stackGenerator(data) : [];
+
+		if (dataAggregated.length) dataAggregated.sort((a, b) => a.index - b.index);
+
+		//const dataByGroup here
 
 		xScale.domain(chartState.selectedYear.includes(allYearsOption) ? yearsArray : monthsArray);
+
+		yScaleByGroup.range([(1 - closeFactor) * height - padding[2], padding[0] + height * closeFactor])
+			.domain(chartState.selectedView === viewOptions[0] ? dataAggregated.map(e => e.key) :
+				[]); //<-----------domain for by groups view here
 
 		if (chartState.selectedView === viewOptions[0]) {
 			yScale.range([stackedHeightAggregate - stackedPadding[2], stackedPadding[0] + (data.length - 1) * stackGap])
@@ -950,25 +961,25 @@
 			yScale.range([stackedHeight - stackedPadding[2], stackedPadding[0]]);
 		};
 
-		stackGenerator.keys(inDataLists.emergencyGroupsInData.map(d => "eg" + d));
+		areaGenerator.x(d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.data.year : d.data.month));
 
-		areaGenerator.x(d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.data.year : d.data.month))
-
-		const dataAggregated = chartState.selectedView === viewOptions[0] ? stackGenerator(data) : [];
+		console.log(data);
 
 		console.log(dataAggregated);
 
-		xAxis.tickSizeInner((yScale.range()[1] - yScale.range()[0]));
-
 		yAxis.tickSizeInner(-(xScale.range()[1] - xScale.range()[0]))
 			.ticks(chartState.selectedView === viewOptions[0] ? tickNumberAggregate : tickNumberByGroup);
+
+		const stackTransition = d3.transition()
+			.duration(duration);
+
+		//Aggregated view
 
 		let xAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "xAxisGroupAggregated")
 			.data(dataAggregated.length ? [true] : []);
 
 		const xAxisGroupAggregatedExit = xAxisGroupAggregated.exit()
-			.transition()
-			.duration(duration)
+			.transition(stackTransition)
 			.style("opacity", 0)
 			.remove();
 
@@ -978,32 +989,8 @@
 			.merge(xAxisGroupAggregated)
 			.attr("transform", "translate(0," + yScale.range()[0] + ")");
 
-		xAxisGroupAggregated.transition()
-			.duration(duration)
+		xAxisGroupAggregated.transition(stackTransition)
 			.call(xAxis);
-
-		let yAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "yAxisGroupAggregated")
-			.data(dataAggregated.length ? [true] : []);
-
-		const yAxisGroupAggregatedExit = yAxisGroupAggregated.exit()
-			.transition()
-			.duration(duration)
-			.style("opacity", 0)
-			.remove();
-
-		yAxisGroupAggregated = yAxisGroupAggregated.enter()
-			.append("g")
-			.attr("class", classPrefix + "yAxisGroupAggregated")
-			.merge(yAxisGroupAggregated)
-			.attr("transform", "translate(" + stackedPadding[3] + ",0)");
-
-		yAxisGroupAggregated.transition()
-			.duration(duration)
-			.call(yAxis);
-
-		yAxisGroupAggregated.selectAll(".tick")
-			.filter(d => d === 0)
-			.remove();
 
 		let areaPaths = mainGroup.selectAll("." + classPrefix + "areaPath")
 			.data(dataAggregated, d => d.key);
@@ -1017,28 +1004,111 @@
 		const areaPathsEnter = areaPaths.enter()
 			.append("path")
 			.attr("class", classPrefix + "areaPath")
+			.style("cursor", "pointer")
 			.style("fill", d => colorScale(d.key))
 			.attr("d", (d, i) => {
-				areaGenerator.y0(e => yScale(e[0]) - i * stackGap)
-					.y1(e => yScale(e[1]) - i * stackGap)
-				return areaGenerator(d)
+				let thisIndex = [];
+				areaGenerator.y0((e, j) => {
+						for (let index = 0; index < d.index; index++) {
+							const foundData = dataAggregated.find(e => e.index === index);
+							if ((foundData[j][0] !== foundData[j][1]) ||
+								(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
+								(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
+						};
+						return yScale(e[0]) - (thisIndex[j] || 0) * stackGap
+					})
+					.y1((e, j) => yScale(e[1]) - (thisIndex[j] || 0) * stackGap);
+				return areaGenerator(d);
 			});
 
 		areaPaths = areaPathsEnter.merge(areaPaths);
 
-		areaPaths.transition()
-			.duration(duration)
+		areaPaths.order();
+
+		areaPaths.transition(stackTransition)
 			.attrTween("d", (d, i, n) => {
-				areaGenerator.y0(e => yScale(e[0]) - i * stackGap)
-					.y1(e => yScale(e[1]) - i * stackGap)
+				let thisIndex = [];
+				areaGenerator.y0((e, j) => {
+						for (let index = 0; index < d.index; index++) {
+							const foundData = dataAggregated.find(e => e.index === index);
+							if ((foundData[j][0] !== foundData[j][1]) ||
+								(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
+								(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
+						};
+						return yScale(e[0]) - (thisIndex[j] || 0) * stackGap
+					})
+					.y1((e, j) => yScale(e[1]) - (thisIndex[j] || 0) * stackGap);
 				return pathTween(areaGenerator(d), precision, n[i])();
 			});
+
+		let yAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "yAxisGroupAggregated")
+			.data(dataAggregated.length ? [true] : []);
+
+		const yAxisGroupAggregatedExit = yAxisGroupAggregated.exit()
+			.transition(stackTransition)
+			.style("opacity", 0)
+			.remove();
+
+		yAxisGroupAggregated = yAxisGroupAggregated.enter()
+			.append("g")
+			.attr("class", classPrefix + "yAxisGroupAggregated")
+			.merge(yAxisGroupAggregated)
+			.attr("transform", "translate(" + stackedPadding[3] + ",0)");
+
+		yAxisGroupAggregated.transition(stackTransition)
+			.call(yAxis);
+
+		yAxisGroupAggregated.selectAll(".tick")
+			.filter(d => d === 0)
+			.remove();
+
+		areaPaths.on("click", (d, i, n) => {
+			let newBaseline;
+			areaPaths.each((e, j, m) => {
+				if (n[i] === m[j]) newBaseline = inDataLists.emergencyGroupsInData.map(d => "eg" + d).indexOf(e.key);
+			});
+			if (chartState.baseline !== newBaseline) {
+				chartState.baseline = newBaseline;
+				drawStackedAreaChart(data);
+			};
+		});
+
+		let legendGroup = mainGroup.selectAll("." + classPrefix + "legendGroup")
+			.data(yScaleByGroup.domain(), d => d);
+
+		const legendGroupExit = legendGroup.exit()
+			.transition(stackTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const legendGroupEnter = legendGroup.enter()
+			.append("g")
+			.attr("class", classPrefix + "legendGroup")
+			.attr("transform", d => "translate(" + legendPadding + "," + (yScaleByGroup(d) + yScaleByGroup.bandwidth() / 2) + ")");
+
+		const legendText = legendGroupEnter.append("text")
+			.text(d => lists.emergencyGroupNames[d.replace(/^\D+/g, "")].split(" ")[0])
+			.append("tspan")
+			.attr("x", 0)
+			.attr("dy", "1.2em")
+			.text(d => lists.emergencyGroupNames[d.replace(/^\D+/g, "")].split(" ")[1]);
+
+		legendGroupEnter.append("image")
+			.attr("href", emergencyIconsData[1])
+			.attr("width", 20)
+			.attr("height", 20)
+			.style("background-color", "red");
+
+		legendGroup = legendGroupEnter.merge(legendGroup);
+
+		legendGroup.transition(stackTransition)
+			.attr("transform", d => "translate(" + legendPadding + "," + (yScaleByGroup(d) + yScaleByGroup.bandwidth() / 2) + ")");
 
 		//end of drawStackedAreaChart
 	};
 
 	function resizeSvg(firstTime) {
-		const height = chartState.selectedView === viewOptions[0] ? stackedHeightAggregate + padding[0] + padding[2] :
+		height = chartState.selectedView === viewOptions[0] ? stackedHeightAggregate + padding[0] + padding[2] :
 			stackedHeight * (inDataLists.emergencyGroupsInData.length) + padding[0] + padding[2];
 		if (firstTime) {
 			svg.attr("viewBox", "0 0 " + width + " " + height);
@@ -1114,6 +1184,18 @@
 				const foundEmergencyGroup = data.find(e => e.emergencyGroup === +eg);
 				const typesList = lists.emergencyTypesInGroups[eg];
 				if (foundEmergencyGroup) fillZerosByGroup(foundEmergencyGroup.emergencyData, typesList);
+			});
+		};
+
+		if (chartState.selectedView === viewOptions[0]) {
+			data.sort((a, b) => chartState.selectedYear.includes(allYearsOption) ?
+				a.year - b.year :
+				monthsArray.indexOf(a.month) - monthsArray.indexOf(b.month));
+		} else {
+			data.forEach(row => {
+				row.emergencyData.sort((a, b) => chartState.selectedYear.includes(allYearsOption) ?
+					a.year - b.year :
+					monthsArray.indexOf(a.month) - monthsArray.indexOf(b.month));
 			});
 		};
 
@@ -1669,6 +1751,75 @@
 			}
 		});
 		return returnValue;
+	};
+
+	class Bump {
+		constructor(context, x) {
+			this._context = context;
+			this._x = x;
+		}
+		areaStart() {
+			this._line = 0;
+		}
+		areaEnd() {
+			this._line = NaN;
+		}
+		lineStart() {
+			this._point = 0;
+		}
+		lineEnd() {
+			if (this._line || (this._line !== 0 && this._point === 1)) this._context.closePath();
+			this._line = 1 - this._line;
+		}
+		point(x, y) {
+			x = +x, y = +y;
+			switch (this._point) {
+				case 0:
+					{
+						this._point = 1;
+						if (this._line) this._context.lineTo(x, y);
+						else this._context.moveTo(x, y);
+						break;
+					}
+				case 1:
+					this._point = 2; // falls through
+				default:
+					{
+						if (this._x) this._context.bezierCurveTo(this._x0 = (this._x0 + x) / 2, this._y0, this._x0, y, x, y);
+						else this._context.bezierCurveTo(this._x0, this._y0 = (this._y0 + y) / 2, x, this._y0, x, y);
+						break;
+					}
+			}
+			this._x0 = x, this._y0 = y;
+		}
+	}
+
+	function curveBumpX(context) {
+		return new Bump(context, true);
+	};
+
+	function stackCustomOrder(series) {
+		function sum(series) {
+			var s = 0,
+				i = -1,
+				n = series.length,
+				v;
+			while (++i < n) {
+				if (v = +series[i][1]) s += v;
+			};
+			return s;
+		};
+
+		function none(series) {
+			var n = series.length,
+				o = new Array(n);
+			while (--n >= 0) o[n] = n;
+			return o;
+		};
+		var sums = series.map(sum);
+		return none(series).sort(function(a, b) {
+			return a === chartState.baseline ? 1 : b === chartState.baseline ? -1 : sums[a] - sums[b];
+		}).reverse();
 	};
 
 	function createProgressWheel(thissvg, thiswidth, thisheight, thistext) {

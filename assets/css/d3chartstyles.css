@@ -1562,7 +1562,7 @@ p#alloctimelined3chartTitle {
 }
 
 .alloctimelinexAxisGroupAggregated path {
-	stroke: #666;
+	stroke: #888;
 }
 
 .alloctimelinexAxisGroupAggregated line {
@@ -1573,7 +1573,7 @@ p#alloctimelined3chartTitle {
 .alloctimelineyAxisGroupAggregated text {
 	font-family: "Roboto", sans-serif;
 	font-size: 11px;
-	fill: #444;
+	fill: #666;
 }
 
 .alloctimelineyAxisGroupAggregated path {
@@ -1584,5 +1584,13 @@ p#alloctimelined3chartTitle {
 	stroke: #ccc;
 }
 
+.alloctimelineyAxisGroupAggregated {
+	pointer-events: none;
+}
 
+.alloctimelinelegendGroup text {
+	font-family: "Roboto", sans-serif;
+	font-size: 13px;
+	fill: #333;
+}
 
