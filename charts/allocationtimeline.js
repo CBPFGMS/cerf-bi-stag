@@ -967,8 +967,6 @@
 			.domain(chartState.selectedView === viewOptions[0] ? dataAggregated.map(e => e.key) :
 				[]); //<-----------domain for by groups view here
 
-		console.log(inDataLists.emergencyGroupsInData.map(d => "eg" + d))
-
 		if (chartState.selectedView === viewOptions[0]) {
 			yScale.range([stackedHeightAggregate - stackedPadding[2], stackedPadding[0] + (data.length - 1) * stackGap])
 				.domain([0, d3.max(data, d => d.total)]);
@@ -1149,6 +1147,10 @@
 	};
 
 	function processData(rawDataAllocations) {
+
+		for (const arr in inDataLists) {
+			inDataLists[arr].length = 0;
+		};
 
 		const data = [];
 
