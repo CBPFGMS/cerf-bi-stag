@@ -1592,5 +1592,6 @@ p#alloctimelined3chartTitle {
 	font-family: "Roboto", sans-serif;
 	font-size: 13px;
 	fill: #333;
+	dominant-baseline: central;
 }
 
