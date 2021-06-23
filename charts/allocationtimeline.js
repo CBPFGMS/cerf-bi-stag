@@ -233,8 +233,8 @@
 
 	const xAxis = d3.axisBottom(xScale)
 		.tickSizeOuter(0)
-		.tickSizeInner(0)
-		.tickPadding(6);
+		.tickSizeInner(4)
+		.tickPadding(4);
 
 	const stackGenerator = d3.stack()
 		.order(stackCustomOrder);
@@ -1017,7 +1017,6 @@
 		const areaPathsEnter = areaPaths.enter()
 			.append("path")
 			.attr("class", classPrefix + "areaPath")
-			.style("cursor", "pointer")
 			.style("fill", d => colorScale(d.key))
 			.attr("d", (d, i) => {
 				let thisIndex = [];
@@ -1075,11 +1074,8 @@
 			.filter(d => d === 0)
 			.remove();
 
-		areaPaths.on("click", (d, i, n) => {
-			let newBaseline;
-			areaPaths.each((e, j, m) => {
-				if (n[i] === m[j]) newBaseline = inDataLists.emergencyGroupsInData.map(d => "eg" + d).indexOf(e.key);
-			});
+		areaPaths.on("click", d => {
+			const newBaseline = inDataLists.emergencyGroupsInData.map(e => "eg" + e).indexOf(d.key)
 			if (chartState.baseline !== newBaseline) {
 				chartState.baseline = newBaseline;
 				drawStackedAreaChart(data);
@@ -1119,6 +1115,16 @@
 
 		legendGroup.transition(stackTransition)
 			.attr("transform", d => "translate(0," + (yScaleByGroup(d) + yScaleByGroup.bandwidth() / 2) + ")");
+
+		legendGroup.on("click", (d, i, n) => {
+			const newBaseline = inDataLists.emergencyGroupsInData.map(e => "eg" + e).indexOf(d)
+			if (chartState.baseline !== newBaseline) {
+				chartState.baseline = newBaseline;
+				drawStackedAreaChart(data);
+			};
+		});
+
+		//by group view
 
 		//end of drawStackedAreaChart
 	};
