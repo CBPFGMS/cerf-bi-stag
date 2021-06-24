@@ -6,9 +6,10 @@
 	const width = 1100,
 		padding = [4, 4, 4, 4],
 		chartWidth = width - padding[1] - padding[3],
-		stackedHeight = 150,
+		stackedHeight = 200,
 		stackedHeightAggregate = 450,
 		stackedPadding = [8, 16, 20, 190],
+		stackedPaddingByGroup = [28, 16, 22, 190],
 		maxYearsListNumber = 1,
 		legendTextPadding = 40,
 		legendHorPadding = 4,
@@ -28,6 +29,7 @@
 		currentDate = new Date(),
 		currentYear = currentDate.getFullYear(),
 		localVariable = d3.local(),
+		localScale = d3.local(),
 		localStorageTime = 3600000,
 		duration = 1000,
 		shortDuration = 250,
@@ -35,7 +37,7 @@
 		disabledOpacity = 0.4,
 		tickNumberAggregate = 4,
 		tickNumberByGroup = 2,
-		colorArray = ["#66c2a5", "#fc8d62", "#e5c494", "#8da0cb", "#b3b3b3"],
+		colorArray = ["#8da0cb", "#fc8d62", "#e5c494", "#66c2a5", "#b3b3b3"],
 		monthFormat = d3.timeFormat("%b"),
 		monthParse = d3.timeParse("%m"),
 		monthsArray = d3.range(1, 13, 1).map(d => monthFormat(monthParse(d))),
@@ -76,6 +78,7 @@
 			regionsInData: [],
 			fundsInData: [],
 			emergencyGroupsInData: [],
+			emergencyTypesInData: []
 		},
 		separator = "##",
 		chartState = {
@@ -99,10 +102,10 @@
 	// 6: "Multiple Emergencies"
 
 	const emergencyIconsData = { //just an example:
-		"1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5QYXAxUtuP++LwAAA+5JREFUaN7Vmslr1HAUxz9NxwWXk+K+FLx4t54KQY8VxaNLXGjREe02dalL26nL1AWxaEctRkVoHas3wap4Ega8qP+AIAhiR0Xw4lYFHQ++wRB+yWQdpg+GJr9ffi/fb977vSVpTTKfmwKkgSYgAYwC3aZufCegJPO5qcApYDtQBEaAtKkbv4hYNAHfAywG5gMp4HEyn5sZQu9JoAtYCCwCDssYcRBoVozrwJNkPjc7oN4dirGdcRGodZhrAMYCWmKhYmxBXARGXeZ14FFId4pVNKAbyE9WEppEm0bgaRkSYfZErBZASKwvQ6JBotPsqiMwmUlo1pPJSKLGIZPOAMaAtS5rnwGNpm58UawvqhaYulGjuLYGaAU6gGnAHcnaP31boNKWEPCXgEFgBbBEMviJQC5USRIC/iLQppjeGpqAhcSGMnmilLFnWMYKiusKCvDtDjp/REJASHwD1nlIdv2W8xHFNcOW4zYX8IhLRUPAB4ktluM0cE6eekGO+yzzB1z0DABXQ0UhF791i07vTN1Y6lHPJ2CuYuqsqRtHA+cBD5Zw2xO3fKi6pxg74Re8bwIWd2qU8PcRGAcy0oF5lS5gCPgMvAaaTN04HlkiCyvJfG4j0AnUy9ALYMDUjQcVycQhwZ+VFlIlp03d6I6VQDKfmyYhcatDZwXwHrgN9FpTvjz5+2XuucHUjTHLmoT0JM3AMo+43wI3gdMJxWSmTJgrtYyH5I2D9Wl3erj5folkJemxhVgvskzKjaJqE28L0byv8rCm3nbeHMKDdqsIFH0oKAa4aTECHSX5oyJw24eCYdv5Sw9r7NdcD0HAVO2BXosrOW3igtQ7aUUZsKbMTQds52eA38AuoM5DbvoDvAFuAOfjCKP9wDGH6YypG71VnQeExHqJNqtl6LkksodVkciknm8TkLOAu0CX1xfC8vI3DRjABJAFhkzd8L2htYDgL8lvOTAHaAHO+1CTluRVB6wErgAXRXd8BCzgVW3gJh+qDMVYexASiYh6WICvtnIkI0CLEm77LN8HJhx0tMv6lFd30nyCd2sDL9jKkYP8/z5wxFYuZF30+LKEFhH4a8BllxID/n2tKcmQuKIbiSEvJLQIwA8Ce0smT+ZztcA8xXWLLE1RUQo/t+Z9D7AvMAEfTz4VJPzJmlQZS7QGIhDkyQcqZMpbYrpvAj7Ap8KAV1hiMEhhqbJAW6XAK0i0AK+kWMvg4ctmwqFjqhh4G4mrfl5qOVnA6VtYNi7wYUTz+NIpC3RUG3gnF+qSv5ulPBgAstUIXklASuJWLzG4Wl0o7Gb8DXxQTI1PCgIu8XukUnsgCumRMnqbNOHDxPTfKn8B+K9mJccE+EkAAAAASUVORK5CYII=",
+		"1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5QYYBRYhxorNIwAAA+tJREFUaN7VmslrFFEQxn/pjAsuJ8V9CXjxrn0SRI+RiEeXuHSCImoSJ7bGJcm4jRsyIWbU4IZDIi43wah4EgQvjv+AIAiiURG8uAs6HqzBpnnd83obJgVDut/rV/19XfVq6U5drlAcB2SAFiAF3AK6bcv8RkjJFYrjgePAJqAEDAMZ2zJ/EbMYAr4HmAvMBNLAw1yhODmC3mNAFzAbmAPslzGSINCqGF8OPMoVilND6t2sGNuSFIF6j7llwEhIS8xWjM1KisAtn/nlwIOI7pSoGEA38GSskjAk2jQCjyuQiLInErUAQqKpAollEp2m1hyBsUzCcJ6MRRJ1Hpl0EjACrPRZ+xRotC3zs2J9SbXAtsw6xbV1QBuwG5gA3JSs/TOwBaptCQF/DhgAFgHzJIMfDeVC1SQh4PuBdsX0hsgEHCRWV8gT5Yw9yTE2qrhuVAG+w0Pn91gICImvwCqNZHfCcT6suGbIcdzuAx5xqXgIBCCx3nGcAc7IUx+V48NOlT56+oCLkaKQj9/6Rac3tmXO19TzEZiumDptW+bB0HlAwxJ+e+J6AFV3FGNHg4IPTMDhTo0S/j4Ab4GsdGC60gUMAp+Al0CLbZlHYktkUSVXKK4BOoGlMlQE+mzLvFeVTBwR/GlpIVVy0rbM7kQJ5ArFCRISN3h0VgDvgBtArzPly5O/W+Geq23LHHGsSUlP0gos0MT9GrgGnEwpJrMVwly5ZdwnbxycT7tT4+Z7JJKVpccVYnVkgZQbJdUm3hiheV+isWap67w1ggdtUxEoBVBQCnHTUgw6yvJHReBGAAVDrvPnGmvc11yJQOCyag/0OlzJaxOPSr2TUZQBKyrctM91fgr4DWwFGjRy0x/gFXAVOJtEGD0BHPKYztqW2VvTeUBINEm0MWXomSSy+zWRyKSebxeQU4DbQJfuC2F5+ZsBmoEfQB4YtC0z8IY2QoI/J7+FwDRgF3A2gJqMJK8GYDFwAegX3ckRcIBXtYFrA6hqVox1hCGRiqmHBfjiKkeyArQk4faw4/vADw8dHbI+retORkDwfm1gzlWO7OX/94EDrnIh76MnkCWMmMBfAs77lBjw72tNWQbFFf1IDOqQMGIAPwDsKJs8VyjWAzMU181xNEUlKfz8mvftwM7QBAI8+XSY8Cdr0hUs0RaKQJgnH0Y0LDExMIEA4NNRwCssMRCmsFRZoL1a4BUkdgEvpFjLovFlM+XRMVUNvIvExSAvtbws4PUtLJ8U+ChiaL50ygO7aw28lwt1yd91Uh70AflaBK8kICVxm04MrlUXiroZfwPvFVNvxwQBn/g9XK09EIf0SBm9UZrwIRL6b5W/crdmJRV7bWcAAAAASUVORK5CYII=",
 		"2": "data:image/png;base64,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",
 		"3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5QYXAxQhqFLDRQAABAxJREFUaN7tmV2IVVUUx3/3zmRiRvmRTW0iC7HEJHuQtDYxhKKlSYQI2jiiBGntaOhlXnpIekgp0mgXfSioldqHURiMU8oEswiRqB6CUIsK3EaZoiFTOTNOD3cNHK7nzv063XMG5v9y1l1n3XvX/5y19lpr7xxVIohfBGwE7gEmAyeBo8BOY91BGoxcFY5fAbwNrB3BrBtoN9b90SgC+SpsyzkPsBjoDeKvzxSBIH5hkfP7gDuBq4A5wCvAgN6bCezKVAgF8fuBR/TjXmPd6hibZcAnQJOqFhnrDmUlhOZH5BfiDIx1nwGvRlTrspQDU/U6BJwYwe6tiHxvIwg0V2h3CpiuIdcKlFoujynJXIR0qbCcD7QDCzRvBvR/vgBeM9YdSzIHtgFP68fTwDNAl7HuTIxtvz6YQWNdc8z9mzXUHhrhLy8BLwLPGusGkgihLcCfKl8HvAP8HsS3VVkE7wKOlHF+2K9OYHcQn6+bgLHuN2ApEC1QTaqr1PkbNfRaVDUI7ADuA67RJfl+LYbDWAW4JHIAY93RIH6W/uBi4Erg5SpewA5gmspngOXGuq+KbHqC+C+1rjyluk1B/HZjXV9drUQVT/qyHAjiFwDDzvYDrTHOF7ct32tyA6wy1u2rt5WoB2si8q6RnNe33Q+8G1HNqzuE6kRrlIA+5XZgJbDVWHc45ju/RuSWtAmYiPxtED9ec6IZmA3cEvOdmRH5bBLdaD191sRIJe8DLmouAEwP4u8oyoFpwIaIStJ+A/lIfA8BQ0F8N/Cwqj8I4p8AftQWZAswRe+d1CYxVQJx2AQ8CIwDZgE9MTaDwGPGun/TCKFydeU7oA34u4TJeWClsa47qYks8fnDWPchMFe72BNa4L4GngduN9Z9nFQ3WguGKtEZ644DjzdiJs4kxgjE4GLRtZQuswReAs7pQBLVXdDrGMaQJSQ20ATxFtgJXA28CWwz1p3Ve5OBDl3v/wLWGeskMwSC+AeAj4AJEXU/8LPKtxYVzT5ghbGuK3UCQfxy4H1gfA3LbZu2E+kso0H8o8D+GpxHu9C9Qfz6VAgE8RuB3XX2U03A9iC+o6EEgvhO4PWECmEO2BrEb24IgSD+OWAzyaOzFhLVHDHlKGxkdfD/4g3gSWPdpcQIBPFNFI6YGrLnD+wB1pbb2K2IQBA/DngPWNHgIntAR8p/aiYQxE/QZXJJSp1CD4U91AtVEwjiJwKfUtgxThMCLDPWna+YQBA/CegC7s5Iz/YNsMRYd7osgSC+BficwvFplvADhZPPUJKAHv8cAmZktHv+BVhorPvpskIWxN8G9GbYeSgcNPZG91Lz6vxszfibRsEMcwNwOIifC5AL4udpwk4ZZcPYOWBpXgeR0eY8wLXAnv8AFxA8dm7qq4oAAAAASUVORK5CYII=",
-		"5": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAAwCAYAAABE1blzAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5QYXAwsi/AGcYQAAA0dJREFUaN7dmU9IVEEcxz/71AoLMaOwQqEQLaI/IHMIO3QoKg0Kq0sWDFSH/hE1ERgl0l8oRovq0G26dQi6GdSlDmE1HkqpFOrUrSACSQiTOjhCmO6+3X3z9u1+b2935s37zHfe/H7vNylikDZ2JXAV2ALMBfqBbiVFv++xUzHANQKvgIXT/hoHdikpnhQtoDY2BbwENs7S5CvQpKT44esZAs8GHkgDB7AEuFiUDmpjK4GPQH2GpuPAWiXFSLE5eD4EHEAF0FNUDmpj64BhoDKLbq0+NhxfDvZkCQfQo42tSDygNrYF2JND11XA8UQvUW1sALwBmnO8xQ+gUUnxLakOHskDDqAauJRIB7WxVcAIUJvnrSaAZiXFu6Q52B0BHEAZcNdlQckA1MY2AMcinKxNQHuSHLzlvhLS6RmwHmgA7oe4501t7LyCA2pjtwNtIXbHPUqKQSXFZ+AoMJChzwrgTEEBXWDuDdH0g5JidOpCSfEHeB2iX6c2dlkhHTzhAnQm/Z4lyc6kBcD1ggBqY2uACzEUBA5qYzcVwsFrQE0MgCnglsuS4gHUxq4BDhGfmoGOOB3sBcqJVzdctuQXUBu7F9hK/KoFznkF1MbOzXdXy1NnXdbkzcGzLhMplLKe4CAL93JaIh60Vxu71YeDN4AqkqFebWx5ZIDa2Jy3aU8KHaaCEHAp4Db+i8RZJxoum8rbwQ6gJc+HqQr5WzYKlSqmMrg335Uhluf5ML9dGWLwnzz2fQQVgHFgnZJieLYGmV7UzgjgpsZ5ro29B/wEDkdU3qgAdLrv0VQa9+qZPFuoJPlqU1L0ZfsO9hQJHMBtl2WFA3TfX+0Uj2YtegUzwJUBd4j+YKYf2AwI4KEHyC5t7OIwDh4CNkQ8+CiwU0nxQkkxwOTB6GDEY1QDl9MCamOrgSseZveTkuL71IWSYoLMVbVcdFgbuz6dg13AYg8DN2ljl/4zkXMiSB5mUhmTNdr/w4Q2tgkYcrHFh4aYLO//BE4D2zxuOvuUFI+mA/YBOygNfQFWKSnGAgfXWkJwAHVulZBy1ekhoInS0hiwOnABstTgcFnY5QA4SelqfwAsKmHA8gB4XMKAbwPgFPDAxadS0S/gKbD7L9yn11ZmdimEAAAAAElFTkSuQmCC",
+		"5": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAAwCAYAAABE1blzAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5QYYBRcxwibsBgAAA0dJREFUaN7dmT1oFEEYhp/bJCpRQowo/qCghCQiGiFYiDJYKP6CksTG0co44B+iBCGiIv6C4kVRC6ezGLAQ7BS00QGJSgpNUCNoZacggRBBomhxExD17vbudvb27u32bmZnn3ln5/v2mxQxSFmzBLgArAemAgPAGS3kgO+xUzHAtQDPgZl//TUBbNdCPqxYQGVNCngGrM7S5DPQqoUc9fUMgWcDd+eAA5gDnKpIB5U19cA7YFGephPAci3k+0pz8EQIOIA6IF1RDiprFgIjQH0B3bb42HB8OZguEA4graypSzygsmYN0FVE1zbgYKKXqLImAF4CHUXeYhRo0UJ+SaqD+0qAA2gEzibSQWVNA/AemFvirX4CHVrI10lz8EwEcAA1wE2XBSUDUFnTDByIcLLWAp1JcvCa+0rIpcdAO9AM3A5xzyvKmmllB1TWbAK2htgdu7SQQ1rIj8B+YDBPn8XAsbICusDcH6LpWy3k2OSFFvIX8CJEvz5lzfxyOnjIBeh8+pElyc6nGcClsgAqa5qAkzEUBPYoa9aWw8GLQFMMgCngmsuS4gFU1iwD9hKfOgAZp4P9QC3x6rLLlvwCKmu6gQ3Er7nAca+Aypqppe5qJarXZU3eHOx1mUi5VPAEBwW4V9QS8aBuZc0GHw5eBhpIhvqVNbWRASprit6mPSl0mApCwKWA6/gvEhecaLhsqmQHJbCmxIdpCPlbIQqVKqbyuDfdlSEWlPgwP1wZYuiPPPZNBBWACWCFFnIkW4N8L2pfBHCT4zxR1twCxoGeiMobdcDVXN+jqRzuLSJztlBP8rVVC/mg0HcwXSFwANddlhUO0H1/dVI5ylr0Cv4DVwPcIPqDmQFgHbAKuOsB8rSyZnYYB/cCKyMefAzYpoV8qoUcJHMwOhTxGI3AuZyAyppG4LyH2f2ghfw6eaGF/En+qlox6lHWtOdy8DQw28PArcqaeX9M5JQIkof/qYZMjfbfMKGsaQWGXWzxoWEy5f1x4Ciw0eOms1MLee9vwAfAZqpDn4A2LeS3wMFtqSI4gIVulZBy1elhoJXq0jdgaeACZLXB4bKwcwFwmOrVrgCYVcWAtQFwv4oBXwXAEeCOi0/Vou/AI2DHb73c0yO4eOp/AAAAAElFTkSuQmCC",
 		"6": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5QYXAxMSWMM0lAAAA+1JREFUaN7NmsuPFFUUxn/d06ImPmKiMZA4PpAQGQEHYoxvxRkjxC/CgsBCEyUIaGIU1MSd/gFqFNQwEF24EnWjBzRjBhkWPBQTwFHQGJWXLty4AGVmZHpczOmkM+l69K3u6jpJpZPqe879vjqPe+6tKlEwMbN5wHrgIeA6oAv4DdgNvC/ph/rxpQIBvxh4HXgWKEcMmwC2ApskjReGgJnNAHYBfSlVvgaWShovF8QBbzQBHmAJ8GYhPGBmtwJHPNabkQlgYRE8sDYAPK6ztggEHsyg21/pYOiUgbuBORnMdFc6ALwHWAk8AdyU1V4lJ9C3Aav8urGFpk9W2gh6Xh3ouW2aZqjUYOJFXhmWALOBKvALMAwMSBqJAT3bAa8G5rfZsVWgp1Q3+SXAW8DTMUt5FXgPeEnSmOt1e0yvAm7PMZ02S3q+5CAuBQaBe1MqfwXsdNB3ZVgQq8A+YAewzK80MggslzRay4EtTYAHeNivEJkEvnXQn0g64w9xG3AAWJxAeDPwSi0CKmbWC6zJweVHHPQOSb83+P8CMCtC95h7fUDST9PL6Po29kTHHfRHkn5OGDsXmNng/n/AHZLORa0DfS0G/Wvdk/6+Cb0HIu5/FwW+RqC7BaBPAx876EMt7omGk1biyQzAzwP9wH5JwXbMrATcH0rgFHBzaLhI2tcCD94CXNvg/riX2Ugp+2Y5VEba3FIfkvRPEoEtXl9DZLWZvdYCAlEJvCdJsSzpR2B74MQl4FUzGzCzShvif28iAf/dmJQsCbIO+MzMLgvQ7QGuiYj//akISDoPLPUzl9BwWgbsNbOZLYr/byT9m9YDSBqV9AzQC7zjCfo3cBY46p3qcuBMjL1FwAHfdWWN/+G0MdxszM7yTrQ3ZthZYKWkwRTx/xdwdaOzH0l7UnsgrUj6E7gP+CJm2OXA52b2eIK5BRHgx4CDafAEHat4b/IYMBAzbAbwYUKZjYr/g56X7SHgJC5I2gC8ENOO1MrsB2Z2UavjPxOBOiJvA0962YuSp4BdZnbFtHOhe0IXsOAkjknIPuBT4MqYYYeBF4EVfmjQqFqNAldJGs3FA3WeGPJt6emYYb1MHY0/FwG+1ppXcwuhaSRGgDt9+xgqc4Cd/s4gXwJO4g8vs4MZzPQz9bYmvxxokBNdvqJvCDQxAcyXdDxXD9R5YsJbky8DTXR5k0hHCNRJd8ZQ6jiBGzLoXl8EAlnmmCwCgRMZdE8VgcBQBt3dRSCwPXCXN5nQ7eZDwFfnbQGq70o6VgQP4C33cJNh93JHWokIL4wBj6Q4NKj66v1o2m40908NzGwhU+8j+pg60hwHTrqHtk7/nCZJ/gd1ASoC0UvDHgAAAABJRU5ErkJggg=="
 	};
 
@@ -220,16 +223,15 @@
 
 	const yScale = d3.scaleLinear();
 
-	const yScaleByGroup = d3.scaleBand()
-		.paddingOuter(0);
+	const groupScale = d3.scaleBand()
+		.paddingOuter(0)
+		.paddingInner(0);
 
 	const xScale = d3.scalePoint()
 		.range([stackedPadding[3], chartWidth - stackedPadding[1]]);
 
 	const yAxis = d3.axisLeft(yScale)
 		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d));
-
-	const yAxisByGroup = d3.axisLeft(yScaleByGroup);
 
 	const xAxis = d3.axisBottom(xScale)
 		.tickSizeOuter(0)
@@ -943,6 +945,7 @@
 
 		viewButtons.on("click", d => {
 			chartState.selectedView = d;
+			chartState.baseline = null;
 			viewButtons.classed("active", d => chartState.selectedView.includes(d));
 			resizeSvg(false);
 			const data = processData(rawDataAllocations)
@@ -957,33 +960,45 @@
 
 		const dataAggregated = chartState.selectedView === viewOptions[0] ? stackGenerator(data) : [];
 
+		const dataByGroup = chartState.selectedView === viewOptions[1] ? data.reduce((acc, row) => {
+			stackGenerator.keys(lists.emergencyTypesInGroups[row.emergencyGroup].reduce((a, e) => {
+				if (inDataLists.emergencyTypesInData.includes(e)) a.push("et" + e);
+				return a;
+			}, []));
+			acc.push({
+				emergencyGroup: row.emergencyGroup,
+				emergencyGroupData: stackGenerator(row.emergencyData),
+				emergencyGroupTotal: row.total,
+				groupRawData: row.emergencyData
+			});
+			return acc;
+		}, []) : [];
+
 		if (dataAggregated.length) dataAggregated.sort((a, b) => a.index - b.index);
 
-		//const dataByGroup here
+		if (dataByGroup.length) {
+			dataByGroup.sort((a, b) => b.emergencyGroupTotal - a.emergencyGroupTotal);
+		};
 
 		xScale.domain(chartState.selectedYear.includes(allYearsOption) ? yearsArray : monthsArray);
 
-		yScaleByGroup.range([(1 - closeFactor) * height - padding[2], padding[0] + height * closeFactor])
+		groupScale.range(chartState.selectedView === viewOptions[0] ?
+				[(1 - closeFactor) * height - padding[2], padding[0] + height * closeFactor] :
+				[padding[0], height - padding[2]])
 			.domain(chartState.selectedView === viewOptions[0] ? dataAggregated.map(e => e.key) :
-				[]); //<-----------domain for by groups view here
+				dataByGroup.map(e => "eg" + e.emergencyGroup));
 
 		if (chartState.selectedView === viewOptions[0]) {
 			yScale.range([stackedHeightAggregate - stackedPadding[2], stackedPadding[0] + (data.length - 1) * stackGap])
 				.domain([0, d3.max(data, d => d.total)]);
-		} else {
-			yScale.range([stackedHeight - stackedPadding[2], stackedPadding[0]]);
 		};
 
 		areaGenerator.x(d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.data.year : d.data.month));
 
-		console.log(data);
-
-		console.log(dataAggregated);
-
 		yAxis.tickSizeInner(-(xScale.range()[1] - xScale.range()[0]))
-			.ticks(chartState.selectedView === viewOptions[0] ? tickNumberAggregate : tickNumberByGroup);
+			.ticks(tickNumberAggregate);
 
-		const stackTransition = d3.transition()
+		const syncTransition = d3.transition()
 			.duration(duration);
 
 		//Aggregated view
@@ -992,7 +1007,7 @@
 			.data(dataAggregated.length ? [true] : []);
 
 		const xAxisGroupAggregatedExit = xAxisGroupAggregated.exit()
-			.transition(stackTransition)
+			.transition(syncTransition)
 			.style("opacity", 0)
 			.remove();
 
@@ -1002,10 +1017,10 @@
 			.merge(xAxisGroupAggregated)
 			.attr("transform", "translate(0," + yScale.range()[0] + ")");
 
-		xAxisGroupAggregated.transition(stackTransition)
+		xAxisGroupAggregated.transition(syncTransition)
 			.call(xAxis);
 
-		let areaPaths = mainGroup.selectAll("." + classPrefix + "areaPath")
+		let areaPaths = mainGroup.selectAll("." + classPrefix + "areaPaths")
 			.data(dataAggregated, d => d.key);
 
 		const areaPathsExit = areaPaths.exit()
@@ -1016,7 +1031,7 @@
 
 		const areaPathsEnter = areaPaths.enter()
 			.append("path")
-			.attr("class", classPrefix + "areaPath")
+			.attr("class", classPrefix + "areaPaths")
 			.style("fill", d => colorScale(d.key))
 			.attr("d", (d, i) => {
 				let thisIndex = [];
@@ -1037,7 +1052,7 @@
 
 		areaPaths.order();
 
-		areaPaths.transition(stackTransition)
+		areaPaths.transition(syncTransition)
 			.attrTween("d", (d, i, n) => {
 				let thisIndex = [];
 				areaGenerator.y0((e, j) => {
@@ -1057,7 +1072,7 @@
 			.data(dataAggregated.length ? [true] : []);
 
 		const yAxisGroupAggregatedExit = yAxisGroupAggregated.exit()
-			.transition(stackTransition)
+			.transition(syncTransition)
 			.style("opacity", 0)
 			.remove();
 
@@ -1067,7 +1082,7 @@
 			.merge(yAxisGroupAggregated)
 			.attr("transform", "translate(" + stackedPadding[3] + ",0)");
 
-		yAxisGroupAggregated.transition(stackTransition)
+		yAxisGroupAggregated.transition(syncTransition)
 			.call(yAxis);
 
 		yAxisGroupAggregated.selectAll(".tick")
@@ -1083,17 +1098,17 @@
 		});
 
 		let legendGroup = mainGroup.selectAll("." + classPrefix + "legendGroup")
-			.data(yScaleByGroup.domain(), d => d);
+			.data(groupScale.domain(), d => d);
 
 		const legendGroupExit = legendGroup.exit()
-			.transition(stackTransition)
+			.transition(syncTransition)
 			.style("opacity", 0)
 			.remove();
 
 		const legendGroupEnter = legendGroup.enter()
 			.append("g")
 			.attr("class", classPrefix + "legendGroup")
-			.attr("transform", d => "translate(0," + (yScaleByGroup(d) + yScaleByGroup.bandwidth() / 2) + ")");
+			.attr("transform", d => "translate(0," + (groupScale(d) + (chartState.selectedView === viewOptions[0] ? groupScale.bandwidth() / 2 : stackedPaddingByGroup[0])) + ")");
 
 		const legendText = legendGroupEnter.append("text")
 			.attr("x", legendTextPadding + legendHorPadding)
@@ -1113,10 +1128,11 @@
 
 		legendGroup = legendGroupEnter.merge(legendGroup);
 
-		legendGroup.transition(stackTransition)
-			.attr("transform", d => "translate(0," + (yScaleByGroup(d) + yScaleByGroup.bandwidth() / 2) + ")");
+		legendGroup.transition(syncTransition)
+			.attr("transform", d => "translate(0," + (groupScale(d) + (chartState.selectedView === viewOptions[0] ? groupScale.bandwidth() / 2 : stackedPaddingByGroup[0])) + ")");
 
 		legendGroup.on("click", (d, i, n) => {
+			if (chartState.selectedView === viewOptions[1]) return;
 			const newBaseline = inDataLists.emergencyGroupsInData.map(e => "eg" + e).indexOf(d)
 			if (chartState.baseline !== newBaseline) {
 				chartState.baseline = newBaseline;
@@ -1125,6 +1141,130 @@
 		});
 
 		//by group view
+
+		let byGroupContainer = mainGroup.selectAll("." + classPrefix + "byGroupContainer")
+			.data(dataByGroup, d => d.emergencyGroup);
+
+		const byGroupContainerExit = byGroupContainer.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const byGroupContainerEnter = byGroupContainer.enter()
+			.append("g")
+			.attr("class", classPrefix + "byGroupContainer")
+			.attr("transform", d => "translate(0," + groupScale("eg" + d.emergencyGroup) + ")");
+
+		byGroupContainer = byGroupContainerEnter.merge(byGroupContainer);
+
+		byGroupContainer.transition(syncTransition)
+			.attr("transform", d => "translate(0," + groupScale("eg" + d.emergencyGroup) + ")");
+
+		byGroupContainer.each((d, i, n) => {
+			localVariable.set(n[i], d.emergencyGroup);
+			const yScaleLocal = d3.scaleLinear()
+				.range([stackedHeight - stackedPaddingByGroup[2], stackedPaddingByGroup[0]])
+				.domain([0, d3.max(d.groupRawData, e => e.total)]);
+			localScale.set(n[i], yScaleLocal);
+		});
+
+		let xAxisGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "xAxisGroupByGroup")
+			.data(dataByGroup.length ? [true] : []);
+
+		const xAxisGroupByGroupExit = xAxisGroupByGroup.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		xAxisGroupByGroup = xAxisGroupByGroup.enter()
+			.append("g")
+			.attr("class", classPrefix + "xAxisGroupByGroup")
+			.merge(xAxisGroupByGroup)
+			.attr("transform", (d, i, n) => "translate(0," + localScale.get(n[i]).range()[0] + ")");
+
+		xAxisGroupByGroup.transition(syncTransition)
+			.call(xAxis);
+
+		let areaPathsByGroup = byGroupContainer.selectAll("." + classPrefix + "areaPathsByGroup")
+			.data(d => d.emergencyGroupData, e => e.key);
+
+		const areaPathsByGroupExit = areaPathsByGroup.exit()
+			.transition()
+			.duration(shortDuration)
+			.style("opacity", 0)
+			.remove();
+
+		const areaPathsByGroupEnter = areaPathsByGroup.enter()
+			.append("path")
+			.attr("class", classPrefix + "areaPathsByGroup")
+			.style("fill", (d, i, n) => d3.color(colorScale("eg" + localVariable.get(n[i]))).brighter(0.2 * i))
+			.attr("d", (d, i, n) => {
+				let thisIndex = [];
+				const thisGroup = dataByGroup.find(a => a.emergencyGroup === localVariable.get(n[i]));
+				const thisScale = localScale.get(n[i]);
+				areaGenerator.y0((e, j) => {
+						for (let index = 0; index < d.index; index++) {
+							const foundData = thisGroup.emergencyGroupData.find(e => e.index === index);
+							if ((foundData[j][0] !== foundData[j][1]) ||
+								(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
+								(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
+						};
+						return thisScale(e[0]) - (thisIndex[j] || 0) * stackGap
+					})
+					.y1((e, j) => thisScale(e[1]) - (thisIndex[j] || 0) * stackGap);
+				return areaGenerator(d);
+			});
+
+		areaPathsByGroup = areaPathsByGroupEnter.merge(areaPathsByGroup);
+
+		areaPathsByGroup.order();
+
+		areaPathsByGroup.transition(syncTransition)
+			.attrTween("d", (d, i, n) => {
+				let thisIndex = [];
+				const thisGroup = dataByGroup.find(a => a.emergencyGroup === localVariable.get(n[i]));
+				const thisScale = localScale.get(n[i]);
+				areaGenerator.y0((e, j) => {
+						for (let index = 0; index < d.index; index++) {
+							const foundData = thisGroup.emergencyGroupData.find(e => e.index === index);
+							if ((foundData[j][0] !== foundData[j][1]) ||
+								(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
+								(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
+						};
+						return thisScale(e[0]) - (thisIndex[j] || 0) * stackGap
+					})
+					.y1((e, j) => thisScale(e[1]) - (thisIndex[j] || 0) * stackGap);
+				return pathTween(areaGenerator(d), precision, n[i])();
+			});
+
+
+		let yAxisGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "yAxisGroupByGroup")
+			.data(dataByGroup.length ? [true] : []);
+
+		const yAxisGroupByGroupExit = yAxisGroupByGroup.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		yAxisGroupByGroup = yAxisGroupByGroup.enter()
+			.append("g")
+			.attr("class", classPrefix + "yAxisGroupByGroup")
+			.merge(yAxisGroupByGroup)
+			.attr("transform", "translate(" + stackedPadding[3] + ",0)");
+
+		yAxisGroupByGroup.each((d, i, n) => {
+			const scale = localScale.get(n[i]);
+			const axis = d3.axisLeft(scale)
+				.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d))
+				.tickSizeInner(-(xScale.range()[1] - xScale.range()[0]))
+				.ticks(tickNumberByGroup);
+			d3.select(n[i]).transition(syncTransition)
+				.call(axis);
+		});
+
+		yAxisGroupByGroup.selectAll(".tick")
+			.filter(d => d === 0)
+			.remove();
 
 		//end of drawStackedAreaChart
 	};
@@ -1170,6 +1310,7 @@
 				if (!inDataLists.regionsInData.includes(lists.fundRegions[row.CountryID])) inDataLists.regionsInData.push(lists.fundRegions[row.CountryID]);
 				if (!inDataLists.fundsInData.includes(row.CountryID)) inDataLists.fundsInData.push(row.CountryID);
 				if (!inDataLists.emergencyGroupsInData.includes(row.EmergencyGroupID)) inDataLists.emergencyGroupsInData.push(row.EmergencyGroupID);
+				if (!inDataLists.emergencyTypesInData.includes(row.EmergencyTypeID)) inDataLists.emergencyTypesInData.push(row.EmergencyTypeID);
 			};
 
 			if (chartState.selectedView === viewOptions[0]) {
@@ -1184,18 +1325,23 @@
 
 				if (foundEmergencyGroup) {
 					if (chartState.selectedYear.includes(allYearsOption)) {
+						foundEmergencyGroup.total += row.Budget;
 						populateYears(foundEmergencyGroup.emergencyData, row, "et", "EmergencyTypeID");
 					} else if (chartState.selectedYear.includes(row.Year)) {
+						foundEmergencyGroup.total += row.Budget;
 						populateMonths(foundEmergencyGroup.emergencyData, row, "et", "EmergencyTypeID");
 					};
 				} else {
 					const emergencyObj = {
 						emergencyGroup: row.EmergencyGroupID,
+						total: 0,
 						emergencyData: []
 					};
 					if (chartState.selectedYear.includes(allYearsOption)) {
+						emergencyObj.total += row.Budget;
 						populateYears(emergencyObj.emergencyData, row, "et", "EmergencyTypeID");
 					} else if (chartState.selectedYear.includes(row.Year)) {
+						emergencyObj.total += row.Budget;
 						populateMonths(emergencyObj.emergencyData, row, "et", "EmergencyTypeID");
 					};
 					data.push(emergencyObj);

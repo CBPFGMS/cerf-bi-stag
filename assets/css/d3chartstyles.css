@@ -1561,26 +1561,32 @@ p#alloctimelined3chartTitle {
 	fill: #444;
 }
 
-.alloctimelinexAxisGroupAggregated path, .alloctimelinexAxisGroupAggregated line {
+.alloctimelinexAxisGroupByGroup text {
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: #444;
+}
+
+.alloctimelinexAxisGroupAggregated path, .alloctimelinexAxisGroupAggregated line, .alloctimelinexAxisGroupByGroup path, .alloctimelinexAxisGroupByGroup line {
 	stroke: #666;
 }
 
-.alloctimelineyAxisGroupAggregated text {
+.alloctimelineyAxisGroupAggregated text, .alloctimelineyAxisGroupByGroup text {
 	font-family: "Roboto", sans-serif;
 	font-size: 11px;
 	fill: #666;
 }
 
-.alloctimelineyAxisGroupAggregated path {
+.alloctimelineyAxisGroupAggregated path, .alloctimelineyAxisGroupByGroup path {
 	stroke: none;
 }
 
-.alloctimelineyAxisGroupAggregated line {
+.alloctimelineyAxisGroupAggregated line, .alloctimelineyAxisGroupByGroup line {
 	stroke: #ccc;
 	stroke-dasharray: 3, 3;
 }
 
-.alloctimelineyAxisGroupAggregated {
+.alloctimelineyAxisGroupAggregated, .alloctimelineyAxisGroupByGroup {
 	pointer-events: none;
 }
 
@@ -1595,7 +1601,7 @@ p#alloctimelined3chartTitle {
 	dominant-baseline: central;
 }
 
-.alloctimelineareaPath {
+.alloctimelineareaPaths {
 	cursor: pointer;
 }
 
