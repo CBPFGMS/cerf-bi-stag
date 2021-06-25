@@ -1605,3 +1605,9 @@ p#alloctimelined3chartTitle {
 	cursor: pointer;
 }
 
+.alloctimelinesublegendGroup text {
+	font-size: 10px;
+	font-family: "Roboto", sans-serif;
+	fill:  #666;
+	font-style: italic;
+}

@@ -17,6 +17,9 @@
 		unBlue = "#1F69B3",
 		classPrefix = "alloctimeline",
 		tooltipWidth = 270,
+		sublegendGroupSize = 16,
+		sublegendGroupPadding = -iconSize,
+		sublegendGroupVertPadding = 28,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -651,6 +654,8 @@
 
 			const data = processData(rawDataAllocations);
 
+			resizeSvg(false);
+
 			drawStackedAreaChart(data);
 
 		};
@@ -954,8 +959,8 @@
 			chartState.selectedView = d;
 			chartState.baseline = null;
 			viewButtons.classed("active", d => chartState.selectedView.includes(d));
+			const data = processData(rawDataAllocations);
 			resizeSvg(false);
-			const data = processData(rawDataAllocations)
 			drawStackedAreaChart(data);
 		});
 
@@ -1243,6 +1248,31 @@
 			.filter(d => d === 0)
 			.remove();
 
+		let sublegendGroup = legendGroup.selectAll("." + classPrefix + "sublegendGroup")
+			.data(chartState.selectedView === viewOptions[0] ? [] : d => dataByGroup.find(e => "eg" + e.emergencyGroup === d).emergencyGroupData.map(e => e.key), d => d);
+
+		const sublegendGroupExit = sublegendGroup.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const sublegendGroupEnter = sublegendGroup.enter()
+			.append("g")
+			.attr("class", classPrefix + "sublegendGroup")
+			.attr("transform", (_, i) => "translate(0," + (sublegendGroupVertPadding + (i * sublegendGroupSize)) + ")");
+
+		const sublegendGroupEnterText = sublegendGroupEnter.append("text")
+			.attr("x", legendTextPadding + legendHorPadding + sublegendGroupPadding)
+			.text(d => lists.emergencyTypeNames[d.replace(/^\D+/g, "")].includes(" - ") ?
+				(lists.emergencyTypeNames[d.replace(/^\D+/g, "")].split(" - ")[1] === "Unspecified Health Emergency" ?
+					"Unspecified Health Emerg." : lists.emergencyTypeNames[d.replace(/^\D+/g, "")].split(" - ")[1]) :
+				lists.emergencyTypeNames[d.replace(/^\D+/g, "")]);
+
+		sublegendGroup = sublegendGroupEnter.merge(sublegendGroup);
+
+		sublegendGroup.transition(syncTransition)
+			.attr("transform", (_, i) => "translate(0," + (sublegendGroupVertPadding + (i * sublegendGroupSize)) + ")");
+
 		//end of drawStackedAreaChart
 	};
 
@@ -1319,11 +1349,12 @@
 					if (chartState.selectedYear.includes(allYearsOption)) {
 						emergencyObj.total += row.Budget;
 						populateYears(emergencyObj.emergencyData, row, "et", "EmergencyTypeID");
+						data.push(emergencyObj);
 					} else if (chartState.selectedYear.includes(row.Year)) {
 						emergencyObj.total += row.Budget;
 						populateMonths(emergencyObj.emergencyData, row, "et", "EmergencyTypeID");
+						data.push(emergencyObj);
 					};
-					data.push(emergencyObj);
 				};
 			};
 		});
