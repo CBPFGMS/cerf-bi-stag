@@ -247,6 +247,11 @@
 	const areaGenerator = d3.area()
 		.curve(curveBumpX);
 
+	const areaGeneratorZero = d3.area()
+		.y0(() => yScale(0))
+		.y1(() => yScale(0))
+		.curve(curveBumpX);
+
 	const colorScale = d3.scaleOrdinal()
 		.range(colorArray);
 
@@ -994,6 +999,7 @@
 		};
 
 		areaGenerator.x(d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.data.year : d.data.month));
+		areaGeneratorZero.x(d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.data.year : d.data.month));
 
 		yAxis.tickSizeInner(-(xScale.range()[1] - xScale.range()[0]))
 			.ticks(tickNumberAggregate);
@@ -1034,18 +1040,7 @@
 			.attr("class", classPrefix + "areaPaths")
 			.style("fill", d => colorScale(d.key))
 			.attr("d", (d, i) => {
-				let thisIndex = [];
-				areaGenerator.y0((e, j) => {
-						for (let index = 0; index < d.index; index++) {
-							const foundData = dataAggregated.find(e => e.index === index);
-							if ((foundData[j][0] !== foundData[j][1]) ||
-								(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
-								(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
-						};
-						return yScale(e[0]) - (thisIndex[j] || 0) * stackGap
-					})
-					.y1((e, j) => yScale(e[1]) - (thisIndex[j] || 0) * stackGap);
-				return areaGenerator(d);
+				return areaGeneratorZero(d);
 			});
 
 		areaPaths = areaPathsEnter.merge(areaPaths);
@@ -1199,25 +1194,14 @@
 			.attr("class", classPrefix + "areaPathsByGroup")
 			.style("fill", (d, i, n) => d3.color(colorScale("eg" + localVariable.get(n[i]))).brighter(0.2 * i))
 			.attr("d", (d, i, n) => {
-				let thisIndex = [];
-				const thisGroup = dataByGroup.find(a => a.emergencyGroup === localVariable.get(n[i]));
-				const thisScale = localScale.get(n[i]);
-				areaGenerator.y0((e, j) => {
-						for (let index = 0; index < d.index; index++) {
-							const foundData = thisGroup.emergencyGroupData.find(e => e.index === index);
-							if ((foundData[j][0] !== foundData[j][1]) ||
-								(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
-								(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
-						};
-						return thisScale(e[0]) - (thisIndex[j] || 0) * stackGap
-					})
-					.y1((e, j) => thisScale(e[1]) - (thisIndex[j] || 0) * stackGap);
-				return areaGenerator(d);
+				return areaGeneratorZero(d);
 			});
 
 		areaPathsByGroup = areaPathsByGroupEnter.merge(areaPathsByGroup);
 
 		areaPathsByGroup.order();
+
+		//2. same y axis!!!!!!!!!!!
 
 		areaPathsByGroup.transition(syncTransition)
 			.attrTween("d", (d, i, n) => {
@@ -1236,7 +1220,6 @@
 					.y1((e, j) => thisScale(e[1]) - (thisIndex[j] || 0) * stackGap);
 				return pathTween(areaGenerator(d), precision, n[i])();
 			});
-
 
 		let yAxisGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "yAxisGroupByGroup")
 			.data(dataByGroup.length ? [true] : []);
@@ -1283,6 +1266,7 @@
 
 	function preProcessData(rawDataAllocations) {
 		rawDataAllocations.forEach(row => {
+			if (!row.Budget) return;
 			if (row.LastProjectApprovedDate) row.Year = row.LastProjectApprovedDate.getFullYear();
 			if (!lists.fundsInAllDataList[row.CountryID] && lists.fundNames[row.CountryID]) lists.fundsInAllDataList[row.CountryID] = lists.fundNames[row.CountryID];
 			if (!lists.regionsInAllDataList[lists.fundRegions[row.CountryID]] && lists.regionNames[lists.fundRegions[row.CountryID]]) lists.regionsInAllDataList[lists.fundRegions[row.CountryID]] = lists.regionNames[lists.fundRegions[row.CountryID]];
@@ -1305,6 +1289,7 @@
 			//TEMPORARY FILTER: REMOVE!!!
 			if (!lists.emergencyGroupsInAllDataList[row.EmergencyGroupID]) return;
 			if (!row.LastProjectApprovedDate) return;
+			if (!row.Budget) return;
 
 			if (chartState.selectedYear.includes(row.Year) || chartState.selectedYear.includes(allYearsOption)) {
 				if (!inDataLists.regionsInData.includes(lists.fundRegions[row.CountryID])) inDataLists.regionsInData.push(lists.fundRegions[row.CountryID]);
@@ -1458,7 +1443,7 @@
 				const topIndex = target.reduce((a, c) => {
 					return Math.max(monthsArray.indexOf(c.month), a)
 				}, 0);
-				monthsToFill = monthsArray.slice(0, topIndex);
+				monthsToFill = monthsArray.slice(0, topIndex + 1);
 			} else {
 				monthsToFill = monthsArray.slice();
 			};
