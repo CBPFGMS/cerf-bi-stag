@@ -29,14 +29,13 @@
 		currentDate = new Date(),
 		currentYear = currentDate.getFullYear(),
 		localVariable = d3.local(),
-		localScale = d3.local(),
 		localStorageTime = 3600000,
 		duration = 1000,
 		shortDuration = 250,
 		tooltipPadding = 12,
 		disabledOpacity = 0.4,
 		tickNumberAggregate = 4,
-		tickNumberByGroup = 2,
+		tickNumberByGroup = 3,
 		colorArray = ["#8da0cb", "#fc8d62", "#e5c494", "#66c2a5", "#b3b3b3"],
 		monthFormat = d3.timeFormat("%b"),
 		monthParse = d3.timeParse("%m"),
@@ -231,6 +230,9 @@
 		.range([stackedPadding[3], chartWidth - stackedPadding[1]]);
 
 	const yAxis = d3.axisLeft(yScale)
+		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d));
+
+	const yAxisByGroup = d3.axisLeft(yScale)
 		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d));
 
 	const xAxis = d3.axisBottom(xScale)
@@ -996,6 +998,9 @@
 		if (chartState.selectedView === viewOptions[0]) {
 			yScale.range([stackedHeightAggregate - stackedPadding[2], stackedPadding[0] + (data.length - 1) * stackGap])
 				.domain([0, d3.max(data, d => d.total)]);
+		} else {
+			yScale.range([stackedHeight - stackedPaddingByGroup[2], stackedPaddingByGroup[0]])
+				.domain([0, d3.max(dataByGroup.map(e => d3.max(e.groupRawData, f => f.total)))]);
 		};
 
 		areaGenerator.x(d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.data.year : d.data.month));
@@ -1003,6 +1008,9 @@
 
 		yAxis.tickSizeInner(-(xScale.range()[1] - xScale.range()[0]))
 			.ticks(tickNumberAggregate);
+
+		yAxisByGroup.tickSizeInner(-(xScale.range()[1] - xScale.range()[0]))
+			.ticks(tickNumberByGroup);
 
 		const syncTransition = d3.transition()
 			.duration(duration);
@@ -1157,10 +1165,6 @@
 
 		byGroupContainer.each((d, i, n) => {
 			localVariable.set(n[i], d.emergencyGroup);
-			const yScaleLocal = d3.scaleLinear()
-				.range([stackedHeight - stackedPaddingByGroup[2], stackedPaddingByGroup[0]])
-				.domain([0, d3.max(d.groupRawData, e => e.total)]);
-			localScale.set(n[i], yScaleLocal);
 		});
 
 		let xAxisGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "xAxisGroupByGroup")
@@ -1175,7 +1179,7 @@
 			.append("g")
 			.attr("class", classPrefix + "xAxisGroupByGroup")
 			.merge(xAxisGroupByGroup)
-			.attr("transform", (d, i, n) => "translate(0," + localScale.get(n[i]).range()[0] + ")");
+			.attr("transform", (d, i, n) => "translate(0," + yScale.range()[0] + ")");
 
 		xAxisGroupByGroup.transition(syncTransition)
 			.call(xAxis);
@@ -1201,13 +1205,10 @@
 
 		areaPathsByGroup.order();
 
-		//2. same y axis!!!!!!!!!!!
-
 		areaPathsByGroup.transition(syncTransition)
 			.attrTween("d", (d, i, n) => {
 				let thisIndex = [];
 				const thisGroup = dataByGroup.find(a => a.emergencyGroup === localVariable.get(n[i]));
-				const thisScale = localScale.get(n[i]);
 				areaGenerator.y0((e, j) => {
 						for (let index = 0; index < d.index; index++) {
 							const foundData = thisGroup.emergencyGroupData.find(e => e.index === index);
@@ -1215,9 +1216,9 @@
 								(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
 								(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
 						};
-						return thisScale(e[0]) - (thisIndex[j] || 0) * stackGap
+						return yScale(e[0]) - (thisIndex[j] || 0) * stackGap
 					})
-					.y1((e, j) => thisScale(e[1]) - (thisIndex[j] || 0) * stackGap);
+					.y1((e, j) => yScale(e[1]) - (thisIndex[j] || 0) * stackGap);
 				return pathTween(areaGenerator(d), precision, n[i])();
 			});
 
@@ -1235,15 +1236,8 @@
 			.merge(yAxisGroupByGroup)
 			.attr("transform", "translate(" + stackedPadding[3] + ",0)");
 
-		yAxisGroupByGroup.each((d, i, n) => {
-			const scale = localScale.get(n[i]);
-			const axis = d3.axisLeft(scale)
-				.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d))
-				.tickSizeInner(-(xScale.range()[1] - xScale.range()[0]))
-				.ticks(tickNumberByGroup);
-			d3.select(n[i]).transition(syncTransition)
-				.call(axis);
-		});
+		yAxisGroupByGroup.transition(syncTransition)
+			.call(yAxisByGroup);
 
 		yAxisGroupByGroup.selectAll(".tick")
 			.filter(d => d === 0)
