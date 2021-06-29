@@ -18,6 +18,7 @@
 		classPrefix = "alloctimeline",
 		tooltipWidth = 270,
 		sublegendGroupSize = 16,
+		bulletSize = 4,
 		sublegendGroupPadding = -iconSize,
 		sublegendGroupVertPadding = 28,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
@@ -990,6 +991,9 @@
 
 		if (dataByGroup.length) {
 			dataByGroup.sort((a, b) => b.emergencyGroupTotal - a.emergencyGroupTotal);
+			dataByGroup.forEach(row => {
+				row.emergencyGroupData.sort((a, b) => a.index - b.index);
+			});
 		};
 
 		xScale.domain(chartState.selectedYear.includes(allYearsOption) ? yearsArray : monthsArray);
@@ -1136,7 +1140,8 @@
 
 		legendGroup = legendGroupEnter.merge(legendGroup);
 
-		legendGroup.transition(syncTransition)
+		legendGroup.style("cursor", chartState.selectedView === viewOptions[0] ? "pointer" : "default")
+			.transition(syncTransition)
 			.attr("transform", d => "translate(0," + (groupScale(d) + (chartState.selectedView === viewOptions[0] ? groupScale.bandwidth() / 2 : stackedPaddingByGroup[0])) + ")");
 
 		legendGroup.on("click", (d, i, n) => {
@@ -1210,7 +1215,8 @@
 
 		areaPathsByGroup.order();
 
-		areaPathsByGroup.transition(syncTransition)
+		areaPathsByGroup.style("fill", (d, i, n) => d3.color(colorScale("eg" + localVariable.get(n[i]))).brighter(0.2 * i))
+			.transition(syncTransition)
 			.attrTween("d", (d, i, n) => {
 				let thisIndex = [];
 				const thisGroup = dataByGroup.find(a => a.emergencyGroup === localVariable.get(n[i]));
@@ -1249,7 +1255,11 @@
 			.remove();
 
 		let sublegendGroup = legendGroup.selectAll("." + classPrefix + "sublegendGroup")
-			.data(chartState.selectedView === viewOptions[0] ? [] : d => dataByGroup.find(e => "eg" + e.emergencyGroup === d).emergencyGroupData.map(e => e.key), d => d);
+			.data(chartState.selectedView === viewOptions[0] ? [] :
+				d => dataByGroup.find(e => "eg" + e.emergencyGroup === d).emergencyGroupData.sort((a, b) => a.index - b.index).map(e => ({
+					type: e.key,
+					group: d
+				})), d => d.type);
 
 		const sublegendGroupExit = sublegendGroup.exit()
 			.transition(syncTransition)
@@ -1259,19 +1269,34 @@
 		const sublegendGroupEnter = sublegendGroup.enter()
 			.append("g")
 			.attr("class", classPrefix + "sublegendGroup")
-			.attr("transform", (_, i) => "translate(0," + (sublegendGroupVertPadding + (i * sublegendGroupSize)) + ")");
+			.attr("transform", (_, i, n) => "translate(0," + (sublegendGroupVertPadding + ((n.length - 1 - i) * sublegendGroupSize)) + ")");
 
 		const sublegendGroupEnterText = sublegendGroupEnter.append("text")
 			.attr("x", legendTextPadding + legendHorPadding + sublegendGroupPadding)
-			.text(d => lists.emergencyTypeNames[d.replace(/^\D+/g, "")].includes(" - ") ?
-				(lists.emergencyTypeNames[d.replace(/^\D+/g, "")].split(" - ")[1] === "Unspecified Health Emergency" ?
-					"Unspecified Health Emerg." : lists.emergencyTypeNames[d.replace(/^\D+/g, "")].split(" - ")[1]) :
-				lists.emergencyTypeNames[d.replace(/^\D+/g, "")]);
+			.text(d => lists.emergencyTypeNames[d.type.replace(/^\D+/g, "")].includes(" - ") ?
+				(lists.emergencyTypeNames[d.type.replace(/^\D+/g, "")].split(" - ")[1] === "Unspecified Health Emergency" ?
+					"Unspecified Health Emerg." : lists.emergencyTypeNames[d.type.replace(/^\D+/g, "")].split(" - ")[1]) :
+				lists.emergencyTypeNames[d.type.replace(/^\D+/g, "")]);
+
+		const sublegendGroupEnterBullet = sublegendGroupEnter.append("circle")
+			.attr("r", bulletSize)
+			.attr("cx", 2 * legendHorPadding)
+			.style("fill", (d, i) => d3.color(colorScale(d.group)).brighter(0.2 * i))
 
 		sublegendGroup = sublegendGroupEnter.merge(sublegendGroup);
 
 		sublegendGroup.transition(syncTransition)
-			.attr("transform", (_, i) => "translate(0," + (sublegendGroupVertPadding + (i * sublegendGroupSize)) + ")");
+			.style("fill", (d, i) => d3.color(colorScale(d.group)).brighter(0.2 * i))
+			.attr("transform", (_, i, n) => "translate(0," + (sublegendGroupVertPadding + ((n.length - 1 - i) * sublegendGroupSize)) + ")");
+
+		//change colours, and change this:
+		sublegendGroup.on("click", (d, i) => {
+			const thisIndex = lists.emergencyTypesInGroups[d.group.replace(/^\D+/g, "")].indexOf(+d.type.replace(/^\D+/g, ""));
+			if (chartState.baseline !== thisIndex) {
+				chartState.baseline = thisIndex;
+				drawStackedAreaChart(data);
+			};
+		});
 
 		//end of drawStackedAreaChart
 	};

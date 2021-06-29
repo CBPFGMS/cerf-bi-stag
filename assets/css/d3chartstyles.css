@@ -1590,7 +1590,7 @@ p#alloctimelined3chartTitle {
 	pointer-events: none;
 }
 
-.alloctimelinelegendGroup {
+.alloctimelinesublegendGroup {
 	cursor: pointer;
 }
 
