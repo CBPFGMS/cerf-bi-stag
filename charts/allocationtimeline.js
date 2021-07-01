@@ -959,7 +959,35 @@
 
 		//listeners
 
+		emergencyCheckboxDiv.select("input")
+			.on("change", (d, i, n) => {
+				if (d === allEmergencyGroupsOption) {
+					if (n[i].checked) {
+						chartState.selectedEmergencyGroup = d3.keys(lists.emergencyGroupsInAllDataList).map(e => +e);
+						emergencyCheckbox.property("checked", false);
+					} else {
+						chartState.selectedEmergencyGroup.length = 0;
+					};
+				} else {
+					if (n[i].checked) {
+						if (chartState.selectedEmergencyGroup.length === d3.keys(lists.emergencyGroupsInAllDataList).length) {
+							chartState.selectedEmergencyGroup = [d];
+						} else {
+							chartState.selectedEmergencyGroup.push(d);
+						};
+					} else {
+						const thisIndex = chartState.selectedEmergencyGroup.indexOf(d);
+						chartState.selectedEmergencyGroup.splice(thisIndex, 1);
+					};
+					allEmergencies.property("checked", false);
+				};
 
+				const data = processData(rawDataAllocations);
+
+				resizeSvg(false);
+
+				drawStackedAreaChart(data);
+			});
 
 		//end of createDropdowns
 	};
@@ -1373,10 +1401,13 @@
 
 		rawDataAllocations.forEach(row => {
 
-			//TEMPORARY FILTER: REMOVE!!!
+			//Filter for checking invalid data rows
 			if (!lists.emergencyGroupsInAllDataList[row.EmergencyGroupID]) return;
 			if (!row.LastProjectApprovedDate) return;
 			if (!row.Budget) return;
+
+			//Filter for selections
+			if (!chartState.selectedEmergencyGroup.includes(row.EmergencyGroupID)) return;
 
 			if (chartState.selectedYear.includes(row.Year) || chartState.selectedYear.includes(allYearsOption)) {
 				if (!inDataLists.regionsInData.includes(lists.fundRegions[row.CountryID])) inDataLists.regionsInData.push(lists.fundRegions[row.CountryID]);
