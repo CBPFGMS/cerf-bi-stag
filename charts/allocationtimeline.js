@@ -40,7 +40,23 @@
 		disabledOpacity = 0.4,
 		tickNumberAggregate = 4,
 		tickNumberByGroup = 3,
-		colorArray = ["#8da0cb", "#fc8d62", "#e5c494", "#66c2a5", "#b3b3b3"],
+		colorArray = [{
+			main: "#8da0cb",
+			sub: ["#8DA0CB", "#9D8BD9", "#8BCCD9", "#9194E3", "#91C0E3"]
+		}, {
+			main: "#fc8d62",
+			sub: ["#FC8D62", "#FEB756", "#FE565D", "#FF9F57", "#FF6E57"]
+		}, {
+			main: "#e5c494",
+			sub: ["#E5C494", "#F2DF91", "#F2B091", "#FCDE97", "#FCC697"]
+		}, {
+			main: "#66c2a5",
+			sub: ["#66C2A5", "#63B6CF", "#63CF6F", "#68D9D5", "#68D995"]
+		}, {
+			main: "#b3b3b3",
+			sub: ["#B3B3B3", "#BFB8B6", "#BFB6BF", "#C9C1BF", "#C9BFC4"]
+		}],
+		colorSubScale = {},
 		monthFormat = d3.timeFormat("%b"),
 		monthParse = d3.timeParse("%m"),
 		monthsArray = d3.range(1, 13, 1).map(d => monthFormat(monthParse(d))),
@@ -63,6 +79,7 @@
 			[viewOptions[1]]: "View by Emergency Group"
 		},
 		yearsArray = [],
+		clickedGroup = {},
 		lists = {
 			fundNames: {},
 			fundRegions: {},
@@ -244,8 +261,7 @@
 		.tickSizeInner(4)
 		.tickPadding(4);
 
-	const stackGenerator = d3.stack()
-		.order(stackCustomOrder);
+	const stackGenerator = d3.stack();
 
 	const stackGeneratorByGroup = d3.stack()
 		.order(d3.stackOrderDescending);
@@ -259,7 +275,7 @@
 		.curve(curveBumpX);
 
 	const colorScale = d3.scaleOrdinal()
-		.range(colorArray);
+		.range(colorArray.map(e => e.main));
 
 	Promise.all([
 			fetchFile(classPrefix + "MasterFunds", masterFundsUrl, "master table for funds", "json"),
@@ -287,6 +303,8 @@
 		preProcessData(rawDataAllocations);
 
 		colorScale.domain(d3.keys(lists.emergencyGroupsInAllDataList).map(d => "eg" + d));
+
+		d3.keys(lists.emergencyGroupsInAllDataList).forEach(group => clickedGroup[group] = null);
 
 		validateYear(selectedYearString);
 
@@ -959,6 +977,7 @@
 		viewButtons.on("click", d => {
 			chartState.selectedView = d;
 			chartState.baseline = null;
+			d3.keys(lists.emergencyGroupsInAllDataList).forEach(group => clickedGroup[group] = null);
 			viewButtons.classed("active", d => chartState.selectedView.includes(d));
 			const data = processData(rawDataAllocations);
 			resizeSvg(false);
@@ -969,15 +988,18 @@
 
 	function drawStackedAreaChart(data) {
 
-		stackGenerator.keys(inDataLists.emergencyGroupsInData.map(d => "eg" + d));
+		stackGenerator.keys(inDataLists.emergencyGroupsInData.map(d => "eg" + d))
+			.order(stackCustomOrder);
 
 		const dataAggregated = chartState.selectedView === viewOptions[0] ? stackGenerator(data) : [];
 
 		const dataByGroup = chartState.selectedView === viewOptions[1] ? data.reduce((acc, row) => {
+			if (clickedGroup[row.emergencyGroup]) chartState.baseline = clickedGroup[row.emergencyGroup];
 			stackGenerator.keys(lists.emergencyTypesInGroups[row.emergencyGroup].reduce((a, e) => {
-				if (inDataLists.emergencyTypesInData.includes(e)) a.push("et" + e);
-				return a;
-			}, []));
+					if (inDataLists.emergencyTypesInData.includes(e)) a.push("et" + e);
+					return a;
+				}, []))
+				.order(clickedGroup[row.emergencyGroup] ? stackCustomOrder : d3.stackOrderDescending);
 			acc.push({
 				emergencyGroup: row.emergencyGroup,
 				emergencyGroupData: stackGenerator(row.emergencyData),
@@ -1023,6 +1045,12 @@
 
 		const syncTransition = d3.transition()
 			.duration(duration);
+
+		d3.entries(lists.emergencyTypesInGroups).forEach((entry, i) => {
+			colorSubScale[entry.key] = d3.scaleOrdinal()
+				.domain(entry.value.filter(e => inDataLists.emergencyTypesInData.includes(e)))
+				.range(colorArray[i].sub);
+		});
 
 		//Aggregated view
 
@@ -1124,17 +1152,17 @@
 
 		const legendText = legendGroupEnter.append("text")
 			.attr("x", legendTextPadding + legendHorPadding)
-			.attr("y", d => lists.emergencyGroupNames[d.replace(/^\D+/g, "")].split(" ").length > 1 ? "-0.6em" : 0)
-			.text(d => lists.emergencyGroupNames[d.replace(/^\D+/g, "")].split(" ")[0])
+			.attr("y", d => lists.emergencyGroupNames[extractNum(d)].split(" ").length > 1 ? "-0.6em" : 0)
+			.text(d => lists.emergencyGroupNames[extractNum(d)].split(" ")[0])
 			.append("tspan")
 			.attr("x", legendTextPadding + legendHorPadding)
 			.attr("dy", "1.2em")
-			.text(d => lists.emergencyGroupNames[d.replace(/^\D+/g, "")].split(" ")[1]);
+			.text(d => lists.emergencyGroupNames[extractNum(d)].split(" ")[1]);
 
 		const legendIcon = legendGroupEnter.append("image")
 			.attr("x", legendTextPadding - iconSize - legendHorPadding)
 			.attr("y", -iconSize / 2)
-			.attr("href", d => emergencyIconsData[d.replace(/^\D+/g, "")])
+			.attr("href", d => emergencyIconsData[extractNum(d)])
 			.attr("width", iconSize)
 			.attr("height", iconSize);
 
@@ -1206,7 +1234,7 @@
 		const areaPathsByGroupEnter = areaPathsByGroup.enter()
 			.append("path")
 			.attr("class", classPrefix + "areaPathsByGroup")
-			.style("fill", (d, i, n) => d3.color(colorScale("eg" + localVariable.get(n[i]))).brighter(0.2 * i))
+			.style("fill", (d, i, n) => colorSubScale[localVariable.get(n[i])](+extractNum(d.key)))
 			.attr("d", (d, i, n) => {
 				return areaGeneratorZero(d);
 			});
@@ -1215,8 +1243,7 @@
 
 		areaPathsByGroup.order();
 
-		areaPathsByGroup.style("fill", (d, i, n) => d3.color(colorScale("eg" + localVariable.get(n[i]))).brighter(0.2 * i))
-			.transition(syncTransition)
+		areaPathsByGroup.transition(syncTransition)
 			.attrTween("d", (d, i, n) => {
 				let thisIndex = [];
 				const thisGroup = dataByGroup.find(a => a.emergencyGroup === localVariable.get(n[i]));
@@ -1232,6 +1259,16 @@
 					.y1((e, j) => yScale(e[1]) - (thisIndex[j] || 0) * stackGap);
 				return pathTween(areaGenerator(d), precision, n[i])();
 			});
+
+		areaPathsByGroup.on("click", (d, i, n) => {
+			const thisGroup = d3.select(n[i].parentNode).datum().emergencyGroup;
+			const thisIndex = lists.emergencyTypesInGroups[thisGroup]
+				.filter(e => inDataLists.emergencyTypesInData.includes(e)).indexOf(+extractNum(d.key));
+			if (clickedGroup[thisGroup] !== thisIndex) {
+				clickedGroup[thisGroup] = thisIndex;
+				drawStackedAreaChart(data);
+			};
+		});
 
 		let yAxisGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "yAxisGroupByGroup")
 			.data(dataByGroup.length ? [true] : []);
@@ -1273,27 +1310,28 @@
 
 		const sublegendGroupEnterText = sublegendGroupEnter.append("text")
 			.attr("x", legendTextPadding + legendHorPadding + sublegendGroupPadding)
-			.text(d => lists.emergencyTypeNames[d.type.replace(/^\D+/g, "")].includes(" - ") ?
-				(lists.emergencyTypeNames[d.type.replace(/^\D+/g, "")].split(" - ")[1] === "Unspecified Health Emergency" ?
-					"Unspecified Health Emerg." : lists.emergencyTypeNames[d.type.replace(/^\D+/g, "")].split(" - ")[1]) :
-				lists.emergencyTypeNames[d.type.replace(/^\D+/g, "")]);
+			.text(d => lists.emergencyTypeNames[extractNum(d.type)].includes(" - ") ?
+				(lists.emergencyTypeNames[extractNum(d.type)].split(" - ")[1] === "Unspecified Health Emergency" ?
+					"Unspecified Health Emerg." : lists.emergencyTypeNames[extractNum(d.type)].split(" - ")[1]) :
+				lists.emergencyTypeNames[extractNum(d.type)]);
 
 		const sublegendGroupEnterBullet = sublegendGroupEnter.append("circle")
 			.attr("r", bulletSize)
 			.attr("cx", 2 * legendHorPadding)
-			.style("fill", (d, i) => d3.color(colorScale(d.group)).brighter(0.2 * i))
+			.style("fill", d => colorSubScale[extractNum(d.group)](extractNum(d.type)));
 
 		sublegendGroup = sublegendGroupEnter.merge(sublegendGroup);
 
-		sublegendGroup.transition(syncTransition)
-			.style("fill", (d, i) => d3.color(colorScale(d.group)).brighter(0.2 * i))
+		sublegendGroup.style("fill", d => colorSubScale[extractNum(d.group)](extractNum(d.type)))
+			.transition(syncTransition)
 			.attr("transform", (_, i, n) => "translate(0," + (sublegendGroupVertPadding + ((n.length - 1 - i) * sublegendGroupSize)) + ")");
 
 		//change colours, and change this:
-		sublegendGroup.on("click", (d, i) => {
-			const thisIndex = lists.emergencyTypesInGroups[d.group.replace(/^\D+/g, "")].indexOf(+d.type.replace(/^\D+/g, ""));
-			if (chartState.baseline !== thisIndex) {
-				chartState.baseline = thisIndex;
+		sublegendGroup.on("click", d => {
+			const thisIndex = lists.emergencyTypesInGroups[extractNum(d.group)]
+				.filter(e => inDataLists.emergencyTypesInData.includes(e)).indexOf(+extractNum(d.type));
+			if (clickedGroup[extractNum(d.group)] !== thisIndex) {
+				clickedGroup[extractNum(d.group)] = thisIndex;
 				drawStackedAreaChart(data);
 			};
 		});
@@ -1897,6 +1935,10 @@
 	function capitalize(str) {
 		return str[0].toUpperCase() + str.substring(1)
 	};
+
+	function extractNum(str) {
+		return str.replace(/^\D+/g, "");
+	}
 
 	function pathTween(newPath, precision, self) {
 		return function() {

@@ -1601,7 +1601,7 @@ p#alloctimelined3chartTitle {
 	dominant-baseline: central;
 }
 
-.alloctimelineareaPaths {
+.alloctimelineareaPaths, .alloctimelineareaPathsByGroup {
 	cursor: pointer;
 }
 
