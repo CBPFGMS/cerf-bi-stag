@@ -19,6 +19,7 @@
 		tooltipWidth = 270,
 		sublegendGroupSize = 16,
 		bulletSize = 4,
+		noDataTextPadding = 180,
 		sublegendGroupPadding = -iconSize,
 		sublegendGroupVertPadding = 28,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
@@ -673,6 +674,33 @@
 
 			const data = processData(rawDataAllocations);
 
+			//FIX THE ISSUE WHEN CHANGING YEARS!!!!!!!!!!!!!!
+
+			d3.selectAll("." + classPrefix + "regionCheckboxDiv")
+				.filter(function(d) {
+					return d !== allRegionsOption;
+				})
+				.select("input")
+				.property("disabled", function(d) {
+					return !inDataLists.regionsInData.includes(d);
+				});
+			d3.selectAll("." + classPrefix + "fundCheckboxDiv")
+				.filter(function(d) {
+					return d !== allFundsOption;
+				})
+				.select("input")
+				.property("disabled", function(d) {
+					return !inDataLists.fundsInData.includes(d);
+				});
+			d3.selectAll("." + classPrefix + "emergencyCheckboxDiv")
+				.filter(function(d) {
+					return d !== allEmergencyGroupsOption;
+				})
+				.select("input")
+				.property("disabled", function(d) {
+					return !inDataLists.emergencyGroupsInData.includes(d);
+				});
+
 			resizeSvg(false);
 
 			drawStackedAreaChart(data);
@@ -959,6 +987,80 @@
 
 		//listeners
 
+		regionCheckboxDiv.select("input")
+			.on("change", (d, i, n) => {
+				if (d === allRegionsOption) {
+					if (n[i].checked) {
+						chartState.selectedRegion = d3.keys(lists.regionsInAllDataList).map(e => +e);
+						regionCheckbox.property("checked", false);
+					} else {
+						chartState.selectedRegion.length = 0;
+					};
+				} else {
+					if (n[i].checked) {
+						if (chartState.selectedRegion.length === d3.keys(lists.regionsInAllDataList).length) {
+							chartState.selectedRegion = [d];
+						} else {
+							chartState.selectedRegion.push(d);
+						};
+					} else {
+						const thisIndex = chartState.selectedRegion.indexOf(d);
+						chartState.selectedRegion.splice(thisIndex, 1);
+					};
+					allRegions.property("checked", false);
+				};
+
+				const data = processData(rawDataAllocations);
+
+				fundCheckbox.property("disabled", function(d) {
+					return !inDataLists.fundsInData.includes(d);
+				});
+				emergencyCheckbox.property("disabled", function(d) {
+					return !inDataLists.emergencyGroupsInData.includes(d);
+				});
+
+				resizeSvg(false);
+
+				drawStackedAreaChart(data);
+			});
+
+		fundCheckboxDiv.select("input")
+			.on("change", (d, i, n) => {
+				if (d === allFundsOption) {
+					if (n[i].checked) {
+						chartState.selectedFund = d3.keys(lists.fundsInAllDataList).map(e => +e);
+						fundCheckbox.property("checked", false);
+					} else {
+						chartState.selectedFund.length = 0;
+					};
+				} else {
+					if (n[i].checked) {
+						if (chartState.selectedFund.length === d3.keys(lists.fundsInAllDataList).length) {
+							chartState.selectedFund = [d];
+						} else {
+							chartState.selectedFund.push(d);
+						};
+					} else {
+						const thisIndex = chartState.selectedFund.indexOf(d);
+						chartState.selectedFund.splice(thisIndex, 1);
+					};
+					allFunds.property("checked", false);
+				};
+
+				const data = processData(rawDataAllocations);
+
+				regionCheckbox.property("disabled", function(d) {
+					return !inDataLists.regionsInData.includes(d);
+				});
+				emergencyCheckbox.property("disabled", function(d) {
+					return !inDataLists.emergencyGroupsInData.includes(d);
+				});
+
+				resizeSvg(false);
+
+				drawStackedAreaChart(data);
+			});
+
 		emergencyCheckboxDiv.select("input")
 			.on("change", (d, i, n) => {
 				if (d === allEmergencyGroupsOption) {
@@ -983,6 +1085,13 @@
 				};
 
 				const data = processData(rawDataAllocations);
+
+				regionCheckbox.property("disabled", function(d) {
+					return !inDataLists.regionsInData.includes(d);
+				});
+				fundCheckbox.property("disabled", function(d) {
+					return !inDataLists.fundsInData.includes(d);
+				});
 
 				resizeSvg(false);
 
@@ -1079,6 +1188,23 @@
 				.domain(entry.value.filter(e => inDataLists.emergencyTypesInData.includes(e)))
 				.range(colorArray[i].sub);
 		});
+
+		const noData = !dataAggregated.length && !dataByGroup.length ? [true] : [];
+
+		const noDataText = mainGroup.selectAll("." + classPrefix + "noDataText")
+			.data(noData);
+
+		const noDataTextExit = noDataText.exit().remove();
+
+		const noDataTextEnter = noDataText.enter()
+			.append("text")
+			.attr("class", classPrefix + "noDataText")
+			.attr("x", chartWidth / 2)
+			.attr("y", noDataTextPadding)
+			.text("No data for the selection")
+			.style("opacity", 0)
+			.transition(syncTransition)
+			.style("opacity", 1);
 
 		//Aggregated view
 
@@ -1408,6 +1534,8 @@
 
 			//Filter for selections
 			if (!chartState.selectedEmergencyGroup.includes(row.EmergencyGroupID)) return;
+			if (!chartState.selectedRegion.includes(lists.fundRegions[row.CountryID])) return;
+			if (!chartState.selectedFund.includes(row.CountryID)) return;
 
 			if (chartState.selectedYear.includes(row.Year) || chartState.selectedYear.includes(allYearsOption)) {
 				if (!inDataLists.regionsInData.includes(lists.fundRegions[row.CountryID])) inDataLists.regionsInData.push(lists.fundRegions[row.CountryID]);

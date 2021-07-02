@@ -1611,3 +1611,15 @@ p#alloctimelined3chartTitle {
 	fill:  #666;
 	font-style: italic;
 }
+
+input:disabled + span.alloctimelinecheckboxText {
+	opacity: 0.5;
+}
+
+.alloctimelinenoDataText {
+	text-anchor: middle;
+	font-family: "Roboto", sans-serif;
+	font-size: 18px;
+	font-weight: bold;
+	fill:  #444;
+}
