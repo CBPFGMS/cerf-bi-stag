@@ -36,6 +36,7 @@
 		localVariable = d3.local(),
 		localStorageTime = 3600000,
 		duration = 1000,
+		delay = 250,
 		shortDuration = 250,
 		tooltipPadding = 12,
 		disabledOpacity = 0.4,
@@ -100,6 +101,11 @@
 			fundsInData: [],
 			emergencyGroupsInData: [],
 			emergencyTypesInData: []
+		},
+		inSelectionLists = {
+			regionsInData: [],
+			fundsInData: [],
+			emergencyGroupsInData: []
 		},
 		separator = "##",
 		chartState = {
@@ -682,7 +688,7 @@
 				})
 				.select("input")
 				.property("disabled", function(d) {
-					return !inDataLists.regionsInData.includes(d);
+					return !inSelectionLists.regionsInData.includes(d);
 				});
 			d3.selectAll("." + classPrefix + "fundCheckboxDiv")
 				.filter(function(d) {
@@ -690,7 +696,7 @@
 				})
 				.select("input")
 				.property("disabled", function(d) {
-					return !inDataLists.fundsInData.includes(d);
+					return !inSelectionLists.fundsInData.includes(d);
 				});
 			d3.selectAll("." + classPrefix + "emergencyCheckboxDiv")
 				.filter(function(d) {
@@ -698,7 +704,7 @@
 				})
 				.select("input")
 				.property("disabled", function(d) {
-					return !inDataLists.emergencyGroupsInData.includes(d);
+					return !inSelectionLists.emergencyGroupsInData.includes(d);
 				});
 
 			resizeSvg(false);
@@ -1181,6 +1187,7 @@
 			.ticks(tickNumberByGroup);
 
 		const syncTransition = d3.transition()
+			.delay(delay)
 			.duration(duration);
 
 		d3.entries(lists.emergencyTypesInGroups).forEach((entry, i) => {
@@ -1523,6 +1530,10 @@
 			inDataLists[arr].length = 0;
 		};
 
+		for (const arr in inSelectionLists) {
+			inSelectionLists[arr].length = 0;
+		};
+
 		const data = [];
 
 		rawDataAllocations.forEach(row => {
@@ -1532,11 +1543,27 @@
 			if (!row.LastProjectApprovedDate) return;
 			if (!row.Budget) return;
 
+			//populate inSelectionLists
+			if (chartState.selectedYear.includes(row.Year) || chartState.selectedYear.includes(allYearsOption)) {
+				if (chartState.selectedRegion.includes(lists.fundRegions[row.CountryID])) {
+					if (!inSelectionLists.fundsInData.includes(row.CountryID)) inSelectionLists.fundsInData.push(row.CountryID);
+					if (!inSelectionLists.emergencyGroupsInData.includes(row.EmergencyGroupID)) inSelectionLists.emergencyGroupsInData.push(row.EmergencyGroupID);
+				};
+				if (chartState.selectedFund.includes(row.CountryID)) {
+					if (!inSelectionLists.emergencyGroupsInData.includes(row.EmergencyGroupID)) inSelectionLists.emergencyGroupsInData.push(row.EmergencyGroupID);
+				};
+				if (chartState.selectedEmergencyGroup.includes(row.EmergencyGroupID)) {
+					if (!inSelectionLists.regionsInData.includes(lists.fundRegions[row.CountryID])) inSelectionLists.regionsInData.push(lists.fundRegions[row.CountryID]);
+					if (!inSelectionLists.fundsInData.includes(row.CountryID)) inSelectionLists.fundsInData.push(row.CountryID);
+				};
+			};
+
 			//Filter for selections
 			if (!chartState.selectedEmergencyGroup.includes(row.EmergencyGroupID)) return;
 			if (!chartState.selectedRegion.includes(lists.fundRegions[row.CountryID])) return;
 			if (!chartState.selectedFund.includes(row.CountryID)) return;
 
+			//populate inDataLists
 			if (chartState.selectedYear.includes(row.Year) || chartState.selectedYear.includes(allYearsOption)) {
 				if (!inDataLists.regionsInData.includes(lists.fundRegions[row.CountryID])) inDataLists.regionsInData.push(lists.fundRegions[row.CountryID]);
 				if (!inDataLists.fundsInData.includes(row.CountryID)) inDataLists.fundsInData.push(row.CountryID);
