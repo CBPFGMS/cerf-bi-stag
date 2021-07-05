@@ -42,6 +42,8 @@
 		disabledOpacity = 0.4,
 		tickNumberAggregate = 4,
 		tickNumberByGroup = 3,
+		totalLabelRemainder = 1,
+		totalLabelPadding = 18,
 		colorArray = [{
 			main: "#8da0cb",
 			sub: ["#8DA0CB", "#9D8BD9", "#8BCCD9", "#9194E3", "#91C0E3"]
@@ -258,10 +260,10 @@
 		.range([stackedPadding[3], chartWidth - stackedPadding[1]]);
 
 	const yAxis = d3.axisLeft(yScale)
-		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d));
+		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d).replace("G", "B"));
 
 	const yAxisByGroup = d3.axisLeft(yScale)
-		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d));
+		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d).replace("G", "B"));
 
 	const xAxis = d3.axisBottom(xScale)
 		.tickSizeOuter(0)
@@ -1213,6 +1215,10 @@
 			.transition(syncTransition)
 			.style("opacity", 1);
 
+		console.log(data);
+		console.log(dataAggregated);
+		console.log(dataByGroup);
+
 		//Aggregated view
 
 		let xAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "xAxisGroupAggregated")
@@ -1289,6 +1295,35 @@
 		yAxisGroupAggregated.selectAll(".tick")
 			.filter(d => d === 0)
 			.remove();
+
+		let totalLabel = mainGroup.selectAll("." + classPrefix + "totalLabel")
+			.data(chartState.selectedView === viewOptions[0] ? data.filter((_, i) => !(i % totalLabelRemainder)) : [],
+				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
+
+		const totalLabelExit = totalLabel.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const totalLabelEnter = totalLabel.enter()
+			.append("text")
+			.attr("class", classPrefix + "totalLabel")
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.attr("y", d => yScale(0) - totalLabelPadding)
+			.style("opacity", 0)
+			.text(d => "$0");
+
+		totalLabel = totalLabelEnter.merge(totalLabel);
+
+		totalLabel.transition(syncTransition)
+			.style("opacity", 1)
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.attr("y", d => yScale(d.total) - totalLabelPadding)
+			.tween("text", (d, i, n) => {
+				const node = n[i];
+				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, d.total);
+				return t => node.textContent = "$" + d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
+			});
 
 		areaPaths.on("click", d => {
 			const newBaseline = inDataLists.emergencyGroupsInData.map(e => "eg" + e).indexOf(d.key)
@@ -1452,6 +1487,35 @@
 			.filter(d => d === 0)
 			.remove();
 
+		let totalLabelByGroup = byGroupContainer.selectAll("." + classPrefix + "totalLabelByGroup")
+			.data(d => chartState.selectedView === viewOptions[1] ? d.groupRawData.filter((_, i) => !(i % totalLabelRemainder)) : [],
+				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
+
+		const totalLabelByGroupExit = totalLabelByGroup.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const totalLabelByGroupEnter = totalLabelByGroup.enter()
+			.append("text")
+			.attr("class", classPrefix + "totalLabelByGroup")
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.attr("y", d => yScale(0) - totalLabelPadding)
+			.style("opacity", 0)
+			.text(d => "$0");
+
+		totalLabelByGroup = totalLabelByGroupEnter.merge(totalLabelByGroup);
+
+		totalLabelByGroup.transition(syncTransition)
+			.style("opacity", 1)
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.attr("y", d => yScale(d.total) - totalLabelPadding)
+			.tween("text", (d, i, n) => {
+				const node = n[i];
+				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, d.total);
+				return t => node.textContent = "$" + d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
+			});
+
 		let sublegendGroup = legendGroup.selectAll("." + classPrefix + "sublegendGroup")
 			.data(chartState.selectedView === viewOptions[0] ? [] :
 				d => dataByGroup.find(e => "eg" + e.emergencyGroup === d).emergencyGroupData.sort((a, b) => a.index - b.index).map(e => ({
@@ -1487,7 +1551,6 @@
 			.transition(syncTransition)
 			.attr("transform", (_, i, n) => "translate(0," + (sublegendGroupVertPadding + ((n.length - 1 - i) * sublegendGroupSize)) + ")");
 
-		//change colours, and change this:
 		sublegendGroup.on("click", d => {
 			const thisIndex = lists.emergencyTypesInGroups[extractNum(d.group)]
 				.filter(e => inDataLists.emergencyTypesInData.includes(e)).indexOf(+extractNum(d.type));
@@ -1693,6 +1756,7 @@
 				} else {
 					const zeroMonth = {
 						month: monthRow,
+						total: 0,
 						monthValues: []
 					};
 					d3.keys(lists.emergencyGroupsInAllDataList).forEach(eg => {
@@ -1730,6 +1794,7 @@
 				} else {
 					const zeroMonth = {
 						month: monthRow,
+						total: 0,
 						monthValues: []
 					};
 					typesList.forEach(et => {

@@ -1623,3 +1623,14 @@ input:disabled + span.alloctimelinecheckboxText {
 	font-weight: bold;
 	fill:  #444;
 }
+
+.alloctimelinetotalLabel, .alloctimelinetotalLabelByGroup {
+	fill:  var(--unblue);
+	font-size: 10px;
+	font-family: "Roboto", sans-serif;
+	text-anchor: middle;
+	font-weight: bold;
+	stroke: white;
+	stroke-width: 2px;
+	paint-order: stroke;
+}
