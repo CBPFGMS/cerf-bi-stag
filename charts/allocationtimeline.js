@@ -43,7 +43,7 @@
 		tickNumberAggregate = 4,
 		tickNumberByGroup = 3,
 		totalLabelRemainder = 1,
-		totalLabelPadding = 18,
+		totalLabelPadding = 4,
 		colorArray = [{
 			main: "#8da0cb",
 			sub: ["#8DA0CB", "#9D8BD9", "#8BCCD9", "#9194E3", "#91C0E3"]
@@ -1309,7 +1309,7 @@
 			.append("text")
 			.attr("class", classPrefix + "totalLabel")
 			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.attr("y", d => yScale(0) - totalLabelPadding)
+			.attr("y", d => yScale(0) - totalLabelPadding - (inDataLists.emergencyGroupsInData.length * stackGap))
 			.style("opacity", 0)
 			.text(d => "$0");
 
@@ -1318,7 +1318,7 @@
 		totalLabel.transition(syncTransition)
 			.style("opacity", 1)
 			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.attr("y", d => yScale(d.total) - totalLabelPadding)
+			.attr("y", d => yScale(d.total) - totalLabelPadding - (inDataLists.emergencyGroupsInData.length * stackGap))
 			.tween("text", (d, i, n) => {
 				const node = n[i];
 				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, d.total);
@@ -1500,7 +1500,10 @@
 			.append("text")
 			.attr("class", classPrefix + "totalLabelByGroup")
 			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.attr("y", d => yScale(0) - totalLabelPadding)
+			.attr("y", d => {
+				const types = d3.keys(d).filter(e => e.includes("et"));
+				return yScale(0) - totalLabelPadding - ((types.length - 1) * stackGap);
+			})
 			.style("opacity", 0)
 			.text(d => "$0");
 
@@ -1509,7 +1512,10 @@
 		totalLabelByGroup.transition(syncTransition)
 			.style("opacity", 1)
 			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.attr("y", d => yScale(d.total) - totalLabelPadding)
+			.attr("y", d => {
+				const types = d3.keys(d).filter(e => e.includes("et"));
+				return yScale(d.total) - totalLabelPadding - ((types.length - 1) * stackGap);
+			})
 			.tween("text", (d, i, n) => {
 				const node = n[i];
 				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, d.total);
@@ -1676,7 +1682,7 @@
 		} else {
 			d3.keys(lists.emergencyGroupsInAllDataList).forEach(eg => {
 				const foundEmergencyGroup = data.find(e => e.emergencyGroup === +eg);
-				const typesList = lists.emergencyTypesInGroups[eg];
+				const typesList = lists.emergencyTypesInGroups[eg].filter(e => inDataLists.emergencyTypesInData.includes(e));
 				if (foundEmergencyGroup) fillZerosByGroup(foundEmergencyGroup.emergencyData, typesList);
 			});
 		};
