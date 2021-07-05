@@ -1287,6 +1287,7 @@ p#cesankd3chartTitle {
 #d3chartcontaineralloctimeline {
 	position: relative;
 	--unblue: #1f69b3;
+	--untomato: #cc5849;
 }
 
 #alloctimelineDownloadingDiv {
@@ -1625,7 +1626,7 @@ input:disabled + span.alloctimelinecheckboxText {
 }
 
 .alloctimelinetotalLabel, .alloctimelinetotalLabelByGroup {
-	fill:  var(--unblue);
+	fill: var(--unblue);
 	font-size: 10px;
 	font-family: "Roboto", sans-serif;
 	text-anchor: middle;
@@ -1633,4 +1634,32 @@ input:disabled + span.alloctimelinecheckboxText {
 	stroke: white;
 	stroke-width: 2px;
 	paint-order: stroke;
+}
+
+.alloctimelinenumberOfFundsTitle {
+	text-anchor: end;
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	fill: var(--unblue);	
+}
+
+.alloctimelinenumberOfFunds {
+	text-anchor: middle;
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	fill: var(--unblue);	
+}
+
+.alloctimelinenumberOfGroupsTitle {
+	text-anchor: end;
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	fill: var(--untomato);	
+}
+
+.alloctimelinenumberOfGroups {
+	text-anchor: middle;
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	fill: var(--untomato);	
 }

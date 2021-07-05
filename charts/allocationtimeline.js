@@ -7,8 +7,8 @@
 		padding = [4, 4, 4, 4],
 		chartWidth = width - padding[1] - padding[3],
 		stackedHeight = 200,
-		stackedHeightAggregate = 450,
-		stackedPadding = [8, 16, 20, 190],
+		stackedHeightAggregate = 490,
+		stackedPadding = [8, 16, 60, 190],
 		stackedPaddingByGroup = [28, 16, 22, 190],
 		maxYearsListNumber = 1,
 		legendTextPadding = 40,
@@ -22,6 +22,9 @@
 		noDataTextPadding = 180,
 		sublegendGroupPadding = -iconSize,
 		sublegendGroupVertPadding = 28,
+		fundsNumberPadding = 34,
+		groupsNumberPadding = 16,
+		numberTitlesPadding = 22,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -1189,7 +1192,6 @@
 			.ticks(tickNumberByGroup);
 
 		const syncTransition = d3.transition()
-			.delay(delay)
 			.duration(duration);
 
 		d3.entries(lists.emergencyTypesInGroups).forEach((entry, i) => {
@@ -1376,6 +1378,86 @@
 				drawStackedAreaChart(data);
 			};
 		});
+
+		let numberOfFundsTitle = mainGroup.selectAll("." + classPrefix + "numberOfFundsTitle")
+			.data(chartState.selectedView === viewOptions[0] ? [true] : []);
+
+		const numberOfFundsTitleExit = numberOfFundsTitle.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const numberOfFundsTitleEnter = numberOfFundsTitle.enter()
+			.append("text")
+			.attr("class", classPrefix + "numberOfFundsTitle")
+			.attr("x", stackedPadding[3] - numberTitlesPadding)
+			.attr("y", yScale.range()[0] + fundsNumberPadding)
+			.text("Number of countries");
+
+		let numberOfGroupsTitle = mainGroup.selectAll("." + classPrefix + "numberOfGroupsTitle")
+			.data(chartState.selectedView === viewOptions[0] ? [true] : []);
+
+		const numberOfGroupsTitleExit = numberOfGroupsTitle.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const numberOfGroupsTitleEnter = numberOfGroupsTitle.enter()
+			.append("text")
+			.attr("class", classPrefix + "numberOfGroupsTitle")
+			.attr("x", stackedPadding[3] - numberTitlesPadding)
+			.attr("y", yScale.range()[0] + fundsNumberPadding + groupsNumberPadding)
+			.text("Number of Emerg. Groups");
+
+		let numberOfFunds = mainGroup.selectAll("." + classPrefix + "numberOfFunds")
+			.data(chartState.selectedView === viewOptions[0] ? data : [],
+				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
+
+		const numberOfFundsExit = numberOfFunds.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const numberOfFundsEnter = numberOfFunds.enter()
+			.append("text")
+			.attr("class", classPrefix + "numberOfFunds")
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.attr("y", yScale.range()[0] + fundsNumberPadding)
+			.text("0");
+
+		numberOfFunds = numberOfFundsEnter.merge(numberOfFunds);
+
+		numberOfFunds.transition(syncTransition)
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.textTween((d, i, n) => {
+				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
+				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.CountryID))].length);
+			});
+
+		let numberOfGroups = mainGroup.selectAll("." + classPrefix + "numberOfGroups")
+			.data(chartState.selectedView === viewOptions[0] ? data : [],
+				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
+
+		const numberOfGroupsExit = numberOfGroups.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const numberOfGroupsEnter = numberOfGroups.enter()
+			.append("text")
+			.attr("class", classPrefix + "numberOfGroups")
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.attr("y", yScale.range()[0] + fundsNumberPadding + groupsNumberPadding)
+			.text("0");
+
+		numberOfGroups = numberOfGroupsEnter.merge(numberOfGroups);
+
+		numberOfGroups.transition(syncTransition)
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.textTween((d, i, n) => {
+				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
+				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.EmergencyGroupID))].length);
+			});
 
 		//by group view
 
