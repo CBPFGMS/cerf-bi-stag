@@ -6,10 +6,10 @@
 	const width = 1100,
 		padding = [4, 4, 4, 4],
 		chartWidth = width - padding[1] - padding[3],
-		stackedHeight = 200,
+		stackedHeight = 250,
 		stackedHeightAggregate = 490,
 		stackedPadding = [8, 16, 60, 190],
-		stackedPaddingByGroup = [28, 16, 22, 190],
+		stackedPaddingByGroup = [28, 16, 62, 190],
 		maxYearsListNumber = 1,
 		legendTextPadding = 40,
 		legendHorPadding = 4,
@@ -24,6 +24,8 @@
 		sublegendGroupVertPadding = 28,
 		fundsNumberPadding = 34,
 		groupsNumberPadding = 16,
+		fundsNumberPaddingByGroup = 28,
+		groupsNumberPaddingByGroup = 12,
 		numberTitlesPadding = 22,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
@@ -1685,6 +1687,86 @@
 				drawStackedAreaChart(data);
 			};
 		});
+
+		let numberOfFundsTitleByGroup = byGroupContainer.selectAll("." + classPrefix + "numberOfFundsTitleByGroup")
+			.data(chartState.selectedView === viewOptions[1] ? [true] : []);
+
+		const numberOfFundsTitleByGroupExit = numberOfFundsTitleByGroup.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const numberOfFundsTitleByGroupEnter = numberOfFundsTitleByGroup.enter()
+			.append("text")
+			.attr("class", classPrefix + "numberOfFundsTitleByGroup")
+			.attr("x", stackedPadding[3] - numberTitlesPadding)
+			.attr("y", yScale.range()[0] + fundsNumberPaddingByGroup)
+			.text("# of countries");
+
+		let numberOfGroupsTitleByGroup = byGroupContainer.selectAll("." + classPrefix + "numberOfGroupsTitleByGroup")
+			.data(chartState.selectedView === viewOptions[1] ? [true] : []);
+
+		const numberOfGroupsTitleByGroupExit = numberOfGroupsTitleByGroup.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const numberOfGroupsTitleByGroupEnter = numberOfGroupsTitleByGroup.enter()
+			.append("text")
+			.attr("class", classPrefix + "numberOfGroupsTitleByGroup")
+			.attr("x", stackedPadding[3] - numberTitlesPadding)
+			.attr("y", yScale.range()[0] + fundsNumberPaddingByGroup + groupsNumberPaddingByGroup)
+			.text("# of Emerg. Types");
+
+		let numberOfFundsByGroup = byGroupContainer.selectAll("." + classPrefix + "numberOfFundsByGroup")
+			.data(d => chartState.selectedView === viewOptions[1] ? d.groupRawData : [],
+				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
+
+		const numberOfFundsByGroupExit = numberOfFundsByGroup.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const numberOfFundsByGroupEnter = numberOfFundsByGroup.enter()
+			.append("text")
+			.attr("class", classPrefix + "numberOfFundsByGroup")
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.attr("y", yScale.range()[0] + fundsNumberPaddingByGroup)
+			.text("0");
+
+		numberOfFundsByGroup = numberOfFundsByGroupEnter.merge(numberOfFundsByGroup);
+
+		numberOfFundsByGroup.transition(syncTransition)
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.textTween((d, i, n) => {
+				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
+				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.CountryID))].length);
+			});
+
+		let numberOfGroupsByGroup = byGroupContainer.selectAll("." + classPrefix + "numberOfGroupsByGroup")
+			.data(d => chartState.selectedView === viewOptions[1] ? d.groupRawData : [],
+				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
+
+		const numberOfGroupsByGroupExit = numberOfGroupsByGroup.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const numberOfGroupsByGroupEnter = numberOfGroupsByGroup.enter()
+			.append("text")
+			.attr("class", classPrefix + "numberOfGroupsByGroup")
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.attr("y", yScale.range()[0] + fundsNumberPaddingByGroup + groupsNumberPaddingByGroup)
+			.text("0");
+
+		numberOfGroupsByGroup = numberOfGroupsByGroupEnter.merge(numberOfGroupsByGroup);
+
+		numberOfGroupsByGroup.transition(syncTransition)
+			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
+			.textTween((d, i, n) => {
+				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
+				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.EmergencyTypeID))].length);
+			});
 
 		//end of drawStackedAreaChart
 	};

@@ -1666,3 +1666,34 @@ input:disabled + span.alloctimelinecheckboxText {
 	font-weight: 500;
 	fill: var(--customred);	
 }
+
+.alloctimelinenumberOfFundsTitleByGroup {
+	text-anchor: end;
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: var(--customblue);	
+}
+
+.alloctimelinenumberOfFundsByGroup {
+	text-anchor: middle;
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	font-weight: 500;
+	fill: var(--customblue);	
+}
+
+.alloctimelinenumberOfGroupsTitleByGroup {
+	text-anchor: end;
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	fill: var(--customred);	
+}
+
+.alloctimelinenumberOfGroupsByGroup {
+	text-anchor: middle;
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	font-weight: 500;
+	fill: var(--customred);	
+}
+
