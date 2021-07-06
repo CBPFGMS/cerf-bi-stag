@@ -1338,6 +1338,7 @@ p#cesankd3chartTitle {
 	flex-direction: row-reverse;
 	align-items: center;
 	margin-right: 16px;
+	z-index: 1500;
 }
 
 .alloctimelineFooterDiv {
