@@ -31,7 +31,7 @@
 		fadeOpacity = 0.2,
 		tooltipMargin = 8,
 		stackGap = 3,
-		precision = 18,
+		precision = 30,
 		closeFactor = 0.2,
 		windowHeight = window.innerHeight,
 		currentDate = new Date(),
@@ -124,6 +124,7 @@
 
 	let isSnapshotTooltipVisible = false,
 		height,
+		previousDataLength,
 		currentHoveredElement;
 
 	//emergency groups:
@@ -346,7 +347,9 @@
 
 	function draw(rawDataAllocations) {
 
-		const data = processData(rawDataAllocations); //create inData lists
+		const data = processData(rawDataAllocations);
+
+		previousDataLength = data.length;
 
 		resizeSvg(true);
 
@@ -1136,6 +1139,9 @@
 
 	function drawStackedAreaChart(data) {
 
+		const sameDataLength = previousDataLength === data.length;
+		previousDataLength = data.length;
+
 		stackGenerator.keys(inDataLists.emergencyGroupsInData.map(d => "eg" + d))
 			.order(stackCustomOrder);
 
@@ -1192,6 +1198,7 @@
 			.ticks(tickNumberByGroup);
 
 		const syncTransition = d3.transition()
+			.delay(delay)
 			.duration(duration);
 
 		d3.entries(lists.emergencyTypesInGroups).forEach((entry, i) => {
@@ -1217,10 +1224,6 @@
 			.transition(syncTransition)
 			.style("opacity", 1);
 
-		console.log(data);
-		console.log(dataAggregated);
-		console.log(dataByGroup);
-
 		//Aggregated view
 
 		let xAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "xAxisGroupAggregated")
@@ -1244,8 +1247,7 @@
 			.data(dataAggregated, d => d.key);
 
 		const areaPathsExit = areaPaths.exit()
-			.transition()
-			.duration(shortDuration)
+			.transition(syncTransition)
 			.style("opacity", 0)
 			.remove();
 
@@ -1261,21 +1263,39 @@
 
 		areaPaths.order();
 
-		areaPaths.transition(syncTransition)
-			.attrTween("d", (d, i, n) => {
-				let thisIndex = [];
-				areaGenerator.y0((e, j) => {
-						for (let index = 0; index < d.index; index++) {
-							const foundData = dataAggregated.find(e => e.index === index);
-							if ((foundData[j][0] !== foundData[j][1]) ||
-								(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
-								(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
-						};
-						return yScale(e[0]) - (thisIndex[j] || 0) * stackGap
-					})
-					.y1((e, j) => yScale(e[1]) - (thisIndex[j] || 0) * stackGap);
-				return pathTween(areaGenerator(d), precision, n[i])();
-			});
+		if (sameDataLength) {
+			areaPaths.transition(syncTransition)
+				.attr("d", (d, i, n) => {
+					let thisIndex = [];
+					areaGenerator.y0((e, j) => {
+							for (let index = 0; index < d.index; index++) {
+								const foundData = dataAggregated.find(e => e.index === index);
+								if ((foundData[j][0] !== foundData[j][1]) ||
+									(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
+									(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
+							};
+							return yScale(e[0]) - (thisIndex[j] || 0) * stackGap
+						})
+						.y1((e, j) => yScale(e[1]) - (thisIndex[j] || 0) * stackGap);
+					return areaGenerator(d);
+				});
+		} else {
+			areaPaths.transition(syncTransition)
+				.attrTween("d", (d, i, n) => {
+					let thisIndex = [];
+					areaGenerator.y0((e, j) => {
+							for (let index = 0; index < d.index; index++) {
+								const foundData = dataAggregated.find(e => e.index === index);
+								if ((foundData[j][0] !== foundData[j][1]) ||
+									(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
+									(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
+							};
+							return yScale(e[0]) - (thisIndex[j] || 0) * stackGap
+						})
+						.y1((e, j) => yScale(e[1]) - (thisIndex[j] || 0) * stackGap);
+					return pathTween(areaGenerator(d), precision, n[i])();
+				});
+		};
 
 		let yAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "yAxisGroupAggregated")
 			.data(dataAggregated.length ? [true] : []);
@@ -1504,8 +1524,7 @@
 			.data(d => d.emergencyGroupData, e => e.key);
 
 		const areaPathsByGroupExit = areaPathsByGroup.exit()
-			.transition()
-			.duration(shortDuration)
+			.transition(syncTransition)
 			.style("opacity", 0)
 			.remove();
 
@@ -1521,22 +1540,41 @@
 
 		areaPathsByGroup.order();
 
-		areaPathsByGroup.transition(syncTransition)
-			.attrTween("d", (d, i, n) => {
-				let thisIndex = [];
-				const thisGroup = dataByGroup.find(a => a.emergencyGroup === localVariable.get(n[i]));
-				areaGenerator.y0((e, j) => {
-						for (let index = 0; index < d.index; index++) {
-							const foundData = thisGroup.emergencyGroupData.find(e => e.index === index);
-							if ((foundData[j][0] !== foundData[j][1]) ||
-								(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
-								(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
-						};
-						return yScale(e[0]) - (thisIndex[j] || 0) * stackGap
-					})
-					.y1((e, j) => yScale(e[1]) - (thisIndex[j] || 0) * stackGap);
-				return pathTween(areaGenerator(d), precision, n[i])();
-			});
+		if (sameDataLength) {
+			areaPathsByGroup.transition(syncTransition)
+				.attr("d", (d, i, n) => {
+					let thisIndex = [];
+					const thisGroup = dataByGroup.find(a => a.emergencyGroup === localVariable.get(n[i]));
+					areaGenerator.y0((e, j) => {
+							for (let index = 0; index < d.index; index++) {
+								const foundData = thisGroup.emergencyGroupData.find(e => e.index === index);
+								if ((foundData[j][0] !== foundData[j][1]) ||
+									(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
+									(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
+							};
+							return yScale(e[0]) - (thisIndex[j] || 0) * stackGap
+						})
+						.y1((e, j) => yScale(e[1]) - (thisIndex[j] || 0) * stackGap);
+					return areaGenerator(d);
+				});
+		} else {
+			areaPathsByGroup.transition(syncTransition)
+				.attrTween("d", (d, i, n) => {
+					let thisIndex = [];
+					const thisGroup = dataByGroup.find(a => a.emergencyGroup === localVariable.get(n[i]));
+					areaGenerator.y0((e, j) => {
+							for (let index = 0; index < d.index; index++) {
+								const foundData = thisGroup.emergencyGroupData.find(e => e.index === index);
+								if ((foundData[j][0] !== foundData[j][1]) ||
+									(foundData[j - 1] && (foundData[j - 1][0] !== foundData[j - 1][1])) ||
+									(foundData[j + 1] && (foundData[j + 1][0] !== foundData[j + 1][1]))) thisIndex[j] = (thisIndex[j] || 0) + 1;
+							};
+							return yScale(e[0]) - (thisIndex[j] || 0) * stackGap
+						})
+						.y1((e, j) => yScale(e[1]) - (thisIndex[j] || 0) * stackGap);
+					return pathTween(areaGenerator(d), precision, n[i])();
+				});
+		};
 
 		areaPathsByGroup.on("click", (d, i, n) => {
 			const thisGroup = d3.select(n[i].parentNode).datum().emergencyGroup;
