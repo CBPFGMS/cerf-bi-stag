@@ -8,7 +8,7 @@
 		chartWidth = width - padding[1] - padding[3],
 		stackedHeight = 250,
 		stackedHeightAggregate = 490,
-		stackedPadding = [8, 16, 60, 190],
+		stackedPadding = [22, 16, 60, 190],
 		stackedPaddingByGroup = [28, 16, 62, 190],
 		maxYearsListNumber = 1,
 		legendTextPadding = 40,
@@ -27,6 +27,9 @@
 		fundsNumberPaddingByGroup = 28,
 		groupsNumberPaddingByGroup = 12,
 		numberTitlesPadding = 22,
+		innerTooltipWidth = 300,
+		tooltipFundsNumber = 20,
+		tooltipFundsNumberByGroup = 10,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -43,7 +46,7 @@
 		duration = 1000,
 		delay = 250,
 		shortDuration = 250,
-		tooltipPadding = 12,
+		tooltipPadding = 26,
 		disabledOpacity = 0.4,
 		tickNumberAggregate = 4,
 		tickNumberByGroup = 3,
@@ -66,7 +69,10 @@
 			sub: ["#B3B3B3", "#BFB8B6", "#BFB6BF", "#C9C1BF", "#C9BFC4"]
 		}],
 		colorSubScale = {},
+		formatMoney0Decimals = d3.format(",.0f"),
 		monthFormat = d3.timeFormat("%b"),
+		monthFullNameFormat = d3.timeFormat("%B"),
+		monthShortNameParse = d3.timeParse("%b"),
 		monthParse = d3.timeParse("%m"),
 		monthsArray = d3.range(1, 13, 1).map(d => monthFormat(monthParse(d))),
 		approvedDateParse = d3.timeParse("%d/%m/%Y"),
@@ -254,6 +260,7 @@
 
 	const mainGroup = svg.append("g")
 		.attr("class", classPrefix + "mainGroup")
+		.attr("pointer-events", "all")
 		.attr("transform", "translate(" + padding[3] + "," + padding[0] + ")");
 
 	const yScale = d3.scaleLinear();
@@ -264,6 +271,10 @@
 
 	const xScale = d3.scalePoint()
 		.range([stackedPadding[3], chartWidth - stackedPadding[1]]);
+
+	xScale.invert = function(x) {
+		return d3.scaleQuantize().domain([this.range()[0] - this.step() / 2, this.range()[1] + this.step() / 2]).range(this.domain())(x);
+	};
 
 	const yAxis = d3.axisLeft(yScale)
 		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d).replace("G", "B"));
@@ -1141,8 +1152,11 @@
 
 	function drawStackedAreaChart(data) {
 
-		const sameDataLength = previousDataLength === data.length;
-		previousDataLength = data.length;
+		mainGroup.selectAll("*").interrupt();
+
+		const thisDataLength = chartState.selectedView === viewOptions[0] ? data.length : d3.max(data, d => d.emergencyData.length);
+		const sameDataLength = previousDataLength === thisDataLength;
+		previousDataLength = thisDataLength;
 
 		stackGenerator.keys(inDataLists.emergencyGroupsInData.map(d => "eg" + d))
 			.order(stackCustomOrder);
@@ -1183,7 +1197,7 @@
 				dataByGroup.map(e => "eg" + e.emergencyGroup));
 
 		if (chartState.selectedView === viewOptions[0]) {
-			yScale.range([stackedHeightAggregate - stackedPadding[2], stackedPadding[0] + (data.length - 1) * stackGap])
+			yScale.range([stackedHeightAggregate - stackedPadding[2], stackedPadding[0] + (dataAggregated.length - 1) * stackGap])
 				.domain([0, d3.max(data, d => d.total)]);
 		} else {
 			yScale.range([stackedHeight - stackedPaddingByGroup[2], stackedPaddingByGroup[0]])
@@ -1227,6 +1241,23 @@
 			.style("opacity", 1);
 
 		//Aggregated view
+
+		let backRectangle = mainGroup.selectAll("." + classPrefix + "backRectangle")
+			.data(dataAggregated.length ? [true] : [])
+
+		const backRectangleExit = backRectangle.exit()
+			.remove();
+
+		const backRectangleEnter = backRectangle.enter()
+			.append("rect")
+			.attr("class", classPrefix + "backRectangle")
+			.style("fill", "none")
+			.attr("x", stackedPadding[3])
+			.attr("width", chartWidth - stackedPadding[1] - stackedPadding[3])
+			.attr("y", stackedPadding[0])
+			.attr("height", stackedHeightAggregate - stackedPadding[0] - stackedPadding[2]);
+
+		backRectangle = backRectangleEnter.merge(backRectangle);
 
 		let xAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "xAxisGroupAggregated")
 			.data(dataAggregated.length ? [true] : []);
@@ -1494,6 +1525,7 @@
 		const byGroupContainerEnter = byGroupContainer.enter()
 			.append("g")
 			.attr("class", classPrefix + "byGroupContainer")
+			.attr("pointer-events", "all")
 			.attr("transform", d => "translate(0," + groupScale("eg" + d.emergencyGroup) + ")");
 
 		byGroupContainer = byGroupContainerEnter.merge(byGroupContainer);
@@ -1504,6 +1536,23 @@
 		byGroupContainer.each((d, i, n) => {
 			localVariable.set(n[i], d.emergencyGroup);
 		});
+
+		let backRectangleByGroup = byGroupContainer.selectAll("." + classPrefix + "backRectangleByGroup")
+			.data([true])
+
+		const backRectangleByGroupExit = backRectangleByGroup.exit()
+			.remove();
+
+		const backRectangleByGroupEnter = backRectangleByGroup.enter()
+			.append("rect")
+			.attr("class", classPrefix + "backRectangleByGroup")
+			.style("fill", "none")
+			.attr("x", stackedPaddingByGroup[3])
+			.attr("width", chartWidth - stackedPaddingByGroup[1] - stackedPaddingByGroup[3])
+			.attr("y", stackedPaddingByGroup[0])
+			.attr("height", stackedHeight - stackedPaddingByGroup[0] - stackedPaddingByGroup[2]);
+
+		backRectangleByGroup = backRectangleByGroupEnter.merge(backRectangleByGroup);
 
 		let xAxisGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "xAxisGroupByGroup")
 			.data(dataByGroup.length ? [true] : []);
@@ -1767,6 +1816,231 @@
 				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
 				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.EmergencyTypeID))].length);
 			});
+
+		//listeners
+
+		mainGroup.on("mousemove", (_, i, n) => {
+			currentHoveredElement = n[i];
+			const mousePosition = d3.mouse(n[i]);
+			if (mousePosition[1] < stackedPadding[0] ||
+				mousePosition[1] > stackedHeightAggregate - stackedPadding[2] ||
+				mousePosition[0] < stackedPadding[3] ||
+				mousePosition[0] > chartWidth - stackedPadding[1] ||
+				chartState.selectedView === viewOptions[1]) return;
+
+			const xValue = xScale.invert(mousePosition[0]);
+
+			tooltip.style("display", "block")
+				.html(null);
+
+			const innerTooltip = tooltip.append("div")
+				.style("max-width", innerTooltipWidth + "px")
+				.attr("id", classPrefix + "innerTooltipDiv");
+
+			const tooltipTitleDiv = innerTooltip.append("div")
+				.attr("class", classPrefix + "tooltipTitleDiv");
+
+			tooltipTitleDiv.append("strong")
+				.style("font-size", "16px")
+				.html(chartState.selectedYear.includes(allYearsOption) ? "Year: " + xValue :
+					"Month: " + monthFullNameFormat(monthShortNameParse(xValue)));
+
+			const tooltipContainer = innerTooltip.append("div")
+				.style("margin", "0px")
+				.style("display", "flex")
+				.style("flex-wrap", "wrap")
+				.style("white-space", "pre")
+				.style("line-height", 1.4)
+				.style("width", "100%");
+
+			const thisDatum = data.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
+
+			const rowDiv = tooltipContainer.append("div")
+				.style("display", "flex")
+				.style("align-items", "center")
+				.style("margin-bottom", "4px")
+				.style("width", "100%");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipKeys")
+				.html("Total");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipLeader");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipValues")
+				.html("$" + (thisDatum ? formatMoney0Decimals(thisDatum.total) : 0));
+
+			if (thisDatum) {
+
+				const tooltipFundsListTitle = tooltipContainer.append("div")
+					.attr("class", classPrefix + "tooltipFundsListTitle")
+					.html("Top " + tooltipFundsNumber + " countries");
+
+				const yearsOrMonths = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
+
+				const fundsListData = thisDatum[yearsOrMonths].reduce((acc, curr) => {
+					const foundFund = acc.find(e => e.fund === curr.CountryID);
+					if (foundFund) {
+						foundFund.value += curr.Budget
+					} else {
+						acc.push({
+							fund: curr.CountryID,
+							value: curr.Budget
+						});
+					};
+					return acc;
+				}, []).sort((a, b) => b.value - a.value).slice(0, tooltipFundsNumber);
+
+				fundsListData.forEach(row => {
+					const rowDivList = tooltipContainer.append("div")
+						.attr("class", classPrefix + "tooltipDivList")
+						.style("display", "flex")
+						.style("align-items", "center")
+						.style("margin-bottom", "4px")
+						.style("width", "100%");
+
+					rowDivList.append("span")
+						.attr("class", classPrefix + "tooltipKeys")
+						.html(d => lists.fundNames[row.fund]);
+
+					rowDivList.append("span")
+						.attr("class", classPrefix + "tooltipLeader");
+
+					rowDivList.append("span")
+						.attr("class", classPrefix + "tooltipValues")
+						.html("$" + formatMoney0Decimals(row.value));
+				});
+			};
+
+			const thisBox = n[i].getBoundingClientRect();
+			const containerBox = containerDiv.node().getBoundingClientRect();
+			const tooltipBox = tooltip.node().getBoundingClientRect();
+			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
+			const thisElementRealYPos = xScale(xValue) / (width / containerBox.width);
+			const thisOffsetLeft = thisElementRealYPos + tooltipPadding + tooltipBox.width > containerBox.width ?
+				thisElementRealYPos - tooltipBox.width - tooltipPadding : thisElementRealYPos + tooltipPadding;
+
+			tooltip.style("top", thisOffsetTop + "px")
+				.style("left", thisOffsetLeft + "px");
+
+		}).on("mouseout", () => {
+			if (isSnapshotTooltipVisible) return;
+			currentHoveredElement = null;
+			tooltip.style("display", "none");
+		});
+
+		byGroupContainer.on("mousemove", (d, i, n) => {
+			currentHoveredElement = n[i];
+			const mousePosition = d3.mouse(n[i]);
+			if (mousePosition[1] < stackedPaddingByGroup[0] ||
+				mousePosition[1] > stackedHeight - stackedPaddingByGroup[2] ||
+				mousePosition[0] < stackedPaddingByGroup[3] ||
+				mousePosition[0] > chartWidth - stackedPaddingByGroup[1]) return;
+
+			const xValue = xScale.invert(mousePosition[0]);
+
+			tooltip.style("display", "block")
+				.html(null);
+
+			const innerTooltip = tooltip.append("div")
+				.style("max-width", innerTooltipWidth + "px")
+				.attr("id", classPrefix + "innerTooltipDiv");
+
+			const tooltipTitleDiv = innerTooltip.append("div")
+				.attr("class", classPrefix + "tooltipTitleDiv");
+
+			tooltipTitleDiv.append("strong")
+				.style("font-size", "16px")
+				.html(chartState.selectedYear.includes(allYearsOption) ? "Year: " + xValue :
+					"Month: " + monthFullNameFormat(monthShortNameParse(xValue)));
+
+			const tooltipContainer = innerTooltip.append("div")
+				.style("margin", "0px")
+				.style("display", "flex")
+				.style("flex-wrap", "wrap")
+				.style("white-space", "pre")
+				.style("line-height", 1.4)
+				.style("width", "100%");
+
+			const thisDatum = d.groupRawData.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
+
+			const rowDiv = tooltipContainer.append("div")
+				.style("display", "flex")
+				.style("align-items", "center")
+				.style("margin-bottom", "4px")
+				.style("width", "100%");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipKeys")
+				.html("Total");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipLeader");
+
+			rowDiv.append("span")
+				.attr("class", classPrefix + "tooltipValues")
+				.html("$" + (thisDatum ? formatMoney0Decimals(thisDatum.total) : 0));
+
+			if (thisDatum) {
+
+				const tooltipFundsListTitle = tooltipContainer.append("div")
+					.attr("class", classPrefix + "tooltipFundsListTitle")
+					.html("Top " + tooltipFundsNumberByGroup + " countries");
+
+				const yearsOrMonths = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
+
+				const fundsListData = thisDatum[yearsOrMonths].reduce((acc, curr) => {
+					const foundFund = acc.find(e => e.fund === curr.CountryID);
+					if (foundFund) {
+						foundFund.value += curr.Budget
+					} else {
+						acc.push({
+							fund: curr.CountryID,
+							value: curr.Budget
+						});
+					};
+					return acc;
+				}, []).sort((a, b) => b.value - a.value).slice(0, tooltipFundsNumberByGroup);
+
+				fundsListData.forEach(row => {
+					const rowDivList = tooltipContainer.append("div")
+						.attr("class", classPrefix + "tooltipDivList")
+						.style("display", "flex")
+						.style("align-items", "center")
+						.style("margin-bottom", "4px")
+						.style("width", "100%");
+
+					rowDivList.append("span")
+						.attr("class", classPrefix + "tooltipKeys")
+						.html(d => lists.fundNames[row.fund]);
+
+					rowDivList.append("span")
+						.attr("class", classPrefix + "tooltipLeader");
+
+					rowDivList.append("span")
+						.attr("class", classPrefix + "tooltipValues")
+						.html("$" + formatMoney0Decimals(row.value));
+				});
+			};
+
+			const thisBox = n[i].getBoundingClientRect();
+			const containerBox = containerDiv.node().getBoundingClientRect();
+			const tooltipBox = tooltip.node().getBoundingClientRect();
+			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
+			const thisElementRealYPos = xScale(xValue) / (width / containerBox.width);
+			const thisOffsetLeft = thisElementRealYPos + tooltipPadding + tooltipBox.width > containerBox.width ?
+				thisElementRealYPos - tooltipBox.width - tooltipPadding : thisElementRealYPos + tooltipPadding;
+
+			tooltip.style("top", thisOffsetTop + "px")
+				.style("left", thisOffsetLeft + "px");
+
+		}).on("mouseout", () => {
+			if (isSnapshotTooltipVisible) return;
+			currentHoveredElement = null;
+			tooltip.style("display", "none");
+		});
 
 		//end of drawStackedAreaChart
 	};
