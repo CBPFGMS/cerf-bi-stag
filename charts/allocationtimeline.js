@@ -133,6 +133,7 @@
 	let isSnapshotTooltipVisible = false,
 		height,
 		previousDataLength,
+		clickedLabel = false,
 		currentHoveredElement;
 
 	//emergency groups:
@@ -659,9 +660,8 @@
 			const thisSize = this.getBoundingClientRect();
 			const tooltipSize = tooltip.node().getBoundingClientRect();
 
-			tooltip.style("left", (tooltipPadding + thisSize.left + thisSize.width / 2 - tooltipSize.width / 2) < containerSize.left ?
-					tooltipPadding :
-					thisSize.left + thisSize.width / 2 - tooltipSize.width / 2 - containerSize.left + "px")
+			tooltip.style("left", (thisSize.left + thisSize.width / 2 - tooltipSize.width / 2) < containerSize.left ?
+					"0px" : thisSize.left + thisSize.width / 2 - tooltipSize.width / 2 - containerSize.left + "px")
 				.style("top", thisSize.top - containerSize.top + thisSize.height + 4 + "px");
 		};
 
@@ -1380,14 +1380,6 @@
 				return t => node.textContent = "$" + d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
 			});
 
-		areaPaths.on("click", d => {
-			const newBaseline = inDataLists.emergencyGroupsInData.map(e => "eg" + e).indexOf(d.key)
-			if (chartState.baseline !== newBaseline) {
-				chartState.baseline = newBaseline;
-				drawStackedAreaChart(data);
-			};
-		});
-
 		let legendGroup = mainGroup.selectAll("." + classPrefix + "legendGroup")
 			.data(groupScale.domain(), d => d);
 
@@ -1423,7 +1415,29 @@
 			.transition(syncTransition)
 			.attr("transform", d => "translate(0," + (groupScale(d) + (chartState.selectedView === viewOptions[0] ? groupScale.bandwidth() / 2 : stackedPaddingByGroup[0])) + ")");
 
-		legendGroup.on("click", (d, i, n) => {
+		legendGroup.on("mouseover", (_, i, n) => {
+			if (clickedLabel || chartState.selectedView === viewOptions[1]) return;
+			tooltip.style("display", "block")
+				.html(null);
+
+			const innerTooltip = tooltip.append("div")
+				.style("max-width", "180px")
+				.attr("id", classPrefix + "innerTooltipDiv");
+
+			innerTooltip.html("Click to send this emergency group to the baseline.");
+
+			const containerSize = containerDiv.node().getBoundingClientRect();
+			const thisSize = n[i].getBoundingClientRect();
+			const tooltipSize = tooltip.node().getBoundingClientRect();
+
+			tooltip.style("left", (thisSize.left + thisSize.width / 2 - tooltipSize.width / 2) < containerSize.left ?
+					"0px" : thisSize.left + thisSize.width / 2 - tooltipSize.width / 2 - containerSize.left + "px")
+				.style("top", thisSize.top - containerSize.top + thisSize.height + 4 + "px");
+		}).on("mouseout", () => {
+			tooltip.html(null)
+				.style("display", "none");
+		}).on("click", (d, i, n) => {
+			clickedLabel = true;
 			if (chartState.selectedView === viewOptions[1]) return;
 			const newBaseline = inDataLists.emergencyGroupsInData.map(e => "eg" + e).indexOf(d)
 			if (chartState.baseline !== newBaseline) {
@@ -1627,16 +1641,6 @@
 				});
 		};
 
-		areaPathsByGroup.on("click", (d, i, n) => {
-			const thisGroup = d3.select(n[i].parentNode).datum().emergencyGroup;
-			const thisIndex = lists.emergencyTypesInGroups[thisGroup]
-				.filter(e => inDataLists.emergencyTypesInData.includes(e)).indexOf(+extractNum(d.key));
-			if (clickedGroup[thisGroup] !== thisIndex) {
-				clickedGroup[thisGroup] = thisIndex;
-				drawStackedAreaChart(data);
-			};
-		});
-
 		let yAxisGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "yAxisGroupByGroup")
 			.data(dataByGroup.length ? [true] : []);
 
@@ -1728,7 +1732,28 @@
 			.transition(syncTransition)
 			.attr("transform", (_, i, n) => "translate(0," + (sublegendGroupVertPadding + ((n.length - 1 - i) * sublegendGroupSize)) + ")");
 
-		sublegendGroup.on("click", d => {
+		sublegendGroup.on("mouseover", (_, i, n) => {
+			if (clickedLabel) return;
+			tooltip.style("display", "block")
+				.html(null);
+
+			const innerTooltip = tooltip.append("div")
+				.style("max-width", "180px")
+				.attr("id", classPrefix + "innerTooltipDiv");
+
+			innerTooltip.html("Click to send this emergency type to the baseline.");
+
+			const containerSize = containerDiv.node().getBoundingClientRect();
+			const thisSize = n[i].getBoundingClientRect();
+			const tooltipSize = tooltip.node().getBoundingClientRect();
+
+			tooltip.style("left", (thisSize.left + thisSize.width / 2 - tooltipSize.width / 2) < containerSize.left ?
+					"0px" : thisSize.left + thisSize.width / 2 - tooltipSize.width / 2 - containerSize.left + "px")
+				.style("top", thisSize.top - containerSize.top + thisSize.height + 4 + "px");
+		}).on("mouseout", () => {
+			tooltip.html(null)
+				.style("display", "none");
+		}).on("click", d => {
 			const thisIndex = lists.emergencyTypesInGroups[extractNum(d.group)]
 				.filter(e => inDataLists.emergencyTypesInData.includes(e)).indexOf(+extractNum(d.type));
 			if (clickedGroup[extractNum(d.group)] !== thisIndex) {
@@ -1830,6 +1855,61 @@
 
 			const xValue = xScale.invert(mousePosition[0]);
 
+			const thisDatum = data.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
+
+			generateTooltip(xValue, thisDatum, tooltipFundsNumber);
+
+			const thisBox = n[i].getBoundingClientRect();
+			const containerBox = containerDiv.node().getBoundingClientRect();
+			const tooltipBox = tooltip.node().getBoundingClientRect();
+			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
+			const thisElementRealYPos = xScale(xValue) / (width / containerBox.width);
+			const thisOffsetLeft = thisElementRealYPos + tooltipPadding + tooltipBox.width > containerBox.width ?
+				thisElementRealYPos - tooltipBox.width - tooltipPadding : thisElementRealYPos + tooltipPadding;
+
+			tooltip.style("top", thisOffsetTop + "px")
+				.style("left", thisOffsetLeft + "px");
+
+		}).on("mouseout", () => {
+			if (isSnapshotTooltipVisible) return;
+			currentHoveredElement = null;
+			tooltip.style("display", "none")
+				.html(null);
+		});
+
+		byGroupContainer.on("mousemove", (d, i, n) => {
+			currentHoveredElement = n[i];
+			const mousePosition = d3.mouse(n[i]);
+			if (mousePosition[1] < stackedPaddingByGroup[0] ||
+				mousePosition[1] > stackedHeight - stackedPaddingByGroup[2] ||
+				mousePosition[0] < stackedPaddingByGroup[3] ||
+				mousePosition[0] > chartWidth - stackedPaddingByGroup[1]) return;
+
+			const xValue = xScale.invert(mousePosition[0]);
+
+			const thisDatum = d.groupRawData.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
+
+			generateTooltip(xValue, thisDatum, tooltipFundsNumberByGroup);
+
+			const thisBox = n[i].getBoundingClientRect();
+			const containerBox = containerDiv.node().getBoundingClientRect();
+			const tooltipBox = tooltip.node().getBoundingClientRect();
+			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
+			const thisElementRealYPos = xScale(xValue) / (width / containerBox.width);
+			const thisOffsetLeft = thisElementRealYPos + tooltipPadding + tooltipBox.width > containerBox.width ?
+				thisElementRealYPos - tooltipBox.width - tooltipPadding : thisElementRealYPos + tooltipPadding;
+
+			tooltip.style("top", thisOffsetTop + "px")
+				.style("left", thisOffsetLeft + "px");
+
+		}).on("mouseout", () => {
+			if (isSnapshotTooltipVisible) return;
+			currentHoveredElement = null;
+			tooltip.style("display", "none")
+				.html(null);
+		});
+
+		function generateTooltip(xValue, thisDatum, tooltipFundsNumber) {
 			tooltip.style("display", "block")
 				.html(null);
 
@@ -1853,8 +1933,6 @@
 				.style("line-height", 1.4)
 				.style("width", "100%");
 
-			const thisDatum = data.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
-
 			const rowDiv = tooltipContainer.append("div")
 				.style("display", "flex")
 				.style("align-items", "center")
@@ -1872,7 +1950,7 @@
 				.attr("class", classPrefix + "tooltipValues")
 				.html("$" + (thisDatum ? formatMoney0Decimals(thisDatum.total) : 0));
 
-			if (thisDatum) {
+			if (thisDatum && thisDatum.total) {
 
 				const tooltipFundsListTitle = tooltipContainer.append("div")
 					.attr("class", classPrefix + "tooltipFundsListTitle")
@@ -1913,134 +1991,7 @@
 						.html("$" + formatMoney0Decimals(row.value));
 				});
 			};
-
-			const thisBox = n[i].getBoundingClientRect();
-			const containerBox = containerDiv.node().getBoundingClientRect();
-			const tooltipBox = tooltip.node().getBoundingClientRect();
-			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
-			const thisElementRealYPos = xScale(xValue) / (width / containerBox.width);
-			const thisOffsetLeft = thisElementRealYPos + tooltipPadding + tooltipBox.width > containerBox.width ?
-				thisElementRealYPos - tooltipBox.width - tooltipPadding : thisElementRealYPos + tooltipPadding;
-
-			tooltip.style("top", thisOffsetTop + "px")
-				.style("left", thisOffsetLeft + "px");
-
-		}).on("mouseout", () => {
-			if (isSnapshotTooltipVisible) return;
-			currentHoveredElement = null;
-			tooltip.style("display", "none");
-		});
-
-		byGroupContainer.on("mousemove", (d, i, n) => {
-			currentHoveredElement = n[i];
-			const mousePosition = d3.mouse(n[i]);
-			if (mousePosition[1] < stackedPaddingByGroup[0] ||
-				mousePosition[1] > stackedHeight - stackedPaddingByGroup[2] ||
-				mousePosition[0] < stackedPaddingByGroup[3] ||
-				mousePosition[0] > chartWidth - stackedPaddingByGroup[1]) return;
-
-			const xValue = xScale.invert(mousePosition[0]);
-
-			tooltip.style("display", "block")
-				.html(null);
-
-			const innerTooltip = tooltip.append("div")
-				.style("max-width", innerTooltipWidth + "px")
-				.attr("id", classPrefix + "innerTooltipDiv");
-
-			const tooltipTitleDiv = innerTooltip.append("div")
-				.attr("class", classPrefix + "tooltipTitleDiv");
-
-			tooltipTitleDiv.append("strong")
-				.style("font-size", "16px")
-				.html(chartState.selectedYear.includes(allYearsOption) ? "Year: " + xValue :
-					"Month: " + monthFullNameFormat(monthShortNameParse(xValue)));
-
-			const tooltipContainer = innerTooltip.append("div")
-				.style("margin", "0px")
-				.style("display", "flex")
-				.style("flex-wrap", "wrap")
-				.style("white-space", "pre")
-				.style("line-height", 1.4)
-				.style("width", "100%");
-
-			const thisDatum = d.groupRawData.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
-
-			const rowDiv = tooltipContainer.append("div")
-				.style("display", "flex")
-				.style("align-items", "center")
-				.style("margin-bottom", "4px")
-				.style("width", "100%");
-
-			rowDiv.append("span")
-				.attr("class", classPrefix + "tooltipKeys")
-				.html("Total");
-
-			rowDiv.append("span")
-				.attr("class", classPrefix + "tooltipLeader");
-
-			rowDiv.append("span")
-				.attr("class", classPrefix + "tooltipValues")
-				.html("$" + (thisDatum ? formatMoney0Decimals(thisDatum.total) : 0));
-
-			if (thisDatum) {
-
-				const tooltipFundsListTitle = tooltipContainer.append("div")
-					.attr("class", classPrefix + "tooltipFundsListTitle")
-					.html("Top " + tooltipFundsNumberByGroup + " countries");
-
-				const yearsOrMonths = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
-
-				const fundsListData = thisDatum[yearsOrMonths].reduce((acc, curr) => {
-					const foundFund = acc.find(e => e.fund === curr.CountryID);
-					if (foundFund) {
-						foundFund.value += curr.Budget
-					} else {
-						acc.push({
-							fund: curr.CountryID,
-							value: curr.Budget
-						});
-					};
-					return acc;
-				}, []).sort((a, b) => b.value - a.value).slice(0, tooltipFundsNumberByGroup);
-
-				fundsListData.forEach(row => {
-					const rowDivList = tooltipContainer.append("div")
-						.attr("class", classPrefix + "tooltipDivList")
-						.style("display", "flex")
-						.style("align-items", "center")
-						.style("margin-bottom", "4px")
-						.style("width", "100%");
-
-					rowDivList.append("span")
-						.attr("class", classPrefix + "tooltipKeys")
-						.html(d => lists.fundNames[row.fund]);
-
-					rowDivList.append("span")
-						.attr("class", classPrefix + "tooltipLeader");
-
-					rowDivList.append("span")
-						.attr("class", classPrefix + "tooltipValues")
-						.html("$" + formatMoney0Decimals(row.value));
-				});
-			};
-
-			const thisBox = n[i].getBoundingClientRect();
-			const containerBox = containerDiv.node().getBoundingClientRect();
-			const tooltipBox = tooltip.node().getBoundingClientRect();
-			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
-			const thisElementRealYPos = xScale(xValue) / (width / containerBox.width);
-			const thisOffsetLeft = thisElementRealYPos + tooltipPadding + tooltipBox.width > containerBox.width ?
-				thisElementRealYPos - tooltipBox.width - tooltipPadding : thisElementRealYPos + tooltipPadding;
-
-			tooltip.style("top", thisOffsetTop + "px")
-				.style("left", thisOffsetLeft + "px");
-
-		}).on("mouseout", () => {
-			if (isSnapshotTooltipVisible) return;
-			currentHoveredElement = null;
-			tooltip.style("display", "none");
-		});
+		};
 
 		//end of drawStackedAreaChart
 	};
