@@ -1748,3 +1748,8 @@ input:disabled + span.alloctimelinecheckboxText {
 	font-size: 11px;
 	letter-spacing: -0.03em;
 }
+
+.alloctimelineverticalLine {
+	stroke-width: 1px;
+	stroke: var(--unblue);
+}

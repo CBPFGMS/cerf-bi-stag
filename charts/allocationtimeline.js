@@ -46,7 +46,6 @@
 		duration = 1000,
 		delay = 250,
 		shortDuration = 250,
-		tooltipPadding = 26,
 		disabledOpacity = 0.4,
 		tickNumberAggregate = 4,
 		tickNumberByGroup = 3,
@@ -133,6 +132,7 @@
 	let isSnapshotTooltipVisible = false,
 		height,
 		previousDataLength,
+		previousXValue,
 		clickedLabel = false,
 		currentHoveredElement;
 
@@ -1242,23 +1242,6 @@
 
 		//Aggregated view
 
-		let backRectangle = mainGroup.selectAll("." + classPrefix + "backRectangle")
-			.data(dataAggregated.length ? [true] : [])
-
-		const backRectangleExit = backRectangle.exit()
-			.remove();
-
-		const backRectangleEnter = backRectangle.enter()
-			.append("rect")
-			.attr("class", classPrefix + "backRectangle")
-			.style("fill", "none")
-			.attr("x", stackedPadding[3])
-			.attr("width", chartWidth - stackedPadding[1] - stackedPadding[3])
-			.attr("y", stackedPadding[0])
-			.attr("height", stackedHeightAggregate - stackedPadding[0] - stackedPadding[2]);
-
-		backRectangle = backRectangleEnter.merge(backRectangle);
-
 		let xAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "xAxisGroupAggregated")
 			.data(dataAggregated.length ? [true] : []);
 
@@ -1329,6 +1312,20 @@
 					return pathTween(areaGenerator(d), precision, n[i])();
 				});
 		};
+
+		let verticalLine = mainGroup.selectAll("." + classPrefix + "verticalLine")
+			.data(dataAggregated.length ? [true] : []);
+
+		const verticalLineExit = verticalLine.exit().remove();
+
+		const verticalLineEnter = verticalLine.enter()
+			.append("line")
+			.attr("class", classPrefix + "verticalLine")
+			.style("opacity", 0)
+			.attr("y1", stackedPadding[0])
+			.attr("y2", stackedHeightAggregate - stackedPadding[2]);
+
+		verticalLine = verticalLineEnter.merge(verticalLine);
 
 		let yAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "yAxisGroupAggregated")
 			.data(dataAggregated.length ? [true] : []);
@@ -1526,6 +1523,26 @@
 				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.EmergencyGroupID))].length);
 			});
 
+		let rectOverlay = mainGroup.selectAll("." + classPrefix + "rectOverlay")
+			.data(dataAggregated.length ? [true] : [])
+
+		const rectOverlayExit = rectOverlay.exit()
+			.remove();
+
+		const rectOverlayEnter = rectOverlay.enter()
+			.append("rect")
+			.attr("class", classPrefix + "rectOverlay")
+			.style("fill", "none")
+			.attr("x", xScale.range()[0])
+			.attr("width", xScale.range()[1] - xScale.range()[0])
+			.attr("y", stackedPadding[0])
+			.attr("height", yScale.range()[0] - stackedPadding[0]);
+
+		rectOverlay = rectOverlayEnter.merge(rectOverlay);
+
+		rectOverlay.raise()
+			.attr("width", xScale.range()[1] - xScale.range()[0]);
+
 		//by group view
 
 		let byGroupContainer = mainGroup.selectAll("." + classPrefix + "byGroupContainer")
@@ -1550,23 +1567,6 @@
 		byGroupContainer.each((d, i, n) => {
 			localVariable.set(n[i], d.emergencyGroup);
 		});
-
-		let backRectangleByGroup = byGroupContainer.selectAll("." + classPrefix + "backRectangleByGroup")
-			.data([true])
-
-		const backRectangleByGroupExit = backRectangleByGroup.exit()
-			.remove();
-
-		const backRectangleByGroupEnter = backRectangleByGroup.enter()
-			.append("rect")
-			.attr("class", classPrefix + "backRectangleByGroup")
-			.style("fill", "none")
-			.attr("x", stackedPaddingByGroup[3])
-			.attr("width", chartWidth - stackedPaddingByGroup[1] - stackedPaddingByGroup[3])
-			.attr("y", stackedPaddingByGroup[0])
-			.attr("height", stackedHeight - stackedPaddingByGroup[0] - stackedPaddingByGroup[2]);
-
-		backRectangleByGroup = backRectangleByGroupEnter.merge(backRectangleByGroup);
 
 		let xAxisGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "xAxisGroupByGroup")
 			.data(dataByGroup.length ? [true] : []);
@@ -1842,25 +1842,47 @@
 				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.EmergencyTypeID))].length);
 			});
 
+		let rectOverlayByGroup = byGroupContainer.selectAll("." + classPrefix + "rectOverlayByGroup")
+			.data(d => [d.groupRawData])
+
+		rectOverlayByGroup = rectOverlayByGroup.enter()
+			.append("rect")
+			.attr("class", classPrefix + "rectOverlayByGroup")
+			.style("fill", "none")
+			.attr("x", xScale.range()[0])
+			.attr("y", stackedPaddingByGroup[0])
+			.attr("height", yScale.range()[0] - stackedPaddingByGroup[0])
+			.merge(rectOverlayByGroup)
+			.attr("width", xScale.range()[1] - xScale.range()[0])
+			.raise();
+
 		//listeners
 
-		mainGroup.on("mousemove", (_, i, n) => {
+		rectOverlay.on("mousemove", (_, i, n) => {
 			currentHoveredElement = n[i];
 			const mousePosition = d3.mouse(n[i]);
-			if (mousePosition[1] < stackedPadding[0] ||
-				mousePosition[1] > stackedHeightAggregate - stackedPadding[2] ||
-				mousePosition[0] < stackedPadding[3] ||
-				mousePosition[0] > chartWidth - stackedPadding[1] ||
-				chartState.selectedView === viewOptions[1]) return;
 
 			const xValue = xScale.invert(mousePosition[0]);
 
+			if (xValue === previousXValue) return;
+
+			previousXValue = xValue;
+
 			const thisDatum = data.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
+
+			if (thisDatum && thisDatum.total) {
+				verticalLine.style("opacity", 1)
+					.attr("x1", xScale(xValue))
+					.attr("x2", xScale(xValue));
+			} else {
+				verticalLine.style("opacity", 0);
+			};
 
 			generateTooltip(xValue, thisDatum, tooltipFundsNumber);
 
 			const thisBox = n[i].getBoundingClientRect();
 			const containerBox = containerDiv.node().getBoundingClientRect();
+			const tooltipPadding = 10 + xScale.step() / 2 * (width / containerBox.width);
 			const tooltipBox = tooltip.node().getBoundingClientRect();
 			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
 			const thisElementRealYPos = xScale(xValue) / (width / containerBox.width);
@@ -1873,26 +1895,28 @@
 		}).on("mouseout", () => {
 			if (isSnapshotTooltipVisible) return;
 			currentHoveredElement = null;
+			verticalLine.style("opacity", 0);
 			tooltip.style("display", "none")
 				.html(null);
 		});
 
-		byGroupContainer.on("mousemove", (d, i, n) => {
+		rectOverlayByGroup.on("mousemove", (d, i, n) => {
 			currentHoveredElement = n[i];
 			const mousePosition = d3.mouse(n[i]);
-			if (mousePosition[1] < stackedPaddingByGroup[0] ||
-				mousePosition[1] > stackedHeight - stackedPaddingByGroup[2] ||
-				mousePosition[0] < stackedPaddingByGroup[3] ||
-				mousePosition[0] > chartWidth - stackedPaddingByGroup[1]) return;
 
 			const xValue = xScale.invert(mousePosition[0]);
 
-			const thisDatum = d.groupRawData.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
+			if (xValue === previousXValue) return;
+
+			previousXValue = xValue;
+
+			const thisDatum = d.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
 
 			generateTooltip(xValue, thisDatum, tooltipFundsNumberByGroup);
 
 			const thisBox = n[i].getBoundingClientRect();
 			const containerBox = containerDiv.node().getBoundingClientRect();
+			const tooltipPadding = 10 + xScale.step() / 2 * (width / containerBox.width);
 			const tooltipBox = tooltip.node().getBoundingClientRect();
 			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
 			const thisElementRealYPos = xScale(xValue) / (width / containerBox.width);
