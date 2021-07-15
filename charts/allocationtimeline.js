@@ -37,6 +37,7 @@
 		innerTooltipWidth = 300,
 		tooltipFundsNumber = 20,
 		tooltipFundsNumberByGroup = 10,
+		verticalLineOpacity = 0.4,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -2192,7 +2193,7 @@
 			const thisDatum = data.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
 
 			if (thisDatum && thisDatum.total) {
-				verticalLine.style("opacity", 1)
+				verticalLine.style("opacity", verticalLineOpacity)
 					.attr("x1", xScale(xValue))
 					.attr("x2", xScale(xValue));
 			} else {
@@ -2241,7 +2242,7 @@
 			const thisVerticalLine = d3.select(n[i].parentNode).select("." + classPrefix + "verticalLineByGroup");
 
 			if (thisDatum && thisDatum.total) {
-				thisVerticalLine.style("opacity", 1)
+				thisVerticalLine.style("opacity", verticalLineOpacity)
 					.attr("x1", xScale(xValue))
 					.attr("x2", xScale(xValue));
 			} else {
