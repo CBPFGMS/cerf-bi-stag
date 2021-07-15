@@ -1569,8 +1569,12 @@ p#alloctimelined3chartTitle {
 	fill: #444;
 }
 
-.alloctimelinexAxisGroupAggregated path, .alloctimelinexAxisGroupAggregated line, .alloctimelinexAxisGroupByGroup path, .alloctimelinexAxisGroupByGroup line {
+.alloctimelinexAxisGroupAggregated line, .alloctimelinexAxisGroupByGroup line {
 	stroke: #666;
+}
+
+.alloctimelinexAxisGroupAggregated path, .alloctimelinexAxisGroupByGroup path {
+	stroke: none;
 }
 
 .alloctimelineyAxisGroupAggregated text, .alloctimelineyAxisGroupByGroup text {
@@ -1749,7 +1753,24 @@ input:disabled + span.alloctimelinecheckboxText {
 	letter-spacing: -0.03em;
 }
 
-.alloctimelineverticalLine {
+.alloctimelineverticalLine, .alloctimelineverticalLineByGroup {
 	stroke-width: 1px;
+	opacity: 0.5;
 	stroke: var(--unblue);
+}
+
+.alloctimelinearrowChevron {
+	font-size: 38px;
+	fill:  white;
+	font-weight: bold;
+	dominant-baseline: middle;
+	text-anchor: middle;
+}
+
+.alloctimelinearrowChevronByGroup {
+	font-size: 26px;
+	fill:  white;
+	font-weight: bold;
+	dominant-baseline: middle;
+	text-anchor: middle;
 }
