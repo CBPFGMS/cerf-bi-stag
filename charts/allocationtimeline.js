@@ -6,19 +6,20 @@
 	const width = 1100,
 		padding = [4, 4, 4, 4],
 		chartWidth = width - padding[1] - padding[3],
-		stackedHeight = 250,
-		stackedHeightAggregate = 490,
-		stackedPadding = [22, 42, 60, 244],
-		stackedPaddingByGroup = [28, 42, 62, 244],
-		arrowPaddingLeft = 62,
-		arrowPaddingRight = 22,
+		stackedHeight = 230,
+		stackedHeightAggregate = 460,
+		stackedPadding = [22, 50, 36, 244],
+		stackedPaddingByGroup = [28, 50, 38, 244],
+		arrowPaddingLeft = 28,
+		arrowPaddingRight = 28,
 		maxYearsListNumber = 1,
 		legendTextPadding = 40,
 		legendHorPadding = 4,
 		iconSize = 28,
 		maxTickNumber = 12,
-		arrowCircleRadius = 16,
-		arrowCircleRadiusByGroup = 12,
+		arrowCircleRadius = 22,
+		arrowCircleRadiusByGroup = 16,
+		arrowFadeColor = "#f1f1f1",
 		tickMove = 3,
 		tickStep = (chartWidth - stackedPadding[1] - stackedPadding[3]) / maxTickNumber,
 		unBlue = "#1F69B3",
@@ -37,7 +38,6 @@
 		innerTooltipWidth = 300,
 		tooltipFundsNumber = 20,
 		tooltipFundsNumberByGroup = 10,
-		verticalLineOpacity = 0.4,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -141,7 +141,6 @@
 		height,
 		previousDataLength,
 		previousXValue,
-		clickedLabel = false,
 		currentHoveredElement;
 
 	//emergency groups:
@@ -1053,7 +1052,8 @@
 				if (d === allRegionsOption) {
 					if (n[i].checked) {
 						chartState.selectedRegion = d3.keys(lists.regionsInAllDataList).map(e => +e);
-						regionCheckbox.property("checked", false);
+						regionCheckbox.property("checked", false)
+							.property("disabled", false);
 					} else {
 						chartState.selectedRegion.length = 0;
 					};
@@ -1110,9 +1110,6 @@
 
 				const data = processData(rawDataAllocations);
 
-				regionCheckbox.property("disabled", function(d) {
-					return !inDataLists.regionsInData.includes(d);
-				});
 				emergencyCheckbox.property("disabled", function(d) {
 					return !inDataLists.emergencyGroupsInData.includes(d);
 				});
@@ -1295,7 +1292,7 @@
 			.attr("class", classPrefix + "leftArrowGroupAggregated")
 			.style("opacity", 0)
 			.style("cursor", "pointer")
-			.attr("transform", "translate(" + (stackedPadding[3] - arrowPaddingLeft) + "," + (stackedPadding[0] + (stackedHeightAggregate - stackedPadding[0] - stackedPadding[2]) / 2) + ")");
+			.attr("transform", "translate(" + (stackedPadding[3] - arrowPaddingLeft) + "," + (stackedHeightAggregate - stackedPadding[2] - arrowCircleRadius / 2) + ")");
 
 		const leftArrowCircle = leftArrowGroupAggregatedEnter.append("circle")
 			.style("fill", unBlue)
@@ -1323,7 +1320,7 @@
 			.attr("class", classPrefix + "rightArrowGroupAggregated")
 			.style("opacity", 0)
 			.style("cursor", "pointer")
-			.attr("transform", "translate(" + (chartWidth - stackedPadding[1] + arrowPaddingRight) + "," + (stackedPadding[0] + (stackedHeightAggregate - stackedPadding[0] - stackedPadding[2]) / 2) + ")");
+			.attr("transform", "translate(" + (chartWidth - stackedPadding[1] + arrowPaddingRight) + "," + (stackedHeightAggregate - stackedPadding[2] - arrowCircleRadius / 2) + ")");
 
 		const rightArrowCircle = rightArrowGroupAggregatedEnter.append("circle")
 			.style("fill", unBlue)
@@ -1417,20 +1414,6 @@
 				});
 		};
 
-		let verticalLine = aggregatedChartArea.selectAll("." + classPrefix + "verticalLine")
-			.data(dataAggregated.length ? [true] : []);
-
-		const verticalLineExit = verticalLine.exit().remove();
-
-		const verticalLineEnter = verticalLine.enter()
-			.append("line")
-			.attr("class", classPrefix + "verticalLine")
-			.style("opacity", 0)
-			.attr("y1", stackedPadding[0])
-			.attr("y2", stackedHeightAggregate - stackedPadding[2]);
-
-		verticalLine = verticalLineEnter.merge(verticalLine);
-
 		let yAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "yAxisGroupAggregated")
 			.data(dataAggregated.length ? [true] : []);
 
@@ -1517,7 +1500,7 @@
 			.attr("transform", d => "translate(0," + (groupScale(d) + (chartState.selectedView === viewOptions[0] ? groupScale.bandwidth() / 2 : stackedPaddingByGroup[0])) + ")");
 
 		legendGroup.on("mouseover", (_, i, n) => {
-			if (clickedLabel || chartState.selectedView === viewOptions[1]) return;
+			if (chartState.selectedView === viewOptions[1]) return;
 			tooltip.style("display", "block")
 				.html(null);
 
@@ -1538,7 +1521,6 @@
 			tooltip.html(null)
 				.style("display", "none");
 		}).on("click", (d, i, n) => {
-			clickedLabel = true;
 			if (chartState.selectedView === viewOptions[1]) return;
 			const newBaseline = inDataLists.emergencyGroupsInData.map(e => "eg" + e).indexOf(d)
 			if (chartState.baseline !== newBaseline) {
@@ -1561,21 +1543,6 @@
 			.attr("x", stackedPadding[3] - numberTitlesPadding)
 			.attr("y", yScale.range()[0] + fundsNumberPadding)
 			.text("Number of countries");
-
-		let numberOfGroupsTitle = mainGroup.selectAll("." + classPrefix + "numberOfGroupsTitle")
-			.data(chartState.selectedView === viewOptions[0] ? [true] : []);
-
-		const numberOfGroupsTitleExit = numberOfGroupsTitle.exit()
-			.transition(syncTransition)
-			.style("opacity", 0)
-			.remove();
-
-		const numberOfGroupsTitleEnter = numberOfGroupsTitle.enter()
-			.append("text")
-			.attr("class", classPrefix + "numberOfGroupsTitle")
-			.attr("x", stackedPadding[3] - numberTitlesPadding)
-			.attr("y", yScale.range()[0] + fundsNumberPadding + groupsNumberPadding)
-			.text("Number of Emerg. Groups");
 
 		let numberOfFunds = aggregatedChartArea.selectAll("." + classPrefix + "numberOfFunds")
 			.data(chartState.selectedView === viewOptions[0] ? data : [],
@@ -1602,33 +1569,6 @@
 			.textTween((d, i, n) => {
 				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
 				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.CountryID))].length);
-			});
-
-		let numberOfGroups = aggregatedChartArea.selectAll("." + classPrefix + "numberOfGroups")
-			.data(chartState.selectedView === viewOptions[0] ? data : [],
-				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
-
-		const numberOfGroupsExit = numberOfGroups.exit()
-			.transition(syncTransition)
-			.style("opacity", 0)
-			.remove();
-
-		const numberOfGroupsEnter = numberOfGroups.enter()
-			.append("text")
-			.attr("class", classPrefix + "numberOfGroups")
-			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.attr("y", yScale.range()[0] + fundsNumberPadding + groupsNumberPadding)
-			.style("opacity", 0)
-			.text("0");
-
-		numberOfGroups = numberOfGroupsEnter.merge(numberOfGroups);
-
-		numberOfGroups.transition(syncTransition)
-			.style("opacity", 1)
-			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.textTween((d, i, n) => {
-				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
-				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.EmergencyGroupID))].length);
 			});
 
 		let rectOverlay = aggregatedChartArea.selectAll("." + classPrefix + "rectOverlay")
@@ -1714,7 +1654,7 @@
 			.attr("class", classPrefix + "leftArrowGroupByGroup")
 			.style("opacity", 0)
 			.style("cursor", "pointer")
-			.attr("transform", "translate(" + (stackedPaddingByGroup[3] - arrowPaddingLeft) + "," + (stackedPaddingByGroup[0] + (stackedHeight - stackedPaddingByGroup[0] - stackedPaddingByGroup[2]) / 2) + ")");
+			.attr("transform", "translate(" + (stackedPaddingByGroup[3] - arrowPaddingLeft) + "," + (stackedHeight - stackedPaddingByGroup[2] - arrowCircleRadiusByGroup / 2) + ")");
 
 		const leftArrowCircleByGroup = leftArrowGroupByGroupEnter.append("circle")
 			.style("fill", unBlue)
@@ -1742,7 +1682,7 @@
 			.attr("class", classPrefix + "rightArrowGroupByGroup")
 			.style("opacity", 0)
 			.style("cursor", "pointer")
-			.attr("transform", "translate(" + (chartWidth - stackedPaddingByGroup[1] + arrowPaddingRight) + "," + (stackedPaddingByGroup[0] + (stackedHeight - stackedPaddingByGroup[0] - stackedPaddingByGroup[2]) / 2) + ")");
+			.attr("transform", "translate(" + (chartWidth - stackedPaddingByGroup[1] + arrowPaddingRight) + "," + (stackedHeight - stackedPaddingByGroup[2] - arrowCircleRadiusByGroup / 2) + ")");
 
 		const rightArrowCircleByGroup = rightArrowGroupByGroupEnter.append("circle")
 			.style("fill", unBlue)
@@ -1838,20 +1778,6 @@
 				});
 		};
 
-		let verticalLineByGroup = chartAreaByGroup.selectAll("." + classPrefix + "verticalLineByGroup")
-			.data(dataByGroup.length ? [true] : []);
-
-		const verticalLineByGroupExit = verticalLineByGroup.exit().remove();
-
-		const verticalLineByGroupEnter = verticalLineByGroup.enter()
-			.append("line")
-			.attr("class", classPrefix + "verticalLineByGroup")
-			.style("opacity", 0)
-			.attr("y1", stackedPaddingByGroup[0])
-			.attr("y2", stackedHeight - stackedPaddingByGroup[2]);
-
-		verticalLineByGroup = verticalLineByGroupEnter.merge(verticalLineByGroup);
-
 		let yAxisGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "yAxisGroupByGroup")
 			.data(dataByGroup.length ? [true] : []);
 
@@ -1944,7 +1870,6 @@
 			.attr("transform", (_, i, n) => "translate(0," + (sublegendGroupVertPadding + ((n.length - 1 - i) * sublegendGroupSize)) + ")");
 
 		sublegendGroup.on("mouseover", (_, i, n) => {
-			if (clickedLabel) return;
 			tooltip.style("display", "block")
 				.html(null);
 
@@ -1988,21 +1913,6 @@
 			.attr("y", yScale.range()[0] + fundsNumberPaddingByGroup)
 			.text("# of countries");
 
-		let numberOfGroupsTitleByGroup = byGroupContainer.selectAll("." + classPrefix + "numberOfGroupsTitleByGroup")
-			.data(chartState.selectedView === viewOptions[1] ? [true] : []);
-
-		const numberOfGroupsTitleByGroupExit = numberOfGroupsTitleByGroup.exit()
-			.transition(syncTransition)
-			.style("opacity", 0)
-			.remove();
-
-		const numberOfGroupsTitleByGroupEnter = numberOfGroupsTitleByGroup.enter()
-			.append("text")
-			.attr("class", classPrefix + "numberOfGroupsTitleByGroup")
-			.attr("x", stackedPadding[3] - numberTitlesPadding)
-			.attr("y", yScale.range()[0] + fundsNumberPaddingByGroup + groupsNumberPaddingByGroup)
-			.text("# of Emerg. Types");
-
 		let numberOfFundsByGroup = chartAreaByGroup.selectAll("." + classPrefix + "numberOfFundsByGroup")
 			.data(d => chartState.selectedView === viewOptions[1] ? d.groupRawData : [],
 				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
@@ -2028,33 +1938,6 @@
 			.textTween((d, i, n) => {
 				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
 				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.CountryID))].length);
-			});
-
-		let numberOfGroupsByGroup = chartAreaByGroup.selectAll("." + classPrefix + "numberOfGroupsByGroup")
-			.data(d => chartState.selectedView === viewOptions[1] ? d.groupRawData : [],
-				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
-
-		const numberOfGroupsByGroupExit = numberOfGroupsByGroup.exit()
-			.transition(syncTransition)
-			.style("opacity", 0)
-			.remove();
-
-		const numberOfGroupsByGroupEnter = numberOfGroupsByGroup.enter()
-			.append("text")
-			.attr("class", classPrefix + "numberOfGroupsByGroup")
-			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.attr("y", yScale.range()[0] + fundsNumberPaddingByGroup + groupsNumberPaddingByGroup)
-			.style("opacity", 0)
-			.text("0");
-
-		numberOfGroupsByGroup = numberOfGroupsByGroupEnter.merge(numberOfGroupsByGroup);
-
-		numberOfGroupsByGroup.transition(syncTransition)
-			.style("opacity", 1)
-			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.textTween((d, i, n) => {
-				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
-				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.EmergencyTypeID))].length);
 			});
 
 		let rectOverlayByGroup = chartAreaByGroup.selectAll("." + classPrefix + "rectOverlayByGroup")
@@ -2094,7 +1977,7 @@
 			const currentTranslate = parseTransform(aggregatedChartArea.attr("transform"))[0];
 
 			if (currentTranslate === 0) {
-				leftArrowGroupAggregated.select("circle").style("fill", "#ccc");
+				leftArrowGroupAggregated.select("circle").style("fill", arrowFadeColor);
 				leftArrowGroupAggregated.attr("pointer-events", "none");
 			} else {
 				leftArrowGroupAggregated.select("circle").style("fill", unBlue);
@@ -2102,7 +1985,7 @@
 			};
 
 			if (~~Math.abs(currentTranslate) >= ~~(xScale.range()[1] - maxTickNumber * tickStep)) {
-				rightArrowGroupAggregated.select("circle").style("fill", "#ccc");
+				rightArrowGroupAggregated.select("circle").style("fill", arrowFadeColor);
 				rightArrowGroupAggregated.attr("pointer-events", "none");
 			} else {
 				rightArrowGroupAggregated.select("circle").style("fill", unBlue);
@@ -2113,11 +1996,11 @@
 		function checkCurrentTranslate() {
 			const currentTranslate = parseTransform(aggregatedChartArea.attr("transform"))[0];
 			if (currentTranslate === 0) {
-				leftArrowGroupAggregated.select("circle").style("fill", "#ccc");
+				leftArrowGroupAggregated.select("circle").style("fill", arrowFadeColor);
 				leftArrowGroupAggregated.attr("pointer-events", "none");
 			};
 			if (~~Math.abs(currentTranslate) >= ~~(xScale.range()[1] - maxTickNumber * tickStep)) {
-				rightArrowGroupAggregated.select("circle").style("fill", "#ccc");
+				rightArrowGroupAggregated.select("circle").style("fill", arrowFadeColor);
 				rightArrowGroupAggregated.attr("pointer-events", "none");
 			};
 		};
@@ -2147,7 +2030,7 @@
 			const thisRightArrow = d3.select(thisChartAreaGroup.node().parentNode.parentNode).select("." + classPrefix + "rightArrowGroupByGroup");
 
 			if (currentTranslate === 0) {
-				thisLeftArrow.select("circle").style("fill", "#ccc");
+				thisLeftArrow.select("circle").style("fill", arrowFadeColor);
 				thisLeftArrow.attr("pointer-events", "none");
 			} else {
 				thisLeftArrow.select("circle").style("fill", unBlue);
@@ -2155,7 +2038,7 @@
 			};
 
 			if (~~Math.abs(currentTranslate) >= ~~(xScale.range()[1] - maxTickNumber * tickStep)) {
-				thisRightArrow.select("circle").style("fill", "#ccc");
+				thisRightArrow.select("circle").style("fill", arrowFadeColor);
 				thisRightArrow.attr("pointer-events", "none");
 			} else {
 				thisRightArrow.select("circle").style("fill", unBlue);
@@ -2166,11 +2049,11 @@
 		function checkCurrentTranslateByGroup() {
 			const currentTranslate = parseTransform(chartAreaByGroup.attr("transform"))[0];
 			if (currentTranslate === 0) {
-				leftArrowGroupByGroup.select("circle").style("fill", "#ccc");
+				leftArrowGroupByGroup.select("circle").style("fill", arrowFadeColor);
 				leftArrowGroupByGroup.attr("pointer-events", "none");
 			};
 			if (~~Math.abs(currentTranslate) >= ~~(xScale.range()[1] - maxTickNumber * tickStep)) {
-				rightArrowGroupByGroup.select("circle").style("fill", "#ccc");
+				rightArrowGroupByGroup.select("circle").style("fill", arrowFadeColor);
 				rightArrowGroupByGroup.attr("pointer-events", "none");
 			};
 		};
@@ -2192,14 +2075,6 @@
 
 			const thisDatum = data.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
 
-			if (thisDatum && thisDatum.total) {
-				verticalLine.style("opacity", verticalLineOpacity)
-					.attr("x1", xScale(xValue))
-					.attr("x2", xScale(xValue));
-			} else {
-				verticalLine.style("opacity", 0);
-			};
-
 			generateTooltip(xValue, thisDatum, tooltipFundsNumber);
 
 			const thisBox = n[i].getBoundingClientRect();
@@ -2217,7 +2092,6 @@
 		}).on("mouseout", () => {
 			if (isSnapshotTooltipVisible) return;
 			currentHoveredElement = null;
-			verticalLine.style("opacity", 0);
 			tooltip.style("display", "none")
 				.html(null);
 		});
@@ -2239,16 +2113,6 @@
 
 			const thisDatum = d.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
 
-			const thisVerticalLine = d3.select(n[i].parentNode).select("." + classPrefix + "verticalLineByGroup");
-
-			if (thisDatum && thisDatum.total) {
-				thisVerticalLine.style("opacity", verticalLineOpacity)
-					.attr("x1", xScale(xValue))
-					.attr("x2", xScale(xValue));
-			} else {
-				thisVerticalLine.style("opacity", 0);
-			};
-
 			generateTooltip(xValue, thisDatum, tooltipFundsNumberByGroup);
 
 			const thisBox = n[i].getBoundingClientRect();
@@ -2266,7 +2130,6 @@
 		}).on("mouseout", () => {
 			if (isSnapshotTooltipVisible) return;
 			currentHoveredElement = null;
-			verticalLineByGroup.style("opacity", 0);
 			tooltip.style("display", "none")
 				.html(null);
 		});
@@ -2527,10 +2390,24 @@
 
 	function fillZeros(target) {
 		if (chartState.selectedYear.includes(allYearsOption)) {
-			target.forEach(row => {
-				d3.keys(lists.emergencyGroupsInAllDataList).forEach(eg => {
-					if (!row["eg" + eg]) row["eg" + eg] = 0;
-				});
+			yearsToFill = yearsArray.slice();
+			yearsToFill.forEach(yearRow => {
+				const foundDataYear = target.find(e => e.year === yearRow);
+				if (foundDataYear) {
+					d3.keys(lists.emergencyGroupsInAllDataList).forEach(eg => {
+						if (!foundDataYear["eg" + eg]) foundDataYear["eg" + eg] = 0;
+					});
+				} else {
+					const zeroYear = {
+						year: yearRow,
+						total: 0,
+						yearValues: []
+					};
+					d3.keys(lists.emergencyGroupsInAllDataList).forEach(eg => {
+						zeroYear["eg" + eg] = 0;
+					});
+					target.push(zeroYear);
+				};
 			});
 		} else {
 			let monthsToFill;
@@ -2565,10 +2442,24 @@
 
 	function fillZerosByGroup(target, typesList) {
 		if (chartState.selectedYear.includes(allYearsOption)) {
-			target.forEach(row => {
-				typesList.forEach(et => {
-					if (!row["et" + et]) row["et" + et] = 0;
-				});
+			yearsToFill = yearsArray.slice();
+			yearsToFill.forEach(yearRow => {
+				const foundDataYear = target.find(e => e.year === yearRow);
+				if (foundDataYear) {
+					typesList.forEach(et => {
+						if (!foundDataYear["et" + et]) foundDataYear["et" + et] = 0;
+					});
+				} else {
+					const zeroYear = {
+						year: yearRow,
+						total: 0,
+						yearValues: []
+					};
+					typesList.forEach(et => {
+						zeroYear["et" + et] = 0;
+					});
+					target.push(zeroYear);
+				};
 			});
 		} else {
 			let monthsToFill;

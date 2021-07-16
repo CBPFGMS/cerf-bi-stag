@@ -1656,21 +1656,6 @@ input:disabled + span.alloctimelinecheckboxText {
 	fill: var(--customblue);	
 }
 
-.alloctimelinenumberOfGroupsTitle {
-	text-anchor: end;
-	font-family: "Roboto", sans-serif;
-	font-size: 12px;
-	fill: var(--customred);	
-}
-
-.alloctimelinenumberOfGroups {
-	text-anchor: middle;
-	font-family: "Roboto", sans-serif;
-	font-size: 12px;
-	font-weight: 500;
-	fill: var(--customred);	
-}
-
 .alloctimelinenumberOfFundsTitleByGroup {
 	text-anchor: end;
 	font-family: "Roboto", sans-serif;
@@ -1684,21 +1669,6 @@ input:disabled + span.alloctimelinecheckboxText {
 	font-size: 10px;
 	font-weight: 500;
 	fill: var(--customblue);	
-}
-
-.alloctimelinenumberOfGroupsTitleByGroup {
-	text-anchor: end;
-	font-family: "Roboto", sans-serif;
-	font-size: 10px;
-	fill: var(--customred);	
-}
-
-.alloctimelinenumberOfGroupsByGroup {
-	text-anchor: middle;
-	font-family: "Roboto", sans-serif;
-	font-size: 10px;
-	font-weight: 500;
-	fill: var(--customred);	
 }
 
 .alloctimelinetooltipTitleDiv {
@@ -1753,14 +1723,8 @@ input:disabled + span.alloctimelinecheckboxText {
 	letter-spacing: -0.03em;
 }
 
-.alloctimelineverticalLine, .alloctimelineverticalLineByGroup {
-	stroke-width: 1px;
-	opacity: 0.1;
-	stroke: var(--unblue);
-}
-
 .alloctimelinearrowChevron {
-	font-size: 38px;
+	font-size: 52px;
 	fill:  white;
 	font-weight: bold;
 	dominant-baseline: middle;
@@ -1768,7 +1732,7 @@ input:disabled + span.alloctimelinecheckboxText {
 }
 
 .alloctimelinearrowChevronByGroup {
-	font-size: 26px;
+	font-size: 38px;
 	fill:  white;
 	font-weight: bold;
 	dominant-baseline: middle;
