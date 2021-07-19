@@ -24,7 +24,6 @@
 		tickStep = (chartWidth - stackedPadding[1] - stackedPadding[3]) / maxTickNumber,
 		unBlue = "#1F69B3",
 		classPrefix = "alloctimeline",
-		tooltipWidth = 270,
 		sublegendGroupSize = 16,
 		bulletSize = 4,
 		noDataTextPadding = 180,
@@ -35,9 +34,10 @@
 		fundsNumberPaddingByGroup = 28,
 		groupsNumberPaddingByGroup = 12,
 		numberTitlesPadding = 22,
-		innerTooltipWidth = 300,
+		innerTooltipWidth = 210,
 		tooltipFundsNumber = 20,
 		tooltipFundsNumberByGroup = 10,
+		tooltipVerticalPadding = 22,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -255,6 +255,10 @@
 
 	const tooltip = containerDiv.append("div")
 		.attr("id", classPrefix + "tooltipdiv")
+		.style("display", "none");
+
+	const dataTooltip = containerDiv.append("div")
+		.attr("id", classPrefix + "dataTooltipdiv")
 		.style("display", "none");
 
 	containerDiv.on("contextmenu", function() {
@@ -1436,7 +1440,7 @@
 			.remove();
 
 		let totalLabel = aggregatedChartArea.selectAll("." + classPrefix + "totalLabel")
-			.data(chartState.selectedView === viewOptions[0] ? data.filter((_, i) => !(i % totalLabelRemainder)) : [],
+			.data(chartState.selectedView === viewOptions[0] ? data.filter((d, i) => d.total && !(i % totalLabelRemainder)) : [],
 				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
 
 		const totalLabelExit = totalLabel.exit()
@@ -1461,7 +1465,7 @@
 			.tween("text", (d, i, n) => {
 				const node = n[i];
 				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, d.total);
-				return t => node.textContent = "$" + d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
+				return t => node.textContent = "$" + formatSIFloat(interpolator(t)).replace("G", "B");
 			});
 
 		let legendGroup = mainGroup.selectAll("." + classPrefix + "legendGroup")
@@ -1800,7 +1804,7 @@
 			.remove();
 
 		let totalLabelByGroup = chartAreaByGroup.selectAll("." + classPrefix + "totalLabelByGroup")
-			.data(d => chartState.selectedView === viewOptions[1] ? d.groupRawData.filter((_, i) => !(i % totalLabelRemainder)) : [],
+			.data(d => chartState.selectedView === viewOptions[1] ? d.groupRawData.filter((d, i) => d.total && !(i % totalLabelRemainder)) : [],
 				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
 
 		const totalLabelByGroupExit = totalLabelByGroup.exit()
@@ -1831,7 +1835,7 @@
 			.tween("text", (d, i, n) => {
 				const node = n[i];
 				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, d.total);
-				return t => node.textContent = "$" + d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
+				return t => node.textContent = "$" + formatSIFloat(interpolator(t)).replace("G", "B");
 			});
 
 		let sublegendGroup = legendGroup.selectAll("." + classPrefix + "sublegendGroup")
@@ -2069,30 +2073,30 @@
 
 			const xValue = xScale.invert(mousePosition[0]);
 
-			if (xValue === previousXValue) return;
+			if (xValue === previousXValue && tooltip.style("display") === "block") return;
 
 			previousXValue = xValue;
 
 			const thisDatum = data.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
 
-			generateTooltip(xValue, thisDatum, tooltipFundsNumber);
+			generateTooltip(thisDatum);
 
 			const thisBox = n[i].getBoundingClientRect();
+			const svgBox = svg.node().getBoundingClientRect();
 			const containerBox = containerDiv.node().getBoundingClientRect();
-			const tooltipPadding = 10 + xScale.step() / 2 * (width / containerBox.width);
-			const tooltipBox = tooltip.node().getBoundingClientRect();
-			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
+			const tooltipBox = dataTooltip.node().getBoundingClientRect();
+			//const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
+			const thisOffsetTop = svgBox.top - containerBox.top - tooltipBox.height - tooltipVerticalPadding + ((yScale(thisDatum.total) - totalLabelPadding - (inDataLists.emergencyGroupsInData.length * stackGap)) / (width / containerBox.width));
 			const thisElementRealYPos = (stackedPadding[3] + xScale(xValue) - Math.abs(currentTranslate)) / (width / containerBox.width);
-			const thisOffsetLeft = thisElementRealYPos + tooltipPadding + tooltipBox.width > containerBox.width ?
-				thisElementRealYPos - tooltipBox.width - tooltipPadding : thisElementRealYPos + tooltipPadding;
+			const thisOffsetLeft = thisElementRealYPos - tooltipBox.width / 2;
 
-			tooltip.style("top", thisOffsetTop + "px")
+			dataTooltip.style("top", thisOffsetTop + "px")
 				.style("left", thisOffsetLeft + "px");
 
 		}).on("mouseout", () => {
 			if (isSnapshotTooltipVisible) return;
 			currentHoveredElement = null;
-			tooltip.style("display", "none")
+			dataTooltip.style("display", "none")
 				.html(null);
 		});
 
@@ -2113,109 +2117,64 @@
 
 			const thisDatum = d.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
 
-			generateTooltip(xValue, thisDatum, tooltipFundsNumberByGroup);
+			generateTooltip(thisDatum);
 
 			const thisBox = n[i].getBoundingClientRect();
 			const containerBox = containerDiv.node().getBoundingClientRect();
 			const tooltipPadding = 10 + xScale.step() / 2 * (width / containerBox.width);
-			const tooltipBox = tooltip.node().getBoundingClientRect();
+			const tooltipBox = dataTooltip.node().getBoundingClientRect();
 			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
 			const thisElementRealYPos = (stackedPaddingByGroup[3] + xScale(xValue) - Math.abs(currentTranslate)) / (width / containerBox.width);
 			const thisOffsetLeft = thisElementRealYPos + tooltipPadding + tooltipBox.width > containerBox.width ?
 				thisElementRealYPos - tooltipBox.width - tooltipPadding : thisElementRealYPos + tooltipPadding;
 
-			tooltip.style("top", thisOffsetTop + "px")
+			dataTooltip.style("top", thisOffsetTop + "px")
 				.style("left", thisOffsetLeft + "px");
 
 		}).on("mouseout", () => {
 			if (isSnapshotTooltipVisible) return;
 			currentHoveredElement = null;
-			tooltip.style("display", "none")
+			dataTooltip.style("display", "none")
 				.html(null);
 		});
 
-		function generateTooltip(xValue, thisDatum, tooltipFundsNumber) {
-			tooltip.style("display", "block")
+		function generateTooltip(thisDatum) {
+			dataTooltip.style("display", "block")
 				.html(null);
 
-			const innerTooltip = tooltip.append("div")
-				.style("max-width", innerTooltipWidth + "px")
+			const innerTooltip = dataTooltip.append("div")
+				.style("width", innerTooltipWidth + "px")
 				.attr("id", classPrefix + "innerTooltipDiv");
 
-			const tooltipTitleDiv = innerTooltip.append("div")
-				.attr("class", classPrefix + "tooltipTitleDiv");
+			const tooltipTopValue = innerTooltip.append("div")
+				.attr("class", classPrefix + "tooltipTopValue")
+				.html(formatSIFloat(thisDatum.total));
 
-			tooltipTitleDiv.append("strong")
-				.style("font-size", "16px")
-				.html(chartState.selectedYear.includes(allYearsOption) ? "Year: " + xValue :
-					"Month: " + monthFullNameFormat(monthShortNameParse(xValue)));
+			const tooltipDate = innerTooltip.append("div")
+				.attr("class", classPrefix + "tooltipDate")
+				.html("Total allocations<br>in " + (chartState.selectedYear.includes(allYearsOption) ? thisDatum.year : monthFullNameFormat(monthShortNameParse(thisDatum.month))));
 
-			const tooltipContainer = innerTooltip.append("div")
-				.style("margin", "0px")
-				.style("display", "flex")
-				.style("flex-wrap", "wrap")
-				.style("white-space", "pre")
-				.style("line-height", 1.4)
-				.style("width", "100%");
+			const tooltipData = d3.entries(thisDatum).filter(e => e.key.includes("eg") && e.value).sort((a, b) => b.value - a.value);
 
-			const rowDiv = tooltipContainer.append("div")
-				.style("display", "flex")
-				.style("align-items", "center")
-				.style("margin-bottom", "4px")
-				.style("width", "100%");
+			const tooltipEmergencyGroups = innerTooltip.selectAll(null)
+				.data(tooltipData)
+				.enter()
+				.append("div")
+				.attr("class", classPrefix + "tooltipEmergencyGroups");
 
-			rowDiv.append("span")
-				.attr("class", classPrefix + "tooltipKeys")
-				.html("Total");
+			tooltipEmergencyGroups.append("span")
+				.attr("class", classPrefix + "tooltipCircle")
+				.style("color", d => colorScale(d.key))
+				.html("\u2b24");
 
-			rowDiv.append("span")
-				.attr("class", classPrefix + "tooltipLeader");
+			tooltipEmergencyGroups.append("span")
+				.attr("class", classPrefix + "tooltipValue")
+				.html(d => formatSIFloat(d.value));
 
-			rowDiv.append("span")
-				.attr("class", classPrefix + "tooltipValues")
-				.html("$" + (thisDatum ? formatMoney0Decimals(thisDatum.total) : 0));
+			tooltipEmergencyGroups.append("span")
+				.attr("class", classPrefix + "tooltipGroupName")
+				.html(d => lists.emergencyGroupNames[extractNum(d.key)]);
 
-			if (thisDatum && thisDatum.total) {
-
-				const tooltipFundsListTitle = tooltipContainer.append("div")
-					.attr("class", classPrefix + "tooltipFundsListTitle")
-					.html("Top " + tooltipFundsNumber + " countries");
-
-				const yearsOrMonths = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
-
-				const fundsListData = thisDatum[yearsOrMonths].reduce((acc, curr) => {
-					const foundFund = acc.find(e => e.fund === curr.CountryID);
-					if (foundFund) {
-						foundFund.value += curr.Budget
-					} else {
-						acc.push({
-							fund: curr.CountryID,
-							value: curr.Budget
-						});
-					};
-					return acc;
-				}, []).sort((a, b) => b.value - a.value).slice(0, tooltipFundsNumber);
-
-				fundsListData.forEach(row => {
-					const rowDivList = tooltipContainer.append("div")
-						.attr("class", classPrefix + "tooltipDivList")
-						.style("display", "flex")
-						.style("align-items", "center")
-						.style("margin-bottom", "4px")
-						.style("width", "100%");
-
-					rowDivList.append("span")
-						.attr("class", classPrefix + "tooltipKeys")
-						.html(d => lists.fundNames[row.fund]);
-
-					rowDivList.append("span")
-						.attr("class", classPrefix + "tooltipLeader");
-
-					rowDivList.append("span")
-						.attr("class", classPrefix + "tooltipValues")
-						.html("$" + formatMoney0Decimals(row.value));
-				});
-			};
 		};
 
 		//end of drawStackedAreaChart
