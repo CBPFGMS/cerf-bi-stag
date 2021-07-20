@@ -2139,22 +2139,26 @@
 
 			const xValue = xScale.invert(mousePosition[0]);
 
-			if (xValue === previousXValue) return;
+			if (xValue === previousXValue && tooltip.style("display") === "block") return;
 
 			previousXValue = xValue;
 
 			const thisDatum = d.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
 
-			generateTooltip(thisDatum);
+			if (thisDatum.total) {
+				generateTooltip(thisDatum);
+			} else {
+				dataTooltip.style("display", "none")
+					.html(null);
+				return;
+			};
 
 			const thisBox = n[i].getBoundingClientRect();
 			const containerBox = containerDiv.node().getBoundingClientRect();
-			const tooltipPadding = 10 + xScale.step() / 2 * (width / containerBox.width);
 			const tooltipBox = dataTooltip.node().getBoundingClientRect();
-			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
-			const thisElementRealYPos = (stackedPaddingByGroup[3] + xScale(xValue) - Math.abs(currentTranslate)) / (width / containerBox.width);
-			const thisOffsetLeft = thisElementRealYPos + tooltipPadding + tooltipBox.width > containerBox.width ?
-				thisElementRealYPos - tooltipBox.width - tooltipPadding : thisElementRealYPos + tooltipPadding;
+			const thisOffsetTop = thisBox.top - stackedPaddingByGroup[0] - containerBox.top - tooltipBox.height - tooltipVerticalPadding + ((yScale(thisDatum.total) - totalLabelPadding - (inDataLists.emergencyGroupsInData.length * stackGap)) / (width / containerBox.width));
+			const thisElementRealYPos = (stackedPadding[3] + xScale(xValue) - Math.abs(currentTranslate)) / (width / containerBox.width);
+			const thisOffsetLeft = thisElementRealYPos - tooltipBox.width / 2;
 
 			dataTooltip.style("top", thisOffsetTop + "px")
 				.style("left", thisOffsetLeft + "px");
@@ -2182,26 +2186,62 @@
 				.attr("class", classPrefix + "tooltipDate")
 				.html("Total allocations<br>in " + (chartState.selectedYear.includes(allYearsOption) ? thisDatum.year : monthFullNameFormat(monthShortNameParse(thisDatum.month))));
 
-			const tooltipData = d3.entries(thisDatum).filter(e => e.key.includes("eg") && e.value).sort((a, b) => b.value - a.value);
+			if (chartState.selectedView === viewOptions[0]) {
 
-			const tooltipEmergencyGroups = innerTooltip.selectAll(null)
-				.data(tooltipData)
-				.enter()
-				.append("div")
-				.attr("class", classPrefix + "tooltipEmergencyGroups");
+				const tooltipData = d3.entries(thisDatum).filter(e => e.key.includes("eg") && e.value).sort((a, b) => b.value - a.value);
 
-			tooltipEmergencyGroups.append("span")
-				.attr("class", classPrefix + "tooltipCircle")
-				.style("color", d => colorScale(d.key))
-				.html("\u2b24");
+				const tooltipEmergencyGroups = innerTooltip.selectAll(null)
+					.data(tooltipData)
+					.enter()
+					.append("div")
+					.attr("class", classPrefix + "tooltipEmergencyGroups");
 
-			tooltipEmergencyGroups.append("span")
-				.attr("class", classPrefix + "tooltipValue")
-				.html(d => formatSIFloat(d.value));
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipCircle")
+					.style("color", d => colorScale(d.key))
+					.html("\u2b24");
 
-			tooltipEmergencyGroups.append("span")
-				.attr("class", classPrefix + "tooltipGroupName")
-				.html(d => lists.emergencyGroupNames[extractNum(d.key)]);
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipValue")
+					.html(d => formatSIFloat(d.value));
+
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipGroupName")
+					.html(d => lists.emergencyGroupNames[extractNum(d.key)]);
+
+			} else {
+
+				const tooltipData = d3.entries(thisDatum).filter(e => e.key.includes("et") && e.value).sort((a, b) => b.value - a.value);
+
+				const thisTypes = tooltipData.map(d => +extractNum(d.key));
+
+				let thisGroup;
+
+				for (const key in lists.emergencyTypesInGroups) {
+					if (lists.emergencyTypesInGroups[key].some(e => thisTypes.includes(e))) thisGroup = key;
+				};
+
+				const tooltipEmergencyGroups = innerTooltip.selectAll(null)
+					.data(tooltipData)
+					.enter()
+					.append("div")
+					.attr("class", classPrefix + "tooltipEmergencyGroups");
+
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipCircle")
+					.style("color", d => colorSubScale[thisGroup](d.key))
+					.html("\u2b24");
+
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipValue")
+					.html(d => formatSIFloat(d.value));
+
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipGroupName")
+					.html(d => lists.emergencyTypeNames[extractNum(d.key)].includes(" - ") ?
+						lists.emergencyTypeNames[extractNum(d.key)].split(" - ")[1] :
+						lists.emergencyTypeNames[extractNum(d.key)]);
+			};
 
 		};
 
