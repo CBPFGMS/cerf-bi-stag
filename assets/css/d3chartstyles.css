@@ -1644,10 +1644,17 @@ p#alloctimelined3chartTitle {
 	cursor: pointer;
 }
 
-.alloctimelinelegendGroup text {
+.alloctimelinelegendGroupValue {
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	fill: #222;
+	dominant-baseline: central;
+}
+
+.alloctimelinelegendGroupName {
 	font-family: "Roboto", sans-serif;
-	font-size: 13px;
-	fill: #333;
+	font-size: 12px;
+	fill: #666;
 	dominant-baseline: central;
 }
 
@@ -1660,6 +1667,7 @@ p#alloctimelined3chartTitle {
 	font-family: "Roboto", sans-serif;
 	fill:  #666;
 	font-style: italic;
+	dominant-baseline: central;
 }
 
 input:disabled + span.alloctimelinecheckboxText {

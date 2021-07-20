@@ -59,6 +59,7 @@
 		tickNumberByGroup = 3,
 		totalLabelRemainder = 1,
 		totalLabelPadding = 4,
+		legendGroupPaddingByGroup = 28,
 		colorArray = [{
 			main: "#8da0cb",
 			sub: ["#8DA0CB", "#9D8BD9", "#8BCCD9", "#9194E3", "#91C0E3"]
@@ -1465,8 +1466,22 @@
 			.tween("text", (d, i, n) => {
 				const node = n[i];
 				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, d.total);
-				return t => node.textContent = "$" + formatSIFloat(interpolator(t)).replace("G", "B");
+				return t => node.textContent = "$" + formatSIFloat(interpolator(t));
 			});
+
+		const legendTotalData = chartState.selectedView === viewOptions[0] ?
+			data.reduce((acc, curr) => {
+				for (let key in acc) {
+					acc[key] += curr[key];
+				};
+				return acc;
+			}, groupScale.domain().reduce((acc, curr) => {
+				acc[curr] = 0;
+				return acc;
+			}, {})) : data.reduce((acc, curr) => {
+				acc["eg" + curr.emergencyGroup] = curr.total;
+				return acc;
+			}, {});
 
 		let legendGroup = mainGroup.selectAll("." + classPrefix + "legendGroup")
 			.data(groupScale.domain(), d => d);
@@ -1481,14 +1496,17 @@
 			.attr("class", classPrefix + "legendGroup")
 			.attr("transform", d => "translate(0," + (groupScale(d) + (chartState.selectedView === viewOptions[0] ? groupScale.bandwidth() / 2 : stackedPaddingByGroup[0])) + ")");
 
-		const legendText = legendGroupEnter.append("text")
+		const legendTextValue = legendGroupEnter.append("text")
+			.attr("class", classPrefix + "legendGroupValue")
 			.attr("x", legendTextPadding + legendHorPadding)
-			.attr("y", d => lists.emergencyGroupNames[extractNum(d)].split(" ").length > 1 ? "-0.6em" : 0)
-			.text(d => lists.emergencyGroupNames[extractNum(d)].split(" ")[0])
-			.append("tspan")
+			.attr("y", "-0.6em")
+			.text(d => "$" + formatSIFloat(legendTotalData[d]));
+
+		const legendTextName = legendGroupEnter.append("text")
+			.attr("class", classPrefix + "legendGroupName")
 			.attr("x", legendTextPadding + legendHorPadding)
-			.attr("dy", "1.2em")
-			.text(d => lists.emergencyGroupNames[extractNum(d)].split(" ")[1]);
+			.attr("dy", "0.6em")
+			.text(d => lists.emergencyGroupNames[extractNum(d)]);
 
 		const legendIcon = legendGroupEnter.append("image")
 			.attr("x", legendTextPadding - iconSize - legendHorPadding)
@@ -1501,7 +1519,13 @@
 
 		legendGroup.style("cursor", chartState.selectedView === viewOptions[0] ? "pointer" : "default")
 			.transition(syncTransition)
-			.attr("transform", d => "translate(0," + (groupScale(d) + (chartState.selectedView === viewOptions[0] ? groupScale.bandwidth() / 2 : stackedPaddingByGroup[0])) + ")");
+			.attr("transform", d => "translate(0," + (groupScale(d) + (chartState.selectedView === viewOptions[0] ? groupScale.bandwidth() / 2 : stackedPaddingByGroup[0] + legendGroupPaddingByGroup)) + ")")
+			.select("." + classPrefix + "legendGroupValue")
+			.tween("text", (d, i, n) => {
+				const node = n[i];
+				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, legendTotalData[d]);
+				return t => node.textContent = "$" + formatSIFloat(interpolator(t));
+			});
 
 		legendGroup.on("mouseover", (_, i, n) => {
 			if (chartState.selectedView === viewOptions[1]) return;
@@ -1835,7 +1859,7 @@
 			.tween("text", (d, i, n) => {
 				const node = n[i];
 				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, d.total);
-				return t => node.textContent = "$" + formatSIFloat(interpolator(t)).replace("G", "B");
+				return t => node.textContent = "$" + formatSIFloat(interpolator(t));
 			});
 
 		let sublegendGroup = legendGroup.selectAll("." + classPrefix + "sublegendGroup")
@@ -1858,8 +1882,7 @@
 		const sublegendGroupEnterText = sublegendGroupEnter.append("text")
 			.attr("x", legendTextPadding + legendHorPadding + sublegendGroupPadding)
 			.text(d => lists.emergencyTypeNames[extractNum(d.type)].includes(" - ") ?
-				(lists.emergencyTypeNames[extractNum(d.type)].split(" - ")[1] === "Unspecified Health Emergency" ?
-					"Unspecified Health Emerg." : lists.emergencyTypeNames[extractNum(d.type)].split(" - ")[1]) :
+				lists.emergencyTypeNames[extractNum(d.type)].split(" - ")[1] :
 				lists.emergencyTypeNames[extractNum(d.type)]);
 
 		const sublegendGroupEnterBullet = sublegendGroupEnter.append("circle")
@@ -2079,13 +2102,18 @@
 
 			const thisDatum = data.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
 
-			generateTooltip(thisDatum);
+			if (thisDatum.total) {
+				generateTooltip(thisDatum);
+			} else {
+				dataTooltip.style("display", "none")
+					.html(null);
+				return;
+			};
 
 			const thisBox = n[i].getBoundingClientRect();
 			const svgBox = svg.node().getBoundingClientRect();
 			const containerBox = containerDiv.node().getBoundingClientRect();
 			const tooltipBox = dataTooltip.node().getBoundingClientRect();
-			//const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
 			const thisOffsetTop = svgBox.top - containerBox.top - tooltipBox.height - tooltipVerticalPadding + ((yScale(thisDatum.total) - totalLabelPadding - (inDataLists.emergencyGroupsInData.length * stackGap)) / (width / containerBox.width));
 			const thisElementRealYPos = (stackedPadding[3] + xScale(xValue) - Math.abs(currentTranslate)) / (width / containerBox.width);
 			const thisOffsetLeft = thisElementRealYPos - tooltipBox.width / 2;
