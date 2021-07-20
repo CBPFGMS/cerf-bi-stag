@@ -2175,7 +2175,7 @@
 				.html(null);
 
 			const innerTooltip = dataTooltip.append("div")
-				.style("width", innerTooltipWidth + "px")
+				.style("min-width", innerTooltipWidth + "px")
 				.attr("id", classPrefix + "innerTooltipDiv");
 
 			const tooltipTopValue = innerTooltip.append("div")
