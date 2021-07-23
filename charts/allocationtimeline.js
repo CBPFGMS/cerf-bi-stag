@@ -6,17 +6,24 @@
 	const width = 1100,
 		padding = [4, 4, 4, 4],
 		chartWidth = width - padding[1] - padding[3],
-		stackedHeight = 250,
-		stackedHeightAggregate = 490,
-		stackedPadding = [22, 16, 60, 190],
-		stackedPaddingByGroup = [28, 16, 62, 190],
+		stackedHeight = 230,
+		stackedHeightAggregate = 460,
+		stackedPadding = [22, 50, 36, 244],
+		stackedPaddingByGroup = [28, 50, 38, 244],
+		arrowPaddingLeft = 28,
+		arrowPaddingRight = 28,
 		maxYearsListNumber = 1,
 		legendTextPadding = 40,
 		legendHorPadding = 4,
 		iconSize = 28,
+		maxTickNumber = 12,
+		arrowCircleRadius = 22,
+		arrowCircleRadiusByGroup = 16,
+		arrowFadeColor = "#f1f1f1",
+		tickMove = 3,
+		tickStep = (chartWidth - stackedPadding[1] - stackedPadding[3]) / maxTickNumber,
 		unBlue = "#1F69B3",
 		classPrefix = "alloctimeline",
-		tooltipWidth = 270,
 		sublegendGroupSize = 16,
 		bulletSize = 4,
 		noDataTextPadding = 180,
@@ -27,9 +34,10 @@
 		fundsNumberPaddingByGroup = 28,
 		groupsNumberPaddingByGroup = 12,
 		numberTitlesPadding = 22,
-		innerTooltipWidth = 300,
+		innerTooltipWidth = 210,
 		tooltipFundsNumber = 20,
 		tooltipFundsNumberByGroup = 10,
+		tooltipVerticalPadding = 22,
 		isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches),
 		isBookmarkPage = window.location.hostname + window.location.pathname === "cbpfgms.github.io/cerf-bi-stag/bookmark.html",
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
@@ -51,6 +59,7 @@
 		tickNumberByGroup = 3,
 		totalLabelRemainder = 1,
 		totalLabelPadding = 4,
+		legendGroupPaddingByGroup = 28,
 		colorArray = [{
 			main: "#8da0cb",
 			sub: ["#8DA0CB", "#9D8BD9", "#8BCCD9", "#9194E3", "#91C0E3"]
@@ -133,7 +142,6 @@
 		height,
 		previousDataLength,
 		previousXValue,
-		clickedLabel = false,
 		currentHoveredElement;
 
 	//emergency groups:
@@ -250,6 +258,10 @@
 		.attr("id", classPrefix + "tooltipdiv")
 		.style("display", "none");
 
+	const dataTooltip = containerDiv.append("div")
+		.attr("id", classPrefix + "dataTooltipdiv")
+		.style("display", "none");
+
 	containerDiv.on("contextmenu", function() {
 		d3.event.preventDefault();
 		const thisMouse = d3.mouse(this);
@@ -271,17 +283,21 @@
 		.paddingInner(0);
 
 	const xScale = d3.scalePoint()
-		.range([stackedPadding[3], chartWidth - stackedPadding[1]]);
+		.padding(0.25);
 
 	xScale.invert = function(x) {
 		return d3.scaleQuantize().domain([this.range()[0] - this.step() / 2, this.range()[1] + this.step() / 2]).range(this.domain())(x);
 	};
 
 	const yAxis = d3.axisLeft(yScale)
-		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d).replace("G", "B"));
+		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d).replace("G", "B"))
+		.tickSizeInner(-(chartWidth - stackedPadding[1] - stackedPadding[3]))
+		.ticks(tickNumberAggregate);
 
 	const yAxisByGroup = d3.axisLeft(yScale)
-		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d).replace("G", "B"));
+		.tickFormat(d => "$" + d3.formatPrefix(".0", d)(d).replace("G", "B"))
+		.tickSizeInner(-(chartWidth - stackedPaddingByGroup[1] - stackedPaddingByGroup[3]))
+		.ticks(tickNumberByGroup);
 
 	const xAxis = d3.axisBottom(xScale)
 		.tickSizeOuter(0)
@@ -303,6 +319,28 @@
 
 	const colorScale = d3.scaleOrdinal()
 		.range(colorArray.map(e => e.main));
+
+	const aggregatedClipPath = mainGroup.append("clipPath")
+		.attr("id", classPrefix + "aggregatedClipPath")
+		.append("rect")
+		.attr("height", stackedHeightAggregate)
+		.attr("width", chartWidth - stackedPadding[1] - stackedPadding[3]);
+
+	const clipPathByGroup = mainGroup.append("clipPath")
+		.attr("id", classPrefix + "clipPathByGroup")
+		.append("rect")
+		.attr("height", stackedHeight)
+		.attr("width", chartWidth - stackedPaddingByGroup[1] - stackedPaddingByGroup[3]);
+
+	const clipPathGroup = mainGroup.append("g")
+		.attr("class", classPrefix + "clipPathGroup")
+		.attr("transform", "translate(" + stackedPadding[3] + ",0)")
+		.attr("clip-path", "url(#" + classPrefix + "aggregatedClipPath)");
+
+	const aggregatedChartArea = clipPathGroup.append("g")
+		.attr("class", classPrefix + "aggregatedChartArea")
+		.attr("transform", "translate(0,0)");
+	//.style("cursor", "ew-resize");
 
 	Promise.all([
 			fetchFile(classPrefix + "MasterFunds", masterFundsUrl, "master table for funds", "json"),
@@ -1019,7 +1057,8 @@
 				if (d === allRegionsOption) {
 					if (n[i].checked) {
 						chartState.selectedRegion = d3.keys(lists.regionsInAllDataList).map(e => +e);
-						regionCheckbox.property("checked", false);
+						regionCheckbox.property("checked", false)
+							.property("disabled", false);
 					} else {
 						chartState.selectedRegion.length = 0;
 					};
@@ -1076,9 +1115,6 @@
 
 				const data = processData(rawDataAllocations);
 
-				regionCheckbox.property("disabled", function(d) {
-					return !inDataLists.regionsInData.includes(d);
-				});
 				emergencyCheckbox.property("disabled", function(d) {
 					return !inDataLists.emergencyGroupsInData.includes(d);
 				});
@@ -1190,6 +1226,13 @@
 
 		xScale.domain(chartState.selectedYear.includes(allYearsOption) ? yearsArray : monthsArray);
 
+		if (chartState.selectedView === viewOptions[0]) {
+			xScale.range([0, Math.max(maxTickNumber, data.length) * tickStep]);
+		} else {
+			const maxLength = d3.max(data, d => d.emergencyData.length);
+			xScale.range([0, Math.max(maxTickNumber, maxLength) * tickStep]);
+		};
+
 		groupScale.range(chartState.selectedView === viewOptions[0] ?
 				[(1 - closeFactor) * height - padding[2], padding[0] + height * closeFactor] :
 				[padding[0], height - padding[2]])
@@ -1206,12 +1249,6 @@
 
 		areaGenerator.x(d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.data.year : d.data.month));
 		areaGeneratorZero.x(d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.data.year : d.data.month));
-
-		yAxis.tickSizeInner(-(xScale.range()[1] - xScale.range()[0]))
-			.ticks(tickNumberAggregate);
-
-		yAxisByGroup.tickSizeInner(-(xScale.range()[1] - xScale.range()[0]))
-			.ticks(tickNumberByGroup);
 
 		const syncTransition = d3.transition()
 			.delay(delay)
@@ -1240,9 +1277,78 @@
 			.transition(syncTransition)
 			.style("opacity", 1);
 
+		if (!chartState.selectedYear.includes(allYearsOption)) {
+			aggregatedChartArea.transition(syncTransition)
+				.attr("transform", "translate(0,0)");
+		};
+
 		//Aggregated view
 
-		let xAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "xAxisGroupAggregated")
+		let leftArrowGroupAggregated = mainGroup.selectAll("." + classPrefix + "leftArrowGroupAggregated")
+			.data(dataAggregated.length && chartState.selectedYear.includes(allYearsOption) ? [true] : []);
+
+		const leftArrowGroupAggregatedExit = leftArrowGroupAggregated.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const leftArrowGroupAggregatedEnter = leftArrowGroupAggregated.enter()
+			.append("g")
+			.attr("class", classPrefix + "leftArrowGroupAggregated")
+			.style("opacity", 0)
+			.style("cursor", "pointer")
+			.attr("transform", "translate(" + (stackedPadding[3] - arrowPaddingLeft) + "," + (stackedHeightAggregate - stackedPadding[2] - arrowCircleRadius / 2) + ")");
+
+		const leftArrowCircle = leftArrowGroupAggregatedEnter.append("circle")
+			.style("fill", unBlue)
+			.attr("r", arrowCircleRadius);
+
+		const leftArrowChevron = leftArrowGroupAggregatedEnter.append("text")
+			.attr("class", classPrefix + "arrowChevron")
+			.text("\u2039");
+
+		leftArrowGroupAggregated = leftArrowGroupAggregatedEnter.merge(leftArrowGroupAggregated);
+
+		leftArrowGroupAggregated.transition(syncTransition)
+			.style("opacity", 1);
+
+		let rightArrowGroupAggregated = mainGroup.selectAll("." + classPrefix + "rightArrowGroupAggregated")
+			.data(dataAggregated.length && chartState.selectedYear.includes(allYearsOption) ? [true] : []);
+
+		const rightArrowGroupAggregatedExit = rightArrowGroupAggregated.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const rightArrowGroupAggregatedEnter = rightArrowGroupAggregated.enter()
+			.append("g")
+			.attr("class", classPrefix + "rightArrowGroupAggregated")
+			.style("opacity", 0)
+			.style("cursor", "pointer")
+			.attr("transform", "translate(" + (chartWidth - stackedPadding[1] + arrowPaddingRight) + "," + (stackedHeightAggregate - stackedPadding[2] - arrowCircleRadius / 2) + ")");
+
+		const rightArrowCircle = rightArrowGroupAggregatedEnter.append("circle")
+			.style("fill", unBlue)
+			.attr("r", arrowCircleRadius);
+
+		const rightArrowChevron = rightArrowGroupAggregatedEnter.append("text")
+			.attr("class", classPrefix + "arrowChevron")
+			.text("\u203a");
+
+		rightArrowGroupAggregated = rightArrowGroupAggregatedEnter.merge(rightArrowGroupAggregated);
+
+		rightArrowGroupAggregated.transition(syncTransition)
+			.style("opacity", 1);
+
+		if (chartState.selectedYear.includes(allYearsOption)) {
+			aggregatedChartArea.transition(syncTransition)
+				.attr("transform", "translate(" +
+					(-(xScale.range()[1] - maxTickNumber * tickStep)) +
+					",0)")
+				.on("end", checkCurrentTranslate);
+		};
+
+		let xAxisGroupAggregated = aggregatedChartArea.selectAll("." + classPrefix + "xAxisGroupAggregated")
 			.data(dataAggregated.length ? [true] : []);
 
 		const xAxisGroupAggregatedExit = xAxisGroupAggregated.exit()
@@ -1259,7 +1365,7 @@
 		xAxisGroupAggregated.transition(syncTransition)
 			.call(xAxis);
 
-		let areaPaths = mainGroup.selectAll("." + classPrefix + "areaPaths")
+		let areaPaths = aggregatedChartArea.selectAll("." + classPrefix + "areaPaths")
 			.data(dataAggregated, d => d.key);
 
 		const areaPathsExit = areaPaths.exit()
@@ -1313,20 +1419,6 @@
 				});
 		};
 
-		let verticalLine = mainGroup.selectAll("." + classPrefix + "verticalLine")
-			.data(dataAggregated.length ? [true] : []);
-
-		const verticalLineExit = verticalLine.exit().remove();
-
-		const verticalLineEnter = verticalLine.enter()
-			.append("line")
-			.attr("class", classPrefix + "verticalLine")
-			.style("opacity", 0)
-			.attr("y1", stackedPadding[0])
-			.attr("y2", stackedHeightAggregate - stackedPadding[2]);
-
-		verticalLine = verticalLineEnter.merge(verticalLine);
-
 		let yAxisGroupAggregated = mainGroup.selectAll("." + classPrefix + "yAxisGroupAggregated")
 			.data(dataAggregated.length ? [true] : []);
 
@@ -1348,8 +1440,8 @@
 			.filter(d => d === 0)
 			.remove();
 
-		let totalLabel = mainGroup.selectAll("." + classPrefix + "totalLabel")
-			.data(chartState.selectedView === viewOptions[0] ? data.filter((_, i) => !(i % totalLabelRemainder)) : [],
+		let totalLabel = aggregatedChartArea.selectAll("." + classPrefix + "totalLabel")
+			.data(chartState.selectedView === viewOptions[0] ? data.filter((d, i) => d.total && !(i % totalLabelRemainder)) : [],
 				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
 
 		const totalLabelExit = totalLabel.exit()
@@ -1374,8 +1466,22 @@
 			.tween("text", (d, i, n) => {
 				const node = n[i];
 				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, d.total);
-				return t => node.textContent = "$" + d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
+				return t => node.textContent = "$" + formatSIFloat(interpolator(t));
 			});
+
+		const legendTotalData = chartState.selectedView === viewOptions[0] ?
+			data.reduce((acc, curr) => {
+				for (let key in acc) {
+					acc[key] += curr[key];
+				};
+				return acc;
+			}, groupScale.domain().reduce((acc, curr) => {
+				acc[curr] = 0;
+				return acc;
+			}, {})) : data.reduce((acc, curr) => {
+				acc["eg" + curr.emergencyGroup] = curr.total;
+				return acc;
+			}, {});
 
 		let legendGroup = mainGroup.selectAll("." + classPrefix + "legendGroup")
 			.data(groupScale.domain(), d => d);
@@ -1390,14 +1496,17 @@
 			.attr("class", classPrefix + "legendGroup")
 			.attr("transform", d => "translate(0," + (groupScale(d) + (chartState.selectedView === viewOptions[0] ? groupScale.bandwidth() / 2 : stackedPaddingByGroup[0])) + ")");
 
-		const legendText = legendGroupEnter.append("text")
+		const legendTextValue = legendGroupEnter.append("text")
+			.attr("class", classPrefix + "legendGroupValue")
 			.attr("x", legendTextPadding + legendHorPadding)
-			.attr("y", d => lists.emergencyGroupNames[extractNum(d)].split(" ").length > 1 ? "-0.6em" : 0)
-			.text(d => lists.emergencyGroupNames[extractNum(d)].split(" ")[0])
-			.append("tspan")
+			.attr("y", "-0.6em")
+			.text(d => "$" + formatSIFloat(legendTotalData[d]));
+
+		const legendTextName = legendGroupEnter.append("text")
+			.attr("class", classPrefix + "legendGroupName")
 			.attr("x", legendTextPadding + legendHorPadding)
-			.attr("dy", "1.2em")
-			.text(d => lists.emergencyGroupNames[extractNum(d)].split(" ")[1]);
+			.attr("dy", "0.6em")
+			.text(d => lists.emergencyGroupNames[extractNum(d)]);
 
 		const legendIcon = legendGroupEnter.append("image")
 			.attr("x", legendTextPadding - iconSize - legendHorPadding)
@@ -1410,10 +1519,16 @@
 
 		legendGroup.style("cursor", chartState.selectedView === viewOptions[0] ? "pointer" : "default")
 			.transition(syncTransition)
-			.attr("transform", d => "translate(0," + (groupScale(d) + (chartState.selectedView === viewOptions[0] ? groupScale.bandwidth() / 2 : stackedPaddingByGroup[0])) + ")");
+			.attr("transform", d => "translate(0," + (groupScale(d) + (chartState.selectedView === viewOptions[0] ? groupScale.bandwidth() / 2 : stackedPaddingByGroup[0] + legendGroupPaddingByGroup)) + ")")
+			.select("." + classPrefix + "legendGroupValue")
+			.tween("text", (d, i, n) => {
+				const node = n[i];
+				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, legendTotalData[d]);
+				return t => node.textContent = "$" + formatSIFloat(interpolator(t));
+			});
 
 		legendGroup.on("mouseover", (_, i, n) => {
-			if (clickedLabel || chartState.selectedView === viewOptions[1]) return;
+			if (chartState.selectedView === viewOptions[1]) return;
 			tooltip.style("display", "block")
 				.html(null);
 
@@ -1434,7 +1549,6 @@
 			tooltip.html(null)
 				.style("display", "none");
 		}).on("click", (d, i, n) => {
-			clickedLabel = true;
 			if (chartState.selectedView === viewOptions[1]) return;
 			const newBaseline = inDataLists.emergencyGroupsInData.map(e => "eg" + e).indexOf(d)
 			if (chartState.baseline !== newBaseline) {
@@ -1458,22 +1572,7 @@
 			.attr("y", yScale.range()[0] + fundsNumberPadding)
 			.text("Number of countries");
 
-		let numberOfGroupsTitle = mainGroup.selectAll("." + classPrefix + "numberOfGroupsTitle")
-			.data(chartState.selectedView === viewOptions[0] ? [true] : []);
-
-		const numberOfGroupsTitleExit = numberOfGroupsTitle.exit()
-			.transition(syncTransition)
-			.style("opacity", 0)
-			.remove();
-
-		const numberOfGroupsTitleEnter = numberOfGroupsTitle.enter()
-			.append("text")
-			.attr("class", classPrefix + "numberOfGroupsTitle")
-			.attr("x", stackedPadding[3] - numberTitlesPadding)
-			.attr("y", yScale.range()[0] + fundsNumberPadding + groupsNumberPadding)
-			.text("Number of Emerg. Groups");
-
-		let numberOfFunds = mainGroup.selectAll("." + classPrefix + "numberOfFunds")
+		let numberOfFunds = aggregatedChartArea.selectAll("." + classPrefix + "numberOfFunds")
 			.data(chartState.selectedView === viewOptions[0] ? data : [],
 				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
 
@@ -1487,43 +1586,20 @@
 			.attr("class", classPrefix + "numberOfFunds")
 			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
 			.attr("y", yScale.range()[0] + fundsNumberPadding)
+			.style("opacity", 0)
 			.text("0");
 
 		numberOfFunds = numberOfFundsEnter.merge(numberOfFunds);
 
 		numberOfFunds.transition(syncTransition)
+			.style("opacity", 1)
 			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
 			.textTween((d, i, n) => {
 				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
 				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.CountryID))].length);
 			});
 
-		let numberOfGroups = mainGroup.selectAll("." + classPrefix + "numberOfGroups")
-			.data(chartState.selectedView === viewOptions[0] ? data : [],
-				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
-
-		const numberOfGroupsExit = numberOfGroups.exit()
-			.transition(syncTransition)
-			.style("opacity", 0)
-			.remove();
-
-		const numberOfGroupsEnter = numberOfGroups.enter()
-			.append("text")
-			.attr("class", classPrefix + "numberOfGroups")
-			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.attr("y", yScale.range()[0] + fundsNumberPadding + groupsNumberPadding)
-			.text("0");
-
-		numberOfGroups = numberOfGroupsEnter.merge(numberOfGroups);
-
-		numberOfGroups.transition(syncTransition)
-			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.textTween((d, i, n) => {
-				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
-				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.EmergencyGroupID))].length);
-			});
-
-		let rectOverlay = mainGroup.selectAll("." + classPrefix + "rectOverlay")
+		let rectOverlay = aggregatedChartArea.selectAll("." + classPrefix + "rectOverlay")
 			.data(dataAggregated.length ? [true] : [])
 
 		const rectOverlayExit = rectOverlay.exit()
@@ -1568,7 +1644,96 @@
 			localVariable.set(n[i], d.emergencyGroup);
 		});
 
-		let xAxisGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "xAxisGroupByGroup")
+		let clipPathGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "clipPathGroupByGroup")
+			.data(d => [d]);
+
+		clipPathGroupByGroup = clipPathGroupByGroup.enter()
+			.append("g")
+			.attr("class", classPrefix + "clipPathGroupByGroup")
+			.attr("transform", "translate(" + stackedPaddingByGroup[3] + ",0)")
+			.attr("clip-path", "url(#" + classPrefix + "clipPathByGroup)")
+			.merge(clipPathGroupByGroup);
+
+		let chartAreaByGroup = clipPathGroupByGroup.selectAll("." + classPrefix + "chartAreaByGroup")
+			.data(d => [d]);
+
+		chartAreaByGroup = chartAreaByGroup.enter()
+			.append("g")
+			.attr("class", classPrefix + "chartAreaByGroup")
+			.attr("transform", "translate(0,0)")
+			.merge(chartAreaByGroup);
+		//.style("cursor", "ew-resize");
+
+		if (!chartState.selectedYear.includes(allYearsOption)) {
+			chartAreaByGroup.transition(syncTransition)
+				.attr("transform", "translate(0,0)");
+		};
+
+		let leftArrowGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "leftArrowGroupByGroup")
+			.data(dataByGroup.length && chartState.selectedYear.includes(allYearsOption) ? [true] : []);
+
+		const leftArrowGroupByGroupExit = leftArrowGroupByGroup.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const leftArrowGroupByGroupEnter = leftArrowGroupByGroup.enter()
+			.append("g")
+			.attr("class", classPrefix + "leftArrowGroupByGroup")
+			.style("opacity", 0)
+			.style("cursor", "pointer")
+			.attr("transform", "translate(" + (stackedPaddingByGroup[3] - arrowPaddingLeft) + "," + (stackedHeight - stackedPaddingByGroup[2] - arrowCircleRadiusByGroup / 2) + ")");
+
+		const leftArrowCircleByGroup = leftArrowGroupByGroupEnter.append("circle")
+			.style("fill", unBlue)
+			.attr("r", arrowCircleRadiusByGroup);
+
+		const leftArrowChevronByGroup = leftArrowGroupByGroupEnter.append("text")
+			.attr("class", classPrefix + "arrowChevronByGroup")
+			.text("\u2039");
+
+		leftArrowGroupByGroup = leftArrowGroupByGroupEnter.merge(leftArrowGroupByGroup);
+
+		leftArrowGroupByGroup.transition(syncTransition)
+			.style("opacity", 1);
+
+		let rightArrowGroupByGroup = byGroupContainer.selectAll("." + classPrefix + "rightArrowGroupByGroup")
+			.data(dataByGroup.length && chartState.selectedYear.includes(allYearsOption) ? [true] : []);
+
+		const rightArrowGroupByGroupExit = rightArrowGroupByGroup.exit()
+			.transition(syncTransition)
+			.style("opacity", 0)
+			.remove();
+
+		const rightArrowGroupByGroupEnter = rightArrowGroupByGroup.enter()
+			.append("g")
+			.attr("class", classPrefix + "rightArrowGroupByGroup")
+			.style("opacity", 0)
+			.style("cursor", "pointer")
+			.attr("transform", "translate(" + (chartWidth - stackedPaddingByGroup[1] + arrowPaddingRight) + "," + (stackedHeight - stackedPaddingByGroup[2] - arrowCircleRadiusByGroup / 2) + ")");
+
+		const rightArrowCircleByGroup = rightArrowGroupByGroupEnter.append("circle")
+			.style("fill", unBlue)
+			.attr("r", arrowCircleRadiusByGroup);
+
+		const rightArrowChevronByGroup = rightArrowGroupByGroupEnter.append("text")
+			.attr("class", classPrefix + "arrowChevronByGroup")
+			.text("\u203a");
+
+		rightArrowGroupByGroup = rightArrowGroupByGroupEnter.merge(rightArrowGroupByGroup);
+
+		rightArrowGroupByGroup.transition(syncTransition)
+			.style("opacity", 1);
+
+		if (chartState.selectedYear.includes(allYearsOption)) {
+			chartAreaByGroup.transition(syncTransition)
+				.attr("transform", "translate(" +
+					(-(xScale.range()[1] - maxTickNumber * tickStep)) +
+					",0)")
+				.on("end", checkCurrentTranslateByGroup);
+		};
+
+		let xAxisGroupByGroup = chartAreaByGroup.selectAll("." + classPrefix + "xAxisGroupByGroup")
 			.data(dataByGroup.length ? [true] : []);
 
 		const xAxisGroupByGroupExit = xAxisGroupByGroup.exit()
@@ -1585,7 +1750,7 @@
 		xAxisGroupByGroup.transition(syncTransition)
 			.call(xAxis);
 
-		let areaPathsByGroup = byGroupContainer.selectAll("." + classPrefix + "areaPathsByGroup")
+		let areaPathsByGroup = chartAreaByGroup.selectAll("." + classPrefix + "areaPathsByGroup")
 			.data(d => d.emergencyGroupData, e => e.key);
 
 		const areaPathsByGroupExit = areaPathsByGroup.exit()
@@ -1662,8 +1827,8 @@
 			.filter(d => d === 0)
 			.remove();
 
-		let totalLabelByGroup = byGroupContainer.selectAll("." + classPrefix + "totalLabelByGroup")
-			.data(d => chartState.selectedView === viewOptions[1] ? d.groupRawData.filter((_, i) => !(i % totalLabelRemainder)) : [],
+		let totalLabelByGroup = chartAreaByGroup.selectAll("." + classPrefix + "totalLabelByGroup")
+			.data(d => chartState.selectedView === viewOptions[1] ? d.groupRawData.filter((d, i) => d.total && !(i % totalLabelRemainder)) : [],
 				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
 
 		const totalLabelByGroupExit = totalLabelByGroup.exit()
@@ -1694,7 +1859,7 @@
 			.tween("text", (d, i, n) => {
 				const node = n[i];
 				const interpolator = d3.interpolate(reverseFormat(node.textContent.substring(1)) || 0, d.total);
-				return t => node.textContent = "$" + d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
+				return t => node.textContent = "$" + formatSIFloat(interpolator(t));
 			});
 
 		let sublegendGroup = legendGroup.selectAll("." + classPrefix + "sublegendGroup")
@@ -1717,8 +1882,7 @@
 		const sublegendGroupEnterText = sublegendGroupEnter.append("text")
 			.attr("x", legendTextPadding + legendHorPadding + sublegendGroupPadding)
 			.text(d => lists.emergencyTypeNames[extractNum(d.type)].includes(" - ") ?
-				(lists.emergencyTypeNames[extractNum(d.type)].split(" - ")[1] === "Unspecified Health Emergency" ?
-					"Unspecified Health Emerg." : lists.emergencyTypeNames[extractNum(d.type)].split(" - ")[1]) :
+				lists.emergencyTypeNames[extractNum(d.type)].split(" - ")[1] :
 				lists.emergencyTypeNames[extractNum(d.type)]);
 
 		const sublegendGroupEnterBullet = sublegendGroupEnter.append("circle")
@@ -1733,7 +1897,6 @@
 			.attr("transform", (_, i, n) => "translate(0," + (sublegendGroupVertPadding + ((n.length - 1 - i) * sublegendGroupSize)) + ")");
 
 		sublegendGroup.on("mouseover", (_, i, n) => {
-			if (clickedLabel) return;
 			tooltip.style("display", "block")
 				.html(null);
 
@@ -1777,22 +1940,7 @@
 			.attr("y", yScale.range()[0] + fundsNumberPaddingByGroup)
 			.text("# of countries");
 
-		let numberOfGroupsTitleByGroup = byGroupContainer.selectAll("." + classPrefix + "numberOfGroupsTitleByGroup")
-			.data(chartState.selectedView === viewOptions[1] ? [true] : []);
-
-		const numberOfGroupsTitleByGroupExit = numberOfGroupsTitleByGroup.exit()
-			.transition(syncTransition)
-			.style("opacity", 0)
-			.remove();
-
-		const numberOfGroupsTitleByGroupEnter = numberOfGroupsTitleByGroup.enter()
-			.append("text")
-			.attr("class", classPrefix + "numberOfGroupsTitleByGroup")
-			.attr("x", stackedPadding[3] - numberTitlesPadding)
-			.attr("y", yScale.range()[0] + fundsNumberPaddingByGroup + groupsNumberPaddingByGroup)
-			.text("# of Emerg. Types");
-
-		let numberOfFundsByGroup = byGroupContainer.selectAll("." + classPrefix + "numberOfFundsByGroup")
+		let numberOfFundsByGroup = chartAreaByGroup.selectAll("." + classPrefix + "numberOfFundsByGroup")
 			.data(d => chartState.selectedView === viewOptions[1] ? d.groupRawData : [],
 				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
 
@@ -1806,43 +1954,20 @@
 			.attr("class", classPrefix + "numberOfFundsByGroup")
 			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
 			.attr("y", yScale.range()[0] + fundsNumberPaddingByGroup)
+			.style("opacity", 0)
 			.text("0");
 
 		numberOfFundsByGroup = numberOfFundsByGroupEnter.merge(numberOfFundsByGroup);
 
 		numberOfFundsByGroup.transition(syncTransition)
+			.style("opacity", 1)
 			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
 			.textTween((d, i, n) => {
 				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
 				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.CountryID))].length);
 			});
 
-		let numberOfGroupsByGroup = byGroupContainer.selectAll("." + classPrefix + "numberOfGroupsByGroup")
-			.data(d => chartState.selectedView === viewOptions[1] ? d.groupRawData : [],
-				d => chartState.selectedYear.includes(allYearsOption) ? d.year : d.month);
-
-		const numberOfGroupsByGroupExit = numberOfGroupsByGroup.exit()
-			.transition(syncTransition)
-			.style("opacity", 0)
-			.remove();
-
-		const numberOfGroupsByGroupEnter = numberOfGroupsByGroup.enter()
-			.append("text")
-			.attr("class", classPrefix + "numberOfGroupsByGroup")
-			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.attr("y", yScale.range()[0] + fundsNumberPaddingByGroup + groupsNumberPaddingByGroup)
-			.text("0");
-
-		numberOfGroupsByGroup = numberOfGroupsByGroupEnter.merge(numberOfGroupsByGroup);
-
-		numberOfGroupsByGroup.transition(syncTransition)
-			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
-			.textTween((d, i, n) => {
-				const prop = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
-				return d3.interpolateRound(+n[i].textContent || 0, [...new Set(d[prop].map(e => e.EmergencyTypeID))].length);
-			});
-
-		let rectOverlayByGroup = byGroupContainer.selectAll("." + classPrefix + "rectOverlayByGroup")
+		let rectOverlayByGroup = chartAreaByGroup.selectAll("." + classPrefix + "rectOverlayByGroup")
 			.data(d => [d.groupRawData])
 
 		rectOverlayByGroup = rectOverlayByGroup.enter()
@@ -1858,163 +1983,266 @@
 
 		//listeners
 
+		leftArrowGroupAggregated.on("click", () => {
+			const currentTranslate = parseTransform(aggregatedChartArea.attr("transform"))[0];
+			aggregatedChartArea.transition()
+				.duration(duration)
+				.attr("transform", "translate(" + Math.min(0, (currentTranslate + tickMove * tickStep)) + ",0)")
+				.on("end", checkArrows);
+		});
+
+		rightArrowGroupAggregated.on("click", () => {
+			const currentTranslate = parseTransform(aggregatedChartArea.attr("transform"))[0];
+			aggregatedChartArea.transition()
+				.duration(duration)
+				.attr("transform", "translate(" + Math.max(-(xScale.range()[1] - maxTickNumber * tickStep),
+					(-(Math.abs(currentTranslate) + tickMove * tickStep))) + ",0)")
+				.on("end", checkArrows);
+		});
+
+		function checkArrows() {
+			const currentTranslate = parseTransform(aggregatedChartArea.attr("transform"))[0];
+
+			if (currentTranslate === 0) {
+				leftArrowGroupAggregated.select("circle").style("fill", arrowFadeColor);
+				leftArrowGroupAggregated.attr("pointer-events", "none");
+			} else {
+				leftArrowGroupAggregated.select("circle").style("fill", unBlue);
+				leftArrowGroupAggregated.attr("pointer-events", "all");
+			};
+
+			if (~~Math.abs(currentTranslate) >= ~~(xScale.range()[1] - maxTickNumber * tickStep)) {
+				rightArrowGroupAggregated.select("circle").style("fill", arrowFadeColor);
+				rightArrowGroupAggregated.attr("pointer-events", "none");
+			} else {
+				rightArrowGroupAggregated.select("circle").style("fill", unBlue);
+				rightArrowGroupAggregated.attr("pointer-events", "all");
+			};
+		};
+
+		function checkCurrentTranslate() {
+			const currentTranslate = parseTransform(aggregatedChartArea.attr("transform"))[0];
+			if (currentTranslate === 0) {
+				leftArrowGroupAggregated.select("circle").style("fill", arrowFadeColor);
+				leftArrowGroupAggregated.attr("pointer-events", "none");
+			};
+			if (~~Math.abs(currentTranslate) >= ~~(xScale.range()[1] - maxTickNumber * tickStep)) {
+				rightArrowGroupAggregated.select("circle").style("fill", arrowFadeColor);
+				rightArrowGroupAggregated.attr("pointer-events", "none");
+			};
+		};
+
+		leftArrowGroupByGroup.on("click", (_, i, n) => {
+			const thisChartAreaGroup = d3.select(n[i].parentNode).select("." + classPrefix + "chartAreaByGroup");
+			const currentTranslate = parseTransform(thisChartAreaGroup.attr("transform"))[0];
+			thisChartAreaGroup.transition()
+				.duration(duration)
+				.attr("transform", "translate(" + Math.min(0, (currentTranslate + tickMove * tickStep)) + ",0)")
+				.on("end", () => checkArrowsByGroup(thisChartAreaGroup));
+		});
+
+		rightArrowGroupByGroup.on("click", (_, i, n) => {
+			const thisChartAreaGroup = d3.select(n[i].parentNode).select("." + classPrefix + "chartAreaByGroup");
+			const currentTranslate = parseTransform(thisChartAreaGroup.attr("transform"))[0];
+			thisChartAreaGroup.transition()
+				.duration(duration)
+				.attr("transform", "translate(" + Math.max(-(xScale.range()[1] - maxTickNumber * tickStep),
+					(-(Math.abs(currentTranslate) + tickMove * tickStep))) + ",0)")
+				.on("end", () => checkArrowsByGroup(thisChartAreaGroup));
+		});
+
+		function checkArrowsByGroup(thisChartAreaGroup) {
+			const currentTranslate = parseTransform(thisChartAreaGroup.attr("transform"))[0];
+			const thisLeftArrow = d3.select(thisChartAreaGroup.node().parentNode.parentNode).select("." + classPrefix + "leftArrowGroupByGroup");
+			const thisRightArrow = d3.select(thisChartAreaGroup.node().parentNode.parentNode).select("." + classPrefix + "rightArrowGroupByGroup");
+
+			if (currentTranslate === 0) {
+				thisLeftArrow.select("circle").style("fill", arrowFadeColor);
+				thisLeftArrow.attr("pointer-events", "none");
+			} else {
+				thisLeftArrow.select("circle").style("fill", unBlue);
+				thisLeftArrow.attr("pointer-events", "all");
+			};
+
+			if (~~Math.abs(currentTranslate) >= ~~(xScale.range()[1] - maxTickNumber * tickStep)) {
+				thisRightArrow.select("circle").style("fill", arrowFadeColor);
+				thisRightArrow.attr("pointer-events", "none");
+			} else {
+				thisRightArrow.select("circle").style("fill", unBlue);
+				thisRightArrow.attr("pointer-events", "all");
+			};
+		};
+
+		function checkCurrentTranslateByGroup() {
+			const currentTranslate = parseTransform(chartAreaByGroup.attr("transform"))[0];
+			if (currentTranslate === 0) {
+				leftArrowGroupByGroup.select("circle").style("fill", arrowFadeColor);
+				leftArrowGroupByGroup.attr("pointer-events", "none");
+			};
+			if (~~Math.abs(currentTranslate) >= ~~(xScale.range()[1] - maxTickNumber * tickStep)) {
+				rightArrowGroupByGroup.select("circle").style("fill", arrowFadeColor);
+				rightArrowGroupByGroup.attr("pointer-events", "none");
+			};
+		};
+
 		rectOverlay.on("mousemove", (_, i, n) => {
 			currentHoveredElement = n[i];
+
+			let currentTranslate = 0;
+
+			if (chartState.selectedYear.includes(allYearsOption)) currentTranslate = parseTransform(aggregatedChartArea.attr("transform"))[0];
+
 			const mousePosition = d3.mouse(n[i]);
 
 			const xValue = xScale.invert(mousePosition[0]);
 
-			if (xValue === previousXValue) return;
+			if (xValue === previousXValue && tooltip.style("display") === "block") return;
 
 			previousXValue = xValue;
 
 			const thisDatum = data.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
 
-			if (thisDatum && thisDatum.total) {
-				verticalLine.style("opacity", 1)
-					.attr("x1", xScale(xValue))
-					.attr("x2", xScale(xValue));
+			if (thisDatum.total) {
+				generateTooltip(thisDatum);
 			} else {
-				verticalLine.style("opacity", 0);
+				dataTooltip.style("display", "none")
+					.html(null);
+				return;
 			};
 
-			generateTooltip(xValue, thisDatum, tooltipFundsNumber);
-
 			const thisBox = n[i].getBoundingClientRect();
+			const svgBox = svg.node().getBoundingClientRect();
 			const containerBox = containerDiv.node().getBoundingClientRect();
-			const tooltipPadding = 10 + xScale.step() / 2 * (width / containerBox.width);
-			const tooltipBox = tooltip.node().getBoundingClientRect();
-			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
-			const thisElementRealYPos = xScale(xValue) / (width / containerBox.width);
-			const thisOffsetLeft = thisElementRealYPos + tooltipPadding + tooltipBox.width > containerBox.width ?
-				thisElementRealYPos - tooltipBox.width - tooltipPadding : thisElementRealYPos + tooltipPadding;
+			const tooltipBox = dataTooltip.node().getBoundingClientRect();
+			const thisOffsetTop = svgBox.top - containerBox.top - tooltipBox.height - tooltipVerticalPadding + ((yScale(thisDatum.total) - totalLabelPadding - (inDataLists.emergencyGroupsInData.length * stackGap)) / (width / containerBox.width));
+			const thisElementRealYPos = (stackedPadding[3] + xScale(xValue) - Math.abs(currentTranslate)) / (width / containerBox.width);
+			const thisOffsetLeft = thisElementRealYPos - tooltipBox.width / 2;
 
-			tooltip.style("top", thisOffsetTop + "px")
+			dataTooltip.style("top", thisOffsetTop + "px")
 				.style("left", thisOffsetLeft + "px");
 
 		}).on("mouseout", () => {
 			if (isSnapshotTooltipVisible) return;
 			currentHoveredElement = null;
-			verticalLine.style("opacity", 0);
-			tooltip.style("display", "none")
+			dataTooltip.style("display", "none")
 				.html(null);
 		});
 
 		rectOverlayByGroup.on("mousemove", (d, i, n) => {
 			currentHoveredElement = n[i];
+
+			let currentTranslate = 0;
+
+			if (chartState.selectedYear.includes(allYearsOption)) currentTranslate = parseTransform(d3.select(n[i].parentNode).attr("transform"))[0];
+
 			const mousePosition = d3.mouse(n[i]);
 
 			const xValue = xScale.invert(mousePosition[0]);
 
-			if (xValue === previousXValue) return;
+			if (xValue === previousXValue && tooltip.style("display") === "block") return;
 
 			previousXValue = xValue;
 
 			const thisDatum = d.find(e => chartState.selectedYear.includes(allYearsOption) ? e.year === xValue : e.month === xValue);
 
-			generateTooltip(xValue, thisDatum, tooltipFundsNumberByGroup);
+			if (thisDatum.total) {
+				generateTooltip(thisDatum);
+			} else {
+				dataTooltip.style("display", "none")
+					.html(null);
+				return;
+			};
 
 			const thisBox = n[i].getBoundingClientRect();
 			const containerBox = containerDiv.node().getBoundingClientRect();
-			const tooltipPadding = 10 + xScale.step() / 2 * (width / containerBox.width);
-			const tooltipBox = tooltip.node().getBoundingClientRect();
-			const thisOffsetTop = ((thisBox.top + thisBox.bottom) / 2) - containerBox.top - tooltipBox.height / 2;
-			const thisElementRealYPos = xScale(xValue) / (width / containerBox.width);
-			const thisOffsetLeft = thisElementRealYPos + tooltipPadding + tooltipBox.width > containerBox.width ?
-				thisElementRealYPos - tooltipBox.width - tooltipPadding : thisElementRealYPos + tooltipPadding;
+			const tooltipBox = dataTooltip.node().getBoundingClientRect();
+			const thisOffsetTop = thisBox.top - stackedPaddingByGroup[0] - containerBox.top - tooltipBox.height - tooltipVerticalPadding + ((yScale(thisDatum.total) - totalLabelPadding - (inDataLists.emergencyGroupsInData.length * stackGap)) / (width / containerBox.width));
+			const thisElementRealYPos = (stackedPadding[3] + xScale(xValue) - Math.abs(currentTranslate)) / (width / containerBox.width);
+			const thisOffsetLeft = thisElementRealYPos - tooltipBox.width / 2;
 
-			tooltip.style("top", thisOffsetTop + "px")
+			dataTooltip.style("top", thisOffsetTop + "px")
 				.style("left", thisOffsetLeft + "px");
 
 		}).on("mouseout", () => {
 			if (isSnapshotTooltipVisible) return;
 			currentHoveredElement = null;
-			tooltip.style("display", "none")
+			dataTooltip.style("display", "none")
 				.html(null);
 		});
 
-		function generateTooltip(xValue, thisDatum, tooltipFundsNumber) {
-			tooltip.style("display", "block")
+		function generateTooltip(thisDatum) {
+			dataTooltip.style("display", "block")
 				.html(null);
 
-			const innerTooltip = tooltip.append("div")
-				.style("max-width", innerTooltipWidth + "px")
+			const innerTooltip = dataTooltip.append("div")
+				.style("min-width", innerTooltipWidth + "px")
 				.attr("id", classPrefix + "innerTooltipDiv");
 
-			const tooltipTitleDiv = innerTooltip.append("div")
-				.attr("class", classPrefix + "tooltipTitleDiv");
+			const tooltipTopValue = innerTooltip.append("div")
+				.attr("class", classPrefix + "tooltipTopValue")
+				.html(formatSIFloat(thisDatum.total));
 
-			tooltipTitleDiv.append("strong")
-				.style("font-size", "16px")
-				.html(chartState.selectedYear.includes(allYearsOption) ? "Year: " + xValue :
-					"Month: " + monthFullNameFormat(monthShortNameParse(xValue)));
+			const tooltipDate = innerTooltip.append("div")
+				.attr("class", classPrefix + "tooltipDate")
+				.html("Total allocations<br>in " + (chartState.selectedYear.includes(allYearsOption) ? thisDatum.year : monthFullNameFormat(monthShortNameParse(thisDatum.month))));
 
-			const tooltipContainer = innerTooltip.append("div")
-				.style("margin", "0px")
-				.style("display", "flex")
-				.style("flex-wrap", "wrap")
-				.style("white-space", "pre")
-				.style("line-height", 1.4)
-				.style("width", "100%");
+			if (chartState.selectedView === viewOptions[0]) {
 
-			const rowDiv = tooltipContainer.append("div")
-				.style("display", "flex")
-				.style("align-items", "center")
-				.style("margin-bottom", "4px")
-				.style("width", "100%");
+				const tooltipData = d3.entries(thisDatum).filter(e => e.key.includes("eg") && e.value).sort((a, b) => b.value - a.value);
 
-			rowDiv.append("span")
-				.attr("class", classPrefix + "tooltipKeys")
-				.html("Total");
+				const tooltipEmergencyGroups = innerTooltip.selectAll(null)
+					.data(tooltipData)
+					.enter()
+					.append("div")
+					.attr("class", classPrefix + "tooltipEmergencyGroups");
 
-			rowDiv.append("span")
-				.attr("class", classPrefix + "tooltipLeader");
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipCircle")
+					.style("color", d => colorScale(d.key))
+					.html("\u2b24");
 
-			rowDiv.append("span")
-				.attr("class", classPrefix + "tooltipValues")
-				.html("$" + (thisDatum ? formatMoney0Decimals(thisDatum.total) : 0));
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipValue")
+					.html(d => formatSIFloat(d.value));
 
-			if (thisDatum && thisDatum.total) {
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipGroupName")
+					.html(d => lists.emergencyGroupNames[extractNum(d.key)]);
 
-				const tooltipFundsListTitle = tooltipContainer.append("div")
-					.attr("class", classPrefix + "tooltipFundsListTitle")
-					.html("Top " + tooltipFundsNumber + " countries");
+			} else {
 
-				const yearsOrMonths = chartState.selectedYear.includes(allYearsOption) ? "yearValues" : "monthValues";
+				const tooltipData = d3.entries(thisDatum).filter(e => e.key.includes("et") && e.value).sort((a, b) => b.value - a.value);
 
-				const fundsListData = thisDatum[yearsOrMonths].reduce((acc, curr) => {
-					const foundFund = acc.find(e => e.fund === curr.CountryID);
-					if (foundFund) {
-						foundFund.value += curr.Budget
-					} else {
-						acc.push({
-							fund: curr.CountryID,
-							value: curr.Budget
-						});
-					};
-					return acc;
-				}, []).sort((a, b) => b.value - a.value).slice(0, tooltipFundsNumber);
+				const thisTypes = tooltipData.map(d => +extractNum(d.key));
 
-				fundsListData.forEach(row => {
-					const rowDivList = tooltipContainer.append("div")
-						.attr("class", classPrefix + "tooltipDivList")
-						.style("display", "flex")
-						.style("align-items", "center")
-						.style("margin-bottom", "4px")
-						.style("width", "100%");
+				let thisGroup;
 
-					rowDivList.append("span")
-						.attr("class", classPrefix + "tooltipKeys")
-						.html(d => lists.fundNames[row.fund]);
+				for (const key in lists.emergencyTypesInGroups) {
+					if (lists.emergencyTypesInGroups[key].some(e => thisTypes.includes(e))) thisGroup = key;
+				};
 
-					rowDivList.append("span")
-						.attr("class", classPrefix + "tooltipLeader");
+				const tooltipEmergencyGroups = innerTooltip.selectAll(null)
+					.data(tooltipData)
+					.enter()
+					.append("div")
+					.attr("class", classPrefix + "tooltipEmergencyGroups");
 
-					rowDivList.append("span")
-						.attr("class", classPrefix + "tooltipValues")
-						.html("$" + formatMoney0Decimals(row.value));
-				});
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipCircle")
+					.style("color", d => colorSubScale[thisGroup](d.key))
+					.html("\u2b24");
+
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipValue")
+					.html(d => formatSIFloat(d.value));
+
+				tooltipEmergencyGroups.append("span")
+					.attr("class", classPrefix + "tooltipGroupName")
+					.html(d => lists.emergencyTypeNames[extractNum(d.key)].includes(" - ") ?
+						lists.emergencyTypeNames[extractNum(d.key)].split(" - ")[1] :
+						lists.emergencyTypeNames[extractNum(d.key)]);
 			};
+
 		};
 
 		//end of drawStackedAreaChart
@@ -2189,10 +2417,24 @@
 
 	function fillZeros(target) {
 		if (chartState.selectedYear.includes(allYearsOption)) {
-			target.forEach(row => {
-				d3.keys(lists.emergencyGroupsInAllDataList).forEach(eg => {
-					if (!row["eg" + eg]) row["eg" + eg] = 0;
-				});
+			yearsToFill = yearsArray.slice();
+			yearsToFill.forEach(yearRow => {
+				const foundDataYear = target.find(e => e.year === yearRow);
+				if (foundDataYear) {
+					d3.keys(lists.emergencyGroupsInAllDataList).forEach(eg => {
+						if (!foundDataYear["eg" + eg]) foundDataYear["eg" + eg] = 0;
+					});
+				} else {
+					const zeroYear = {
+						year: yearRow,
+						total: 0,
+						yearValues: []
+					};
+					d3.keys(lists.emergencyGroupsInAllDataList).forEach(eg => {
+						zeroYear["eg" + eg] = 0;
+					});
+					target.push(zeroYear);
+				};
 			});
 		} else {
 			let monthsToFill;
@@ -2227,10 +2469,24 @@
 
 	function fillZerosByGroup(target, typesList) {
 		if (chartState.selectedYear.includes(allYearsOption)) {
-			target.forEach(row => {
-				typesList.forEach(et => {
-					if (!row["et" + et]) row["et" + et] = 0;
-				});
+			yearsToFill = yearsArray.slice();
+			yearsToFill.forEach(yearRow => {
+				const foundDataYear = target.find(e => e.year === yearRow);
+				if (foundDataYear) {
+					typesList.forEach(et => {
+						if (!foundDataYear["et" + et]) foundDataYear["et" + et] = 0;
+					});
+				} else {
+					const zeroYear = {
+						year: yearRow,
+						total: 0,
+						yearValues: []
+					};
+					typesList.forEach(et => {
+						zeroYear["et" + et] = 0;
+					});
+					target.push(zeroYear);
+				};
 			});
 		} else {
 			let monthsToFill;
@@ -2646,7 +2902,14 @@
 
 	function extractNum(str) {
 		return str.replace(/^\D+/g, "");
-	}
+	};
+
+	function parseTransform(translate) {
+		const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
+		group.setAttributeNS(null, "transform", translate);
+		const matrix = group.transform.baseVal.consolidate().matrix;
+		return [matrix.e, matrix.f];
+	};
 
 	function pathTween(newPath, precision, self) {
 		return function() {
