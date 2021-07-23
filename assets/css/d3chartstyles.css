@@ -1286,7 +1286,6 @@ p#cesankd3chartTitle {
 
 #d3chartcontaineralloctimeline {
 	position: relative;
-	overflow-y: visible;
 	--unblue: #1f69b3;
 	--customblue: #06519c;
 	--customred: #9c291a;
@@ -1300,7 +1299,7 @@ p#cesankd3chartTitle {
 	pointer-events: none;
 	cursor: none;
 	width: 200px;
-	z-index: 1010;
+	z-index: 1500;
 }
 
 #alloctimelinetooltipdiv {    
@@ -1317,51 +1316,8 @@ p#cesankd3chartTitle {
 	border-radius: 4px;
 	pointer-events: none;
 	cursor: none;
-	z-index: 1020;
+	z-index: 1500;
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-}
-
-#alloctimelinedataTooltipdiv {    
-	position: absolute;
-	text-align: left;
-	color: #333;
-	font-family: 'Roboto', sans-serif;
-	white-space: normal;	
-	line-height: 120%;
-	font-size: 14px;
-	padding: 8px;
-	background: #ffffff; 
-	border: 1px solid #3189c9; 
-	border-radius: 4px;
-	pointer-events: none;
-	cursor: none;
-	z-index: 1020;
-	box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-}
-
-#alloctimelinedataTooltipdiv:after,
-#alloctimelinedataTooltipdiv:before {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    width: 0;
-    height: 0;
-    border-style: solid;
-}
-
-#alloctimelinedataTooltipdiv:after {
-    top: 100%;
-    border-color: white transparent transparent transparent;
-    border-width: 10px;
-}
-
-#alloctimelinedataTooltipdiv:before {
-    top: 100%;
-    border-color: #3189c9 transparent transparent transparent;
-    border-width: 12px;
 }
 
 .alloctimelineTopDiv {
@@ -1613,12 +1569,8 @@ p#alloctimelined3chartTitle {
 	fill: #444;
 }
 
-.alloctimelinexAxisGroupAggregated line, .alloctimelinexAxisGroupByGroup line {
+.alloctimelinexAxisGroupAggregated path, .alloctimelinexAxisGroupAggregated line, .alloctimelinexAxisGroupByGroup path, .alloctimelinexAxisGroupByGroup line {
 	stroke: #666;
-}
-
-.alloctimelinexAxisGroupAggregated path, .alloctimelinexAxisGroupByGroup path {
-	stroke: none;
 }
 
 .alloctimelineyAxisGroupAggregated text, .alloctimelineyAxisGroupByGroup text {
@@ -1644,17 +1596,10 @@ p#alloctimelined3chartTitle {
 	cursor: pointer;
 }
 
-.alloctimelinelegendGroupValue {
-	font-family: "Arial", sans-serif;
-	font-size: 14px;
-	fill: #222;
-	dominant-baseline: central;
-}
-
-.alloctimelinelegendGroupName {
+.alloctimelinelegendGroup text {
 	font-family: "Roboto", sans-serif;
-	font-size: 12px;
-	fill: #666;
+	font-size: 13px;
+	fill: #333;
 	dominant-baseline: central;
 }
 
@@ -1667,7 +1612,6 @@ p#alloctimelined3chartTitle {
 	font-family: "Roboto", sans-serif;
 	fill:  #666;
 	font-style: italic;
-	dominant-baseline: central;
 }
 
 input:disabled + span.alloctimelinecheckboxText {
@@ -1708,6 +1652,21 @@ input:disabled + span.alloctimelinecheckboxText {
 	fill: var(--customblue);	
 }
 
+.alloctimelinenumberOfGroupsTitle {
+	text-anchor: end;
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	fill: var(--customred);	
+}
+
+.alloctimelinenumberOfGroups {
+	text-anchor: middle;
+	font-family: "Roboto", sans-serif;
+	font-size: 12px;
+	font-weight: 500;
+	fill: var(--customred);	
+}
+
 .alloctimelinenumberOfFundsTitleByGroup {
 	text-anchor: end;
 	font-family: "Roboto", sans-serif;
@@ -1723,60 +1682,74 @@ input:disabled + span.alloctimelinecheckboxText {
 	fill: var(--customblue);	
 }
 
-.alloctimelinearrowChevron {
-	font-size: 52px;
-	fill:  white;
-	font-weight: bold;
-	dominant-baseline: middle;
-	text-anchor: middle;
-}
-
-.alloctimelinearrowChevronByGroup {
-	font-size: 38px;
-	fill:  white;
-	font-weight: bold;
-	dominant-baseline: middle;
-	text-anchor: middle;
-}
-
-.alloctimelinetooltipTopValue {
-	font-family: "Arial", sans-serif;
-	font-size: 22px;
-	color: #222;
-	margin-bottom: 4px;
-	margin-top: 12px;
-}
-
-.alloctimelinetooltipDate {
+.alloctimelinenumberOfGroupsTitleByGroup {
+	text-anchor: end;
 	font-family: "Roboto", sans-serif;
-	font-size: 12px;
-	color: #666;
-	text-transform: uppercase;
-	margin-bottom: 12px;
+	font-size: 10px;
+	fill: var(--customred);	
 }
 
-.alloctimelinetooltipEmergencyGroups {
-	width:  100%;
+.alloctimelinenumberOfGroupsByGroup {
+	text-anchor: middle;
+	font-family: "Roboto", sans-serif;
+	font-size: 10px;
+	font-weight: 500;
+	fill: var(--customred);	
+}
+
+.alloctimelinetooltipTitleDiv {
+	padding:8px !important;
+	background-color: #3189c9;
+	color: #fff;
+	border-radius: 2px 2px 0px 0px;
+	line-height: normal;
+	margin-top: -8px;
+	margin-left: -8px;
+	margin-right: -8px;
 	display: flex;
 	align-items: center;
-	height: 1.4em;
+	white-space: pre-wrap;
+	margin-bottom: 18px;
 }
 
-.alloctimelinetooltipCircle {
-	font-size: 8px;
-	font-family: "Arial", sans-serif;
+.alloctimelinetooltipTotalDiv {
+	width: 100%;
 }
 
-.alloctimelinetooltipValue {
-	font-family: "Arial", sans-serif;
+.alloctimelinetooltipFundsListTitle {
+	margin-top: 12px;
+	margin-bottom: 8px;
 	font-size: 12px;
-	color: #222;
-	margin-left: 6px;
 }
 
-.alloctimelinetooltipGroupName {
-	font-family: "Arial", sans-serif;
-	font-size: 12px;
-	color: #666;
-	margin-left: 6px;
+.alloctimelinetooltipKeys {
+	font-weight: 600;
+}
+
+.alloctimelinetooltipLeader {
+  flex: 0 1 auto;
+  overflow: hidden;
+  color: #ccc;
+}
+
+.alloctimelinetooltipLeader::before {
+   display: block;
+   overflow: hidden;
+   text-overflow: clip;
+   content: 
+     ". . . . . . . . . . . . . . . . . . . . "
+     ". . . . . . . . . . . . . . . . . . . . "
+     ". . . . . . . . . . . . . . . . . . . . "
+     ". . . . . . . . . . . . . . . . . . . . "
+}
+
+.alloctimelinetooltipDivList {
+	font-family: "Roboto", sans-serif;
+	font-size: 11px;
+	letter-spacing: -0.03em;
+}
+
+.alloctimelineverticalLine {
+	stroke-width: 1px;
+	stroke: var(--unblue);
 }
