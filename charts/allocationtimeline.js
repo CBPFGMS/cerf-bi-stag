@@ -728,13 +728,13 @@
 
 			if (!chartState.selectedYear.includes(allYearsOption)) {
 				const yearValues = chartState.selectedYear.join("|");
-				if (queryStringValues.has("contributionYear")) {
-					queryStringValues.set("contributionYear", yearValues);
+				if (queryStringValues.has("year")) {
+					queryStringValues.set("year", yearValues);
 				} else {
-					queryStringValues.append("contributionYear", yearValues);
+					queryStringValues.append("year", yearValues);
 				};
 			} else {
-				queryStringValues.delete("contributionYear");
+				queryStringValues.delete("year");
 			};
 
 			const data = processData(rawDataAllocations);
@@ -1114,6 +1114,17 @@
 					allRegions.property("checked", false);
 				};
 
+				if (chartState.selectedRegion.length !== d3.keys(lists.regionsInAllDataList).length) {
+					const regionValues = chartState.selectedRegion.join("|");
+					if (queryStringValues.has("region")) {
+						queryStringValues.set("region", regionValues);
+					} else {
+						queryStringValues.append("region", regionValues);
+					};
+				} else {
+					queryStringValues.delete("region");
+				};
+
 				regionTitle.html(chartState.selectedRegion.length === d3.keys(lists.regionsInAllDataList).length ? "All regions" :
 					chartState.selectedRegion.length > 1 ? "Multiple regions" : lists.regionNames[chartState.selectedRegion]);
 
@@ -1154,6 +1165,16 @@
 					allFunds.property("checked", false);
 				};
 
+				if (chartState.selectedFund.length !== d3.keys(lists.fundsInAllDataList).length) {
+					const fundValues = chartState.selectedFund.join("|");
+					if (queryStringValues.has("fund")) {
+						queryStringValues.set("fund", fundValues);
+					} else {
+						queryStringValues.append("fund", fundValues);
+					};
+				} else {
+					queryStringValues.delete("fund");
+				};
 
 				fundTitle.html(chartState.selectedFund.length === d3.keys(lists.fundsInAllDataList).length ? "All funds" :
 					chartState.selectedFund.length > 1 ? "Multiple funds" : lists.fundNames[chartState.selectedFund]);
@@ -1190,6 +1211,17 @@
 						chartState.selectedEmergencyGroup.splice(thisIndex, 1);
 					};
 					allEmergencies.property("checked", false);
+				};
+
+				if (chartState.selectedEmergencyGroup.length !== d3.keys(lists.emergencyGroupsInAllDataList).length) {
+					const emergencyGroupValues = chartState.selectedEmergencyGroup.join("|");
+					if (queryStringValues.has("emergencygroup")) {
+						queryStringValues.set("emergencygroup", emergencyGroupValues);
+					} else {
+						queryStringValues.append("emergencygroup", emergencyGroupValues);
+					};
+				} else {
+					queryStringValues.delete("emergencygroup");
 				};
 
 				emergencyTitle.html(chartState.selectedEmergencyGroup.length === d3.keys(lists.emergencyGroupsInAllDataList).length ? "All emergencies" :
@@ -1266,6 +1298,11 @@
 			chartState.baseline = null;
 			d3.keys(lists.emergencyGroupsInAllDataList).forEach(group => clickedGroup[group] = null);
 			viewButtons.classed("active", d => chartState.selectedView.includes(d));
+			if (queryStringValues.has("view")) {
+				queryStringValues.set("view", chartState.selectedView);
+			} else {
+				queryStringValues.append("view", chartState.selectedView);
+			};
 			const data = processData(rawDataAllocations);
 			resizeSvg(false);
 			drawStackedAreaChart(data);
