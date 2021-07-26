@@ -12,17 +12,86 @@
     <link rel="stylesheet" href="assets/css/d3chartstyles.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js" integrity="sha512-FHsFVKQ/T1KWJDGSbrUhTJyS1ph3eRrxI228ND0EGaEp6v4a/vGwPWd3Dtd/+9cI7ccofZvl/wulICEurHN1pg==" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js" integrity="sha512-4UKI/XKm3xrvJ6pZS5oTRvIQGIzZFoXR71rRBb1y2N+PbwAsKa5tPl2J6WvbEvwN3TxQCm8hMzsl/pO+82iRlg==" crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/d3-sankey@0"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha512-cLuyDTDg9CSseBSFWNd4wkEaZ0TBEpclX0zD3D6HjI19pO39M58AgJ1SjHp6c7ZOp0/OCRcC2BCvvySU9KJaGw==" crossorigin="anonymous"></script>
     <script type="text/javascript" src="assets/js/html2canvas.min.js"></script>
+	<script src="assets/js/CheckBrowserCompatibility.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-1884029-23"></script>
 </head>
 <body id="page-top">
-	<nav class="navbar navbar-light navbar-expand-lg fixed-top" style="top:0;" id="mainNav">
+    <div class="cd-header">
+		<div class="cd-global-header">
+            <div class="container">
+                <div class="cd-ocha">
+                    <button type="button" class="cd-ocha-btn cd-global-header__dropdown-btn" data-toggle="dropdown" id="cd-ocha-dropdown-toggle" aria-expanded="false" aria-label="OCHA Services">
+                        <span class="cd-ocha-btn__logo" aria-hidden="true"></span>
+                        <span class="cd-ocha-btn__label">OCHA Services</span>
+                        <svg class="icon icon--arrow-down" style="background-color: transparent">
+                            <use xlink:href="#arrow-down"></use>
+                        </svg>
+                    </button>
+                    <div class="cd-global-header__dropdown cd-ocha-dropdown cd-dropdown" role="menu" id="cd-ocha-dropdown" aria-labelledby="cd-ocha-dropdown-toggle">
+                        <div class="cd-ocha-dropdown__inner">
+                            <div class="cd-ocha-dropdown__section">
+                                <p class="cd-ocha-dropdown__heading">Related Platforms</p>
+                                <ul class="cd-ocha-dropdown__list">
+                                    <li class="cd-ocha-dropdown__link"><a href="https://gms.unocha.org/">CBPF GMS Portal</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://gms-blog.unocha.org">CBPF GMS Blog</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://gms.unocha.org/support">GMS Help Portal</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://www.unocha.org/our-work/humanitarian-financing/country-based-pooled-funds-cbpf">About CBPF</a></li>
+                                </ul>
+                            </div>
+                            <div class="cd-ocha-dropdown__section">
+                                <p class="cd-ocha-dropdown__heading">Other OCHA Services</p>
+                                <ul class="cd-ocha-dropdown__list">
+                                    <li class="cd-ocha-dropdown__link"><a href="https://fts.unocha.org/">Financial Tracking Service</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://data.humdata.org/">Humanitarian Data Exchange</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://humanitarian.id/">Humanitarian ID</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://humanitarianresponse.info/">Humanitarian Response</a></li>
+                                </ul>
+                            </div>
+                            <div class="cd-ocha-dropdown__section">
+                                <p class="cd-ocha-dropdown__heading" aria-hidden="true">&nbsp;</p>
+                                <ul class="cd-ocha-dropdown__list">
+                                    <li class="cd-ocha-dropdown__link"><a href="https://interagencystandingcommittee.org/">Inter-Agency Standing Committee</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://unocha.org/">OCHA website</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://reliefweb.int/">ReliefWeb</a></li>
+                                    <li class="cd-ocha-dropdown__link"><a href="https://vosocc.unocha.org/">Virtual OSOCC</a></li>
+                                </ul>
+                            </div>
+                            <div class="cd-ocha-dropdown__section">
+                                <a class="cd-ocha-dropdown__see-all" href="https://www.unocha.org/ocha-digital-services" target="_blank" rel="noopener">See all</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				<div class="cd-global-header__user-menu">
+      				<div id="block-hr-layout-hr-layout-login" class="block block-hr-layout">
+  						<ul class="menu">
+							<li><a href="https://pfdata.unocha.org/">Pooled Funds Data Hub</a></li>
+							<li><a href="https://cbpf.data.unocha.org/">CBPF Data Hub</a></li>
+						</ul>
+					</div>						
+   				</div>
+            </div>
+        </div>
+	</div>
+	<nav class="navbar navbar-light navbar-expand-lg fixed-top" id="mainNav">
 		<div class="container"><a class="navbar-brand js-scroll-trigger pf-onebi-logo" href="#page-top"></a><button data-toggle="collapse" data-target="#navbarResponsive" class="navbar-toggler navbar-toggler-right" type="button" aria-controls="navbarResponsive"
                 aria-expanded="false" aria-label="Toggle navigation"><i class="fa fa-align-justify"></i></button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="nav navbar-nav ml-auto font-weight-bold text-uppercase">
+                <ul class="nav navbar-nav ml-auto font-weight-bold text-uppercase" aria-labelledby="navbarDropdownMenuLink">
                     <li class="nav-item" role="presentation"><a class="nav-link js-scroll-trigger" href="/">Home</a></li>
+                    <li class="nav-item dropdown dropdown-panel" role="presentation"><a class="nav-link dropdown-toggle js-scroll-trigger" href="/#Allocations" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Allocations</a>
+						<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="/#Allocations">Allocations (Home)</a>
+                            <a class="dropdown-item" href="/allocations.html">Allocations Timeline</a>
+                            <a class="dropdown-item" href="https://cerf.un.org/what-we-do/allocation-data">Allocation Data</a>
+            			</ul>
+					</li>
+                    <li class="nav-item" role="presentation"><a class="nav-link js-scroll-trigger" href="/#Contributions">Contributions</a></li>
+                    <!--<li class="nav-item" role="presentation"><a class="nav-link js-scroll-trigger" href="data.html">Data Explorer</a></li>-->
                 </ul>
             </div>	
         </div>
@@ -95,15 +164,7 @@
                 </div>
             </div>
             <div class="cd-footer__section cd-footer__section--copyright">
-                <div class="cd-footer-copyright">
-                    <span class="cd-footer-copyright__text">Except where otherwise noted, content on this site is licensed under a <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0</a> International license.</span>
-                    <a class="cd-footer-copyright__link" href="https://creativecommons.org/licenses/by/4.0/">
-                        <span class="element-invisible">Creative Commons BY 4.0</span>
-                        <svg class="icon icon--cc">
-                            <use xlink:href="#creative-commons"></use>
-                        </svg>
-                    </a>
-                </div>
+                
             </div>
         </div>
     </footer>
