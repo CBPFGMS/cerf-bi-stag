@@ -1060,9 +1060,10 @@
 			.attr("class", "fa fa-filter");
 
 		filterContainer.append("i")
-			.style("font-size", "14px")
-			.style("align-self", "flex-end")
-			.style("margin-left", "-6px")
+			.style("font-size", "12px")
+			.style("margin-top", "3px")
+			.style("margin-left", "-10px")
+			.style("text-shadow", "-1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff")
 			.attr("class", "fa fa-times-circle");
 
 		filterContainer.on("mouseover", (_, i, n) => {
@@ -2646,11 +2647,16 @@
 		const csvData = [];
 
 		rawDataAllocations.forEach(function(row) {
-			if (chartState.selectedYear.includes(row.Year) && chartState.selectedFund.includes(row.CountryID)) {
+			if ((chartState.selectedYear.includes(row.Year) || chartState.selectedYear.includes(allYearsOption)) &&
+				chartState.selectedFund.includes(row.CountryID) &&
+				chartState.selectedEmergencyGroup.includes(row.EmergencyGroupID)) {
 				csvData.push({
 					Year: row.Year,
-					// Cluster: lists.clusterNames[row.ClusterCBPFCERFId],
-					// Agency: lists.unAgencyShortNames[row.partnerCode],
+					Fund: lists.fundNames[row.CountryID],
+					["Application Code"]: row.ApplicationCode,
+					["Emergency Group"]: lists.emergencyGroupNames[row.EmergencyGroupID],
+					["Emergency Type"]: lists.emergencyTypeNames[row.EmergencyTypeID],
+					Date: row.LastProjectApprovedDate,
 					Budget: row.Budget
 				});
 			};
@@ -2714,7 +2720,13 @@
 
 		snapshotTooltip.style("display", "none");
 
+		containerDiv.selectAll(".alloctimelineregionDropdown, .alloctimelinefundDropdown, .alloctimelineemergencyDropdown")
+			.style("display", "none");
+
 		html2canvas(imageDiv).then(function(canvas) {
+
+			containerDiv.selectAll(".alloctimelineregionDropdown, .alloctimelinefundDropdown, .alloctimelineemergencyDropdown")
+				.style("display", null);
 
 			svg.attr("width", null)
 				.attr("height", null);
