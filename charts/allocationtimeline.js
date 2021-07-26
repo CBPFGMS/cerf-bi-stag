@@ -1050,6 +1050,43 @@
 			return chartState.selectedEmergencyGroup.length === d3.keys(lists.emergencyGroupsInAllDataList).length;
 		});
 
+		//filter
+
+		const filterContainer = dropdownDiv.append("div")
+			.attr("class", classPrefix + "filterContainer");
+
+		filterContainer.append("i")
+			.style("font-size", "28px")
+			.attr("class", "fa fa-filter");
+
+		filterContainer.append("i")
+			.style("font-size", "14px")
+			.style("align-self", "flex-end")
+			.style("margin-left", "-6px")
+			.attr("class", "fa fa-times-circle");
+
+		filterContainer.on("mouseover", (_, i, n) => {
+			tooltip.style("display", "block")
+				.html(null);
+
+			const innerTooltip = tooltip.append("div")
+				.style("max-width", "120px")
+				.attr("id", classPrefix + "innerTooltipDiv");
+
+			innerTooltip.html("Remove all filters.");
+
+			const containerSize = containerDiv.node().getBoundingClientRect();
+			const thisSize = n[i].getBoundingClientRect();
+			const tooltipSize = tooltip.node().getBoundingClientRect();
+
+			tooltip.style("left", (thisSize.left + thisSize.width / 2 - tooltipSize.width / 2) < containerSize.left ?
+					"0px" : thisSize.left + thisSize.width / 2 - tooltipSize.width / 2 - containerSize.left + "px")
+				.style("top", thisSize.top - containerSize.top + thisSize.height + 4 + "px");
+		}).on("mouseout", () => {
+			tooltip.html(null)
+				.style("display", "none");
+		});
+
 		//listeners
 
 		regionCheckboxDiv.select("input")
@@ -1075,6 +1112,9 @@
 					};
 					allRegions.property("checked", false);
 				};
+
+				regionTitle.html(chartState.selectedRegion.length === d3.keys(lists.regionsInAllDataList).length ? "All regions" :
+					chartState.selectedRegion.length > 1 ? "Multiple regions" : lists.regionNames[chartState.selectedRegion]);
 
 				const data = processData(rawDataAllocations);
 
@@ -1113,6 +1153,10 @@
 					allFunds.property("checked", false);
 				};
 
+
+				fundTitle.html(chartState.selectedFund.length === d3.keys(lists.fundsInAllDataList).length ? "All funds" :
+					chartState.selectedFund.length > 1 ? "Multiple funds" : lists.fundNames[chartState.selectedFund]);
+
 				const data = processData(rawDataAllocations);
 
 				emergencyCheckbox.property("disabled", function(d) {
@@ -1147,6 +1191,9 @@
 					allEmergencies.property("checked", false);
 				};
 
+				emergencyTitle.html(chartState.selectedEmergencyGroup.length === d3.keys(lists.emergencyGroupsInAllDataList).length ? "All emergencies" :
+					chartState.selectedEmergencyGroup.length > 1 ? "Multiple emergencies" : lists.emergencyGroupNames[chartState.selectedEmergencyGroup]);
+
 				const data = processData(rawDataAllocations);
 
 				regionCheckbox.property("disabled", function(d) {
@@ -1160,6 +1207,45 @@
 
 				drawStackedAreaChart(data);
 			});
+
+		filterContainer.on("click", () => {
+
+			chartState.selectedRegion = d3.keys(lists.regionsInAllDataList).map(e => +e);
+			chartState.selectedFund = d3.keys(lists.fundsInAllDataList).map(e => +e);
+			chartState.selectedEmergencyGroup = d3.keys(lists.emergencyGroupsInAllDataList).map(e => +e);
+
+			regionTitle.html("Select Region");
+			fundTitle.html("Select Country");
+			emergencyTitle.html("Select Emergency Group");
+
+			regionCheckbox.property("checked", false);
+			fundCheckbox.property("checked", false);
+			emergencyCheckbox.property("checked", false);
+
+			allRegions.property("checked", true);
+			allFunds.property("checked", true);
+			allEmergencies.property("checked", true);
+
+			regionContainer.classed("active", false);
+			fundContainer.classed("active", false);
+			emergencyContainer.classed("active", false);
+
+			const data = processData(rawDataAllocations);
+
+			regionCheckbox.property("disabled", function(d) {
+				return !inDataLists.regionsInData.includes(d);
+			});
+			fundCheckbox.property("disabled", function(d) {
+				return !inDataLists.fundsInData.includes(d);
+			});
+			emergencyCheckbox.property("disabled", function(d) {
+				return !inDataLists.emergencyGroupsInData.includes(d);
+			});
+
+			resizeSvg(false);
+
+			drawStackedAreaChart(data);
+		});
 
 		//end of createDropdowns
 	};
@@ -1187,8 +1273,6 @@
 	};
 
 	function drawStackedAreaChart(data) {
-
-		mainGroup.selectAll("*").interrupt();
 
 		const thisDataLength = chartState.selectedView === viewOptions[0] ? data.length : d3.max(data, d => d.emergencyData.length);
 		const sameDataLength = previousDataLength === thisDataLength;
@@ -1252,7 +1336,13 @@
 
 		const syncTransition = d3.transition()
 			.delay(delay)
-			.duration(duration);
+			.duration(duration)
+			.on("start", () => {
+				dropdownDiv.style("pointer-events", "none");
+			})
+			.on("end", () => {
+				dropdownDiv.style("pointer-events", "all");
+			});
 
 		d3.entries(lists.emergencyTypesInGroups).forEach((entry, i) => {
 			colorSubScale[entry.key] = d3.scaleOrdinal()

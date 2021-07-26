@@ -1536,6 +1536,14 @@ p#alloctimelined3chartTitle {
 	margin-right: 1rem;
 }
 
+.alloctimelinefilterContainer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color:  #555;
+	cursor: pointer;
+}
+
 .alloctimelineregionTitleDiv, .alloctimelinefundTitleDiv, .alloctimelineemergencyTitleDiv {
 	display: flex;
 	align-items: center;
@@ -1545,6 +1553,12 @@ p#alloctimelined3chartTitle {
 	border-radius: 4px;
 	padding: 2px 16px 2px 16px;
 	cursor: pointer;
+}
+
+.alloctimelineregionTitle, .alloctimelinefundTitle, .alloctimelineemergencyTitle {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .alloctimelineregionArrow, .alloctimelinefundArrow, .alloctimelineemergencyArrow {
