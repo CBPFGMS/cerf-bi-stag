@@ -140,6 +140,7 @@
 
 	let isSnapshotTooltipVisible = false,
 		height,
+		timer,
 		previousDataLength,
 		previousXValue,
 		currentHoveredElement;
@@ -493,51 +494,12 @@
 				timer.stop();
 			};
 
-			//IMPORTANT: refactor loop function
 			function loopButtons() {
 				const index = yearsArray.indexOf(chartState.selectedYear[0]);
-
-				chartState.selectedYear[0] = yearsArray[(index + 1) % yearsArray.length];
-
-				const yearButton = d3.selectAll("." + classPrefix + "buttonsRects")
-					.filter(function(d) {
-						return d === chartState.selectedYear[0]
-					});
-
+				chartState.selectedYear = yearsArray[(index + 1) % yearsArray.length];
+				const yearButton = d3.selectAll("." + classPrefix + "yearButtons")
+					.filter(d => d === chartState.selectedYear);
 				yearButton.dispatch("click");
-
-				if (yearsArray.length > buttonsNumber) {
-
-					const firstYearIndex = chartState.selectedYear[0] < yearsArray[buttonsNumber / 2] ?
-						0 :
-						chartState.selectedYear[0] > yearsArray[yearsArray.length - (buttonsNumber / 2)] ?
-						yearsArray.length - buttonsNumber :
-						yearsArray.indexOf(chartState.selectedYear[0]) - (buttonsNumber / 2);
-
-					const currentTranslate = -(buttonsPanel.buttonWidth * firstYearIndex);
-
-					if (currentTranslate === 0) {
-						svg.select("." + classPrefix + "LeftArrowGroup").select("text").style("fill", "#ccc")
-						svg.select("." + classPrefix + "LeftArrowGroup").attr("pointer-events", "none");
-					} else {
-						svg.select("." + classPrefix + "LeftArrowGroup").select("text").style("fill", "#666")
-						svg.select("." + classPrefix + "LeftArrowGroup").attr("pointer-events", "all");
-					};
-
-					if (Math.abs(currentTranslate) >= ((yearsArray.length - buttonsNumber) * buttonsPanel.buttonWidth)) {
-						svg.select("." + classPrefix + "RightArrowGroup").select("text").style("fill", "#ccc")
-						svg.select("." + classPrefix + "RightArrowGroup").attr("pointer-events", "none");
-					} else {
-						svg.select("." + classPrefix + "RightArrowGroup").select("text").style("fill", "#666")
-						svg.select("." + classPrefix + "RightArrowGroup").attr("pointer-events", "all");
-					};
-
-					svg.select("." + classPrefix + "buttonsGroup").transition()
-						.duration(duration)
-						.attrTween("transform", function() {
-							return d3.interpolateString(this.getAttribute("transform"), "translate(" + currentTranslate + ",0)");
-						});
-				};
 			};
 		});
 
@@ -2993,18 +2955,14 @@
 
 	function validateSelectionString(selectionString, dataList) {
 		const arr = [],
-			dataArray = selectionString.split(",").map(function(d) {
-				return d.trim().toLowerCase();
-			}),
-			someInvalidValue = dataArray.some(function(d) {
-				return !valuesInLowerCase(d3.values(dataList)).includes(d);
-			});
+			dataArray = selectionString.split(",").map(d => +(d.trim())),
+			someInvalidValue = dataArray.some(d => !(d3.keys(dataList).map(e => +e).includes(d)));
 
 		if (someInvalidValue) return d3.keys(dataList).map(d => +d);
 
 		dataArray.forEach(function(d) {
 			for (var key in dataList) {
-				if (dataList[key].toLowerCase() === d) arr.push(key)
+				if (+key === d) arr.push(+key)
 			};
 		});
 
