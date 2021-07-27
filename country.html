@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-	<title>Allocations Timeline - CERF Data Hub</title>
+	<title>Country Profile - CERF Data Hub</title>
 	<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
 	<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.2.0/aos.css">	
@@ -100,8 +100,8 @@
 		<div class="container my-auto">
 			<div class="row">
 				<div class="col-lg-12 mx-auto">
-					<h2 class="text-uppercase font-weight-bold mb-1 mt-5 pt-5"><span style="color: #ffc417;">CERF</span> Allocations Timeline</h2>
-					<p class="title-desc mb-2">CERF Allocations Timeline - Interactive visual dashboard showing the overview of ongoing and previous CERF allocations</p>
+					<h2 class="text-uppercase font-weight-bold mb-1 mt-5 pt-5"><span style="color: #ffc417;">CERF</span> COUNTRY PROFILE</h2>
+					<p class="title-desc mb-2">The country profile page provides basic details on allocations,contributions, and AAP for CERF countries </p>
 				</div>
 			</div>
 		</div>		
@@ -110,8 +110,20 @@
 		<div class="container">
 			<div class="row">
 				<div class="col intro-txt mt-3 mb-4">	
-					<p class="mt-3"></p>
-                    <div id="d3chartcontaineralloctimeline" data-title="" data-year="all" data-fund="all" data-region="all" data-emergencygroup="all" data-view="aggregated" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/allocationtimeline.js"></script>
+					<p class="mt-3">Country profile viz goes here</p>
+                    <p>Since its inception in 2006, CERF has allocated {$AllocationAmt} million to {CountryName} </p>
+                    <p>Rapid Response window : {$AllocationAmt} </p>
+                    <p>Underfunded Emergencies window : {$AllocationAmt} </p>
+                    <p>{Ranking#} highest recipient of CERF funding since 2006</p>
+                    <p>In the last 4 years (since 2016), CERF has allocated {$AllocationAmt} million to {CountryName} </p>
+                    <img src="https://cbpfgms.github.io/cerf-bi-stag/assets/img/mockups/country_alloc.PNG">
+                    <img src="https://cbpfgms.github.io/cerf-bi-stag/assets/img/mockups/cerf_aap.PNG">
+                    <h5>3 Most recent allocations</h5>
+                    <ul>
+                        <li>RR Mar 2021: Title name</li>
+                        <li>RR Feb 2021: Title name</li>
+                        <li>RR Jan 2021: Title name</li>
+                    </ul>
 				</div>
 			</div>
 		</div>
