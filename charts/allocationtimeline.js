@@ -2832,7 +2832,7 @@
 				pdf.setFont('helvetica');
 				pdf.setFontType("bold");
 				pdf.setFontSize(14);
-				pdf.text("CERF by year", pdfMargins.left, 44);
+				pdf.text("CERF Allocations Timeline", pdfMargins.left, 44);
 
 				pdf.addImage(source, "PNG", pdfMargins.left, 48, widthInMilimeters, heightInMilimeters);
 
