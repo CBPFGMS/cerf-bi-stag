@@ -1088,16 +1088,25 @@
 				};
 
 				regionTitle.html(chartState.selectedRegion.length === d3.keys(lists.regionsInAllDataList).length ? "All regions" :
-					chartState.selectedRegion.length > 1 ? "Multiple regions" : lists.regionNames[chartState.selectedRegion]);
+					chartState.selectedRegion.length > 1 ? "Multiple regions" : (lists.regionNames[chartState.selectedRegion] || "No selection"));
 
 				const data = processData(rawDataAllocations);
 
-				fundCheckbox.property("disabled", function(d) {
-					return !inDataLists.fundsInData.includes(d);
-				});
-				emergencyCheckbox.property("disabled", function(d) {
-					return !inDataLists.emergencyGroupsInData.includes(d);
-				});
+				if (chartState.selectedRegion.length === d3.keys(lists.regionsInAllDataList).length) {
+					fundCheckbox.property("disabled", function(d) {
+						return !inSelectionLists.fundsInData.includes(d);
+					});
+					emergencyCheckbox.property("disabled", function(d) {
+						return !inSelectionLists.emergencyGroupsInData.includes(d);
+					});
+				} else {
+					fundCheckbox.property("disabled", function(d) {
+						return !inDataLists.fundsInData.includes(d);
+					});
+					emergencyCheckbox.property("disabled", function(d) {
+						return !inDataLists.emergencyGroupsInData.includes(d);
+					});
+				};
 
 				resizeSvg(false);
 
@@ -1109,7 +1118,8 @@
 				if (d === allFundsOption) {
 					if (n[i].checked) {
 						chartState.selectedFund = d3.keys(lists.fundsInAllDataList).map(e => +e);
-						fundCheckbox.property("checked", false);
+						fundCheckbox.property("checked", false)
+							.property("disabled", false);
 					} else {
 						chartState.selectedFund.length = 0;
 					};
@@ -1139,13 +1149,19 @@
 				};
 
 				fundTitle.html(chartState.selectedFund.length === d3.keys(lists.fundsInAllDataList).length ? "All funds" :
-					chartState.selectedFund.length > 1 ? "Multiple funds" : lists.fundNames[chartState.selectedFund]);
+					chartState.selectedFund.length > 1 ? "Multiple funds" : (lists.fundNames[chartState.selectedFund] || "No selection"));
 
 				const data = processData(rawDataAllocations);
 
-				emergencyCheckbox.property("disabled", function(d) {
-					return !inDataLists.emergencyGroupsInData.includes(d);
-				});
+				if (chartState.selectedFund.length === d3.keys(lists.fundsInAllDataList).length) {
+					emergencyCheckbox.property("disabled", function(d) {
+						return !inSelectionLists.emergencyGroupsInData.includes(d);
+					});
+				} else {
+					emergencyCheckbox.property("disabled", function(d) {
+						return !inDataLists.emergencyGroupsInData.includes(d);
+					});
+				};
 
 				resizeSvg(false);
 
@@ -1157,7 +1173,8 @@
 				if (d === allEmergencyGroupsOption) {
 					if (n[i].checked) {
 						chartState.selectedEmergencyGroup = d3.keys(lists.emergencyGroupsInAllDataList).map(e => +e);
-						emergencyCheckbox.property("checked", false);
+						emergencyCheckbox.property("checked", false)
+							.property("disabled", false);
 					} else {
 						chartState.selectedEmergencyGroup.length = 0;
 					};
@@ -1187,16 +1204,25 @@
 				};
 
 				emergencyTitle.html(chartState.selectedEmergencyGroup.length === d3.keys(lists.emergencyGroupsInAllDataList).length ? "All emergencies" :
-					chartState.selectedEmergencyGroup.length > 1 ? "Multiple emergencies" : lists.emergencyGroupNames[chartState.selectedEmergencyGroup]);
+					chartState.selectedEmergencyGroup.length > 1 ? "Multiple emergencies" : (lists.emergencyGroupNames[chartState.selectedEmergencyGroup] || "No selection"));
 
 				const data = processData(rawDataAllocations);
 
-				regionCheckbox.property("disabled", function(d) {
-					return !inDataLists.regionsInData.includes(d);
-				});
-				fundCheckbox.property("disabled", function(d) {
-					return !inDataLists.fundsInData.includes(d);
-				});
+				if (chartState.selectedEmergencyGroup.length === d3.keys(lists.emergencyGroupsInAllDataList).length) {
+					regionCheckbox.property("disabled", function(d) {
+						return !inSelectionLists.regionsInData.includes(d);
+					});
+					fundCheckbox.property("disabled", function(d) {
+						return !inSelectionLists.fundsInData.includes(d);
+					});
+				} else {
+					regionCheckbox.property("disabled", function(d) {
+						return !inDataLists.regionsInData.includes(d);
+					});
+					fundCheckbox.property("disabled", function(d) {
+						return !inDataLists.fundsInData.includes(d);
+					});
+				};
 
 				resizeSvg(false);
 
