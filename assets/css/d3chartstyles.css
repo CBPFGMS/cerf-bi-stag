@@ -1588,6 +1588,8 @@ p#alloctimelined3chartTitle {
 	transform: scale(1, 1);
 }
 
+.alloctimelineemergencyDropdown{overflow-y: hidden !important;}
+
 .alloctimelineregionContainer.active .alloctimelineregionArrow, .alloctimelinefundContainer.active .alloctimelinefundArrow, .alloctimelineemergencyContainer.active .alloctimelineemergencyArrow {
 	transform: rotate(180deg);
 }

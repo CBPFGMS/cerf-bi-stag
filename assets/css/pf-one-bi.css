@@ -15,7 +15,7 @@ header{background-image: url(../../assets/img/pf-one-bi-header-bg.png); display:
 #mainNav .navbar-nav > li.nav-item > a.nav-link.active:hover, #mainNav .navbar-nav > li.nav-item > a.nav-link:focus.active:hover {
   background-color: transparent;}
 .navbar-nav li:hover > ul.dropdown-menu {
-    display: block;
+    display: block; margin: 0;
 }
 .dropdown-panel ul a{font-size: 0.9em; color: #8d8d9c;}
 
