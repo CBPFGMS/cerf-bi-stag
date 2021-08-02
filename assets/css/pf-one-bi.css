@@ -99,6 +99,8 @@ a:hover.txt-header {color:#333 !important;}
 .font-09em{font-size: 0.9em !important;}
 .clr-grey{color:#ccc;}
 .f-a{font-family: 'FontAwesome' !important; font-weight: normal !important;}
+.mt-n-60{margin-top: -60px;}
+.banner-brdr{border-right: 1px solid #cfe2f0; display: inline-block; margin-right: 26px; max-height: 166px; margin-top: -60px; margin-left: 10px;}
 .cookie-panel {
     background-color: rgba(0, 0, 0, 0.80);
     padding: 20px 10px;
@@ -217,6 +219,9 @@ footer{background-color: #BCBEC0; padding: 15px 0; width: 100%; overflow: auto;}
 	.fixed-top{background-color: #fff;}
 	header{padding-top: 20px;}
 	.figure-box-panel{margin-bottom: 10px;}
+	.mt-n-60 {margin: 0;}
+	.banner-brdr {border-bottom: 1px solid #cfe2f0; margin: 0 0 25px 0; border-right: none;}
+	.allocation-timeline {text-align: center;}
 }
 
 @media (max-width: 991.98px) { 	
