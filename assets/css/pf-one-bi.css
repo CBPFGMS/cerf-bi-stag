@@ -212,7 +212,7 @@ a:hover.txt-header {color:#333 !important;}
 	font-weight: 300;
 	display: block;
 }
-
+.allocation-timeline {text-align: right;}
 footer{background-color: #BCBEC0; padding: 15px 0; width: 100%; overflow: auto;}
 
 @media (max-width: 768px) { 	
