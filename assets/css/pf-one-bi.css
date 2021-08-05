@@ -2,7 +2,7 @@
 body{font-family: 'Roboto', sans-serif; color:#333; background: #fff; padding: 0; margin: 0;}
 
 .container {width: 100%; padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; box-sizing: border-box;}
-header{background-image: url(../../assets/img/pf-one-bi-header-bg.png); display: block; width: 100%; background-repeat: no-repeat; background-position: top center; min-height: 500px; border-bottom: 5px solid #cfe2f0;}  
+header{background-image: url(../../assets/img/pf-one-bi-header-bg.png); display: block; width: 100%; background-repeat: no-repeat; background-position: top center; min-height: 450px; border-bottom: 5px solid #cfe2f0;}  
 
 .pf-onebi-logo{background-repeat: no-repeat; background-size: contain; background-position: center left; background-image: url(../../assets/img/cerf-data-hub-logo.svg); float: left; margin: 0; min-width: 300px; height: 50px;}
 
@@ -99,6 +99,9 @@ a:hover.txt-header {color:#333 !important;}
 .font-09em{font-size: 0.9em !important;}
 .clr-grey{color:#ccc;}
 .f-a{font-family: 'FontAwesome' !important; font-weight: normal !important;}
+.mt-n-60{margin-top: -60px;}
+.banner-brdr{border-right: 1px solid #cfe2f0; display: inline-block; margin-right: 26px; max-height: 166px; margin-top: -60px; margin-left: 10px;}
+.mt-6 {margin-top: 6rem !important;}
 .cookie-panel {
     background-color: rgba(0, 0, 0, 0.80);
     padding: 20px 10px;
@@ -210,13 +213,16 @@ a:hover.txt-header {color:#333 !important;}
 	font-weight: 300;
 	display: block;
 }
-
+.allocation-timeline {text-align: right;}
 footer{background-color: #BCBEC0; padding: 15px 0; width: 100%; overflow: auto;}
 
 @media (max-width: 768px) { 	
 	.fixed-top{background-color: #fff;}
 	header{padding-top: 20px;}
 	.figure-box-panel{margin-bottom: 10px;}
+	.mt-n-60 {margin: 0;}
+	.banner-brdr {border-bottom: 1px solid #cfe2f0; margin: 0 0 25px 0; border-right: none;}
+	.allocation-timeline {text-align: center;}
 }
 
 @media (max-width: 991.98px) { 	
