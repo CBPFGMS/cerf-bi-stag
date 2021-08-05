@@ -88,7 +88,7 @@
 		allRegionsOption = "Select all regions",
 		allFundsOption = "Select all countries",
 		allEmergencyGroupsOption = "Select all emergency groups",
-		chartTitleDefault = "Allocation Timeline",
+		chartTitleDefault = "Allocations Timeline",
 		vizNameQueryString = "alloctimeline",
 		allocationsDataUrl = "https://cbpfgms.github.io/pfbi-data/cerf/cerf_applications.csv",
 		masterEmergencyTypeUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstEmergencyType.json",
