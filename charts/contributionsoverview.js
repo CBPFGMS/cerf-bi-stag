@@ -215,8 +215,8 @@
 		buttonContributionsPadding: 860
 	};
 
-	Promise.all([fetchFile(classPrefix + "data", dataUrl, "data", "csv"),
-			fetchFile(classPrefix + "flags", flagsUrl, "flags images", "json")
+	Promise.all([fetchFile("contributionsdata", dataUrl, "data", "csv"),
+			fetchFile("contributionsflags", flagsUrl, "flags images", "json")
 		])
 		.then(allData => csvCallback(allData));
 

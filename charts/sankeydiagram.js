@@ -81,7 +81,7 @@
 		masterUnAgenciesUrl = "https://cerfgms-webapi.unocha.org/v1/agency/All.json",
 		masterPartnersUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstOrganization.json",
 		masterClustersUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstClusterCBPFCERF.json",
-		flagsUrl = "https://cbpfgms.github.io/cerf-bi-stag/assets/img/flags24.json", //CHANGE THIS to: "https://cerf.data.unocha.org/assets/img/flags24.json"
+		flagsUrl = "./assets/img/flags24.json",
 		csvDateFormat = d3.utcFormat("_%Y%m%d_%H%M%S_UTC"),
 		yearsArray = [],
 		yearsArrayAllocations = [],
