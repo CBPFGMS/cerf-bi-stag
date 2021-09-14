@@ -1796,3 +1796,201 @@ input:disabled + span.alloctimelinecheckboxText {
 	color: #666;
 	margin-left: 6px;
 }
+
+/*Contributions chart (code: contributionschart)*/
+#d3chartcontainercontributionschart{
+	position: relative;
+}
+
+.contributionschartTopDiv {
+	display: flex;
+	width: 100%;
+	margin-bottom: 4px;
+}
+
+.contributionschartTitleDiv {
+	display: flex;
+	flex:0 50%;
+	margin-left: 8px;
+}
+
+.contributionschartIconsDiv {
+	display: flex;
+	flex:0 50%;
+	flex-direction: row-reverse;
+	align-items: center;
+	margin-right: 16px;
+}
+
+.contributionschartFooterDiv {
+	width: 100%;
+	margin-top: 8px;
+}
+
+#contributionschartSnapshotTooltip {
+	z-index: 1600;
+}
+
+.contributionschartSnapshotContent {
+	position: absolute;
+	min-width: 100px;
+	display: none;
+	background-color: #f9f9f9;
+	box-shadow: 0px 4px 8px 0px rgba(0,0,0,0.25);
+	cursor: pointer;
+	border-radius: 4px;
+	overflow: hidden;
+	text-align: left;
+}
+
+.contributionschartSnapshotContent #contributionschartSnapshotPdfText, .contributionschartSnapshotContent #contributionschartSnapshotPngText, .contributionschartSnapshotContent #contributionschartSnapshotTooltipPdfText, .contributionschartSnapshotContent #contributionschartSnapshotTooltipPngText {
+	font-size: 14px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+}
+
+.contributionschartSnapshotContent #contributionschartBestVisualizedText, .contributionschartSnapshotContent #contributionschartTooltipBestVisualizedText {
+	font-size: 11px;
+	padding: 10px;
+	margin: 0px;
+	color: #222;
+	font-family: "Arial", sans-serif;
+	border-top: 1px solid lightgray;
+	width: 202px;
+}
+
+.contributionschartSnapshotContent #contributionschartSnapshotPdfText:hover, .contributionschartSnapshotContent #contributionschartSnapshotPngText:hover, .contributionschartSnapshotContent #contributionschartSnapshotTooltipPdfText:hover, .contributionschartSnapshotContent #contributionschartSnapshotTooltipPngText:hover {
+	background-color: #1F69B3;
+	color: white;
+}
+
+p#contributionschartd3chartTitle {
+	font-size: 26px;
+	font-family: "Arial", sans-serif;
+	margin: 0px;
+	color: #418fde;
+}
+
+.contributionschartheaderDiv {
+	display: flex;
+	line-height: normal;
+}
+
+.contributionscharttopFiguresDiv {
+	flex: 0 30%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+}
+
+.contributionscharttopFiguresHeaderDiv {
+	width: 50%;
+	text-align: right;
+	font-size: 1rem;
+	color: #444;
+}
+
+.contributionscharttopFiguresDonorsDiv, .contributionscharttopFiguresContributionsDiv {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.contributionscharttopFiguresDonorsNumberDiv, .contributionscharttopFiguresContributionsNumberDiv {
+	flex: 0 50%;
+	text-align: right;
+	font-size: 3rem;
+}
+
+.contributionscharttopFiguresDonorsTextDiv, .contributionscharttopFiguresContributionsTextDiv {
+	flex: 0 50%;
+	font-size: 1rem;
+	color: #444;
+	text-align: left;
+	line-height: 1.3rem;
+	padding-left: 0.5rem;
+}
+
+.contributionscharttopChartDiv {
+	flex: 0 40%;
+	flex-direction: column;
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.contributionscharttopChartSvgDiv {
+	flex: 0 85%;
+	height: 85%;
+}
+
+.contributionscharttopChartHeaderDiv {
+	font-size: 0.8rem;
+	color:  #444;
+	font-style: italic;
+}
+
+.contributionscharttopRadioButtonsDiv {
+	flex: 0 30%;
+	display: flex;
+	flex-direction: column;
+	--color: #FBD45C;
+	justify-content: space-evenly;
+}
+
+.contributionscharttopRadioButtonsDonorsDiv, .contributionscharttopRadioButtonsOrderDiv {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding-left: 2rem;
+}
+
+.contributionschartdonorLabels, .contributionschartorderLabels {
+	font-size: 0.9rem;
+  color: var(--color);
+  display: grid;
+  grid-template-columns: min-content auto;
+  grid-gap: 0.5em;
+  cursor: pointer;
+}
+
+.contributionschartradioInput {
+	display: flex;
+}
+
+.contributionschartradioInput input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.contributionschartradioControl {
+  display: grid;
+  place-items: center;
+  width: 1.1em;
+	height: 1.1em;
+	border-radius: 50%;
+	border: 0.1em solid #bbb;
+	transform: translateY(-0.05em);
+}
+
+.contributionschartradioInput input + .contributionschartradioControl::before {
+	 content: "";
+	 width: 0.7em;
+	 height: 0.7em;
+	 box-shadow: inset 0.5em 0.5em currentColor;
+	 border-radius: 50%;
+	 transition: 180ms transform ease-in-out;
+	 transform: scale(0);
+}
+
+.contributionschartradioInput input:checked + .contributionschartradioControl::before {
+	 transform: scale(1);
+}
+
+.contributionschartradioLabel {
+	line-height: 1;
+	color: #444;
+}

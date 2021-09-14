@@ -2,8 +2,14 @@
 
 	const isTouchScreenOnly = (window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches);
 
-	const width = 1100,
+	const svgWidth = 140,
+		svgHeight = 68,
+		svgRatio = svgWidth / svgHeight,
+		topSvgWidth = 380,
+		topSvgHeight = topSvgWidth / svgRatio,
+		topSvgPadding = [0, 0, 0, 0],
 		windowHeight = window.innerHeight,
+		headerDivHeightPercentage = 0.14,
 		currentDate = new Date(),
 		currentYear = currentDate.getFullYear(),
 		localStorageTime = 3600000,
@@ -12,10 +18,8 @@
 		formatPercent = d3.format(".0%"),
 		formatNumberSI = d3.format(".3s"),
 		localVariable = d3.local(),
-		paidColor = "#9063CD",
-		pledgedColor = "#E56A54",
+		cerfColor = "#FBD45C",
 		unBlue = "#1F69B3",
-		highlightColor = "#F79A3B",
 		chartTitleDefault = "CERF Contributions Chart",
 		yearsArray = [],
 		memberStateType = "Member State",
@@ -35,6 +39,7 @@
 		orders = ["contributions", "alphabetical"],
 		donors = ["top", "all"],
 		topDonorsNumber = 20,
+		highlightSelection = {},
 		chartState = {
 			selectedDonors: null,
 			selectedOrder: null
@@ -57,8 +62,6 @@
 
 	const chartTitle = containerDiv.node().getAttribute("data-title") ? containerDiv.node().getAttribute("data-title") : chartTitleDefault;
 
-	const selectedResponsiveness = (containerDiv.node().getAttribute("data-responsive") === "true");
-
 	const selectedCountriesString = queryStringValues.has("country") ? queryStringValues.get("country").replace(/\|/g, ",") : containerDiv.node().getAttribute("data-selectedcountry");
 
 	const selectedYearString = queryStringValues.has("year") ? queryStringValues.get("year").replace(/\|/g, ",") : containerDiv.node().getAttribute("data-year");
@@ -73,11 +76,6 @@
 
 	const lazyLoad = (containerDiv.node().getAttribute("data-lazyload") === "true");
 
-	if (selectedResponsiveness === false) {
-		containerDiv.style("width", width + "px")
-			.style("height", height + "px");
-	};
-
 	const topDiv = containerDiv.append("div")
 		.attr("class", classPrefix + "TopDiv");
 
@@ -86,6 +84,61 @@
 
 	const iconsDiv = topDiv.append("div")
 		.attr("class", classPrefix + "IconsDiv d3chartIconsDiv");
+
+	const headerDiv = containerDiv.append("div")
+		.attr("class", classPrefix + "headerDiv")
+		.style("height", containerDiv.node().offsetWidth * headerDivHeightPercentage + "px");
+
+	const topFiguresDiv = headerDiv.append("div")
+		.attr("class", classPrefix + "topFiguresDiv");
+
+	const topFiguresHeaderDiv = topFiguresDiv.append("div")
+		.attr("class", classPrefix + "topFiguresHeaderDiv");
+
+	const topFiguresDonorsDiv = topFiguresDiv.append("div")
+		.attr("class", classPrefix + "topFiguresDonorsDiv");
+
+	const topFiguresDonorsNumberDiv = topFiguresDonorsDiv.append("div")
+		.attr("class", classPrefix + "topFiguresDonorsNumberDiv");
+
+	const topFiguresDonorsTextDiv = topFiguresDonorsDiv.append("div")
+		.attr("class", classPrefix + "topFiguresDonorsTextDiv");
+
+	const topFiguresContributionsDiv = topFiguresDiv.append("div")
+		.attr("class", classPrefix + "topFiguresContributionsDiv");
+
+	const topFiguresContributionsNumberDiv = topFiguresContributionsDiv.append("div")
+		.attr("class", classPrefix + "topFiguresContributionsNumberDiv");
+
+	const topFiguresContributionsTextDiv = topFiguresContributionsDiv.append("div")
+		.attr("class", classPrefix + "topFiguresContributionsTextDiv");
+
+	const topChartDiv = headerDiv.append("div")
+		.attr("class", classPrefix + "topChartDiv");
+
+	const topChartHeaderDiv = topChartDiv.append("div")
+		.attr("class", classPrefix + "topChartHeaderDiv");
+
+	const topChartSvgDiv = topChartDiv.append("div")
+		.attr("class", classPrefix + "topChartSvgDiv");
+
+	const topChartSvg = topChartSvgDiv.append("svg")
+		.attr("viewBox", "0 0 " + topSvgWidth + " " + ~~topSvgHeight)
+		.attr("preserveAspectRatio", "xMidYMid meet")
+		.style("height", "100%")
+		.style("background-color", "wheat");
+
+	const topRadioButtonsDiv = headerDiv.append("div")
+		.attr("class", classPrefix + "topRadioButtonsDiv");
+
+	const topRadioButtonsDonorsDiv = topRadioButtonsDiv.append("div")
+		.attr("class", classPrefix + "topRadioButtonsDonorsDiv");
+
+	const topRadioButtonsOrderDiv = topRadioButtonsDiv.append("div")
+		.attr("class", classPrefix + "topRadioButtonsOrderDiv");
+
+	const chartsDiv = containerDiv.append("div")
+		.attr("class", classPrefix + "chartsDiv");
 
 	const footerDiv = containerDiv.append("div")
 		.attr("class", classPrefix + "FooterDiv");
@@ -144,31 +197,6 @@
 		])
 		.then(allData => csvCallback(allData));
 
-	function fetchFile(fileName, url, warningString, method) {
-		if (localStorage.getItem(fileName) &&
-			JSON.parse(localStorage.getItem(fileName)).timestamp > (currentDate.getTime() - localStorageTime)) {
-			const fetchedData = method === "csv" ? d3.csvParse(JSON.parse(localStorage.getItem(fileName)).data, d3.autoType) :
-				JSON.parse(localStorage.getItem(fileName)).data;
-			console.info("CERF BI chart info: " + warningString + " from local storage");
-			return Promise.resolve(fetchedData);
-		} else {
-			const fetchMethod = method === "csv" ? d3.csv : d3.json;
-			const rowFunction = method === "csv" ? d3.autoType : null;
-			return fetchMethod(url, rowFunction).then(fetchedData => {
-				try {
-					localStorage.setItem(fileName, JSON.stringify({
-						data: method === "csv" ? d3.csvFormat(fetchedData) : fetchedData,
-						timestamp: currentDate.getTime()
-					}));
-				} catch (error) {
-					console.info("CERF BI chart, " + error);
-				};
-				console.info("CERF BI chart info: " + warningString + " from API");
-				return fetchedData;
-			});
-		};
-	};
-
 	function csvCallback([rawData, flagsData]) {
 
 		if (!lazyLoad) {
@@ -191,50 +219,388 @@
 
 	function draw(rawData, flagsData) {
 
+		const data = processData(rawData);
+
+		createTitle(rawData);
+
+		createTopFigures(data);
+
+		createTopChart(data);
+
+		createTopRadioButtons(data);
+
+		//end of draw
+	};
+
+	function createTitle(rawData) {
+
+		const title = titleDiv.append("p")
+			.attr("id", classPrefix + "d3chartTitle")
+			.html(chartTitle);
+
+		//NO HELP ICON FOR NOW
+		// const helpIcon = iconsDiv.append("button")
+		// 	.attr("id", classPrefix + "HelpButton");
+
+		// helpIcon.html("HELP  ")
+		// 	.append("span")
+		// 	.attr("class", "fa fa-info")
+
+		const downloadIcon = iconsDiv.append("button")
+			.attr("id", classPrefix + "DownloadButton");
+
+		downloadIcon.html(".CSV  ")
+			.append("span")
+			.attr("class", "fa fa-download");
+
+		const snapshotDiv = iconsDiv.append("div")
+			.attr("class", classPrefix + "SnapshotDiv");
+
+		const snapshotIcon = snapshotDiv.append("button")
+			.attr("id", classPrefix + "SnapshotButton");
+
+		snapshotIcon.html("IMAGE ")
+			.append("span")
+			.attr("class", "fa fa-camera");
+
+		const snapshotContent = snapshotDiv.append("div")
+			.attr("class", classPrefix + "SnapshotContent");
+
+		const pdfSpan = snapshotContent.append("p")
+			.attr("id", classPrefix + "SnapshotPdfText")
+			.html("Download PDF")
+			.on("click", function() {
+				createSnapshot("pdf", false);
+			});
+
+		const pngSpan = snapshotContent.append("p")
+			.attr("id", classPrefix + "SnapshotPngText")
+			.html("Download Image (PNG)")
+			.on("click", function() {
+				createSnapshot("png", false);
+			});
+
+		if (!isBookmarkPage) {
+
+			const shareIcon = iconsDiv.append("button")
+				.attr("id", classPrefix + "ShareButton");
+
+			shareIcon.html("SHARE  ")
+				.append("span")
+				.attr("class", "fa fa-share");
+
+			const shareDiv = containerDiv.append("div")
+				.attr("class", "d3chartShareDiv")
+				.style("display", "none");
+
+			shareIcon.on("mouseover", function() {
+					shareDiv.html("Click to copy")
+						.style("display", "block");
+					const thisBox = this.getBoundingClientRect();
+					const containerBox = containerDiv.node().getBoundingClientRect();
+					const shareBox = shareDiv.node().getBoundingClientRect();
+					const thisOffsetTop = thisBox.top - containerBox.top - (shareBox.height - thisBox.height) / 2;
+					const thisOffsetLeft = thisBox.left - containerBox.left - shareBox.width - 12;
+					shareDiv.style("top", thisOffsetTop + "px")
+						.style("left", thisOffsetLeft + "20px");
+				}).on("mouseout", function() {
+					shareDiv.style("display", "none");
+				})
+				.on("click", function() {
+
+					const newURL = bookmarkSite + queryStringValues.toString();
+
+					const shareInput = shareDiv.append("input")
+						.attr("type", "text")
+						.attr("readonly", true)
+						.attr("spellcheck", "false")
+						.property("value", newURL);
+
+					shareInput.node().select();
+
+					document.execCommand("copy");
+
+					shareDiv.html("Copied!");
+
+					const thisBox = this.getBoundingClientRect();
+					const containerBox = containerDiv.node().getBoundingClientRect();
+					const shareBox = shareDiv.node().getBoundingClientRect();
+					const thisOffsetLeft = thisBox.left - containerBox.left - shareBox.width - 12;
+					shareDiv.style("left", thisOffsetLeft + "20px");
+
+				});
+
+		};
+
+		if (browserHasSnapshotIssues) {
+			const bestVisualizedSpan = snapshotContent.append("p")
+				.attr("id", classPrefix + "BestVisualizedText")
+				.html("For best results use Chrome, Firefox, Opera or Chromium-based Edge.")
+				.attr("pointer-events", "none")
+				.style("cursor", "default");
+		};
+
+		snapshotDiv.on("mouseover", function() {
+			snapshotContent.style("display", "block")
+		}).on("mouseout", function() {
+			snapshotContent.style("display", "none")
+		});
+
+		//helpIcon.on("click", null); //CHANGE THIS
+
+		downloadIcon.on("click", function() {
+
+			const csv = createCsv(rawData);
+
+			const currentDate = new Date();
+
+			const fileName = vizNameQueryString + "_" + csvDateFormat(currentDate) + ".csv";
+
+			const blob = new Blob([csv], {
+				type: 'text/csv;charset=utf-8;'
+			});
+
+			if (navigator.msSaveBlob) {
+				navigator.msSaveBlob(blob, filename);
+			} else {
+
+				const link = document.createElement("a");
+
+				if (link.download !== undefined) {
+
+					const url = URL.createObjectURL(blob);
+
+					link.setAttribute("href", url);
+					link.setAttribute("download", fileName);
+					link.style = "visibility:hidden";
+
+					document.body.appendChild(link);
+
+					link.click();
+
+					document.body.removeChild(link);
+
+				};
+			};
+
+		});
+
+		//end of createTitle
+	};
+
+	function createTopFigures(data) {
+
+		let headerText = topFiguresHeaderDiv.selectAll("." + classPrefix + "headerText")
+			.data([true]);
+
+		headerText = headerText.enter()
+			.append("span")
+			.attr("class", classPrefix + "headerText")
+			.merge(headerText)
+			.html("Since " + yearsArray[0] + "," + (chartState.selectedDonors === donors[0] ? " the" : ""));
+
+		let donorsNumber = topFiguresDonorsNumberDiv.selectAll("." + classPrefix + "donorsNumber")
+			.data([true]);
+
+		donorsNumber = donorsNumber.enter()
+			.append("span")
+			.attr("class", classPrefix + "donorsNumber contributionColorHTMLcolor")
+			.merge(donorsNumber)
+			.html(chartState.selectedDonors === donors[0] ? "Top 20" : data.byDonor.length);
+
+		let donorsText = topFiguresDonorsTextDiv.selectAll("." + classPrefix + "donorsText")
+			.data([true]);
+
+		donorsText = donorsText.enter()
+			.append("span")
+			.attr("class", classPrefix + "donorsText")
+			.merge(donorsText)
+			.html((data.byDonor.length > 1 ? "Donors" : "Donor") + "<br>Contributed");
+
+		const previousValue = d3.select("." + classPrefix + "contributionsNumber").size() !== 0 ? d3.select("." + classPrefix + "contributionsNumber").datum() : 0;
+
+		let contributionsNumber = topFiguresContributionsNumberDiv.selectAll("." + classPrefix + "contributionsNumber")
+			.data([d3.sum(chartState.selectedDonors === donors[0] ? data.topDonors : data.allDonors, d => d.amount)]);
+
+		contributionsNumber = contributionsNumber.enter()
+			.append("span")
+			.attr("class", classPrefix + "contributionsNumber contributionColorHTMLcolor")
+			.merge(contributionsNumber);
+
+		contributionsNumber.transition()
+			.duration(duration)
+			.tween("text", function(d) {
+				const node = this;
+				const i = d3.interpolate(previousValue, d);
+				return function(t) {
+					const siString = formatSIFloat(i(t))
+					node.textContent = "$" + siString.substring(0, siString.length - 1);
+				};
+			});
+
+		let contributionsText = topFiguresContributionsTextDiv.selectAll("." + classPrefix + "contributionsText")
+			.data([d3.sum(chartState.selectedDonors === donors[0] ? data.topDonors : data.allDonors, d => d.amount)]);
+
+		contributionsText = contributionsText.enter()
+			.append("span")
+			.attr("class", classPrefix + "contributionsText")
+			.merge(contributionsText)
+			.html(function(d) {
+				const valueSI = formatSIFloat(d);
+				const unit = valueSI[valueSI.length - 1];
+				return (unit === "k" ? "Thousand" : unit === "M" ? "Million" : unit === "G" ? "Billion" : "") +
+					" dollars<br>to CERF";
+			})
+
+		//end of createTopFigures
+	};
+
+	function createTopChart(data) {
+
+		let topChartHeader = topChartHeaderDiv.selectAll("." + classPrefix + "topChartHeader")
+			.data([true]);
+
+		topChartHeader = topChartHeader.enter()
+			.append("span")
+			.attr("class", classPrefix + "topChartHeader")
+			.merge(topChartHeader)
+			.html((chartState.selectedDonors === donors[0] ? "Top 20 " : "All ") + `donors contributions to CERF (${yearsArray[0]}-${yearsArray[yearsArray.length - 1]}), in US$`);
+
+		//end of createTopChart
+	};
+
+	function createTopRadioButtons(data) {
+
+		const donorLabels = topRadioButtonsDonorsDiv.selectAll(null)
+			.data(donors)
+			.enter()
+			.append("label")
+			.attr("class", classPrefix + "donorLabels");
+
+		const donorInputOuterSpan = donorLabels.append("span")
+			.attr("class", classPrefix + "radioInput");
+
+		const donorInput = donorInputOuterSpan.append("input")
+			.attr("type", "radio")
+			.attr("name", classPrefix + "donorInput")
+			.attr("value", d => d)
+			.property("checked", d => chartState.selectedDonors === d);
+
+		const donorInputInnerSpan = donorInputOuterSpan.append("span")
+			.attr("class", classPrefix + "radioControl");
+
+		const donorsText = donorLabels.append("span")
+			.attr("class", classPrefix + "radioLabel")
+			.html(d => d === donors[0] ? "Top 20 Donors" : "All donors");
+
+		const orderLabels = topRadioButtonsOrderDiv.selectAll(null)
+			.data(orders)
+			.enter()
+			.append("label")
+			.attr("class", classPrefix + "orderLabels");
+
+		const orderInputOuterSpan = orderLabels.append("span")
+			.attr("class", classPrefix + "radioInput");
+
+		const orderInput = orderInputOuterSpan.append("input")
+			.attr("type", "radio")
+			.attr("name", classPrefix + "orderInput")
+			.attr("value", d => d)
+			.property("checked", d => chartState.selectedOrder === d);
+
+		const orderInputInnerSpan = orderInputOuterSpan.append("span")
+			.attr("class", classPrefix + "radioControl");
+
+		const ordersText = orderLabels.append("span")
+			.attr("class", classPrefix + "radioLabel")
+			.html(d => d === orders[0] ? "By contributions" : "By alphabetical order");
+
+		donorInput.on("change", (d, i, n) => {
+			chartState.selectedDonors = n[i].value;
+			createTopFigures(data);
+			createTopChart(data);
+		});
+
+		orderInput.on("change", (d, i, n) => {
+			chartState.selectedOrder = n[i].value;
+			//
+		});
+
+		//end of createTopRadioButtons
 	};
 
 	function processData(rawData) {
 
-		const aggregatedDonors = rawData.reduce((acc, curr) => {
+		const data = {
+			byDonor: [],
+			topDonors: [],
+			allDonors: []
+		};
 
-			if (chartState.selectedYear[0] === allYearsOption || chartState.selectedYear.indexOf(+curr.FiscalYear) > -1) {
+		const yearsSet = new Set();
 
-				if (!curr.GMSDonorISO2Code) console.warn("Donor " + curr.GMSDonorName + " has no ISO code");
+		rawData.forEach(row => {
+			if (row.FiscalYear <= currentYear) {
 
-				const foundDonor = acc.find(e => e.isoCode === (curr.GMSDonorISO2Code ? curr.GMSDonorISO2Code.toLowerCase() : curr.GMSDonorISO2Code));
+				yearsSet.add(+row.FiscalYear);
+
+				const foundDonor = data.byDonor.find(e => e.isoCode === (row.GMSDonorISO2Code ? row.GMSDonorISO2Code.toLowerCase() : row.GMSDonorISO2Code));
 
 				if (foundDonor) {
-
-					foundDonor.paid += +curr.PaidAmt;
-					foundDonor.pledge += +curr.PledgeAmt;
-					foundDonor.total += (+curr.PaidAmt) + (+curr.PledgeAmt);
-
+					foundDonor.total += row.PaidAmt + row.PledgeAmt;;
+					const foundYear = foundDonor.contributions.find(e => e.year === row.FiscalYear);
+					if (foundYear) {
+						foundYear.amount += row.PaidAmt + row.PledgeAmt;
+					} else {
+						foundDonor.contributions.push({
+							year: row.FiscalYear,
+							amount: row.PaidAmt + row.PledgeAmt
+						});
+					};
 				} else {
+					const donorObject = {
+						donor: row.GMSDonorName,
+						donorType: row.PooledFundName,
+						isoCode: (row.GMSDonorISO2Code ? row.GMSDonorISO2Code.toLowerCase() : row.GMSDonorISO2Code),
+						contributions: [{
+							year: row.FiscalYear,
+							amount: row.PaidAmt + row.PledgeAmt
+						}],
+						total: row.PaidAmt + row.PledgeAmt
+					};
+					data.byDonor.push(donorObject);
+				};
 
-					acc.push({
-						donor: curr.GMSDonorName,
-						donorType: curr.PooledFundName,
-						isoCode: (curr.GMSDonorISO2Code ? curr.GMSDonorISO2Code.toLowerCase() : curr.GMSDonorISO2Code),
-						paid: +curr.PaidAmt,
-						pledge: +curr.PledgeAmt,
-						total: (+curr.PaidAmt) + (+curr.PledgeAmt)
+				const foundAllDonorsYears = data.allDonors.find(e => e.year === row.FiscalYear);
+
+				if (foundAllDonorsYears) {
+					foundAllDonorsYears.amount += row.PaidAmt + row.PledgeAmt;
+				} else {
+					data.allDonors.push({
+						year: row.FiscalYear,
+						amount: row.PaidAmt + row.PledgeAmt
 					});
-
 				};
 
 			};
+		});
 
+		data.byDonor.sort((a, b) => b.total - a.total);
+
+		yearsArray.push(...yearsSet);
+		yearsArray.sort((a, b) => a - b);
+
+		yearsArray.forEach(year => data.topDonors.push({ year: year, amount: 0 }));
+
+		data.byDonor.reduce((acc, curr, index) => {
+			if (index < topDonorsNumber) {
+				curr.contributions.forEach(contrib => acc.find(e => e.year === contrib.year).amount += contrib.amount);
+			};
 			return acc;
+		}, data.topDonors);
 
-		}, []);
+		return data;
 
-		aggregatedDonors.sort((a, b) => b[chartState.selectedContribution] - a[chartState.selectedContribution] ||
-			(a.donor.toLowerCase() < b.donor.toLowerCase() ? -1 :
-				a.donor.toLowerCase() > b.donor.toLowerCase() ? 1 : 0));
-
-		return aggregatedDonors;
-
-		//end of processData
 	};
 
 	function createCsv(rawData) {
@@ -513,32 +879,6 @@
 		//end of downloadSnapshotPdf
 	};
 
-	function validateYear(yearString) {
-		if (yearString.toLowerCase() === allYearsOption) {
-			chartState.selectedYear.push(allYearsOption);
-			return;
-		};
-		const allYears = yearString.split(",").map(function(d) {
-			return +(d.trim());
-		}).sort(function(a, b) {
-			return a - b;
-		});
-		allYears.forEach(function(d) {
-			if (d && yearsArray.indexOf(d) > -1) chartState.selectedYear.push(d);
-		});
-		if (!chartState.selectedYear.length) chartState.selectedYear.push(new Date().getFullYear());
-	};
-
-	function validateCustomEventYear(yearNumber) {
-		if (yearsArray.indexOf(yearNumber) > -1) {
-			return yearNumber;
-		};
-		while (yearsArray.indexOf(yearNumber) === -1) {
-			yearNumber = yearNumber >= currentYear ? yearNumber - 1 : yearNumber + 1;
-		};
-		return yearNumber;
-	};
-
 	function capitalize(str) {
 		return str[0].toUpperCase() + str.substring(1)
 	};
@@ -594,6 +934,31 @@
 			}
 		});
 		return returnValue;
+	};
+
+	function fetchFile(fileName, url, warningString, method) {
+		if (localStorage.getItem(fileName) &&
+			JSON.parse(localStorage.getItem(fileName)).timestamp > (currentDate.getTime() - localStorageTime)) {
+			const fetchedData = method === "csv" ? d3.csvParse(JSON.parse(localStorage.getItem(fileName)).data, d3.autoType) :
+				JSON.parse(localStorage.getItem(fileName)).data;
+			console.info("CERF BI chart info: " + warningString + " from local storage");
+			return Promise.resolve(fetchedData);
+		} else {
+			const fetchMethod = method === "csv" ? d3.csv : d3.json;
+			const rowFunction = method === "csv" ? d3.autoType : null;
+			return fetchMethod(url, rowFunction).then(fetchedData => {
+				try {
+					localStorage.setItem(fileName, JSON.stringify({
+						data: method === "csv" ? d3.csvFormat(fetchedData) : fetchedData,
+						timestamp: currentDate.getTime()
+					}));
+				} catch (error) {
+					console.info("CERF BI chart, " + error);
+				};
+				console.info("CERF BI chart info: " + warningString + " from API");
+				return fetchedData;
+			});
+		};
 	};
 
 	function createProgressWheel(thissvg, thiswidth, thisheight, thistext) {
