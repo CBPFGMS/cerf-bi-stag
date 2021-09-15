@@ -8,6 +8,13 @@
 		topSvgWidth = 380,
 		topSvgHeight = topSvgWidth / svgRatio,
 		topSvgPadding = [0, 0, 0, 0],
+		svgPadding = [10, 30, 14, 26],
+		yScaleRange = [svgHeight - svgPadding[2], svgPadding[0]],
+		donorNameDivHeight = 24,
+		flagSize = 22,
+		lastYearCircleRadius = 3,
+		barLabelPadding = 12,
+		labelMinPadding = 5,
 		windowHeight = window.innerHeight,
 		headerDivHeightPercentage = 0.14,
 		currentDate = new Date(),
@@ -18,6 +25,8 @@
 		formatPercent = d3.format(".0%"),
 		formatNumberSI = d3.format(".3s"),
 		localVariable = d3.local(),
+		localyScale = d3.local(),
+		localLine = d3.local(),
 		cerfColor = "#FBD45C",
 		unBlue = "#1F69B3",
 		chartTitleDefault = "CERF Contributions Chart",
@@ -30,7 +39,7 @@
 		bookmarkSite = "https://cbpfgms.github.io/cerf-bi-stag/bookmark.html?",
 		helpPortalUrl = "https://gms.unocha.org/content/business-intelligence#CBPF_Contributions",
 		dataUrl = "https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERF_ContributionTotal.csv",
-		flagsUrl = "./assets/img/flags.json",
+		flagsUrl = "./assets/img/flags24.json",
 		blankFlag = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
 		duration = 1000,
 		shortDuration = 500,
@@ -40,6 +49,7 @@
 		donors = ["top", "all"],
 		topDonorsNumber = 20,
 		highlightSelection = {},
+		topDonorsIsoCodes = [],
 		chartState = {
 			selectedDonors: null,
 			selectedOrder: null
@@ -192,8 +202,21 @@
 			.style("left", thisMouse[0] - 4 + "px");
 	});
 
+	const xScale = d3.scaleBand()
+		.range([svgPadding[3], svgWidth - svgPadding[1]])
+		.paddingInner(0.4)
+		.paddingOuter(0);
+
+	const xAxis = d3.axisBottom(xScale)
+		.tickSizeOuter(0)
+		.tickSizeInner(3)
+		.tickPadding(2);
+
+	const allYearsTooltipArray = d3.range(yearsArray[0], currentYear + 1, 1);
+	allYearsTooltipArray.splice(-1, 0, null);
+
 	Promise.all([fetchFile("contributionsdata", dataUrl, "data", "csv"),
-			fetchFile("contributionsflags", flagsUrl, "flags images", "json")
+			fetchFile(classPrefix + "flags", flagsUrl, "flags images", "json")
 		])
 		.then(allData => csvCallback(allData));
 
@@ -221,6 +244,10 @@
 
 		const data = processData(rawData);
 
+		xScale.domain(d3.range(yearsArray[0], currentYear, 1));
+
+		xAxis.tickValues(d3.extent(xScale.domain()));
+
 		createTitle(rawData);
 
 		createTopFigures(data);
@@ -228,6 +255,8 @@
 		createTopChart(data);
 
 		createTopRadioButtons(data);
+
+		createChartDivs(data.byDonor, flagsData);
 
 		//end of draw
 	};
@@ -529,6 +558,127 @@
 		//end of createTopRadioButtons
 	};
 
+	function createChartDivs(dataByDonor, flagsData) {
+
+		dataByDonor.sort((a, b) => chartState.selectedOrder === orders[0] ? b.total - a.total : a.donor.localeCompare(b.donor));
+
+		const bandwidth = xScale.bandwidth();
+
+		const syncedTransition = d3.transition()
+			.duration(duration);
+
+		const donorDiv = chartsDiv.selectAll(null)
+			.data(dataByDonor, d => d.donorId)
+			.enter()
+			.append("div")
+			.attr("class", classPrefix + "donorDiv")
+			.style("width", svgWidth + "px")
+			.style("min-height", svgHeight + donorNameDivHeight + "px");
+
+		const donorSvg = donorDiv.append("svg")
+			.attr("width", svgWidth)
+			.attr("height", svgHeight)
+			.style("overflow", "visible")
+
+		const xAxisGroup = donorSvg.append("g")
+			.attr("class", classPrefix + "xAxisGroup")
+			.attr("transform", "translate(0," + (svgHeight - svgPadding[2]) + ")")
+			.call(xAxis);
+
+		const donorNameDiv = donorDiv.append("div")
+			.attr("class", classPrefix + "donorNameDiv")
+			.style("min-height", donorNameDivHeight + "px");
+
+		const donorFlag = donorNameDiv.append("img")
+			.attr("width", flagSize)
+			.attr("height", flagSize)
+			.attr("src", d => flagsData[d.isoCode.toLowerCase()]);
+
+		const donorName = donorNameDiv.append("span")
+			.html(d => d.donor);
+
+		donorSvg.each((d, i, n) => {
+			const yScale = localyScale.set(n[i], d3.scaleLinear()
+				.range(yScaleRange)
+				.domain([0, d3.max(d.contributions, e => d3.max(d.contributions, e => e.amount))]));
+
+			localLine.set(n[i], d3.line()
+				.x(d => xScale(d.year) + bandwidth / 2)
+				.y(d => yScale(d.amount))
+				.curve(d3.curveMonotoneX));
+		});
+
+		const bars = donorSvg.selectAll(null)
+			.data(d => d.contributions.filter(e => e.year < currentYear))
+			.enter()
+			.append("rect")
+			.attr("class", classPrefix + "bars")
+			.attr("width", bandwidth)
+			.attr("height", 0)
+			.attr("y", svgHeight - svgPadding[2])
+			.attr("x", d => xScale(d.year))
+			.transition(syncedTransition)
+			.attr("x", d => xScale(d.year))
+			.attr("width", bandwidth)
+			.attr("y", (d, i, n) => localyScale.get(n[i])(d.amount))
+			.attr("height", (d, i, n) => localyScale.get(n[i])(0) - localyScale.get(n[i])(d.amount));
+
+		const barLine = donorSvg.selectAll(null)
+			.data(d => fillWithZeros(d.contributions.filter(e => e.year < currentYear && e.year >= xScale.domain()[0])))
+			.enter()
+			.append("path")
+			.attr("class", classPrefix + "barLine")
+			.style("stroke", "#888")
+			.style("stroke-width", "1.5px")
+			.style("fill", "none")
+			.style("opacity", 0)
+			.attr("d", (d, i, n) => localLine.get(n[i])(d));
+
+		const lastYearCircle = donorSvg.selectAll(null)
+			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || 0])
+			.enter()
+			.append("circle")
+			.attr("class", classPrefix + "lastYearCircle")
+			.style("opacity", 0)
+			.attr("cx", xScale(currentYear - 1) + bandwidth / 2)
+			.attr("cy", (d, i, n) => localyScale.get(n[i])(d.amount))
+			.attr("r", lastYearCircleRadius)
+			.style("fill", "#888");
+
+		const lastYearLine = donorSvg.selectAll(null)
+			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || 0])
+			.enter()
+			.append("polyline")
+			.attr("class", classPrefix + "lastYearLine")
+			.style("opacity", 0)
+			.attr("points", (d, i, n) => {
+				const thisLocalScale = localyScale.get(n[i]);
+				return `${xScale(currentYear - 1) + lastYearCircleRadius + bandwidth/2},${thisLocalScale(d.amount)} 
+				${xScale(currentYear - 1) + lastYearCircleRadius + bandwidth/2 + (barLabelPadding - lastYearCircleRadius - bandwidth/2)/2},${thisLocalScale(d.amount)} 
+				${xScale(currentYear - 1) + lastYearCircleRadius + bandwidth/2 + (barLabelPadding - lastYearCircleRadius - bandwidth/2)/2},${Math.min(svgHeight - svgPadding[2] - labelMinPadding, thisLocalScale(d.amount))} 
+				${xScale(currentYear - 1) + barLabelPadding},${Math.min(svgHeight - svgPadding[2] - labelMinPadding, thisLocalScale(d.amount))}`
+			})
+			.style("stroke", "#bbb")
+			.style("stroke-width", "1px")
+			.style("fill", "none");
+
+		const barLabel = donorSvg.selectAll(null)
+			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || 0])
+			.enter()
+			.append("text")
+			.attr("class", classPrefix + "barLabel")
+			.style("opacity", 0)
+			.attr("x", xScale(currentYear - 1) + barLabelPadding)
+			.attr("y", (d, i, n) => Math.min(svgHeight - svgPadding[2] - labelMinPadding, localyScale.get(n[i])(d.amount)))
+			.text(d => d3.formatPrefix(".0", d.amount)(d.amount).replace("G", "B"));
+
+		// donorDiv.on("mouseover", donorDivMouseOver)
+		// 	.on("mouseout", donorDivMouseOut)
+		// 	.on("click", (_, d) => donorDivClick(d, memberType === "member"));
+
+		//end of createChartDivs
+	};
+
 	function processData(rawData) {
 
 		const data = {
@@ -594,6 +744,7 @@
 
 		data.byDonor.reduce((acc, curr, index) => {
 			if (index < topDonorsNumber) {
+				topDonorsIsoCodes.push(curr.isoCode);
 				curr.contributions.forEach(contrib => acc.find(e => e.year === contrib.year).amount += contrib.amount);
 			};
 			return acc;
@@ -934,6 +1085,20 @@
 			}
 		});
 		return returnValue;
+	};
+
+	function fillWithZeros(contributionsArray) {
+		const copiedArray = JSON.parse(JSON.stringify(contributionsArray));
+		xScale.domain().forEach(year => {
+			if (!copiedArray.find(e => e.year === year)) {
+				copiedArray.push({
+					year: year,
+					amount: 0
+				})
+			};
+		});
+		copiedArray.sort((a, b) => a.year - b.year);
+		return [copiedArray];
 	};
 
 	function fetchFile(fileName, url, warningString, method) {

@@ -213,7 +213,7 @@
 	};
 
 	Promise.all([fetchFile("contributionsdata", dataUrl, "data", "csv"),
-			fetchFile("contributionsflags", flagsUrl, "flags images", "json")
+			fetchFile(classPrefix + "flags", flagsUrl, "flags images", "json")
 		])
 		.then(allData => csvCallback(allData));
 
