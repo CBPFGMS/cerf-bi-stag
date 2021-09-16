@@ -1876,6 +1876,7 @@ p#contributionschartd3chartTitle {
 .contributionschartheaderDiv {
 	display: flex;
 	line-height: normal;
+	margin-bottom: 2rem;
 }
 
 .contributionscharttopFiguresDiv {
@@ -2039,11 +2040,20 @@ p#contributionschartd3chartTitle {
   letter-spacing: -0.25px;
 }
 
-.contributionschartxAxisGroup path, .contributionschartxAxisGroup line {
+.contributionschartxAxisGroupTopChart text {
+  font-family: "Roboto", sans-serif;
+  font-size: 11px;
+  fill: #aaa;
+  font-weight: 300;
+  pointer-events: none;
+  letter-spacing: -0.25px;
+}
+
+.contributionschartxAxisGroup path, .contributionschartxAxisGroupTopChart path {
   stroke: #ccc;
 }
 
-.contributionschartxAxisGroup line {
+.contributionschartxAxisGroup line, .contributionschartxAxisGroupTopChart line {
   stroke: #888;
 }
 
@@ -2055,3 +2065,32 @@ p#contributionschartd3chartTitle {
   dominant-baseline: middle;
   letter-spacing: -0.25px;
 }
+
+.contributionschartbarLabelTop {
+	font-size: 12px;
+	font-family: "Roboto", sans-serif;
+  fill: #444;
+  pointer-events: none;
+  dominant-baseline: middle;
+}
+
+.contributionschartallLabels {
+  font-family: "Roboto", sans-serif;
+  font-size: 10px;
+  fill: #444;
+  pointer-events: none;
+  dominant-baseline: ideographic;
+  text-anchor: middle;
+  letter-spacing: -0.25px;
+}
+
+.contributionschartallLabelsTop {
+  font-family: "Roboto", sans-serif;
+  font-size: 11px;
+  fill: #444;
+  pointer-events: none;
+  dominant-baseline: ideographic;
+  text-anchor: middle;
+}
+
+

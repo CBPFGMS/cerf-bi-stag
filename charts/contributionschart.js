@@ -4,16 +4,18 @@
 
 	const svgWidth = 140,
 		svgHeight = 68,
-		svgRatio = svgWidth / svgHeight,
-		topSvgWidth = 380,
+		svgRatio = 2.6,
+		topSvgWidth = 420,
 		topSvgHeight = topSvgWidth / svgRatio,
-		topSvgPadding = [0, 0, 0, 0],
+		topSvgPadding = [14, 50, 18, 26],
 		svgPadding = [10, 30, 14, 26],
 		yScaleRange = [svgHeight - svgPadding[2], svgPadding[0]],
 		donorNameDivHeight = 24,
 		flagSize = 22,
 		lastYearCircleRadius = 3,
+		lastYearCircleTopRadius = lastYearCircleRadius * 1.5,
 		barLabelPadding = 12,
+		barLabelTopPadding = 22,
 		labelMinPadding = 5,
 		windowHeight = window.innerHeight,
 		headerDivHeightPercentage = 0.14,
@@ -44,6 +46,7 @@
 		duration = 1000,
 		shortDuration = 500,
 		titlePadding = 24,
+		zeroObject = { amount: 0 },
 		classPrefix = "contributionschart",
 		orders = ["contributions", "alphabetical"],
 		donors = ["top", "all"],
@@ -135,8 +138,7 @@
 	const topChartSvg = topChartSvgDiv.append("svg")
 		.attr("viewBox", "0 0 " + topSvgWidth + " " + ~~topSvgHeight)
 		.attr("preserveAspectRatio", "xMidYMid meet")
-		.style("height", "100%")
-		.style("background-color", "wheat");
+		.style("height", "100%");
 
 	const topRadioButtonsDiv = headerDiv.append("div")
 		.attr("class", classPrefix + "topRadioButtonsDiv");
@@ -207,10 +209,38 @@
 		.paddingInner(0.4)
 		.paddingOuter(0);
 
+	const xScaleTopChart = d3.scaleBand()
+		.range([topSvgPadding[3], topSvgWidth - topSvgPadding[1]])
+		.paddingInner(0.5)
+		.paddingOuter(0);
+
+	const yScaleTopChart = d3.scaleLinear()
+		.range([topSvgHeight - topSvgPadding[2], topSvgPadding[0]]);
+
+	const topLineGenerator = d3.line()
+		.x(d => xScaleTopChart(d.year) + xScaleTopChart.bandwidth() / 2)
+		.y(d => yScaleTopChart(d.amount))
+		.curve(d3.curveMonotoneX);
+
+	const topLineGeneratorBase = d3.line()
+		.x(d => xScaleTopChart(d.year) + xScaleTopChart.bandwidth() / 2)
+		.y(d => yScaleTopChart(0))
+		.curve(d3.curveMonotoneX);
+
 	const xAxis = d3.axisBottom(xScale)
 		.tickSizeOuter(0)
 		.tickSizeInner(3)
 		.tickPadding(2);
+
+	const xAxisTopChart = d3.axisBottom(xScaleTopChart)
+		.tickSizeOuter(0)
+		.tickSizeInner(3)
+		.tickPadding(2)
+		.tickFormat(d => !(d % 2) ? d : null);
+
+	const xAxisGroupTopChart = topChartSvg.append("g")
+		.attr("class", classPrefix + "xAxisGroupTopChart")
+		.attr("transform", "translate(0," + (topSvgHeight - topSvgPadding[2]) + ")");
 
 	const allYearsTooltipArray = d3.range(yearsArray[0], currentYear + 1, 1);
 	allYearsTooltipArray.splice(-1, 0, null);
@@ -245,6 +275,8 @@
 		const data = processData(rawData);
 
 		xScale.domain(d3.range(yearsArray[0], currentYear, 1));
+
+		xScaleTopChart.domain(d3.range(yearsArray[0], currentYear, 1));
 
 		xAxis.tickValues(d3.extent(xScale.domain()));
 
@@ -495,6 +527,136 @@
 			.merge(topChartHeader)
 			.html((chartState.selectedDonors === donors[0] ? "Top 20 " : "All ") + `donors contributions to CERF (${yearsArray[0]}-${yearsArray[yearsArray.length - 1]}), in US$`);
 
+		const topChartData = chartState.selectedDonors === donors[0] ? data.topDonors : data.allDonors;
+
+		const bandwidth = xScaleTopChart.bandwidth();
+
+		yScaleTopChart.domain([0, d3.max(topChartData, d => d.amount)]);
+
+		const syncedTransition = d3.transition()
+			.duration(duration);
+
+		xAxisGroupTopChart.transition(syncedTransition)
+			.call(xAxisTopChart);
+
+		let barsTop = topChartSvg.selectAll("." + classPrefix + "barsTop")
+			.data(topChartData.filter(e => e.year < currentYear), d => d.year);
+
+		barsTop = barsTop.enter()
+			.append("rect")
+			.attr("class", classPrefix + "barsTop")
+			.style("fill", cerfColor)
+			.attr("x", d => xScaleTopChart(d.year))
+			.attr("width", bandwidth)
+			.attr("y", yScaleTopChart(0))
+			.attr("height", 0)
+			.merge(barsTop);
+
+		barsTop.transition(syncedTransition)
+			.attr("y", d => yScaleTopChart(d.amount))
+			.attr("height", d => yScaleTopChart(0) - yScaleTopChart(d.amount));
+
+		let barLineTop = topChartSvg.selectAll("." + classPrefix + "barLineTop")
+			.data(fillWithZeros(topChartData.filter(e => e.year < currentYear)));
+
+		barLineTop = barLineTop.enter()
+			.append("path")
+			.attr("class", classPrefix + "barLineTop")
+			.style("stroke", "#888")
+			.style("stroke-width", "2px")
+			.style("fill", "none")
+			.attr("d", topLineGeneratorBase)
+			.merge(barLineTop);
+
+		barLineTop.transition(syncedTransition)
+			.attr("d", topLineGenerator);
+
+		let lastYearCircleTop = topChartSvg.selectAll("." + classPrefix + "lastYearCircleTop")
+			.data([topChartData.find(e => e.year === currentYear - 1) || zeroObject]);
+
+		lastYearCircleTop = lastYearCircleTop.enter()
+			.append("circle")
+			.attr("class", classPrefix + "lastYearCircleTop")
+			.attr("cx", xScaleTopChart(currentYear - 1) + bandwidth / 2)
+			.attr("cy", yScaleTopChart(0))
+			.attr("r", lastYearCircleTopRadius)
+			.style("fill", "#888")
+			.merge(lastYearCircleTop);
+
+		lastYearCircleTop.transition(syncedTransition)
+			.attr("cy", d => yScaleTopChart(d.amount));
+
+		let lastYearLineTop = topChartSvg.selectAll("." + classPrefix + "lastYearLineTop")
+			.data([topChartData.find(e => e.year === currentYear - 1) || zeroObject]);
+
+		lastYearLineTop = lastYearLineTop.enter()
+			.append("polyline")
+			.attr("class", classPrefix + "lastYearLineTop")
+			.attr("points", (d, i, n) => {
+				return `${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2},${yScaleTopChart(0)} 
+				${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2 + (barLabelTopPadding - lastYearCircleTopRadius - bandwidth/2)/2},${yScaleTopChart(0)} 
+				${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2 + (barLabelTopPadding - lastYearCircleTopRadius - bandwidth/2)/2},${yScaleTopChart(0)} 
+				${xScaleTopChart(currentYear - 1) + barLabelTopPadding},${yScaleTopChart(0)}`
+			})
+			.style("stroke", "#bbb")
+			.style("stroke-width", "1px")
+			.style("fill", "none")
+			.merge(lastYearLineTop);
+
+		lastYearLineTop.transition(syncedTransition)
+			.attr("points", (d, i, n) => {
+				return `${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2},${yScaleTopChart(d.amount)} 
+				${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2 + (barLabelTopPadding - lastYearCircleTopRadius - bandwidth/2)/2},${yScaleTopChart(d.amount)} 
+				${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2 + (barLabelTopPadding - lastYearCircleTopRadius - bandwidth/2)/2},${Math.min(topSvgHeight - topSvgPadding[2] - labelMinPadding, yScaleTopChart(d.amount))} 
+				${xScaleTopChart(currentYear - 1) + barLabelTopPadding},${Math.min(topSvgHeight - topSvgPadding[2] - labelMinPadding, yScaleTopChart(d.amount))}`
+			});
+
+		let barLabelTop = topChartSvg.selectAll("." + classPrefix + "barLabelTop")
+			.data([topChartData.find(e => e.year === currentYear - 1) || zeroObject]);
+
+		barLabelTop = barLabelTop.enter()
+			.append("text")
+			.attr("class", classPrefix + "barLabelTop")
+			.attr("x", xScaleTopChart(currentYear - 1) + barLabelTopPadding)
+			.attr("y", yScaleTopChart(0))
+			.text("0")
+			.merge(barLabelTop);
+
+		barLabelTop.transition(syncedTransition)
+			.attr("y", d => Math.min(topSvgHeight - topSvgPadding[2] - labelMinPadding, yScaleTopChart(d.amount)))
+			.textTween((d, i, n) => {
+				const interpolator = d3.interpolate(reverseFormat(n[i].textContent) || 0, d.amount);
+				return t => d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
+			});
+
+		let allLabelsTop = topChartSvg.selectAll("." + classPrefix + "allLabelsTop")
+			.data(topChartData.filter(e => e.year < currentYear));
+
+		allLabelsTop = allLabelsTop.enter()
+			.append("text")
+			.attr("class", classPrefix + "allLabelsTop")
+			.style("opacity", 0)
+			.attr("x", d => xScaleTopChart(d.year) + bandwidth / 2)
+			.merge(allLabelsTop)
+			.attr("y", d => yScaleTopChart(d.amount))
+			.text(d => d3.formatPrefix(".0", d.amount)(d.amount).replace("G", "B"));
+
+		const barsTopOver = topChartSvg.selectAll("." + classPrefix + "barsTopOver")
+			.data(yearsArray.filter(e => e < currentYear))
+			.enter()
+			.append("rect")
+			.attr("class", classPrefix + "barsTopOver")
+			.style("opacity", 0)
+			.style("pointer-events", "all")
+			.attr("x", d => xScaleTopChart(d) - (xScaleTopChart.step() - xScaleTopChart.bandwidth()) / 2)
+			.attr("width", xScaleTopChart.step())
+			.attr("y", yScaleTopChart.range()[1])
+			.attr("height", yScaleTopChart.range()[0] - yScaleTopChart.range()[1]);
+
+		// donorDiv.on("mouseover", donorDivMouseOver)
+		// 	.on("mouseout", donorDivMouseOut)
+		// 	.on("click", (_, d) => donorDivClick(d, memberType === "member"));
+
 		//end of createTopChart
 	};
 
@@ -548,11 +710,12 @@
 			chartState.selectedDonors = n[i].value;
 			createTopFigures(data);
 			createTopChart(data);
+			hideDonors();
 		});
 
 		orderInput.on("change", (d, i, n) => {
 			chartState.selectedOrder = n[i].value;
-			//
+			sortDonors(data.byDonor);
 		});
 
 		//end of createTopRadioButtons
@@ -571,6 +734,7 @@
 			.data(dataByDonor, d => d.donorId)
 			.enter()
 			.append("div")
+			.style("display", d => chartState.selectedDonors === donors[0] && !topDonorsIsoCodes.includes(d.isoCode) ? "none" : null)
 			.attr("class", classPrefix + "donorDiv")
 			.style("width", svgWidth + "px")
 			.style("min-height", svgHeight + donorNameDivHeight + "px");
@@ -578,7 +742,10 @@
 		const donorSvg = donorDiv.append("svg")
 			.attr("width", svgWidth)
 			.attr("height", svgHeight)
-			.style("overflow", "visible")
+			.style("overflow", "visible");
+
+		highlightSelection.donorDiv = donorDiv;
+		highlightSelection.donorSvg = donorSvg;
 
 		const xAxisGroup = donorSvg.append("g")
 			.attr("class", classPrefix + "xAxisGroup")
@@ -613,11 +780,7 @@
 			.enter()
 			.append("rect")
 			.attr("class", classPrefix + "bars")
-			.attr("width", bandwidth)
-			.attr("height", 0)
-			.attr("y", svgHeight - svgPadding[2])
-			.attr("x", d => xScale(d.year))
-			.transition(syncedTransition)
+			.style("fill", cerfColor)
 			.attr("x", d => xScale(d.year))
 			.attr("width", bandwidth)
 			.attr("y", (d, i, n) => localyScale.get(n[i])(d.amount))
@@ -631,26 +794,23 @@
 			.style("stroke", "#888")
 			.style("stroke-width", "1.5px")
 			.style("fill", "none")
-			.style("opacity", 0)
 			.attr("d", (d, i, n) => localLine.get(n[i])(d));
 
 		const lastYearCircle = donorSvg.selectAll(null)
-			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || 0])
+			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || zeroObject])
 			.enter()
 			.append("circle")
 			.attr("class", classPrefix + "lastYearCircle")
-			.style("opacity", 0)
 			.attr("cx", xScale(currentYear - 1) + bandwidth / 2)
 			.attr("cy", (d, i, n) => localyScale.get(n[i])(d.amount))
 			.attr("r", lastYearCircleRadius)
 			.style("fill", "#888");
 
 		const lastYearLine = donorSvg.selectAll(null)
-			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || 0])
+			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || zeroObject])
 			.enter()
 			.append("polyline")
 			.attr("class", classPrefix + "lastYearLine")
-			.style("opacity", 0)
 			.attr("points", (d, i, n) => {
 				const thisLocalScale = localyScale.get(n[i]);
 				return `${xScale(currentYear - 1) + lastYearCircleRadius + bandwidth/2},${thisLocalScale(d.amount)} 
@@ -663,13 +823,22 @@
 			.style("fill", "none");
 
 		const barLabel = donorSvg.selectAll(null)
-			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || 0])
+			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || zeroObject])
 			.enter()
 			.append("text")
 			.attr("class", classPrefix + "barLabel")
-			.style("opacity", 0)
 			.attr("x", xScale(currentYear - 1) + barLabelPadding)
 			.attr("y", (d, i, n) => Math.min(svgHeight - svgPadding[2] - labelMinPadding, localyScale.get(n[i])(d.amount)))
+			.text(d => d3.formatPrefix(".0", d.amount)(d.amount).replace("G", "B"));
+
+		const allLabels = donorSvg.selectAll(null)
+			.data(d => d.contributions.filter(e => e.year < currentYear))
+			.enter()
+			.append("text")
+			.attr("class", classPrefix + "allLabels")
+			.style("opacity", 0)
+			.attr("x", d => xScale(d.year) + bandwidth / 2)
+			.attr("y", (d, i, n) => localyScale.get(n[i])(d.amount))
 			.text(d => d3.formatPrefix(".0", d.amount)(d.amount).replace("G", "B"));
 
 		// donorDiv.on("mouseover", donorDivMouseOver)
@@ -677,6 +846,14 @@
 		// 	.on("click", (_, d) => donorDivClick(d, memberType === "member"));
 
 		//end of createChartDivs
+	};
+
+	function hideDonors() {
+		highlightSelection.donorDiv.style("display", d => chartState.selectedDonors === donors[0] && !topDonorsIsoCodes.includes(d.isoCode) ? "none" : null)
+	};
+
+	function sortDonors(dataByDonor) {
+		highlightSelection.donorDiv.sort((a, b) => chartState.selectedOrder === orders[0] ? b.total - a.total : a.donor.localeCompare(b.donor));
 	};
 
 	function processData(rawData) {
