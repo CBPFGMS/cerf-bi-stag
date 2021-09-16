@@ -12,6 +12,7 @@
 		yScaleRange = [svgHeight - svgPadding[2], svgPadding[0]],
 		donorNameDivHeight = 24,
 		flagSize = 22,
+		fadeOpacity = 0.2,
 		lastYearCircleRadius = 3,
 		lastYearCircleTopRadius = lastYearCircleRadius * 1.5,
 		barLabelPadding = 12,
@@ -653,9 +654,34 @@
 			.attr("y", yScaleTopChart.range()[1])
 			.attr("height", yScaleTopChart.range()[0] - yScaleTopChart.range()[1]);
 
-		// donorDiv.on("mouseover", donorDivMouseOver)
-		// 	.on("mouseout", donorDivMouseOut)
-		// 	.on("click", (_, d) => donorDivClick(d, memberType === "member"));
+		barsTopOver.on("mouseover", year => {
+				barLineTop.style("opacity", 0);
+				lastYearCircleTop.style("opacity", 0);
+				lastYearLineTop.style("opacity", 0);
+				barLabelTop.style("opacity", 0);
+				allLabelsTop.style("opacity", d => d.year === year ? 1 : 0);
+				barsTop.style("opacity", d => d.year === year ? 1 : fadeOpacity);
+				highlightSelection.donorSvg.select("." + classPrefix + "barLine").style("opacity", 0);
+				highlightSelection.donorSvg.select("." + classPrefix + "lastYearCircle").style("opacity", 0);
+				highlightSelection.donorSvg.select("." + classPrefix + "lastYearLine").style("opacity", 0);
+				highlightSelection.donorSvg.select("." + classPrefix + "barLabel").style("opacity", 0);
+				highlightSelection.donorSvg.selectAll("." + classPrefix + "allLabels").style("opacity", d => d.year === year ? 1 : 0);
+				highlightSelection.donorSvg.selectAll("." + classPrefix + "bars").style("opacity", d => d.year === year ? 1 : fadeOpacity);
+			})
+			.on("mouseout", () => {
+				barLineTop.style("opacity", 1);
+				lastYearCircleTop.style("opacity", 1);
+				lastYearLineTop.style("opacity", 1);
+				barLabelTop.style("opacity", 1);
+				allLabelsTop.style("opacity", 0);
+				barsTop.style("opacity", 1);
+				highlightSelection.donorSvg.select("." + classPrefix + "barLine").style("opacity", 1);
+				highlightSelection.donorSvg.select("." + classPrefix + "lastYearCircle").style("opacity", 1);
+				highlightSelection.donorSvg.select("." + classPrefix + "lastYearLine").style("opacity", 1);
+				highlightSelection.donorSvg.select("." + classPrefix + "barLabel").style("opacity", 1);
+				highlightSelection.donorSvg.selectAll("." + classPrefix + "allLabels").style("opacity", 0);
+				highlightSelection.donorSvg.selectAll("." + classPrefix + "bars").style("opacity", 1);
+			});
 
 		//end of createTopChart
 	};
