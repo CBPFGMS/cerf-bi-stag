@@ -7,16 +7,16 @@
 		svgRatio = 2.6,
 		topSvgWidth = 420,
 		topSvgHeight = topSvgWidth / svgRatio,
-		topSvgPadding = [14, 50, 18, 26],
-		svgPadding = [10, 30, 14, 26],
+		topSvgPadding = [14, 56, 18, 26],
+		svgPadding = [10, 36, 14, 26],
 		yScaleRange = [svgHeight - svgPadding[2], svgPadding[0]],
 		donorNameDivHeight = 24,
 		flagSize = 22,
 		fadeOpacity = 0.2,
 		lastYearCircleRadius = 3,
 		lastYearCircleTopRadius = lastYearCircleRadius * 1.5,
-		barLabelPadding = 12,
-		barLabelTopPadding = 22,
+		barLabelPadding = 16,
+		barLabelTopPadding = 42,
 		labelMinPadding = 5,
 		windowHeight = window.innerHeight,
 		headerDivHeightPercentage = 0.14,
@@ -62,6 +62,7 @@
 	let isSnapshotTooltipVisible = false,
 		currentHoveredElement,
 		timer,
+		alreadyHovered = false,
 		allTimeContributions = 0;
 
 	const queryStringValues = new URLSearchParams(location.search);
@@ -212,7 +213,7 @@
 
 	const xScaleTopChart = d3.scaleBand()
 		.range([topSvgPadding[3], topSvgWidth - topSvgPadding[1]])
-		.paddingInner(0.5)
+		.paddingInner(0.6)
 		.paddingOuter(0);
 
 	const yScaleTopChart = d3.scaleLinear()
@@ -275,9 +276,9 @@
 
 		const data = processData(rawData);
 
-		xScale.domain(d3.range(yearsArray[0], currentYear, 1));
+		xScale.domain(yearsArray);
 
-		xScaleTopChart.domain(d3.range(yearsArray[0], currentYear, 1));
+		xScaleTopChart.domain(yearsArray);
 
 		xAxis.tickValues(d3.extent(xScale.domain()));
 
@@ -519,6 +520,8 @@
 
 	function createTopChart(data) {
 
+		const topChartHeaderText = `donors contributions to CERF, ${yearsArray[0]} to ${yearsArray[yearsArray.length - 1]} (hatched), in US$`;
+
 		let topChartHeader = topChartHeaderDiv.selectAll("." + classPrefix + "topChartHeader")
 			.data([true]);
 
@@ -526,13 +529,29 @@
 			.append("span")
 			.attr("class", classPrefix + "topChartHeader")
 			.merge(topChartHeader)
-			.html((chartState.selectedDonors === donors[0] ? "Top 20 " : "All ") + `donors contributions to CERF (${yearsArray[0]}-${yearsArray[yearsArray.length - 1]}), in US$`);
+			.html((chartState.selectedDonors === donors[0] ? "Top 20 " : "All ") + topChartHeaderText + (alreadyHovered ? "" : "<br>(hover over the bars for highlighting a year)"));
 
 		const topChartData = chartState.selectedDonors === donors[0] ? data.topDonors : data.allDonors;
 
 		const bandwidth = xScaleTopChart.bandwidth();
 
 		yScaleTopChart.domain([0, d3.max(topChartData, d => d.amount)]);
+
+		const defs = topChartSvg.append("defs")
+
+		const pattern = defs.append("pattern")
+			.attr("id", classPrefix + "patterncerf")
+			.attr("width", 10)
+			.attr("height", 4)
+			.attr("patternUnits", "userSpaceOnUse")
+			.attr("patternTransform", "rotate(-45 0 0)")
+			.append("line")
+			.attr("x1", 0)
+			.attr("y1", 2)
+			.attr("x2", 10)
+			.attr("y2", 2)
+			.attr("stroke-width", 2)
+			.attr("stroke", cerfColor);
 
 		const syncedTransition = d3.transition()
 			.duration(duration);
@@ -541,12 +560,13 @@
 			.call(xAxisTopChart);
 
 		let barsTop = topChartSvg.selectAll("." + classPrefix + "barsTop")
-			.data(topChartData.filter(e => e.year < currentYear), d => d.year);
+			.data(topChartData, d => d.year);
 
 		barsTop = barsTop.enter()
 			.append("rect")
 			.attr("class", classPrefix + "barsTop")
-			.style("fill", cerfColor)
+			.style("fill", d => d.year === currentYear ? `url(#${classPrefix}patterncerf)` : cerfColor)
+			.style("stroke", d => d.year === currentYear ? "#ccc" : null)
 			.attr("x", d => xScaleTopChart(d.year))
 			.attr("width", bandwidth)
 			.attr("y", yScaleTopChart(0))
@@ -631,7 +651,7 @@
 			});
 
 		let allLabelsTop = topChartSvg.selectAll("." + classPrefix + "allLabelsTop")
-			.data(topChartData.filter(e => e.year < currentYear));
+			.data(topChartData);
 
 		allLabelsTop = allLabelsTop.enter()
 			.append("text")
@@ -643,7 +663,7 @@
 			.text(d => d3.formatPrefix(".0", d.amount)(d.amount).replace("G", "B"));
 
 		const barsTopOver = topChartSvg.selectAll("." + classPrefix + "barsTopOver")
-			.data(yearsArray.filter(e => e < currentYear))
+			.data(yearsArray)
 			.enter()
 			.append("rect")
 			.attr("class", classPrefix + "barsTopOver")
@@ -655,12 +675,20 @@
 			.attr("height", yScaleTopChart.range()[0] - yScaleTopChart.range()[1]);
 
 		barsTopOver.on("mouseover", year => {
+				if (!alreadyHovered) {
+					alreadyHovered = true;
+					topChartHeaderDiv.select("." + classPrefix + "topChartHeader").html((chartState.selectedDonors === donors[0] ? "Top 20 " : "All ") + topChartHeaderText + (alreadyHovered ? "" : "<br>(hover over the bars for highlighting a year)"));
+				};
+				xAxisTopChart.tickFormat(d => d === year ? d : null);
+				xAxisGroupTopChart.call(xAxisTopChart);
+				xAxis.tickValues([year]);
 				barLineTop.style("opacity", 0);
 				lastYearCircleTop.style("opacity", 0);
 				lastYearLineTop.style("opacity", 0);
 				barLabelTop.style("opacity", 0);
 				allLabelsTop.style("opacity", d => d.year === year ? 1 : 0);
 				barsTop.style("opacity", d => d.year === year ? 1 : fadeOpacity);
+				highlightSelection.donorSvg.select("." + classPrefix + "xAxisGroup").call(xAxis);
 				highlightSelection.donorSvg.select("." + classPrefix + "barLine").style("opacity", 0);
 				highlightSelection.donorSvg.select("." + classPrefix + "lastYearCircle").style("opacity", 0);
 				highlightSelection.donorSvg.select("." + classPrefix + "lastYearLine").style("opacity", 0);
@@ -669,12 +697,16 @@
 				highlightSelection.donorSvg.selectAll("." + classPrefix + "bars").style("opacity", d => d.year === year ? 1 : fadeOpacity);
 			})
 			.on("mouseout", () => {
+				xAxisTopChart.tickFormat(d => !(d % 2) ? d : null);
+				xAxisGroupTopChart.call(xAxisTopChart);
 				barLineTop.style("opacity", 1);
 				lastYearCircleTop.style("opacity", 1);
 				lastYearLineTop.style("opacity", 1);
 				barLabelTop.style("opacity", 1);
 				allLabelsTop.style("opacity", 0);
 				barsTop.style("opacity", 1);
+				xAxis.tickValues(d3.extent(xScale.domain()));
+				highlightSelection.donorSvg.select("." + classPrefix + "xAxisGroup").call(xAxis);
 				highlightSelection.donorSvg.select("." + classPrefix + "barLine").style("opacity", 1);
 				highlightSelection.donorSvg.select("." + classPrefix + "lastYearCircle").style("opacity", 1);
 				highlightSelection.donorSvg.select("." + classPrefix + "lastYearLine").style("opacity", 1);
@@ -802,11 +834,12 @@
 		});
 
 		const bars = donorSvg.selectAll(null)
-			.data(d => d.contributions.filter(e => e.year < currentYear))
+			.data(d => d.contributions)
 			.enter()
 			.append("rect")
 			.attr("class", classPrefix + "bars")
-			.style("fill", cerfColor)
+			.style("fill", d => d.year === currentYear ? `url(#${classPrefix}patterncerf)` : cerfColor)
+			.style("stroke", d => d.year === currentYear ? "#ccc" : null)
 			.attr("x", d => xScale(d.year))
 			.attr("width", bandwidth)
 			.attr("y", (d, i, n) => localyScale.get(n[i])(d.amount))
@@ -858,7 +891,7 @@
 			.text(d => d3.formatPrefix(".0", d.amount)(d.amount).replace("G", "B"));
 
 		const allLabels = donorSvg.selectAll(null)
-			.data(d => d.contributions.filter(e => e.year < currentYear))
+			.data(d => d.contributions)
 			.enter()
 			.append("text")
 			.attr("class", classPrefix + "allLabels")
@@ -1292,7 +1325,8 @@
 
 	function fillWithZeros(contributionsArray) {
 		const copiedArray = JSON.parse(JSON.stringify(contributionsArray));
-		xScale.domain().forEach(year => {
+		const years = xScale.domain().slice(0, -1);
+		years.forEach(year => {
 			if (!copiedArray.find(e => e.year === year)) {
 				copiedArray.push({
 					year: year,
