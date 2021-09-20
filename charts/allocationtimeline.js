@@ -90,7 +90,7 @@
 		allEmergencyGroupsOption = "Select all emergency groups",
 		chartTitleDefault = "Allocations Timeline",
 		vizNameQueryString = "alloctimeline",
-		allocationsDataUrl = "https://cbpfgms.github.io/pfbi-data/cerf/cerf_applications.csv",
+		allocationsDataUrl = "https://cbpfgms.github.io/pfbi-data/cerf/cerf_application_v2.csv",
 		masterEmergencyTypeUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstEmergencyType.json",
 		masterEmergencyGroupUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstEmergencyGroup.json",
 		masterFundsUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstFundv2.json",
