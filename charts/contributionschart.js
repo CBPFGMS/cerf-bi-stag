@@ -7,7 +7,7 @@
 		svgRatio = 2.6,
 		topSvgWidth = 420,
 		topSvgHeight = topSvgWidth / svgRatio,
-		topSvgPadding = [14, 56, 18, 26],
+		topSvgPadding = [22, 56, 18, 26],
 		svgPadding = [10, 36, 14, 26],
 		yScaleRange = [svgHeight - svgPadding[2], svgPadding[0]],
 		donorNameDivHeight = 24,
@@ -15,8 +15,8 @@
 		fadeOpacity = 0.2,
 		lastYearCircleRadius = 3,
 		lastYearCircleTopRadius = lastYearCircleRadius * 1.5,
-		barLabelPadding = 16,
-		barLabelTopPadding = 42,
+		barLabelPadding = 18,
+		barLabelTopPadding = 58,
 		labelMinPadding = 5,
 		windowHeight = window.innerHeight,
 		headerDivHeightPercentage = 0.14,
@@ -63,6 +63,7 @@
 		currentHoveredElement,
 		timer,
 		alreadyHovered = false,
+		yearsArrayWithNull,
 		allTimeContributions = 0;
 
 	const queryStringValues = new URLSearchParams(location.search);
@@ -237,8 +238,7 @@
 	const xAxisTopChart = d3.axisBottom(xScaleTopChart)
 		.tickSizeOuter(0)
 		.tickSizeInner(3)
-		.tickPadding(2)
-		.tickFormat(d => !(d % 2) ? d : null);
+		.tickPadding(2);
 
 	const xAxisGroupTopChart = topChartSvg.append("g")
 		.attr("class", classPrefix + "xAxisGroupTopChart")
@@ -276,11 +276,16 @@
 
 		const data = processData(rawData);
 
-		xScale.domain(yearsArray);
+		yearsArrayWithNull = yearsArray.slice();
+		yearsArrayWithNull.splice(-1, 0, null);
 
-		xScaleTopChart.domain(yearsArray);
+		xScale.domain(yearsArrayWithNull);
 
-		xAxis.tickValues(d3.extent(xScale.domain()));
+		xScaleTopChart.domain(yearsArrayWithNull);
+
+		xAxis.tickValues([yearsArray[0], currentYear - 1]);
+
+		xAxisTopChart.tickValues(yearsArrayWithNull.filter((e, i) => e && (!(i % 2) || e === currentYear)));
 
 		createTitle(rawData);
 
@@ -616,7 +621,6 @@
 			.attr("points", (d, i, n) => {
 				return `${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2},${yScaleTopChart(0)} 
 				${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2 + (barLabelTopPadding - lastYearCircleTopRadius - bandwidth/2)/2},${yScaleTopChart(0)} 
-				${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2 + (barLabelTopPadding - lastYearCircleTopRadius - bandwidth/2)/2},${yScaleTopChart(0)} 
 				${xScaleTopChart(currentYear - 1) + barLabelTopPadding},${yScaleTopChart(0)}`
 			})
 			.style("stroke", "#bbb")
@@ -627,7 +631,6 @@
 		lastYearLineTop.transition(syncedTransition)
 			.attr("points", (d, i, n) => {
 				return `${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2},${yScaleTopChart(d.amount)} 
-				${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2 + (barLabelTopPadding - lastYearCircleTopRadius - bandwidth/2)/2},${yScaleTopChart(d.amount)} 
 				${xScaleTopChart(currentYear - 1) + lastYearCircleTopRadius + bandwidth/2 + (barLabelTopPadding - lastYearCircleTopRadius - bandwidth/2)/2},${Math.min(topSvgHeight - topSvgPadding[2] - labelMinPadding, yScaleTopChart(d.amount))} 
 				${xScaleTopChart(currentYear - 1) + barLabelTopPadding},${Math.min(topSvgHeight - topSvgPadding[2] - labelMinPadding, yScaleTopChart(d.amount))}`
 			});
@@ -679,7 +682,7 @@
 					alreadyHovered = true;
 					topChartHeaderDiv.select("." + classPrefix + "topChartHeader").html((chartState.selectedDonors === donors[0] ? "Top 20 " : "All ") + topChartHeaderText + (alreadyHovered ? "" : "<br>(hover over the bars for highlighting a year)"));
 				};
-				xAxisTopChart.tickFormat(d => d === year ? d : null);
+				xAxis.tickValues([year]);
 				xAxisGroupTopChart.call(xAxisTopChart);
 				xAxis.tickValues([year]);
 				barLineTop.style("opacity", 0);
@@ -697,7 +700,7 @@
 				highlightSelection.donorSvg.selectAll("." + classPrefix + "bars").style("opacity", d => d.year === year ? 1 : fadeOpacity);
 			})
 			.on("mouseout", () => {
-				xAxisTopChart.tickFormat(d => !(d % 2) ? d : null);
+				xAxisTopChart.tickValues(yearsArrayWithNull.filter((e, i) => e && (!(i % 2) || e === currentYear)));
 				xAxisGroupTopChart.call(xAxisTopChart);
 				barLineTop.style("opacity", 1);
 				lastYearCircleTop.style("opacity", 1);
@@ -705,7 +708,7 @@
 				barLabelTop.style("opacity", 1);
 				allLabelsTop.style("opacity", 0);
 				barsTop.style("opacity", 1);
-				xAxis.tickValues(d3.extent(xScale.domain()));
+				xAxis.tickValues([yearsArray[0], currentYear - 1]);
 				highlightSelection.donorSvg.select("." + classPrefix + "xAxisGroup").call(xAxis);
 				highlightSelection.donorSvg.select("." + classPrefix + "barLine").style("opacity", 1);
 				highlightSelection.donorSvg.select("." + classPrefix + "lastYearCircle").style("opacity", 1);
@@ -855,6 +858,21 @@
 			.style("fill", "none")
 			.attr("d", (d, i, n) => localLine.get(n[i])(d));
 
+		const lastYearLine = donorSvg.selectAll(null)
+			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || zeroObject])
+			.enter()
+			.append("polyline")
+			.attr("class", classPrefix + "lastYearLine")
+			.attr("points", (d, i, n) => {
+				const thisLocalScale = localyScale.get(n[i]);
+				return `${xScale(currentYear - 1) + bandwidth/2},${thisLocalScale(d.amount)} 
+				${xScale(currentYear - 1) + bandwidth/2},${Math.min(svgHeight - svgPadding[2] - labelMinPadding, thisLocalScale(d.amount))} 
+				${xScale(currentYear - 1) + barLabelPadding},${Math.min(svgHeight - svgPadding[2] - labelMinPadding, thisLocalScale(d.amount))}`
+			})
+			.style("stroke", "#bbb")
+			.style("stroke-width", "1px")
+			.style("fill", "none");
+
 		const lastYearCircle = donorSvg.selectAll(null)
 			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || zeroObject])
 			.enter()
@@ -864,22 +882,6 @@
 			.attr("cy", (d, i, n) => localyScale.get(n[i])(d.amount))
 			.attr("r", lastYearCircleRadius)
 			.style("fill", "#888");
-
-		const lastYearLine = donorSvg.selectAll(null)
-			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || zeroObject])
-			.enter()
-			.append("polyline")
-			.attr("class", classPrefix + "lastYearLine")
-			.attr("points", (d, i, n) => {
-				const thisLocalScale = localyScale.get(n[i]);
-				return `${xScale(currentYear - 1) + lastYearCircleRadius + bandwidth/2},${thisLocalScale(d.amount)} 
-				${xScale(currentYear - 1) + lastYearCircleRadius + bandwidth/2 + (barLabelPadding - lastYearCircleRadius - bandwidth/2)/2},${thisLocalScale(d.amount)} 
-				${xScale(currentYear - 1) + lastYearCircleRadius + bandwidth/2 + (barLabelPadding - lastYearCircleRadius - bandwidth/2)/2},${Math.min(svgHeight - svgPadding[2] - labelMinPadding, thisLocalScale(d.amount))} 
-				${xScale(currentYear - 1) + barLabelPadding},${Math.min(svgHeight - svgPadding[2] - labelMinPadding, thisLocalScale(d.amount))}`
-			})
-			.style("stroke", "#bbb")
-			.style("stroke-width", "1px")
-			.style("fill", "none");
 
 		const barLabel = donorSvg.selectAll(null)
 			.data(d => [d.contributions.find(e => e.year === currentYear - 1) || zeroObject])
@@ -1325,7 +1327,7 @@
 
 	function fillWithZeros(contributionsArray) {
 		const copiedArray = JSON.parse(JSON.stringify(contributionsArray));
-		const years = xScale.domain().slice(0, -1);
+		const years = yearsArray.slice(0, -1);
 		years.forEach(year => {
 			if (!copiedArray.find(e => e.year === year)) {
 				copiedArray.push({

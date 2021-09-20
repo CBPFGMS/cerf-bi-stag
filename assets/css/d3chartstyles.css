@@ -2002,7 +2002,6 @@ p#contributionschartd3chartTitle {
   height: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(144px, 1fr));
-  overflow-y: scroll;
   padding-top: 4px;
 }
 
@@ -2043,7 +2042,7 @@ p#contributionschartd3chartTitle {
 
 .contributionschartxAxisGroupTopChart text {
   font-family: "Roboto", sans-serif;
-  font-size: 11px;
+  font-size: 12px;
   fill: #aaa;
   font-weight: 300;
   pointer-events: none;
@@ -2068,7 +2067,7 @@ p#contributionschartd3chartTitle {
 }
 
 .contributionschartbarLabelTop {
-	font-size: 12px;
+	font-size: 16px;
 	font-family: "Roboto", sans-serif;
   fill: #444;
   pointer-events: none;
@@ -2087,7 +2086,7 @@ p#contributionschartd3chartTitle {
 
 .contributionschartallLabelsTop {
   font-family: "Roboto", sans-serif;
-  font-size: 11px;
+  font-size: 14px;
   fill: #444;
   pointer-events: none;
   dominant-baseline: ideographic;
