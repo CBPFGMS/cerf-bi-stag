@@ -1800,6 +1800,8 @@ input:disabled + span.alloctimelinecheckboxText {
 /*Contributions chart (code: contributionschart)*/
 #d3chartcontainercontributionschart{
 	position: relative;
+	--color: #FBD45C;
+	--colorlight:  #FCE59D;
 }
 
 .contributionschartTopDiv {
@@ -1938,7 +1940,6 @@ p#contributionschartd3chartTitle {
 	flex: 0 30%;
 	display: flex;
 	flex-direction: column;
-	--color: #FBD45C;
 	justify-content: space-evenly;
 }
 
@@ -2090,6 +2091,147 @@ p#contributionschartd3chartTitle {
   fill: #444;
   pointer-events: none;
   dominant-baseline: ideographic;
+  text-anchor: middle;
+}
+
+.contributionschartdonorDivActive {
+  position: relative;
+  cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0px 5px 10px 0px #aaa, 0px 2px 16px 16px rgba(0,0,0,0);  
+}
+
+.contributionschartdonorDivActive .contributionschartdonorNameDiv{
+	background-color: var(--colorlight);   
+	/*background-color: #3189c9; */ 
+  border-radius: 0 0 4px 4px;
+}
+
+/*.contributionschartdonorDivActive .contributionschartdonorNameDiv span{
+	color:#fff !important;
+}*/
+
+.contributionschartdonorExpandDiv {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  color: #aaa;
+  font-size: 20px;
+  text-align: center;
+  padding: 0px;
+  pointer-events: none;
+}
+
+#contributionscharttooltipDiv {    
+  position: absolute;
+  text-align: left;
+  color: darkslategray;
+  font-family: "Roboto", sans-serif;
+  white-space: normal;
+  padding: 0;
+  line-height: 120%;
+  font-size: 14px;
+  background: #f2f4f4; 
+  border: none; 
+  border-radius: 4px;
+  pointer-events: none;
+  cursor: none;
+  z-index: 1500;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.contributionscharttooltipTopDiv {
+  width: 100%;
+  display: flex;
+  margin-bottom: 6px;
+  align-items: center;
+}
+
+.contributionscharttooltipTopDivMain {
+  flex: 0 80%;
+}
+
+.contributionscharttooltipTopDivClose {
+  flex: 0 20%;
+  font-size: 25px;
+  text-align: right;
+}
+
+.contributionscharttooltipTopDivClose i {
+	color: #999;
+    font-weight: normal !important;
+}
+
+.contributionscharttooltipNameDiv {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.contributionscharttooltipNameDiv span {
+  padding-left: 0.5rem;
+  font-family: "Roboto", sans-serif;
+  line-height: 1;
+  font-size: 1rem;
+	color: #222;
+}
+
+#contributionscharttooltipDiv > div:nth-child(1){
+	width: 645px !important;
+    height: 335px !important;
+}
+
+#contributionscharttooltipDiv > div:nth-child(1) > div:nth-child(2) {
+	padding: 8px !important;
+}
+
+#contributionscharttooltipDiv .contributionscharttooltipTopDiv {
+	height: 35px !important;
+    background-color: var(--colorlight);
+    padding: 8px;
+    border-radius: 4px 4px 0 0;
+	margin-bottom: 0 !important;
+}
+
+#contributionscharttooltipDiv .contributionscharttooltipTopDiv .contributionscharttooltipTopDivMain .contributionscharttooltipNameDiv img{
+	width:25px !important;
+	height: 25px !important;
+}
+
+.contributionschartxAxisGroupTooltip line{
+  stroke: darkslategray;
+}
+
+.contributionschartxAxisGroupTooltip path, .contributionschartyAxisGroupTooltip path {
+  stroke: none;
+}
+
+.contributionschartxAxisGroupTooltip text {
+  font-family: "Roboto", sans-serif;
+  font-size: 10px;
+  fill: #666;
+}
+
+.contributionschartyAxisGroupTooltip text {
+  font-family: "Roboto", sans-serif;
+  font-size: 10px;
+  fill: #888;
+  pointer-events: none;
+}
+
+.contributionschartyAxisGroupTooltip line {
+  stroke: #ddd;
+  stroke-dasharray: 2, 2;
+}
+
+.contributionscharttooltipBarLabel {
+  font-family: "Roboto", sans-serif;
+  font-size: 11px;
+  pointer-events: none;
+  dominant-baseline: middle;
   text-anchor: middle;
 }
 

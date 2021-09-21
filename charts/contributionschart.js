@@ -12,6 +12,7 @@
 		yScaleRange = [svgHeight - svgPadding[2], svgPadding[0]],
 		donorNameDivHeight = 24,
 		flagSize = 22,
+		flagSizeTooltip = 30,
 		fadeOpacity = 0.2,
 		lastYearCircleRadius = 3,
 		lastYearCircleTopRadius = lastYearCircleRadius * 1.5,
@@ -20,6 +21,15 @@
 		labelMinPadding = 5,
 		windowHeight = window.innerHeight,
 		headerDivHeightPercentage = 0.14,
+		tooltipSvgPadding = [30, 12, 24, 36],
+		tooltipBarsColor = "#CBCBCB",
+		tooltipBarLabelPadding = 12,
+		tooltipCircleRadius = 5,
+		tooltipWidth = 640,
+		tooltipSvgHeight = 280,
+		tooltipDonorNameHeight = 30,
+		tooltipLabelCerfPadding = 10,
+		currentYearOpacity = 0.6,
 		currentDate = new Date(),
 		currentYear = currentDate.getFullYear(),
 		localStorageTime = 3600000,
@@ -27,6 +37,7 @@
 		formatMoney0Decimals = d3.format(",.0f"),
 		formatPercent = d3.format(".0%"),
 		formatNumberSI = d3.format(".3s"),
+		formatSIaxes = d3.format("~s"),
 		localVariable = d3.local(),
 		localyScale = d3.local(),
 		localLine = d3.local(),
@@ -220,6 +231,14 @@
 	const yScaleTopChart = d3.scaleLinear()
 		.range([topSvgHeight - topSvgPadding[2], topSvgPadding[0]]);
 
+	const xScaleTooltip = d3.scaleBand()
+		.range([tooltipSvgPadding[3], tooltipWidth - tooltipSvgPadding[1]])
+		.paddingInner(0.4)
+		.paddingOuter(0.2);
+
+	const yScaleTooltip = d3.scaleLinear()
+		.range([tooltipSvgHeight - tooltipSvgPadding[2], tooltipSvgPadding[0]]);
+
 	const topLineGenerator = d3.line()
 		.x(d => xScaleTopChart(d.year) + xScaleTopChart.bandwidth() / 2)
 		.y(d => yScaleTopChart(d.amount))
@@ -244,8 +263,17 @@
 		.attr("class", classPrefix + "xAxisGroupTopChart")
 		.attr("transform", "translate(0," + (topSvgHeight - topSvgPadding[2]) + ")");
 
-	const allYearsTooltipArray = d3.range(yearsArray[0], currentYear + 1, 1);
-	allYearsTooltipArray.splice(-1, 0, null);
+	const xAxisTooltip = d3.axisBottom(xScaleTooltip)
+		.tickFormat((d, i) => xScaleTooltip.domain()[0] % 2 ? (i % 2 ? d : null) : (i % 2 ? null : d))
+		.tickSizeOuter(4)
+		.tickSizeInner(4)
+		.tickPadding(3);
+
+	const yAxisTooltip = d3.axisLeft(yScaleTooltip)
+		.tickSizeOuter(0)
+		.tickSizeInner(-(tooltipWidth - tooltipSvgPadding[1] - tooltipSvgPadding[3]))
+		.ticks(3)
+		.tickFormat(d => "$" + formatSIaxes(d).replace("G", "B"));
 
 	Promise.all([fetchFile("contributionsdata", dataUrl, "data", "csv"),
 			fetchFile(classPrefix + "flags", flagsUrl, "flags images", "json")
@@ -282,6 +310,8 @@
 		xScale.domain(yearsArrayWithNull);
 
 		xScaleTopChart.domain(yearsArrayWithNull);
+
+		xScaleTooltip.domain(yearsArrayWithNull);
 
 		xAxis.tickValues([yearsArray[0], currentYear - 1]);
 
@@ -902,11 +932,143 @@
 			.attr("y", (d, i, n) => localyScale.get(n[i])(d.amount))
 			.text(d => d3.formatPrefix(".0", d.amount)(d.amount).replace("G", "B"));
 
-		// donorDiv.on("mouseover", donorDivMouseOver)
-		// 	.on("mouseout", donorDivMouseOut)
-		// 	.on("click", (_, d) => donorDivClick(d, memberType === "member"));
+		donorDiv.on("mouseover", donorDivMouseOver)
+			.on("mouseout", donorDivMouseOut)
+			.on("click", (d, i, n) => donorDivClick(d, n[i], flagsData));
 
 		//end of createChartDivs
+	};
+
+	function donorDivMouseOver() {
+		d3.select(this).classed(classPrefix + "donorDivActive", true);
+		d3.select(this).append("div")
+			.attr("class", classPrefix + "donorExpandDiv")
+			.append("i")
+			.attr("class", "fa fa-arrows-alt")
+	};
+
+	function donorDivMouseOut() {
+		d3.select(this).classed(classPrefix + "donorDivActive", false);
+		d3.select(this)
+			.select("." + classPrefix + "donorExpandDiv")
+			.remove();
+	};
+
+	function donorDivClick(datum, thisElement, flagsData) {
+
+		d3.select(thisElement).classed(classPrefix + "donorDivActive", false);
+		d3.select(thisElement)
+			.select("." + classPrefix + "donorExpandDiv")
+			.remove();
+
+		yScaleTooltip.domain([0, d3.max(datum.contributions, e => e.amount)]);
+
+		const tooltipDiv = chartsDiv.append("div")
+			.attr("id", classPrefix + "tooltipDiv")
+			.style("left", "50%")
+			.style("top", "50%")
+			.style("transform", "translate(-50%,-50%)");
+
+		const innerTooltipDiv = tooltipDiv.append("div")
+			.style("width", tooltipWidth + "px")
+			.style("height", tooltipDonorNameHeight + tooltipSvgHeight + "px")
+			.style("cursor", "default")
+			.style("pointer-events", "all");
+
+		const tooltipTopDiv = innerTooltipDiv.append("div")
+			.attr("class", classPrefix + "tooltipTopDiv")
+			.style("width", "100%")
+			.style("height", tooltipDonorNameHeight + "px");
+
+		const tooltipTopDivMain = tooltipTopDiv.append("div")
+			.attr("class", classPrefix + "tooltipTopDivMain");
+
+		const tooltipTopDivClose = tooltipTopDiv.append("div")
+			.attr("class", classPrefix + "tooltipTopDivClose")
+			.on("click", () => tooltipDiv.remove());
+
+		tooltipTopDivClose.append("i")
+			.attr("class", "fa fa-window-close-o")
+			.style("cursor", "pointer");
+
+		const tooltipChartDiv = innerTooltipDiv.append("div")
+			.style("width", "100%")
+			.style("height", "100%");
+
+		const tooltipSvg = tooltipChartDiv.append("svg")
+			.attr("width", tooltipWidth)
+			.attr("height", tooltipSvgHeight)
+			.attr("class", classPrefix + "tooltipSvg");
+
+		const tooltipNameDiv = tooltipTopDivMain.append("div")
+			.attr("class", classPrefix + "tooltipNameDiv");
+
+		const donorFlag = tooltipNameDiv.append("img")
+			.attr("width", flagSizeTooltip)
+			.attr("height", flagSizeTooltip)
+			.attr("src", flagsData[datum.isoCode.toLowerCase()]);
+
+		const donorName = tooltipNameDiv.append("span")
+			.html(datum.donor);
+
+		tooltipSvg.append("g")
+			.attr("class", classPrefix + "xAxisGroupTooltip")
+			.attr("transform", "translate(0," + (tooltipSvgHeight - tooltipSvgPadding[2]) + ")")
+			.call(xAxisTooltip)
+			.selectAll(".tick")
+			.filter(d => d === null)
+			.remove();
+
+		tooltipSvg.append("g")
+			.attr("class", classPrefix + "yAxisGroupTooltip")
+			.attr("transform", "translate(" + tooltipSvgPadding[3] + ",0)")
+			.call(yAxisTooltip)
+			.selectAll(".tick")
+			.filter(d => d === 0)
+			.remove();
+
+		const tooltipTransition = d3.transition()
+			.duration(duration);
+
+		const tooltipBars = tooltipSvg.selectAll(null)
+			.data(datum.contributions)
+			.enter()
+			.append("rect")
+			.style("fill", d => d.year === currentYear ? `url(#${classPrefix}patterncerf)` : cerfColor)
+			.style("stroke", d => d.year === currentYear ? "#ccc" : null)
+			.attr("class", classPrefix + "tooltipBars")
+			.attr("width", xScaleTooltip.bandwidth())
+			.attr("height", 0)
+			.attr("y", tooltipSvgHeight - tooltipSvgPadding[2])
+			.attr("x", d => xScaleTooltip(d.year))
+			.attr("data-toggle", "tooltip")
+			.attr("data-placement", "right")
+			.attr("data-container", "." + classPrefix + "tooltipTopDiv")
+			.attr("title", d => "$" + formatMoney0Decimals(d.amount))
+			.transition(tooltipTransition)
+			.attr("y", d => yScaleTooltip(d.amount))
+			.attr("height", d => yScaleTooltip(0) - yScaleTooltip(d.amount));
+
+		$('[data-toggle="tooltip"]').tooltip()
+
+		const tooltipLabel = tooltipSvg.selectAll(null)
+			.data(datum.contributions.filter(d => d.amount))
+			.enter()
+			.append("text")
+			.attr("class", classPrefix + "tooltipBarLabel")
+			.style("opacity", 0)
+			.style("fill", "#444")
+			.attr("x", d => xScaleTooltip(d.year) + xScaleTooltip.bandwidth() / 2)
+			.attr("y", tooltipSvgHeight - tooltipSvgPadding[2])
+			.transition(tooltipTransition)
+			.style("opacity", 1)
+			.attr("y", d => yScaleTooltip(d.amount) - tooltipBarLabelPadding)
+			.textTween((d, i, n) => {
+				const interpolator = d3.interpolate(0, d.amount);
+				return t => d3.formatPrefix(".0", interpolator(t))(interpolator(t)).replace("G", "B");
+			});
+
+		//end of donorDivClick
 	};
 
 	function hideDonors() {
