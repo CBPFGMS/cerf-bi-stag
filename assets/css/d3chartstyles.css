@@ -2235,4 +2235,19 @@ p#contributionschartd3chartTitle {
   text-anchor: middle;
 }
 
+#contributionschartDownloadingDiv {
+  position: absolute;
+  padding: 8px;
+  background: #fcfcfc; 
+  border: 1px solid #999; 
+  border-radius: 8px;
+  pointer-events: none;
+  cursor: none;
+  min-width: 200px;
+  min-height: 100px;
+  z-index: 1500;
+}
 
+.contributionschartDownloadingDivSvg {
+  fill: #3289c9;
+}

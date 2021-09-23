@@ -43,7 +43,7 @@
 		localLine = d3.local(),
 		cerfColor = "#FBD45C",
 		unBlue = "#1F69B3",
-		chartTitleDefault = "CERF Contributions Chart",
+		chartTitleDefault = " ",
 		yearsArray = [],
 		memberStateType = "Member State",
 		privateDonorsName = "Private Contributions",
@@ -1159,16 +1159,14 @@
 		const csvData = [];
 
 		rawData.forEach(function(row) {
-			if (chartState.selectedYear.indexOf(+row.FiscalYear) > -1) {
-				csvData.push({
-					Year: row.FiscalYear,
-					Donor: row.GMSDonorName,
-					"Donor type": row.PooledFundName,
-					Paid: row.PaidAmt,
-					Pledged: row.PledgeAmt,
-					Total: (+row.PaidAmt) + (+row.PledgeAmt)
-				});
-			};
+			csvData.push({
+				Year: row.FiscalYear,
+				Donor: row.GMSDonorName,
+				"Donor type": row.PooledFundName,
+				Paid: row.PaidAmt,
+				Pledged: row.PledgeAmt,
+				Total: (+row.PaidAmt) + (+row.PledgeAmt)
+			});
 		});
 
 		const csv = d3.csvFormat(csvData);
@@ -1228,11 +1226,19 @@
 
 		containerDiv.selectAll("svg")
 			.each(function() {
-				const svgRealSize = this.getBoundingClientRect();
-				d3.select(this).attr("width", svgRealSize.width)
-					.attr("height", svgRealSize.height);
 				setSvgStyles(this);
 			});
+
+		const topSvgRealSize = topChartSvg.node().getBoundingClientRect();
+		topChartSvg.attr("width", topSvgRealSize.width)
+			.attr("height", topSvgRealSize.height);
+
+		topRadioButtonsDiv.selectAll("input")
+			.style("opacity", 1)
+			.style("width", "1.1em")
+			.style("height", "1.1em");
+		topRadioButtonsDiv.selectAll("." + classPrefix + "radioControl")
+			.style("display", "none");
 
 		const imageDiv = containerDiv.node();
 
@@ -1244,15 +1250,17 @@
 
 		snapshotTooltip.style("display", "none");
 
-		svg.selectAll("image")
-			.attr("xlink:href", function(d) {
-				return localStorage.getItem("storedFlag" + d.isoCode);
-			});
-
 		html2canvas(imageDiv).then(function(canvas) {
 
-			svg.attr("width", null)
+			topChartSvg.attr("width", null)
 				.attr("height", null);
+
+			topRadioButtonsDiv.selectAll("input")
+				.style("opacity", 0)
+				.style("width", 0)
+				.style("height", 0);
+			topRadioButtonsDiv.selectAll("." + classPrefix + "radioControl")
+				.style("display", null);
 
 			if (type === "png") {
 				iconsDiv.style("opacity", 1);
@@ -1319,7 +1327,7 @@
 
 		const pdfMargins = {
 			top: 10,
-			bottom: 16,
+			bottom: 19,
 			left: 20,
 			right: 30
 		};
