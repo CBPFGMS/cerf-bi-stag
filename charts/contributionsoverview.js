@@ -245,7 +245,7 @@
 	function csvCallback([rawData, flagsData]) {
 
 		rawData.forEach(function(d) {
-			allTimeContributions += (+d.PaidAmt);
+			allTimeContributions += (+d.PaidAmt + +d.PledgeAmt);
 			if (d.GMSDonorISO2Code) countryNames[d.GMSDonorISO2Code.toLowerCase()] = d.GMSDonorName;
 			if (d.PooledFundISO2Code) countryNames[d.PooledFundISO2Code.toLowerCase()] = d.PooledFundName;
 			if (!yearsArray.includes(+d.FiscalYear)) yearsArray.push(+d.FiscalYear);
