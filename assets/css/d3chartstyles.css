@@ -1529,11 +1529,10 @@ p#alloctimelined3chartTitle {
 	padding-right: 8px;
 }
 
-.alloctimelineregionContainer, .alloctimelinefundContainer, .alloctimelineemergencyContainer {
-	width: 27%;
+.alloctimelineregionContainer, .alloctimelinefundContainer, .alloctimelineemergencyContainer, .alloctimelineallocationTypesContainer {
 	height: 100%;
 	position: relative;
-	margin-right: 1rem;
+	margin-right: 0.8rem;
 }
 
 .alloctimelinefilterContainer {
@@ -1544,30 +1543,30 @@ p#alloctimelined3chartTitle {
 	cursor: pointer;
 }
 
-.alloctimelineregionTitleDiv, .alloctimelinefundTitleDiv, .alloctimelineemergencyTitleDiv {
+.alloctimelineregionTitleDiv, .alloctimelinefundTitleDiv, .alloctimelineemergencyTitleDiv, .alloctimelineallocationTypesTitleDiv {
 	display: flex;
 	align-items: center;
 	height: 100%;
 	background: #f2f4f4; 
 	border: 1px solid #3189c9; 
 	border-radius: 4px;
-	padding: 2px 16px 2px 16px;
+	padding: 2px 12px 2px 16px;
 	cursor: pointer;
 }
 
-.alloctimelineregionTitle, .alloctimelinefundTitle, .alloctimelineemergencyTitle {
+.alloctimelineregionTitle, .alloctimelinefundTitle, .alloctimelineemergencyTitle, .alloctimelineallocationTypesTitle {
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
 }
 
-.alloctimelineregionArrow, .alloctimelinefundArrow, .alloctimelineemergencyArrow {
-	margin-left: auto;
+.alloctimelineregionArrow, .alloctimelinefundArrow, .alloctimelineemergencyArrow, .alloctimelineallocationTypesArrow {
+	margin-left: 0.4rem;
 	font-weight: bold;
 	transition: transform 0.25s ease-in-out;
 }
 
-.alloctimelineregionDropdown, .alloctimelinefundDropdown, .alloctimelineemergencyDropdown {
+.alloctimelineregionDropdown, .alloctimelinefundDropdown, .alloctimelineemergencyDropdown, .alloctimelineallocationTypesDropdown {
 	position: absolute;
 	margin-top: 4px;
 	padding: 2px 16px 2px 16px;
@@ -1584,21 +1583,21 @@ p#alloctimelined3chartTitle {
 	transition: transform 0.25s ease-in-out;
 }
 
-.alloctimelineregionContainer.active .alloctimelineregionDropdown, .alloctimelinefundContainer.active .alloctimelinefundDropdown, .alloctimelineemergencyContainer.active .alloctimelineemergencyDropdown {
+.alloctimelineregionContainer.active .alloctimelineregionDropdown, .alloctimelinefundContainer.active .alloctimelinefundDropdown, .alloctimelineemergencyContainer.active .alloctimelineemergencyDropdown, .alloctimelineallocationTypesContainer.active .alloctimelineallocationTypesDropdown {
 	transform: scale(1, 1);
 }
 
 .alloctimelineemergencyDropdown{overflow-y: hidden !important;}
 
-.alloctimelineregionContainer.active .alloctimelineregionArrow, .alloctimelinefundContainer.active .alloctimelinefundArrow, .alloctimelineemergencyContainer.active .alloctimelineemergencyArrow {
+.alloctimelineregionContainer.active .alloctimelineregionArrow, .alloctimelinefundContainer.active .alloctimelinefundArrow, .alloctimelineemergencyContainer.active .alloctimelineemergencyArrow, .alloctimelineallocationTypesContainer.active .alloctimelineallocationTypesArrow {
 	transform: rotate(180deg);
 }
 
-.alloctimelineregionCheckboxDiv label, .alloctimelinefundCheckboxDiv label, .alloctimelineemergencyCheckboxDiv label {
+.alloctimelineregionCheckboxDiv label, .alloctimelinefundCheckboxDiv label, .alloctimelineemergencyCheckboxDiv label, .alloctimelineallocationTypesCheckboxDiv label {
 	margin-bottom: 0px;
 }
 
-.alloctimelineregionCheckboxDiv input, .alloctimelinefundCheckboxDiv input, .alloctimelineemergencyCheckboxDiv input {
+.alloctimelineregionCheckboxDiv input, .alloctimelinefundCheckboxDiv input, .alloctimelineemergencyCheckboxDiv input, .alloctimelineallocationTypesCheckboxDiv input {
 	vertical-align: text-top;
 }
 
@@ -1609,7 +1608,7 @@ p#alloctimelined3chartTitle {
 	margin-left: 4px;
 }
 
-.alloctimelinecheckboxTextAllRegions, .alloctimelinecheckboxTextAllFunds, .alloctimelinecheckboxTextAllEmergencies {
+.alloctimelinecheckboxTextAllRegions, .alloctimelinecheckboxTextAllFunds, .alloctimelinecheckboxTextAllEmergencies, .alloctimelinecheckboxTextAllAllocationTypes {
 	font-family: "Arial", sans-serif;
 	font-size: 12px;
 	font-weight: 700;

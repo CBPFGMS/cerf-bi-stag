@@ -93,6 +93,7 @@
 		allocationsDataUrl = "https://cbpfgms.github.io/pfbi-data/cerf/cerf_application_v2.csv",
 		masterEmergencyTypeUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstEmergencyType.json",
 		masterEmergencyGroupUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstEmergencyGroup.json",
+		masterAllocationTypesUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstAllocation.json",
 		masterFundsUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstFundv2.json",
 		masterRegionsUrl = "https://cbpfgms.github.io/pfbi-data/mst/MstRegion.json",
 		csvDateFormat = d3.utcFormat("_%Y%m%d_%H%M%S_UTC"),
@@ -110,10 +111,12 @@
 			fundIsoCodes: {},
 			fundIsoCodes3: {},
 			regionNames: {},
+			allocationTypesNames: {},
 			emergencyTypeNames: {},
 			emergencyGroupNames: {},
 			emergencyTypesInGroups: {},
 			fundsInAllDataList: {},
+			allocationTypesInAllDataList: {},
 			regionsInAllDataList: {},
 			emergencyGroupsInAllDataList: {}
 		},
@@ -121,7 +124,8 @@
 			regionsInData: [],
 			fundsInData: [],
 			emergencyGroupsInData: [],
-			emergencyTypesInData: []
+			emergencyTypesInData: [],
+			allocationTypesInData: []
 		},
 		inSelectionLists = {
 			regionsInData: [],
@@ -134,6 +138,7 @@
 			selectedFund: [],
 			selectedRegion: [],
 			selectedEmergencyGroup: [],
+			selectedAllocationTypes: [],
 			selectedView: null,
 			baseline: null
 		};
@@ -152,7 +157,7 @@
 	// 5: "Unspecified Emergency"
 	// 6: "Multiple Emergencies"
 
-	const emergencyIconsData = { 
+	const emergencyIconsData = {
 		"1": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5QYYBRYhxorNIwAAA+tJREFUaN7VmslrFFEQxn/pjAsuJ8V9CXjxrn0SRI+RiEeXuHSCImoSJ7bGJcm4jRsyIWbU4IZDIi43wah4EgQvjv+AIAiiURG8uAs6HqzBpnnd83obJgVDut/rV/19XfVq6U5drlAcB2SAFiAF3AK6bcv8RkjJFYrjgePAJqAEDAMZ2zJ/EbMYAr4HmAvMBNLAw1yhODmC3mNAFzAbmAPslzGSINCqGF8OPMoVilND6t2sGNuSFIF6j7llwEhIS8xWjM1KisAtn/nlwIOI7pSoGEA38GSskjAk2jQCjyuQiLInErUAQqKpAollEp2m1hyBsUzCcJ6MRRJ1Hpl0EjACrPRZ+xRotC3zs2J9SbXAtsw6xbV1QBuwG5gA3JSs/TOwBaptCQF/DhgAFgHzJIMfDeVC1SQh4PuBdsX0hsgEHCRWV8gT5Yw9yTE2qrhuVAG+w0Pn91gICImvwCqNZHfCcT6suGbIcdzuAx5xqXgIBCCx3nGcAc7IUx+V48NOlT56+oCLkaKQj9/6Rac3tmXO19TzEZiumDptW+bB0HlAwxJ+e+J6AFV3FGNHg4IPTMDhTo0S/j4Ab4GsdGC60gUMAp+Al0CLbZlHYktkUSVXKK4BOoGlMlQE+mzLvFeVTBwR/GlpIVVy0rbM7kQJ5ArFCRISN3h0VgDvgBtArzPly5O/W+Geq23LHHGsSUlP0gos0MT9GrgGnEwpJrMVwly5ZdwnbxycT7tT4+Z7JJKVpccVYnVkgZQbJdUm3hiheV+isWap67w1ggdtUxEoBVBQCnHTUgw6yvJHReBGAAVDrvPnGmvc11yJQOCyag/0OlzJaxOPSr2TUZQBKyrctM91fgr4DWwFGjRy0x/gFXAVOJtEGD0BHPKYztqW2VvTeUBINEm0MWXomSSy+zWRyKSebxeQU4DbQJfuC2F5+ZsBmoEfQB4YtC0z8IY2QoI/J7+FwDRgF3A2gJqMJK8GYDFwAegX3ckRcIBXtYFrA6hqVox1hCGRiqmHBfjiKkeyArQk4faw4/vADw8dHbI+retORkDwfm1gzlWO7OX/94EDrnIh76MnkCWMmMBfAs77lBjw72tNWQbFFf1IDOqQMGIAPwDsKJs8VyjWAzMU181xNEUlKfz8mvftwM7QBAI8+XSY8Cdr0hUs0RaKQJgnH0Y0LDExMIEA4NNRwCssMRCmsFRZoL1a4BUkdgEvpFjLovFlM+XRMVUNvIvExSAvtbws4PUtLJ8U+ChiaL50ygO7aw28lwt1yd91Uh70AflaBK8kICVxm04MrlUXiroZfwPvFVNvxwQBn/g9XK09EIf0SBm9UZrwIRL6b5W/crdmJRV7bWcAAAAASUVORK5CYII=",
 		"2": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5QgFARQnB5WTawAAA31JREFUaN7tmV1LFFEYx3+7nUs/QOhGXyCyrESKonyhwGpLIwmlYtPtqg07NxHddtHFpuZNlhzyYgvDMF8genWLokxFjb5AKlTfYXK72BMMgzuzM7Oz44LP1ZyZZ57z/M+c87z8J0JAYqQTrcAQkAOSQqqXQcwTJTh5ANQAMQ2ESgMQM13vqEQAZZEtAGFLxCaKnAAe6uE1IdWEQ9SpBuJAHVALHLCozAHLwAIwIaT65WAvDgzqYY+Q6pVbACumw2cAnUKqZxadCNAGXAcOufii68AnYAAYF1LlLHbPAxlA6FsrQqqdbreQ2agAMkY60WGapEmv6Bhw2OV2jAJHgOfAkpFONJrsdlict/pS9BeIa+fMhgygG9gLpOzedyk54D6wCAxvMGe7kGrSFQAN4hzw1GKwnPIXuCikeuIpCgmpxoALehXCcP6SnfNFhVENojsEAFeEVJlS5YG6EADs8ZUHLNHmTQkPbLGyDrQIqd57BqDj/KJOTGHID6BWSLXudQu1h+g8wC6d3T2fgVSB+z+BZqAKaAFWAgSR8loLVQOrBUA2C6nemXRbgNcBhtOYkOq32y8Qt3k+axl/DfALbANOe9lCdqGzwWFcatlfME/ZvLTb5tmwkU70AF+Ag8CjgAEUDCQRE3tQU2G9zBqQjJrYg0qTGDBUrpZyAjiqw24VcAyYKoVhASR16xgLyPmbQqq7lntZIGukE7eAOx7trgJJuzwwC9T7XXkh1RmHcmUKOOlgZ1ZI1eA2jH4vwer3FaFzrwidZS95YKEEAIqxMe9Hxw7AC53GQ6N2TGX1tGsAuvb4HFQGdaHz0Y5DcgqjAz4B3CiBzoCfcnrc52E+pUNloQh0G2i1eX9J5xBfLWUj8NZnSzmto82cHtfrlW912PvNQqoZXwA0iH7y9GE5pU9I5bgFiy0lFkOodZZLxUqExc79J7YyfliJzUAt2oKI2jgf38B5A7gM9GPDGHvkgPq1bcPSTj7Wvrg+A4MbON8lpBoRUvUCTcXuUwdZApqEVL1CqhGgywJCkGeuXQPIWZzvFFKNmjL1DHmavQ34oFfRzdbIAmeBOiFV1mR3FOi0gPD0f+C47hNyQKoQP2/S367Zg33keU1rKf5Nr/Y8MCmk+uNgL65XPgdcdf2Lya8Y6UTOUlsFMtfWb9YtAJsYwJqlAa84AEkNYlVfByL/AK1bECEs4Y0BAAAAAElFTkSuQmCC",
 		"3": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5QgFARI7Rc5oogAAA+RJREFUaN7VmE9oVUcUxn95xAjW0IKC6CAR01Y31u5qcQqapIhQwRYKYnd9JnQxLtRCQ2M1oTWK+AfCrBKfhJaKXbS7QmmrtHWo7lTc2UKrMmlBFyIRaRa2m/PoeN+99+W+vHfz7tnM3LlzZ8535sz5zrmQQbyz497ZWe/sMdpEShnnHwKek7aQALqkXdouADojLrIBGAeuA+NKm6cZ3KsEfAJsBY4qba4uxgkcA94BPgWmRKlQ5qT9J0b5KWAUeFO+XxQXuhH03wcmI+9PAbPShjIp86vi8gLQkWDJUJntSpufUlxnO3A5GDoPDGZxv6adgGw6CFQCl5mps8ZM4FqVPJWvOYGIZbcBXmnzm3d2GTAM7AXWAveAL4ETSpsn3tmXgTVpJ5U7gADIMuASsCXm9VWgX2nzpJ15YDhBeYDXgY8WlQe8s+PCrF2B359S2ozI8946a7wn4ZN5rNWSE9gfbFhl2/3B89o6a4Tv663VEiaeAD6MWG0imHMP6E1Z427Qr7dWvfu2UgDvAl4SA/8OfAtMKG3+buQSjwFHUqaMKm3GFmpJ7+xuYBp4PmHKrIToi1kv8QmJNnHyK3CyScp/naI8wHLggnd2z7wAeGf7vLMbJET2A2NynHPSjgIDwgMbvbN9DSq/Uixf1cUDewRMN/A28GfgMVPe2VWJLiTpxCRQFmU3KW1upyiwEbgpfl8BhjJmsaGLzgCvKm3uR+a8IBnyumrSqbQ5XHMCQS5UDqLI6jo6rAkubTkhi02TXUH/QFR5SXEeRoqot5JcaCSSyFWUNj+nlZRKm8tB7lTNYj/OAODFoP9dyrwfg35vEoDNkaxyaJ4l5ZDMr8orGQB0B8Z4lDJvSXihvbMraioysdy/Uhccj/Hl2JJSafPUOzsI/CFGONxMsvLO9gJXIsO3vLO6M6LIbeDdRjYRsJ+1iHDPxtzF1cDprEV9bEmZg2xLGO/LCiCppGy1PEgYv9+Z0U1GJFI14sc9kprvBHoyfj4tRFozXsrDfN7ZAeAW8EEDygOcAf6KKWXPlnJQvgf4JgyXDQSIWeBgZPig0uZxHicwHCh/BxgAliptOpQ2HRlAXAS+kMfPlTZfxfFAK2Rn0C8rbS4tYC0DrJKWvACEFduVhSwkTL0jaz2wEP9fEdmju9l7lFqofK9Enij9ry8EgDT6LwqARPovCoBE+i8KgOmM420H4Ay1f7Zn5G60PwCh/0Nx9F+UE0ik/2ZKHkxcQ/+FAhBH/4VxoTykQ/L1CvAGz/4ab2eZA34Byp2ifH/BDN8ldcW5EvBagT1oSwm4VmAA10rAPuAH/v/nU5Q78D2w7z9GBT7e+rAvoAAAAABJRU5ErkJggg==",
@@ -181,6 +186,8 @@
 	const selectedRegionsString = queryStringValues.has("region") ? queryStringValues.get("region").replace(/\|/g, ",") : containerDiv.node().getAttribute("data-region");
 
 	const selectedEmerencyGroupsString = queryStringValues.has("emergencygroup") ? queryStringValues.get("emergencygroup").replace(/\|/g, ",") : containerDiv.node().getAttribute("data-emergencygroup");
+
+	const selectedAllocationTypesString = queryStringValues.has("allocationtype") ? queryStringValues.get("allocationtype").replace(/\|/g, ",") : containerDiv.node().getAttribute("data-allocationtype");
 
 	const selectedViewString = queryStringValues.has("view") ? queryStringValues.get("view") : containerDiv.node().getAttribute("data-view") === viewOptions[1] ? viewOptions[1] : viewOptions[0];
 
@@ -346,6 +353,7 @@
 	Promise.all([
 			fetchFile(classPrefix + "MasterFunds", masterFundsUrl, "master table for funds", "json"),
 			fetchFile(classPrefix + "MasterEmergencyTypes", masterEmergencyTypeUrl, "master table for emergency types", "json"),
+			fetchFile(classPrefix + "MasterAllocationTypes", masterAllocationTypesUrl, "master table for allocation types", "json"),
 			fetchFile(classPrefix + "MasterEmergencyGroups", masterEmergencyGroupUrl, "master table for emergency groups", "json"),
 			fetchFile(classPrefix + "MasterRegions", masterRegionsUrl, "master table for regions", "json"),
 			fetchFile(classPrefix + "AllocationsData", allocationsDataUrl, "allocations data", "csv")
@@ -355,6 +363,7 @@
 	function fetchCallback([
 		masterFunds,
 		masterEmergencyTypes,
+		masterAllocationTypes,
 		masterEmergencyGroups,
 		masterRegions,
 		rawDataAllocations
@@ -364,6 +373,7 @@
 		createFundNamesList(masterFunds);
 		createRegionNamesList(masterRegions);
 		createEmergencyGroupsNames(masterEmergencyGroups);
+		createAllocationTypesNames(masterAllocationTypes);
 		createEmergencyTypesNames(masterEmergencyTypes);
 
 		preProcessData(rawDataAllocations);
@@ -377,7 +387,10 @@
 		chartState.selectedFund = validateSelectionString(selectedFundsString, lists.fundsInAllDataList);
 		chartState.selectedRegion = validateSelectionString(selectedRegionsString, lists.regionsInAllDataList);
 		chartState.selectedEmergencyGroup = validateSelectionString(selectedEmerencyGroupsString, lists.emergencyGroupsInAllDataList);
+		chartState.selectedAllocationTypes = validateSelectionString(selectedAllocationTypesString, lists.allocationTypesInAllDataList);
 		chartState.selectedView = selectedViewString;
+
+		console.log(chartState)
 
 		if (!lazyLoad) {
 			draw(rawDataAllocations);
@@ -1011,6 +1024,31 @@
 		allEmergencies.property("checked", function() {
 			return chartState.selectedEmergencyGroup.length === d3.keys(lists.emergencyGroupsInAllDataList).length;
 		});
+
+		//allocation types checkboxes
+
+		const allocationTypesContainer = dropdownDiv.append("div")
+			.datum({
+				clicked: false
+			})
+			.attr("class", classPrefix + "allocationTypesContainer");
+
+		const allocationTypesTitleDiv = allocationTypesContainer.append("div")
+			.attr("class", classPrefix + "allocationTypesTitleDiv");
+
+		const allocationTypesTitle = allocationTypesTitleDiv.append("div")
+			.attr("class", classPrefix + "allocationTypesTitle")
+			.html("Select Window");
+
+		const allocationTypesArrow = allocationTypesTitleDiv.append("div")
+			.attr("class", classPrefix + "allocationTypesArrow");
+
+		allocationTypesArrow.append("i")
+			.attr("class", "fa fa-angle-down");
+
+		const allocationTypesDropdown = allocationTypesContainer.append("div")
+			.attr("class", classPrefix + "allocationTypesDropdown");
+
 
 		//filter
 
@@ -2383,6 +2421,7 @@
 			if (!lists.fundsInAllDataList[row.CountryID] && lists.fundNames[row.CountryID]) lists.fundsInAllDataList[row.CountryID] = lists.fundNames[row.CountryID];
 			if (!lists.regionsInAllDataList[lists.fundRegions[row.CountryID]] && lists.regionNames[lists.fundRegions[row.CountryID]]) lists.regionsInAllDataList[lists.fundRegions[row.CountryID]] = lists.regionNames[lists.fundRegions[row.CountryID]];
 			if (!lists.emergencyGroupsInAllDataList[row.EmergencyGroupID] && lists.emergencyGroupNames[row.EmergencyGroupID]) lists.emergencyGroupsInAllDataList[row.EmergencyGroupID] = lists.emergencyGroupNames[row.EmergencyGroupID];
+			if (!lists.allocationTypesInAllDataList[row.WindowID]) lists.allocationTypesInAllDataList[row.WindowID] = lists.allocationTypesNames[row.WindowID];
 			if (!yearsArray.includes(row.Year)) yearsArray.push(row.Year);
 		});
 		yearsArray.sort((a, b) => a - b);
@@ -2408,6 +2447,7 @@
 			if (!row.Budget) return;
 
 			//populate inSelectionLists
+			//NOTE: include allocation types???
 			if (chartState.selectedYear.includes(row.Year) || chartState.selectedYear.includes(allYearsOption)) {
 				if (chartState.selectedRegion.includes(lists.fundRegions[row.CountryID])) {
 					if (!inSelectionLists.fundsInData.includes(row.CountryID)) inSelectionLists.fundsInData.push(row.CountryID);
@@ -2432,6 +2472,7 @@
 				if (!inDataLists.regionsInData.includes(lists.fundRegions[row.CountryID])) inDataLists.regionsInData.push(lists.fundRegions[row.CountryID]);
 				if (!inDataLists.fundsInData.includes(row.CountryID)) inDataLists.fundsInData.push(row.CountryID);
 				if (!inDataLists.emergencyGroupsInData.includes(row.EmergencyGroupID)) inDataLists.emergencyGroupsInData.push(row.EmergencyGroupID);
+				if (!inDataLists.allocationTypesInData.includes(row.WindowID)) inDataLists.allocationTypesInData.push(row.WindowID);
 				if (!inDataLists.emergencyTypesInData.includes(row.EmergencyTypeID)) inDataLists.emergencyTypesInData.push(row.EmergencyTypeID);
 			};
 
@@ -2664,6 +2705,12 @@
 		emergencyGroupsData.forEach(row => {
 			lists.emergencyGroupNames[row.emergencyGroupID + ""] = row.emergencyGroupName;
 			lists.emergencyTypesInGroups[row.emergencyGroupID + ""] = [];
+		});
+	};
+
+	function createAllocationTypesNames(allocationTypesData) {
+		allocationTypesData.forEach(row => {
+			lists.allocationTypesNames[row.id + ""] = row.AllocationName;
 		});
 	};
 
