@@ -88,6 +88,7 @@
 		allRegionsOption = "Select all regions",
 		allFundsOption = "Select all countries",
 		allEmergencyGroupsOption = "Select all emergency groups",
+		allAllocationTypesOption = "Select all window types",
 		chartTitleDefault = "Allocations Timeline",
 		vizNameQueryString = "alloctimeline",
 		allocationsDataUrl = "https://cbpfgms.github.io/pfbi-data/cerf/cerf_application_v2.csv",
@@ -130,7 +131,8 @@
 		inSelectionLists = {
 			regionsInData: [],
 			fundsInData: [],
-			emergencyGroupsInData: []
+			emergencyGroupsInData: [],
+			allocationTypesInData: []
 		},
 		separator = "##",
 		chartState = {
@@ -138,7 +140,7 @@
 			selectedFund: [],
 			selectedRegion: [],
 			selectedEmergencyGroup: [],
-			selectedAllocationTypes: [],
+			selectedAllocationType: [],
 			selectedView: null,
 			baseline: null
 		};
@@ -387,7 +389,7 @@
 		chartState.selectedFund = validateSelectionString(selectedFundsString, lists.fundsInAllDataList);
 		chartState.selectedRegion = validateSelectionString(selectedRegionsString, lists.regionsInAllDataList);
 		chartState.selectedEmergencyGroup = validateSelectionString(selectedEmerencyGroupsString, lists.emergencyGroupsInAllDataList);
-		chartState.selectedAllocationTypes = validateSelectionString(selectedAllocationTypesString, lists.allocationTypesInAllDataList);
+		chartState.selectedAllocationType = validateSelectionString(selectedAllocationTypesString, lists.allocationTypesInAllDataList);
 		chartState.selectedView = selectedViewString;
 
 		console.log(chartState)
@@ -786,6 +788,9 @@
 			emergencyContainer.classed("active", d => {
 				return d.clicked = false;
 			});
+			allocationTypesContainer.classed("active", d => {
+				return d.clicked = false;
+			});
 		});
 
 		const regionCheckboxData = d3.keys(lists.regionsInAllDataList).sort(function(a, b) {
@@ -875,6 +880,9 @@
 				return d.clicked = false;
 			});
 			emergencyContainer.classed("active", d => {
+				return d.clicked = false;
+			});
+			allocationTypesContainer.classed("active", d => {
 				return d.clicked = false;
 			});
 		});
@@ -968,6 +976,9 @@
 			regionContainer.classed("active", d => {
 				return d.clicked = false;
 			});
+			allocationTypesContainer.classed("active", d => {
+				return d.clicked = false;
+			});
 		});
 
 		const emergencyCheckboxData = d3.keys(lists.emergencyGroupsInAllDataList).sort(function(a, b) {
@@ -1038,7 +1049,7 @@
 
 		const allocationTypesTitle = allocationTypesTitleDiv.append("div")
 			.attr("class", classPrefix + "allocationTypesTitle")
-			.html("Select Window");
+			.html("Select Window Type");
 
 		const allocationTypesArrow = allocationTypesTitleDiv.append("div")
 			.attr("class", classPrefix + "allocationTypesArrow");
@@ -1049,6 +1060,75 @@
 		const allocationTypesDropdown = allocationTypesContainer.append("div")
 			.attr("class", classPrefix + "allocationTypesDropdown");
 
+		allocationTypesTitleDiv.on("click", () => {
+			allocationTypesContainer.classed("active", d => {
+				return d.clicked = !d.clicked;
+			});
+			fundContainer.classed("active", d => {
+				return d.clicked = false;
+			});
+			regionContainer.classed("active", d => {
+				return d.clicked = false;
+			});
+			emergencyContainer.classed("active", d => {
+				return d.clicked = false;
+			});
+		});
+
+		const allocationTypesCheckboxData = d3.keys(lists.allocationTypesInAllDataList).sort(function(a, b) {
+			return (lists.allocationTypesNames[a]).localeCompare(lists.allocationTypesNames[b]);
+		}).map(d => +d);
+
+		allocationTypesCheckboxData.unshift(allAllocationTypesOption);
+
+		const allocationTypesCheckboxDiv = allocationTypesDropdown.selectAll(null)
+			.data(allocationTypesCheckboxData)
+			.enter()
+			.append("div")
+			.attr("class", classPrefix + "allocationTypesCheckboxDiv");
+
+		allocationTypesCheckboxDiv.filter(function(d) {
+				return d !== allAllocationTypesOption;
+			})
+			.style("opacity", function(d) {
+				return inDataLists.allocationTypesInData.includes(d) ? 1 : disabledOpacity;
+			});
+
+		const allocationTypesLabel = allocationTypesCheckboxDiv.append("label");
+
+		const allocationTypesInput = allocationTypesLabel.append("input")
+			.attr("type", "checkbox")
+			.property("checked", function(d) {
+				return chartState.selectedAllocationType.length !== d3.keys(lists.allocationTypesInAllDataList).length && chartState.selectedAllocationType.includes(d);
+			})
+			.attr("value", function(d) {
+				return d;
+			});
+
+		const allocationTypesSpan = allocationTypesLabel.append("span")
+			.attr("class", classPrefix + "checkboxText")
+			.html(function(d) {
+				return lists.allocationTypesNames[d] || d;
+			});
+
+		const allAllocationTypes = allocationTypesCheckboxDiv.filter(function(d) {
+			return d === allAllocationTypesOption;
+		}).select("input");
+
+		d3.select(allAllocationTypes.node().nextSibling)
+			.attr("class", classPrefix + "checkboxTextAllAllocationTypes");
+
+		const allocationTypesCheckbox = allocationTypesCheckboxDiv.filter(function(d) {
+			return d !== allAllocationTypesOption;
+		}).select("input");
+
+		allocationTypesCheckbox.property("disabled", function(d) {
+			return !inDataLists.allocationTypesInData.includes(d);
+		});
+
+		allAllocationTypes.property("checked", function() {
+			return chartState.selectedAllocationType.length === d3.keys(lists.allocationTypesInAllDataList).length;
+		});
 
 		//filter
 
@@ -1137,12 +1217,18 @@
 					emergencyCheckbox.property("disabled", function(d) {
 						return !inSelectionLists.emergencyGroupsInData.includes(d);
 					});
+					allocationTypesCheckbox.property("disabled", function(d) {
+						return !inSelectionLists.allocationTypesInData.includes(d);
+					});
 				} else {
 					fundCheckbox.property("disabled", function(d) {
 						return !inDataLists.fundsInData.includes(d);
 					});
 					emergencyCheckbox.property("disabled", function(d) {
 						return !inDataLists.emergencyGroupsInData.includes(d);
+					});
+					allocationTypesCheckbox.property("disabled", function(d) {
+						return !inDataLists.allocationTypesInData.includes(d);
 					});
 				};
 
@@ -1195,9 +1281,15 @@
 					emergencyCheckbox.property("disabled", function(d) {
 						return !inSelectionLists.emergencyGroupsInData.includes(d);
 					});
+					allocationTypesCheckbox.property("disabled", function(d) {
+						return !inSelectionLists.allocationTypesInData.includes(d);
+					});
 				} else {
 					emergencyCheckbox.property("disabled", function(d) {
 						return !inDataLists.emergencyGroupsInData.includes(d);
+					});
+					allocationTypesCheckbox.property("disabled", function(d) {
+						return !inDataLists.allocationTypesInData.includes(d);
 					});
 				};
 
@@ -1253,12 +1345,85 @@
 					fundCheckbox.property("disabled", function(d) {
 						return !inSelectionLists.fundsInData.includes(d);
 					});
+					allocationTypesCheckbox.property("disabled", function(d) {
+						return !inSelectionLists.allocationTypesInData.includes(d);
+					});
 				} else {
 					regionCheckbox.property("disabled", function(d) {
 						return !inDataLists.regionsInData.includes(d);
 					});
 					fundCheckbox.property("disabled", function(d) {
 						return !inDataLists.fundsInData.includes(d);
+					});
+					allocationTypesCheckbox.property("disabled", function(d) {
+						return !inDataLists.allocationTypesInData.includes(d);
+					});
+				};
+
+				resizeSvg(false);
+
+				drawStackedAreaChart(data);
+			});
+
+		allocationTypesCheckboxDiv.select("input")
+			.on("change", (d, i, n) => {
+				if (d === allAllocationTypesOption) {
+					if (n[i].checked) {
+						chartState.selectedAllocationType = d3.keys(lists.allocationTypesInAllDataList).map(e => +e);
+						allocationTypesCheckbox.property("checked", false)
+							.property("disabled", false);
+					} else {
+						chartState.selectedAllocationType.length = 0;
+					};
+				} else {
+					if (n[i].checked) {
+						if (chartState.selectedAllocationType.length === d3.keys(lists.allocationTypesInAllDataList).length) {
+							chartState.selectedAllocationType = [d];
+						} else {
+							chartState.selectedAllocationType.push(d);
+						};
+					} else {
+						const thisIndex = chartState.selectedAllocationType.indexOf(d);
+						chartState.selectedAllocationType.splice(thisIndex, 1);
+					};
+					allEmergencies.property("checked", false);
+				};
+
+				if (chartState.selectedAllocationType.length !== d3.keys(lists.allocationTypesInAllDataList).length) {
+					const allocationTypesValues = chartState.selectedAllocationType.join("|");
+					if (queryStringValues.has("allocationtype")) {
+						queryStringValues.set("allocationtype", allocationTypesValues);
+					} else {
+						queryStringValues.append("allocationtype", allocationTypesValues);
+					};
+				} else {
+					queryStringValues.delete("allocationtype");
+				};
+
+				allocationTypesTitle.html(chartState.selectedAllocationType.length === d3.keys(lists.allocationTypesInAllDataList).length ? "All window types" :
+					chartState.selectedAllocationType.length > 1 ? "Multiple window types" : (lists.allocationTypesNames[chartState.selectedAllocationType] || "No selection"));
+
+				const data = processData(rawDataAllocations);
+
+				if (chartState.selectedAllocationType.length === d3.keys(lists.allocationTypesInAllDataList).length) {
+					regionCheckbox.property("disabled", function(d) {
+						return !inSelectionLists.regionsInData.includes(d);
+					});
+					fundCheckbox.property("disabled", function(d) {
+						return !inSelectionLists.fundsInData.includes(d);
+					});
+					emergencyCheckbox.property("disabled", function(d) {
+						return !inSelectionLists.emergencyGroupsInData.includes(d);
+					});
+				} else {
+					regionCheckbox.property("disabled", function(d) {
+						return !inDataLists.regionsInData.includes(d);
+					});
+					fundCheckbox.property("disabled", function(d) {
+						return !inDataLists.fundsInData.includes(d);
+					});
+					emergencyCheckbox.property("disabled", function(d) {
+						return !inDataLists.emergencyGroupsInData.includes(d);
 					});
 				};
 
@@ -1272,22 +1437,27 @@
 			chartState.selectedRegion = d3.keys(lists.regionsInAllDataList).map(e => +e);
 			chartState.selectedFund = d3.keys(lists.fundsInAllDataList).map(e => +e);
 			chartState.selectedEmergencyGroup = d3.keys(lists.emergencyGroupsInAllDataList).map(e => +e);
+			chartState.selectedAllocationType = d3.keys(lists.allocationTypesInAllDataList).map(e => +e);
 
 			regionTitle.html("Select Region");
 			fundTitle.html("Select Country");
 			emergencyTitle.html("Select Emergency Group");
+			allocationTypesTitle.html("Select Window Type");
 
 			regionCheckbox.property("checked", false);
 			fundCheckbox.property("checked", false);
 			emergencyCheckbox.property("checked", false);
+			allocationTypesCheckbox.property("checked", false);
 
 			allRegions.property("checked", true);
 			allFunds.property("checked", true);
 			allEmergencies.property("checked", true);
+			allAllocationTypes.property("checked", true);
 
 			regionContainer.classed("active", false);
 			fundContainer.classed("active", false);
 			emergencyContainer.classed("active", false);
+			allocationTypesContainer.classed("active", false);
 
 			const data = processData(rawDataAllocations);
 
@@ -1299,6 +1469,9 @@
 			});
 			emergencyCheckbox.property("disabled", function(d) {
 				return !inDataLists.emergencyGroupsInData.includes(d);
+			});
+			allocationTypesCheckbox.property("disabled", function(d) {
+				return !inDataLists.allocationTypesInData.includes(d);
 			});
 
 			resizeSvg(false);
@@ -2447,23 +2620,31 @@
 			if (!row.Budget) return;
 
 			//populate inSelectionLists
-			//NOTE: include allocation types???
 			if (chartState.selectedYear.includes(row.Year) || chartState.selectedYear.includes(allYearsOption)) {
 				if (chartState.selectedRegion.includes(lists.fundRegions[row.CountryID])) {
 					if (!inSelectionLists.fundsInData.includes(row.CountryID)) inSelectionLists.fundsInData.push(row.CountryID);
 					if (!inSelectionLists.emergencyGroupsInData.includes(row.EmergencyGroupID)) inSelectionLists.emergencyGroupsInData.push(row.EmergencyGroupID);
+					if (!inSelectionLists.allocationTypesInData.includes(row.WindowID)) inSelectionLists.allocationTypesInData.push(row.WindowID);
 				};
 				if (chartState.selectedFund.includes(row.CountryID)) {
 					if (!inSelectionLists.emergencyGroupsInData.includes(row.EmergencyGroupID)) inSelectionLists.emergencyGroupsInData.push(row.EmergencyGroupID);
+					if (!inSelectionLists.allocationTypesInData.includes(row.WindowID)) inSelectionLists.allocationTypesInData.push(row.WindowID);
 				};
 				if (chartState.selectedEmergencyGroup.includes(row.EmergencyGroupID)) {
 					if (!inSelectionLists.regionsInData.includes(lists.fundRegions[row.CountryID])) inSelectionLists.regionsInData.push(lists.fundRegions[row.CountryID]);
 					if (!inSelectionLists.fundsInData.includes(row.CountryID)) inSelectionLists.fundsInData.push(row.CountryID);
+					if (!inSelectionLists.allocationTypesInData.includes(row.WindowID)) inSelectionLists.allocationTypesInData.push(row.WindowID);
+				};
+				if (chartState.selectedAllocationType.includes(row.WindowID)) {
+					if (!inSelectionLists.regionsInData.includes(lists.fundRegions[row.CountryID])) inSelectionLists.regionsInData.push(lists.fundRegions[row.CountryID]);
+					if (!inSelectionLists.fundsInData.includes(row.CountryID)) inSelectionLists.fundsInData.push(row.CountryID);
+					if (!inSelectionLists.emergencyGroupsInData.includes(row.EmergencyGroupID)) inSelectionLists.emergencyGroupsInData.push(row.EmergencyGroupID);
 				};
 			};
 
 			//Filter for selections
 			if (!chartState.selectedEmergencyGroup.includes(row.EmergencyGroupID)) return;
+			if (!chartState.selectedAllocationType.includes(row.WindowID)) return;
 			if (!chartState.selectedRegion.includes(lists.fundRegions[row.CountryID])) return;
 			if (!chartState.selectedFund.includes(row.CountryID)) return;
 
