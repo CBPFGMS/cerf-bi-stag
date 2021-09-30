@@ -1386,7 +1386,7 @@
 						const thisIndex = chartState.selectedAllocationType.indexOf(d);
 						chartState.selectedAllocationType.splice(thisIndex, 1);
 					};
-					allEmergencies.property("checked", false);
+					allAllocationTypes.property("checked", false);
 				};
 
 				if (chartState.selectedAllocationType.length !== d3.keys(lists.allocationTypesInAllDataList).length) {
