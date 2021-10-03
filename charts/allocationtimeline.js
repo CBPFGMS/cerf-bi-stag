@@ -1810,6 +1810,8 @@
 
 		totalLabel = totalLabelEnter.merge(totalLabel);
 
+		totalLabel.raise();
+
 		totalLabel.transition(syncTransition)
 			.style("opacity", 1)
 			.attr("x", d => xScale(chartState.selectedYear.includes(allYearsOption) ? d.year : d.month))
@@ -2199,6 +2201,8 @@
 			.text(d => "$0");
 
 		totalLabelByGroup = totalLabelByGroupEnter.merge(totalLabelByGroup);
+
+		totalLabelByGroup.raise();
 
 		totalLabelByGroup.transition(syncTransition)
 			.style("opacity", 1)
