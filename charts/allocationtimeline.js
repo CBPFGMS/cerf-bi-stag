@@ -1192,7 +1192,7 @@
 						const thisIndex = chartState.selectedRegion.indexOf(d);
 						chartState.selectedRegion.splice(thisIndex, 1);
 					};
-					if (!chartState.selectedEmergencyGroup.length) {
+					if (!chartState.selectedRegion.length) {
 						chartState.selectedRegion = d3.keys(lists.regionsInAllDataList).map(e => +e);
 						allRegions.property("checked", true);
 					} else {
@@ -1265,7 +1265,7 @@
 						const thisIndex = chartState.selectedFund.indexOf(d);
 						chartState.selectedFund.splice(thisIndex, 1);
 					};
-					if (!chartState.selectedEmergencyGroup.length) {
+					if (!chartState.selectedFund.length) {
 						chartState.selectedFund = d3.keys(lists.fundsInAllDataList).map(e => +e);
 						allFunds.property("checked", true);
 					} else {
@@ -1405,7 +1405,7 @@
 						const thisIndex = chartState.selectedAllocationType.indexOf(d);
 						chartState.selectedAllocationType.splice(thisIndex, 1);
 					};
-					if (!chartState.selectedEmergencyGroup.length) {
+					if (!chartState.selectedAllocationType.length) {
 						chartState.selectedAllocationType = d3.keys(lists.allocationTypesInAllDataList).map(e => +e);
 						allAllocationTypes.property("checked", true);
 					} else {
