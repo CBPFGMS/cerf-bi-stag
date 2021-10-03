@@ -1178,7 +1178,8 @@
 						regionCheckbox.property("checked", false)
 							.property("disabled", false);
 					} else {
-						chartState.selectedRegion.length = 0;
+						n[i].checked = true;
+						return;
 					};
 				} else {
 					if (n[i].checked) {
@@ -1191,7 +1192,12 @@
 						const thisIndex = chartState.selectedRegion.indexOf(d);
 						chartState.selectedRegion.splice(thisIndex, 1);
 					};
-					allRegions.property("checked", false);
+					if (!chartState.selectedEmergencyGroup.length) {
+						chartState.selectedRegion = d3.keys(lists.regionsInAllDataList).map(e => +e);
+						allRegions.property("checked", true);
+					} else {
+						allRegions.property("checked", false);
+					};
 				};
 
 				if (chartState.selectedRegion.length !== d3.keys(lists.regionsInAllDataList).length) {
@@ -1245,7 +1251,8 @@
 						fundCheckbox.property("checked", false)
 							.property("disabled", false);
 					} else {
-						chartState.selectedFund.length = 0;
+						n[i].checked = true;
+						return;
 					};
 				} else {
 					if (n[i].checked) {
@@ -1258,7 +1265,12 @@
 						const thisIndex = chartState.selectedFund.indexOf(d);
 						chartState.selectedFund.splice(thisIndex, 1);
 					};
-					allFunds.property("checked", false);
+					if (!chartState.selectedEmergencyGroup.length) {
+						chartState.selectedFund = d3.keys(lists.fundsInAllDataList).map(e => +e);
+						allFunds.property("checked", true);
+					} else {
+						allFunds.property("checked", false);
+					};
 				};
 
 				if (chartState.selectedFund.length !== d3.keys(lists.fundsInAllDataList).length) {
@@ -1306,7 +1318,8 @@
 						emergencyCheckbox.property("checked", false)
 							.property("disabled", false);
 					} else {
-						chartState.selectedEmergencyGroup.length = 0;
+						n[i].checked = true;
+						return;
 					};
 				} else {
 					if (n[i].checked) {
@@ -1319,7 +1332,12 @@
 						const thisIndex = chartState.selectedEmergencyGroup.indexOf(d);
 						chartState.selectedEmergencyGroup.splice(thisIndex, 1);
 					};
-					allEmergencies.property("checked", false);
+					if (!chartState.selectedEmergencyGroup.length) {
+						chartState.selectedEmergencyGroup = d3.keys(lists.emergencyGroupsInAllDataList).map(e => +e);
+						allEmergencies.property("checked", true);
+					} else {
+						allEmergencies.property("checked", false);
+					};
 				};
 
 				if (chartState.selectedEmergencyGroup.length !== d3.keys(lists.emergencyGroupsInAllDataList).length) {
@@ -1373,7 +1391,8 @@
 						allocationTypesCheckbox.property("checked", false)
 							.property("disabled", false);
 					} else {
-						chartState.selectedAllocationType.length = 0;
+						n[i].checked = true;
+						return;
 					};
 				} else {
 					if (n[i].checked) {
@@ -1386,7 +1405,12 @@
 						const thisIndex = chartState.selectedAllocationType.indexOf(d);
 						chartState.selectedAllocationType.splice(thisIndex, 1);
 					};
-					allAllocationTypes.property("checked", false);
+					if (!chartState.selectedEmergencyGroup.length) {
+						chartState.selectedAllocationType = d3.keys(lists.allocationTypesInAllDataList).map(e => +e);
+						allAllocationTypes.property("checked", true);
+					} else {
+						allAllocationTypes.property("checked", false);
+					};
 				};
 
 				if (chartState.selectedAllocationType.length !== d3.keys(lists.allocationTypesInAllDataList).length) {
