@@ -392,8 +392,6 @@
 		chartState.selectedAllocationType = validateSelectionString(selectedAllocationTypesString, lists.allocationTypesInAllDataList);
 		chartState.selectedView = selectedViewString;
 
-		console.log(chartState)
-
 		if (!lazyLoad) {
 			draw(rawDataAllocations);
 		} else {
@@ -1168,6 +1166,8 @@
 				.style("display", "none");
 		});
 
+		console.log(lists);
+
 		//listeners
 
 		regionCheckboxDiv.select("input")
@@ -1207,6 +1207,16 @@
 					} else {
 						queryStringValues.append("region", regionValues);
 					};
+					chartState.selectedFund = chartState.selectedFund.filter(e => chartState.selectedRegion.includes(lists.fundRegions[e]));
+					if (!chartState.selectedFund.length) {
+						chartState.selectedFund = d3.keys(lists.fundsInAllDataList).map(e => +e);
+						allFunds.property("checked", true);
+					};
+					fundTitle.html(chartState.selectedFund.length === d3.keys(lists.fundsInAllDataList).length ? "All funds" :
+						chartState.selectedFund.length > 1 ? "Multiple funds" : (lists.fundNames[chartState.selectedFund] || "No selection"));
+					fundCheckbox.property("checked", function(d) {
+						return chartState.selectedFund.length !== d3.keys(lists.fundsInAllDataList).length && chartState.selectedFund.includes(d);
+					});
 				} else {
 					queryStringValues.delete("region");
 				};
@@ -3001,12 +3011,12 @@
 
 		snapshotTooltip.style("display", "none");
 
-		containerDiv.selectAll(".alloctimelineregionDropdown, .alloctimelinefundDropdown, .alloctimelineemergencyDropdown")
+		containerDiv.selectAll(".alloctimelineregionDropdown, .alloctimelinefundDropdown, .alloctimelineemergencyDropdown, .alloctimelineallocationTypesDropdown")
 			.style("display", "none");
 
 		html2canvas(imageDiv).then(function(canvas) {
 
-			containerDiv.selectAll(".alloctimelineregionDropdown, .alloctimelinefundDropdown, .alloctimelineemergencyDropdown")
+			containerDiv.selectAll(".alloctimelineregionDropdown, .alloctimelinefundDropdown, .alloctimelineemergencyDropdown, .alloctimelineallocationTypesDropdown")
 				.style("display", null);
 
 			svg.attr("width", null)
