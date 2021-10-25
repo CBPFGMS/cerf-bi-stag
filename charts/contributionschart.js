@@ -964,6 +964,7 @@
 		yScaleTooltip.domain([0, d3.max(datum.contributions, e => e.amount)]);
 
 		const tooltipDiv = chartsDiv.append("div")
+			.style("position", "fixed")
 			.attr("id", classPrefix + "tooltipDiv")
 			.style("left", "50%")
 			.style("top", "50%")
