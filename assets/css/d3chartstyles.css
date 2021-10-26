@@ -2012,15 +2012,19 @@ p#contributionschartd3chartTitle {
 .contributionschartdonorDiv {
   justify-self: center;
   margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
 }
 
 .contributionschartdonorNameDiv {
   width: 100%;
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   padding-right: 4px;
   padding-left: 4px;
+  flex-grow: 1;
 }
 
 .contributionschartdonorNameDiv span {
