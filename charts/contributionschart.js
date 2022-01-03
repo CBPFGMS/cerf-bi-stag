@@ -504,7 +504,7 @@
 			.append("span")
 			.attr("class", classPrefix + "donorsNumber contributionColorHTMLcolor")
 			.merge(donorsNumber)
-			.html(chartState.selectedDonors === donors[0] ? "Top 20" : data.byDonor.length);
+			.html(chartState.selectedDonors === donors[0] ? "Top " + topDonorsNumber : data.byDonor.length);
 
 		let donorsText = topFiguresDonorsTextDiv.selectAll("." + classPrefix + "donorsText")
 			.data([true]);
@@ -564,7 +564,7 @@
 			.append("span")
 			.attr("class", classPrefix + "topChartHeader")
 			.merge(topChartHeader)
-			.html((chartState.selectedDonors === donors[0] ? "Top 20 " : "All ") + topChartHeaderText + (alreadyHovered ? "" : "<br>(hover over the bars for highlighting a year)"));
+			.html((chartState.selectedDonors === donors[0] ? `Top ${topDonorsNumber} ` : "All ") + topChartHeaderText + (alreadyHovered ? "" : "<br>(hover over the bars for highlighting a year)"));
 
 		const topChartData = chartState.selectedDonors === donors[0] ? data.topDonors : data.allDonors;
 
@@ -710,8 +710,9 @@
 		barsTopOver.on("mouseover", year => {
 				if (!alreadyHovered) {
 					alreadyHovered = true;
-					topChartHeaderDiv.select("." + classPrefix + "topChartHeader").html((chartState.selectedDonors === donors[0] ? "Top 20 " : "All ") + topChartHeaderText + (alreadyHovered ? "" : "<br>(hover over the bars for highlighting a year)"));
+					topChartHeaderDiv.select("." + classPrefix + "topChartHeader").html((chartState.selectedDonors === donors[0] ? `Top ${topDonorsNumber} ` : "All ") + topChartHeaderText + (alreadyHovered ? "<br>&nbsp;" : "<br>(hover over the bars for highlighting a year)"));
 				};
+
 				xAxis.tickValues([year]);
 				xAxisGroupTopChart.call(xAxisTopChart);
 				xAxis.tickValues([year]);
@@ -773,7 +774,7 @@
 
 		const donorsText = donorLabels.append("span")
 			.attr("class", classPrefix + "radioLabel")
-			.html(d => d === donors[0] ? "Top 20 Donors" : "All donors");
+			.html(d => d === donors[0] ? `Top ${topDonorsNumber} Donors` : "All donors");
 
 		const orderLabels = topRadioButtonsOrderDiv.selectAll(null)
 			.data(orders)
