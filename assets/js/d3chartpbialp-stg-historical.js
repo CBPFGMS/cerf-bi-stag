@@ -3627,7 +3627,12 @@ function d3ChartIIFE(historicalFile) {
 			const length = (~~Math.log10(value) + 1) % 3;
 			const digits = length === 1 ? 2 : length === 2 ? 1 : 0;
 			const result = d3.formatPrefix("." + digits, value)(value);
-			return parseInt(result) === 1000 ? formatSIFloat(--value) : result;
+			if (parseInt(result) === 1000) {
+				const lastDigit = result[result.length - 1];
+				const units = { k: "M", M: "B" };
+				return 1 + (isNaN(lastDigit) ? units[lastDigit] : "");
+			};
+			return result;
 		};
 
 		function reverseFormat(s) {
@@ -3668,9 +3673,7 @@ function d3ChartIIFE(historicalFile) {
 		function wrapText(text, width) {
 			text.each(function() {
 				let text = d3.select(this),
-					words = text.text() === "Red Cross/Crescent Movement" ?
-					["Red Cross/", "Crescent Movement"] : text.text() === "National NGO" && chartState.netFunding === 2 ?
-					["National", "Partners"] : text.text().split(" "),
+					words = text.text() === "Red Cross/Crescent Movement" ? ["Red Cross/", "Crescent Movement"] : text.text() === "National NGO" && chartState.netFunding === 2 ? ["National", "Partners"] : text.text().split(" "),
 					lineNumber = 0,
 					lineHeight = 1.1,
 					y = text.attr("y"),
