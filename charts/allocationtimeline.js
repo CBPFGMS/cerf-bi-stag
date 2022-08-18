@@ -1166,8 +1166,6 @@
 				.style("display", "none");
 		});
 
-		console.log(lists);
-
 		//listeners
 
 		regionCheckboxDiv.select("input")
