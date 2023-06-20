@@ -83,7 +83,8 @@
                 <ul class="nav navbar-nav ml-auto font-weight-bold text-uppercase" aria-labelledby="navbarDropdownMenuLink">
                     <li class="nav-item dropdown dropdown-panel" role="presentation"><a class="nav-link dropdown-toggle js-scroll-trigger" href="#Allocations" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Allocations</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="https://cbpfgms.github.io/cerf-bi-stag/allocations.html">Allocations Timeline</a>
+                            <a class="dropdown-item js-scroll-trigger" href="#allocation-overview-tab">Allocations Overview</a>
+							<a class="dropdown-item js-scroll-trigger" href="#allocation-emergency-tab">Allocations by Emergency Types</a>
                             <a class="dropdown-item" href="https://cerf.un.org/what-we-do/allocation-data" target="_blank">Allocation Data</a>
             			</ul>
 					</li>
@@ -138,11 +139,11 @@
 				<!--<div class="col-md-auto banner-brdr">
 					
 				</div>-->
-				<div class="col align-self-end">
+				<!-- <div class="col align-self-end">
                     <div class="mt-n-60 allocation-timeline">							
                         <a href="allocations.html" title="CERF Allocation Timeline"><img src="assets/img/allocation-timeline-banner.png" alt="CERF Allocation Timeline"></a>
                     </div>
-                </div>
+                </div> -->
                 <!--<div class="col-md-auto">
                     <div class="figure-box-panel tooltip-custom">							
                         <p><b><span id="spnPartners"></span></b> Recipients</p>
@@ -198,6 +199,20 @@
 					<div class="tab-content border-top pt-3" id="myTabContent">
 						<div class="tab-pane active show" id="allocation-overview" role="tabpanel" aria-labelledby="allocation-overview-tab">
                             <div><div id="d3chartcontainerallocover" data-title=" " data-year="2022" data-cerfallocation="total" data-shownames="false" data-showhelp="false" data-showlink="false" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/allocationsoverview.js"></script></div>
+                        </div>
+					</div>
+				</div>
+			</div>
+			<div class="row mb-5">
+				<div class="col">
+					<ul class="nav nav-tabs mb-4 pt-1 pb-1" id="myTab" role="tablist">
+  						<li class="nav-item waves-effect waves-light mr-4">
+    						<a class="nav-link active" id="allocation-emergency-tab" data-toggle="tab" href="#allocation-emergency" role="tab" aria-controls="home" aria-selected="true"><i class="fa fa-map-o f-a mr-1"></i> Allocations by Emergency Types</a>
+  						</li>				
+					</ul>
+					<div class="tab-content border-top pt-3" id="myTabContent">
+						<div class="tab-pane active show" id="allocation-emergency" role="tabpanel" aria-labelledby="allocation-overview-tab">
+                            <div><div id="d3chartcontaineralloctimeline" data-title=" " data-year="all" data-fund="all" data-region="all" data-emergencygroup="all" data-allocationtype="all" data-view="group" data-responsive="true" data-lazyload="true"></div><script type="text/javascript" src="charts/allocationtimeline.js"></script></div>
                         </div>
 					</div>
 				</div>
