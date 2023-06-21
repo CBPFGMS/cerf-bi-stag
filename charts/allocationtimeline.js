@@ -1211,7 +1211,7 @@
 						allFunds.property("checked", true);
 					};
 					fundTitle.html(chartState.selectedFund.length === d3.keys(lists.fundsInAllDataList).length ? "All funds" :
-						chartState.selectedFund.length > 1 ? "Multiple funds" : (lists.fundNames[chartState.selectedFund] || "No selection"));
+						chartState.selectedFund.length > 1 ? "Multiple countries" : (lists.fundNames[chartState.selectedFund] || "No selection"));
 					fundCheckbox.property("checked", function(d) {
 						return chartState.selectedFund.length !== d3.keys(lists.fundsInAllDataList).length && chartState.selectedFund.includes(d);
 					});
@@ -1293,7 +1293,7 @@
 				};
 
 				fundTitle.html(chartState.selectedFund.length === d3.keys(lists.fundsInAllDataList).length ? "All funds" :
-					chartState.selectedFund.length > 1 ? "Multiple funds" : (lists.fundNames[chartState.selectedFund] || "No selection"));
+					chartState.selectedFund.length > 1 ? "Multiple countries" : (lists.fundNames[chartState.selectedFund] || "No selection"));
 
 				const data = processData(rawDataAllocations);
 
