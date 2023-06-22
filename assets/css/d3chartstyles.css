@@ -1456,7 +1456,7 @@ p#alloctimelined3chartTitle {
 	margin-top: 8px;
 	align-items: center;
 	overflow-y: auto;
-	height: 30px;
+	height: 40px;
 	scrollbar-width: thin;
   scrollbar-color: lightgray white;
 }
