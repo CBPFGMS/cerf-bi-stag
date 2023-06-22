@@ -788,6 +788,8 @@
 			.classed("active", d => chartState.selectedYear.includes(d))
 			.html(d => (d === allYearsOption ? capitalize(allYearsOption) : d));
 
+		yearButtonsDiv.node().scrollLeft = yearButtonsDiv.node().scrollWidth;
+
 		yearButtons
 			.on("mouseover", mouseoveryearButtons)
 			.on("mouseout", mouseoutyearButtons)
