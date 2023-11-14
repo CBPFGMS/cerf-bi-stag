@@ -59,7 +59,7 @@ function LoadDate() {
 
 function LoadAmount() {
 
-    var allocYear = 2022;
+    var allocYear = 2023;
     fetch('https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERFSummary-' + allocYear + '.json')
         .then(function(response) {
             if (response.ok) {
