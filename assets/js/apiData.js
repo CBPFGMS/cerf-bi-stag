@@ -7,10 +7,11 @@ function LoadData() {
     LoadCBPFSummary(year);
     LoadAmount();
     LoadDate();
-    const event = new CustomEvent("d3ChartsYear", {
-        detail: +year
-    });
-    document.body.dispatchEvent(event);
+	//temporarily removing until fixing 2024 summary data
+    // const event = new CustomEvent("d3ChartsYear", {
+    //     detail: +year
+    // });
+    // document.body.dispatchEvent(event);
 }
 
 
@@ -59,7 +60,7 @@ function LoadDate() {
 
 function LoadAmount() {
 
-    var allocYear = 2023;
+    var allocYear = 2024;
     fetch('https://cbpfgms.github.io/pfbi-data/cerf_sample_data/CERFSummary-' + allocYear + '.json')
         .then(function(response) {
             if (response.ok) {

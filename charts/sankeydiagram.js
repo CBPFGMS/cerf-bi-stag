@@ -2333,7 +2333,7 @@
 		};
 
 		rawDataContributions.forEach(row => {
-			if (chartState.selectedYear.includes(row.contributionYear) && chartState.selectedFund.includes(row.fundId) && (row.paidAmount + row.pledgedAmount)) {
+			if (chartState.selectedYear.includes(row.contributionYear) && chartState.selectedFund.includes(row.fundId) && (row.paidAmount + row.pledgedAmount) && +row.donorId === +row.donorId) {
 
 				const foundSource = data.nodes.find(d => d.level === 1 && d.codeId === row.donorId);
 
