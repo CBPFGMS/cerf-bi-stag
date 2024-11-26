@@ -28,13 +28,13 @@ header{background-image: url(../../assets/img/pf-one-bi-header-bg.png); display:
 .next-btn{background: url(../../assets/img/next-icon-img.png); display: inline-block; width: 12px; height: 20px; border: none; vertical-align: middle;}
 .year-filter{font-size: 1.5em; vertical-align: middle; margin: 0 20px; font-weight: 700; text-shadow: 0 2px 1px rgba(0,0,0,.35);}
 .figure-box-panel{padding: 3px 15px; font-size: 1.1em; font-weight: 700; color:#333; cursor: pointer; margin-left: 5px; margin-right: 5px; -webkit-transition: all .3s ease; -o-transition: all .3s ease; transition: all .3s ease; border-radius: 50px;}
-.figure-box-panel p b{color:#498bca; font-size: 2rem; font-weight: 600;}
+.figure-box-panel p b{color:#009edb; font-size: 2rem; font-weight: 600;}
 .figure-box-panel p b span{font-size: 3rem; line-height: normal;}
 .figure-box-panel p{margin: 0; }
-.figure-box-panel:hover{background-color: #498bca; color:#fff !important; border-radius: 50px; }
+.figure-box-panel:hover{background-color: #009edb; color:#fff !important; border-radius: 50px; }
 .figure-box-panel:hover p b{color:#fff !important;}
 
-.select-box{border-radius: 17.5px; background: #ffc417 url(../../assets/img/year-filter-arrow.png) no-repeat 88% 50%; border: none; color: #333; font-size: 1.2em; font-weight: 700; padding: 5px 40px; width: 150px; height: 35px; vertical-align: middle; box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12); cursor: pointer; line-height: normal; -webkit-transition: all .3s ease; -o-transition: all .3s ease; transition: all .3s ease;}
+.select-box{border-radius: 17.5px; background: #ffcb05 url(../../assets/img/year-filter-arrow.png) no-repeat 88% 50%; border: none; color: #333; font-size: 1.2em; font-weight: 700; padding: 5px 40px; width: 150px; height: 35px; vertical-align: middle; box-shadow: 0px 1px 3px 0px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 2px 1px -1px rgba(0,0,0,0.12); cursor: pointer; line-height: normal; -webkit-transition: all .3s ease; -o-transition: all .3s ease; transition: all .3s ease;}
 select.select-box option{font-size: 15px; text-align: center;}
 .select-box:hover{background: #2b6299 url(../../assets/img/year-filter-arrow-hover.png) no-repeat 88% 50%; color:#fff; text-shadow: none;}
 .tooltip-custom {position: relative; text-align: center;}
@@ -55,7 +55,7 @@ a:hover.txt-header {color:#333 !important;}
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active{color: #498bca; background-color: transparent; font-weight: 700; font-size: 1em;}
 .nav-tabs .nav-link{border-bottom: 2px solid transparent; padding: .2rem 0.5rem; border-left: none; border-top: none; border-right: none; font-family: 'Roboto', sans-serif; font-size: 1em; color:#58585e; font-weight: 300;}
 .nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover{color: #333;}
-.btn-light {font-family: 'Roboto', sans-serif; color: #212529; background-color: #eee; border-color: #eee;padding: 1rem 2rem; border-radius: 300px;}
+.btn-light {font-family: 'Roboto', sans-serif; color: #212529; background-color: #f2f2f2; border-color: #f2f2f2;padding: 1rem 2rem; border-radius: 300px;}
 .btn-light.focus, .btn-light:focus, .btn-light:hover {
   color: #212529;
   background-color: #e2e6ea;
@@ -276,7 +276,7 @@ footer{background-color: #BCBEC0; padding: 15px 0; width: 100%; overflow: auto;}
 }
 
 .cd-global-header {
-    background: #f4f4f4;
+    background: #f2f2f2;
     background-image: linear-gradient(-180deg, #f4f4f4 67%, #eaeaea 97%);
     color: #fff;
     height: 35px;
@@ -349,7 +349,7 @@ svg.icon {
 }
 
 .cd-global-header__dropdown {
-    background: #f4f4f4;
+    background: #f2f2f2;
     box-shadow: 0 3px 6px 0 rgba(0, 0, 0, .3);
     left: 0;
     position: absolute;
@@ -556,7 +556,7 @@ a:hover.cd-ocha-dropdown__see-all {
 
 .cd-footer {
     grid-row: 3/3;
-    background: #f4f4f4;
+    background: #f2f2f2;
     color: #333;
     padding: 48px 0 0;
     text-align: center;
