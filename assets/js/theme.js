@@ -3,7 +3,7 @@ var currentyear = d.getFullYear();
 var changedYear = 0;
 
 var minYear = 2014;
-var yearToShowDataOnLoad = 2024;
+var yearToShowDataOnLoad = 2025;
 
 $(function() {
     $('.annualHeading__2uJLv').text(yearToShowDataOnLoad);
@@ -232,7 +232,7 @@ let $underApproval_ = document.querySelector('#underApprovalFig');
 let $updatedOn_ = document.querySelector('#updatedOn');
 let $allocationYear = document.querySelector('.annualHeading__2uJLv');
 
-var yearToShowDataOnLoad = 2024;
+var yearToShowDataOnLoad = 2025;
 
 fetch('https://cbpfapi.unocha.org/vo2/odata/LastModified')
     .then(function(response) {
