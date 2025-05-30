@@ -243,7 +243,7 @@ export default theme;`}function T0(t={},...e){const{breakpoints:n,mixins:r={},sp
 	<div style="width:330px;display:flex;flex-direction:column;margin-top:10px;">
 	<div style="display:flex;flex-direction:row;">
 	<div style="flex: 0 68%;text-align:left;">Allocation Window</div>
-	<div style="flex: 0 32%;text-align:right;outline:1px solid #fff;">Value</div>
+	<div style="flex: 0 32%;text-align:right;">Value</div>
 	</div>
 	<div style="display:flex;flex-direction:row;">
 	<div style="flex: 0 68%;text-align:left;">Rapid Response <span style="font-size:11px;">(${RC(t.rr/t.allocations)})</span>:</div>
