@@ -147,7 +147,9 @@
 			"Multi-purpose CASH",
 			"Emergency Telecommunications",
 			"Mine Action",
-			"To be determined"
+			"To be determined",
+			"Common and Support Services",
+			"Multi-Purpose cash"
 		])
 		.range(["Food Security",
 			"Health",
@@ -162,11 +164,13 @@
 			"Camp Coordination",
 			"Early Recovery",
 			"Multi-Sector",
-			"Multi-purpose",
-			"Multi-purpose",
+			"Multi-purpose CASH",
+			"Multi-purpose CASH",
 			"Emergency Telecom.",
 			"Mine Action",
-			"To\u00a0be determined"
+			"To\u00a0be determined",
+			"Common Services",
+			"Multi-purpose CASH"
 		]);
 
 	let isSnapshotTooltipVisible = false,
@@ -612,27 +616,6 @@
 	};
 
 	function draw(rawData, mapData) {
-
-		//TEST
-		// topPanel.main.append("rect")
-		// 	.attr("width", topPanel.width)
-		// 	.attr("height", topPanel.height)
-		// 	.style("opacity", 0.15);
-		// mapLayer.append("rect")
-		// 	.attr("width", mapPanel.width)
-		// 	.attr("height", mapPanel.height)
-		// 	.style("opacity", 0.15);
-		// legendPanel.main.append("rect")
-		// 	.attr("width", legendPanel.width)
-		// 	.attr("height", legendPanel.height)
-		// 	.style("fill", "green")
-		// 	.style("opacity", 0.15);
-		// mapZoomButtonPanel.main.append("rect")
-		// 	.attr("width", mapZoomButtonPanel.width)
-		// 	.attr("height", mapZoomButtonPanel.height)
-		// 	.style("fill", "blue")
-		// 	.style("opacity", 0.15);
-		//TEST
 
 		const data = processData(rawData);
 
