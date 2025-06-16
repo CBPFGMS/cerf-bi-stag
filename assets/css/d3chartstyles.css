@@ -1457,8 +1457,11 @@ p#alloctimelined3chartTitle {
 	align-items: center;
 	overflow-y: auto;
 	height: 40px;
-	scrollbar-width: thin;
-  scrollbar-color: lightgray white;
+	scrollbar-width: none;
+  	-ms-overflow-style: none; /* IE/Edge */
+    -webkit-overflow-scrolling: touch;
+	padding-left: 2px;
+	padding-right: 2px;
 }
 
 .alloctimelineyearButtonsDiv::-webkit-scrollbar {

@@ -248,9 +248,81 @@
 		.append("div")
 		.attr("class", classPrefix + "IconsDiv d3chartIconsDiv");
 
-	const yearButtonsDiv = containerDiv
+	const yearButtonsContainer = containerDiv
+		.append("div")
+		.attr("class", classPrefix + "yearButtonsContainer")
+		.style("display", "flex")
+		.style("flex-direction", "row")
+		.style("gap", "4px")
+		.style("width", "100%")
+		.style("align-items", "center");
+
+	const leftArrow = yearButtonsContainer
+		.append("div")
+		.attr("class", classPrefix + "yearScrollArrow")
+		.style("cursor", "pointer")
+		.html("&#9664;")
+		.style("opacity", 1);
+
+	const yearButtonsDiv = yearButtonsContainer
 		.append("div")
 		.attr("class", classPrefix + "yearButtonsDiv");
+
+	const rightArrow = yearButtonsContainer
+		.append("div")
+		.attr("class", classPrefix + "yearScrollArrow")
+		.style("cursor", "pointer")
+		.html("&#9654;")
+		.style("opacity", 1);
+
+	// Store DOM reference and client width
+	const scrollDiv = yearButtonsDiv.node();
+	let clientWidth = scrollDiv.clientWidth;
+
+	const checkScrollPosition = () => {
+		const scrollLeft = scrollDiv.scrollLeft;
+		const scrollWidth = scrollDiv.scrollWidth;
+
+		leftArrow
+			.style("opacity", scrollLeft === 0 ? 0.3 : 1)
+			.style("cursor", scrollLeft === 0 ? "default" : "pointer");
+
+		rightArrow
+			.style(
+				"opacity",
+				Math.ceil(scrollLeft + clientWidth) >= scrollWidth ? 0.3 : 1
+			)
+			.style(
+				"cursor",
+				Math.ceil(scrollLeft + clientWidth) >= scrollWidth
+					? "default"
+					: "pointer"
+			);
+	};
+
+	yearButtonsDiv.on("scroll", checkScrollPosition);
+
+	leftArrow.on("click", () => {
+		if (scrollDiv.scrollLeft === 0) return;
+
+		scrollDiv.scrollBy({
+			left: -clientWidth,
+			behavior: "smooth",
+		});
+	});
+
+	rightArrow.on("click", () => {
+		if (
+			Math.ceil(scrollDiv.scrollLeft + clientWidth) >=
+			scrollDiv.scrollWidth
+		)
+			return;
+
+		scrollDiv.scrollBy({
+			left: clientWidth,
+			behavior: "smooth",
+		});
+	});
 
 	const bottomFiltersDiv = containerDiv
 		.append("div")
@@ -552,6 +624,8 @@
 		createTitle(rawDataAllocations);
 
 		createYearButtons(rawDataAllocations);
+
+		checkScrollPosition();
 
 		createDropdowns(rawDataAllocations);
 
