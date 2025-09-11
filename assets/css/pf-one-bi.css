@@ -2,7 +2,8 @@
 body{font-family: 'Roboto', sans-serif; color:#333; background: #fff; padding: 0; margin: 0;}
 
 .container {width: 100%; padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; box-sizing: border-box;}
-header{background-image: url(../../assets/img/pf-one-bi-header-bg.png); display: block; width: 100%; background-repeat: no-repeat; background-position: top center; min-height: 450px; border-bottom: 5px solid #cfe2f0;}  
+header{background-image: url(../../assets/img/pf-one-bi-header-bg.png); display: block; width: 100%; background-repeat: no-repeat; background-position: top center; min-height: 450px; border-bottom: 5px solid #cfe2f0;} 
+header#cvaHeader {min-height: 200px;} 
 
 .pf-onebi-logo{background-repeat: no-repeat; background-size: contain; background-position: center left; background-image: url(../../assets/img/cerf-data-hub-logo.svg); float: left; margin: 0; min-width: 300px; height: 50px;}
 
