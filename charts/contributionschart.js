@@ -341,7 +341,7 @@
 				? i % 2
 					? d
 					: null
-				: i % 2
+				: i % 2 && d !== currentYear
 				? null
 				: d
 		)
