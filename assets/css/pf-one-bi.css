@@ -802,5 +802,11 @@ a.cd-footer-social__link:hover .hover-style {
     }
 }
 .pbinadIconsDiv{z-index:1000 !important;}
-	
+
+.us-fund-btn {height: 20px !important; padding: 0 !important; margin: 7px 0 7px 15px !important; background-color: #fff !important; color: #002868 !important; line-height: 20px !important; border-radius: 3px; display: inline-flex !important; border: 1px solid #fff;}
+.us-fund-btn .blue-f {background-color: #002868; width: 10px; height: 100%;}
+.us-fund-btn .red-f {background-color: #bf0a30; width: 9px; height: 100%;}
+.us-fund-btn .txt {padding: 0 10px; font-size: 12px; color: #002868; white-space: nowrap; font-weight: bold;}
+.us-fund-btn:hover {text-decoration: none !important;}
+.us-fund-btn .txt:hover {color:#bf0a30 !important;}
 	
